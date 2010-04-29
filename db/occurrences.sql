@@ -6,7 +6,7 @@ SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource
 'institution_code_id','institution_code','institution_code_name','institution_code_lsid',
 'collection_code_id','collection_code','catalogue_number_id','catalogue_number',
 'taxon_concept_lsid','taxon_name','raw_taxon_name','country_code',
-'kingdom_lsid','kingdom',
+'kingdom_lsid','kingdom','family_lsid','family',
 'state',
 'biogeographic_region',
 'places',
@@ -18,7 +18,7 @@ SELECT oc.id, oc.data_provider_id, dp.name data_provider_name, oc.data_resource_
 oc.institution_code_id, ic.code institution_code_code, ic.name institution_code_name, ic.lsid institution_code_lsid,
 oc.collection_code_id, cc.code collection_code, oc.catalogue_number_id, cn.code catalogue_number,
 tc.lsid, tn.canonical taxon_name, ror.scientific_name, oc.iso_country_code,
-ktc.lsid, ktn.canonical,
+ktc.lsid, ktn.canonical, ftc.lsid, ftn.canonical,
 GROUP_CONCAT(st.name ORDER BY st.name SEPARATOR "|") as states,
 GROUP_CONCAT(bgr.name ORDER BY bgr.name SEPARATOR "|") as bio_geo_regions,
 GROUP_CONCAT(plc.name ORDER BY plc.name SEPARATOR "|") as places,
@@ -31,6 +31,8 @@ INNER JOIN taxon_name tn ON tn.id = oc.taxon_name_id
 INNER JOIN taxon_concept tc ON tc.id = oc.nub_concept_id
 INNER JOIN taxon_concept ktc ON ktc.id = oc.kingdom_concept_id
 INNER JOIN taxon_name ktn ON ktn.id = ktc.taxon_name_id
+INNER JOIN taxon_concept ftc ON ftc.id = oc.family_concept_id
+INNER JOIN taxon_name ftn ON ftn.id = ftc.taxon_name_id
 INNER JOIN data_provider dp ON dp.id = oc.data_provider_id
 INNER JOIN data_resource dr ON dr.id = oc.data_resource_id
 INNER JOIN institution_code ic ON ic.id = oc.institution_code_id
