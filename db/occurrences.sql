@@ -5,7 +5,7 @@
 SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource',
 'institution_code_id','institution_code','institution_code_name','institution_code_lsid',
 'collection_code_id','collection_code','catalogue_number_id','catalogue_number',
-'taxon_concept_lsid','taxon_name','raw_taxon_name','country_code',
+'taxon_concept_lsid','taxon_name','raw_taxon_name','raw_author','country_code',
 'kingdom_lsid','kingdom','family_lsid','family',
 'state',
 'biogeographic_region',
@@ -18,7 +18,7 @@ UNION
 SELECT oc.id, oc.data_provider_id, dp.name data_provider_name, oc.data_resource_id, dr.name data_resource_name,
 oc.institution_code_id, ic.code institution_code_code, ic.name institution_code_name, ic.lsid institution_code_lsid,
 oc.collection_code_id, cc.code collection_code, oc.catalogue_number_id, cn.code catalogue_number,
-tc.lsid, tn.canonical taxon_name, ror.scientific_name, oc.iso_country_code,
+tc.lsid, tn.canonical taxon_name, ror.scientific_name, ror.author, oc.iso_country_code,
 ktc.lsid, ktn.canonical, ftc.lsid, ftn.canonical,
 GROUP_CONCAT(st.name ORDER BY st.name SEPARATOR "|") as states,
 GROUP_CONCAT(bgr.name ORDER BY bgr.name SEPARATOR "|") as bio_geo_regions,
@@ -48,7 +48,7 @@ LEFT JOIN geo_region plc ON plc.id = gm.geo_region_id AND (plc.region_type >= 3 
 LEFT JOIN typification_record typ ON typ.occurrence_id = oc.id
 LEFT JOIN identifier_record idr ON idr.occurrence_id = oc.id
 LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
-WHERE oc.data_resource_id = 56
+--WHERE oc.data_resource_id = 56
 GROUP BY oc.id
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
 fields enclosed BY '"' TERMINATED BY ',' LINES TERMINATED BY '\n';
