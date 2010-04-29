@@ -16,6 +16,7 @@
 package org.ala.biocache.web;
 
 import javax.inject.Inject;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.gbif.portal.dto.occurrence.OccurrenceRecordDTO;
 import org.gbif.portal.dto.occurrence.RawOccurrenceRecordDTO;
@@ -50,6 +51,9 @@ public class OccurrenceController {
 	private final String LIST = "occurrences/list";
 	/** Name of view for a single taxon */
 	private final String SHOW = "occurrences/show";
+    /** URL for JSON web service for YUI  */
+    private String jsonUrl = "http://localhost:8080/solr/select/?fl=*%20score&wt=json&facet=true&facet.field=state&facet.field=biogeographic_region&facet.field=data_resource&facet.field=basis_of_record&facet.mincount=1&facet.limit=10";
+
 	
 	/**
 	 * Custom handler for the welcome view.
@@ -81,12 +85,29 @@ public class OccurrenceController {
     /**
 	 * Occurrence search page uses SOLR JSON to display results
 	 * 
+     * @param query
      * @param model
      * @return
      * @throws Exception
      */
 	@RequestMapping(value = "/occurrences/search", method = RequestMethod.GET)
-	public String occurrenceSearch(Model model) throws Exception {
+	public String occurrenceSearch(
+            @RequestParam(value="q", required=false) String query,
+            @RequestParam(value="fq", required=false) String facetQuery,
+            Model model)
+            throws Exception {
+        if (query != null && !query.isEmpty()) {
+            model.addAttribute("query", query);
+            String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+            model.addAttribute("queryJsEscaped", queryJsEscaped);
+        }
+
+        if (facetQuery != null && !facetQuery.isEmpty()) {
+            model.addAttribute("facetQuery", facetQuery);
+        }
+
+        model.addAttribute("jsonUrl", jsonUrl);
+
         return LIST;
 	}
 
@@ -98,7 +119,7 @@ public class OccurrenceController {
 	 * @return view name
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/occurrences/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = {"/occurrences/{id}", "/occurrences/{id}.json"}, method = RequestMethod.GET)
 	public String showSpecies(@PathVariable("id") String id, Model model) throws Exception {
 		logger.debug("Retrieving occurrence record with guid: "+id+".");
         model.addAttribute("id", id);
@@ -106,7 +127,7 @@ public class OccurrenceController {
 		model.addAttribute("occurrenceRecord", or);
         RawOccurrenceRecordDTO ror = occurrenceManager.getRawOccurrenceRecordFor(id);
         model.addAttribute("rawOccurrenceRecord", ror);
-       
+        
 		return SHOW;
 	}
 }

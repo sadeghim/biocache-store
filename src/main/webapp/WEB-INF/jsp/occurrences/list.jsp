@@ -65,7 +65,7 @@
             <div id="content" class="yui-skin-sam">
                 <div class="datatable-summary">Search for <a href="?q=<c:out value='${query}'/>"><c:out value="${query}"/></a>
                     returned <c:out value="${searchResults.totalRecords}"/> record<c:if test="${searchResults.totalRecords > 1}">s</c:if></div>
-                <iframe id="yui-history-iframe" src="<c:url value='/static/css/blank.html'/>"></iframe>
+                <iframe id="yui-history-iframe" src="<c:url value='${pageContext.request.contextPath}/static/css/blank.html'/>"></iframe>
                 <input id="yui-history-field" type="hidden">
                 <div id="dt-pag-head"></div>
                 <div id="results"></div>
@@ -76,7 +76,7 @@
                         var searchQuery = '${queryJsEscaped}';
                         var jsonURL = "${jsonUrl}";
                         var facetQuery = "${facetQuery}";
-                        loadDatatable(jsonURL, query, facetQuery);
+                        loadDatatable(jsonURL, searchQuery, facetQuery);
                 </script>
             </div>
         </c:if>

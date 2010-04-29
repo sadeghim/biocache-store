@@ -21,7 +21,7 @@
         <!--[if IE]><link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/lib/ie.css" type="text/css" media="screen, projection" /><![endif]-->
         <script type="text/javascript">
             $(document).ready(function() {
-                $("#q").autocomplete({ source: "${pageContext.request.contextPath}/species/terms", minLength: 2});
+                $("#q").autocomplete({ source: "${pageContext.request.contextPath}/occurrences/terms", minLength: 2});
             });
         </script>
     </head>
@@ -41,13 +41,13 @@
             </div>
             <div id="header">
                 <div id="menuSearch">
-                    <ul class="tabs"><%--Biodiversity Information Explorer--%>
+                    <%--<ul class="tabs">
                         <li class="<c:if test="${pageName == 'datasets'}">active</c:if> "><a href="${pageContext.request.contextPath}/species/datasets">Datasets</a></li>
                         <li class="<c:if test="${pageName == 'conservationStatus'}">active</c:if> "><a href="${pageContext.request.contextPath}/species/status/conservationStatus">Conservation Status List</a></li>
                         <li class="<c:if test="${pageName == 'pestStatus'}">active</c:if> last"><a href="${pageContext.request.contextPath}/species/status/pestStatus">Pest Status List</a></li>
-                    </ul>
-                    <span id="searchHint">Find Australian Species: </span>
-                    <form action="${pageContext.request.contextPath}/species/search" method="GET" autocomplete="off">
+                    </ul>--%>
+                    <span id="searchHint">Search for observations &amp; specimens: </span>
+                    <form action="${pageContext.request.contextPath}/occurrences/search" method="GET" autocomplete="off">
                         <input name="q" id="q" <c:if test="${not empty query}">value="<c:out value="${query}" />"</c:if> type="text" size="30"/>
                         <input type="submit" value="Search"/>
                     </form>

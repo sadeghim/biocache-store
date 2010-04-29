@@ -286,6 +286,28 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.4.3</version>
         </dependency>-->
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>javax.persistence</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>jsr250-api</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <repositories>
         <!-- ALA repository  -->
@@ -321,6 +343,12 @@
             <id>com.springsource.repository.bundles.release</id>
             <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
             <url>http://repository.springsource.com/maven/bundles/release/</url>
+        </repository>
+        <repository>
+            <url>http://ftp.ing.umu.se/mirror/eclipse/rt/eclipselink/maven.repo</url>
+            <id>eclipselink</id>
+            <layout>default</layout>
+            <name>Repository for library Library[eclipselink]</name>
         </repository>
     </repositories>
     <build>
