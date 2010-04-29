@@ -39,13 +39,13 @@ INNER JOIN institution_code ic ON ic.id = oc.institution_code_id
 INNER JOIN collection_code cc ON cc.id = oc.collection_code_id
 INNER JOIN catalogue_number cn ON cn.id = oc.catalogue_number_id
 INNER JOIN basis_of_record bor ON bor.id = oc.basis_of_record
-LEFT JOIN typification_record typ ON typ.occurrence_id = oc.id
-LEFT JOIN identifier_record idr ON idr.occurrence_id = oc.id
-LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
 LEFT JOIN geo_mapping gm ON gm.occurrence_id = oc.id
 LEFT JOIN geo_region st ON st.id = gm.geo_region_id AND st.region_type <= 2
 LEFT JOIN geo_region bgr ON bgr.id = gm.geo_region_id AND bgr.region_type = 2000
 LEFT JOIN geo_region plc ON plc.id = gm.geo_region_id AND (plc.region_type >= 3 AND plc.region_type <= 11)
+LEFT JOIN typification_record typ ON typ.occurrence_id = oc.id
+LEFT JOIN identifier_record idr ON idr.occurrence_id = oc.id
+LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
 WHERE oc.data_resource_id = 56
 GROUP BY oc.id
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
