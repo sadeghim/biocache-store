@@ -51,6 +51,6 @@ LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
 WHERE oc.data_resource_id = 56
 GROUP BY oc.id
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
-FIELDS OPTIONALLY ENCLOSED BY '"' ESCAPED BY '"' TERMINATED BY ',' LINES TERMINATED BY '\n';
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'; -- ESCAPED BY '"'
 
 -- WHERE oc.data_resource_id = 56
