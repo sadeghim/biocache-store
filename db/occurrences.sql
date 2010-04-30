@@ -13,7 +13,7 @@ SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource
 'latitude','longitude','cell_id','centi_cell_id','tenmilli_cell_id',
 'year','month','basis_of_record_id','basis_of_record','raw_basis_of_record',
 'type_status','identifier_type','identifier_value','identifier_name','identifier_date',
-'taxonomic_issue','geospatial_issue','other_issue','modified_date'
+'collector','taxonomic_issue','geospatial_issue','other_issue','modified_date'
 UNION
 SELECT oc.id, oc.data_provider_id, dp.name data_provider_name, oc.data_resource_id, dr.name data_resource_name,
 oc.institution_code_id, ic.code institution_code_code, ic.name institution_code_name, ic.lsid institution_code_lsid,
@@ -26,7 +26,7 @@ GROUP_CONCAT(plc.name ORDER BY plc.name SEPARATOR "|") as places,
 oc.latitude, oc.longitude, oc.cell_id, oc.centi_cell_id, oc.tenmilli_cell_id,
 oc.year, oc.month, oc.basis_of_record basis_of_record_id, bor.description basis_of_record, ror.basis_of_record,
 typ.type_status, lit.it_value, idr.identifier, ror.identifier_name, ror.identification_date,
-oc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, oc.modified
+ror.collector_name, coc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, oc.modified
 FROM occurrence_record oc
 INNER JOIN raw_occurrence_record ror ON ror.id = oc.id
 INNER JOIN taxon_name tn ON tn.id = oc.taxon_name_id
@@ -48,9 +48,9 @@ LEFT JOIN geo_region plc ON plc.id = gm.geo_region_id AND (plc.region_type >= 3 
 LEFT JOIN typification_record typ ON typ.occurrence_id = oc.id
 LEFT JOIN identifier_record idr ON idr.occurrence_id = oc.id
 LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
---WHERE oc.data_resource_id = 56
+WHERE oc.data_resource_id = 56
 GROUP BY oc.id
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
-fields enclosed BY '"' TERMINATED BY ',' LINES TERMINATED BY '\n';
+FIELDS OPTIONALLY ENCLOSED BY '"' ESCAPED BY '"' TERMINATED BY ',' LINES TERMINATED BY '\n';
 
 -- WHERE oc.data_resource_id = 56
