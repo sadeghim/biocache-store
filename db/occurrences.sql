@@ -26,7 +26,7 @@ GROUP_CONCAT(plc.name ORDER BY plc.name SEPARATOR "|") as places,
 oc.latitude, oc.longitude, oc.cell_id, oc.centi_cell_id, oc.tenmilli_cell_id,
 oc.year, oc.month, oc.basis_of_record basis_of_record_id, bor.description basis_of_record, ror.basis_of_record,
 typ.type_status, lit.it_value, idr.identifier, ror.identifier_name, ror.identification_date,
-ror.collector_name, coc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, oc.modified
+ror.collector_name, oc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, oc.modified
 FROM occurrence_record oc
 INNER JOIN raw_occurrence_record ror ON ror.id = oc.id
 INNER JOIN taxon_name tn ON tn.id = oc.taxon_name_id
