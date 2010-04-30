@@ -48,7 +48,7 @@ LEFT JOIN geo_region plc ON plc.id = gm.geo_region_id AND (plc.region_type >= 3 
 LEFT JOIN typification_record typ ON typ.occurrence_id = oc.id
 LEFT JOIN identifier_record idr ON idr.occurrence_id = oc.id
 LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
-WHERE oc.data_resource_id = 56
+--WHERE oc.data_resource_id = 56
 GROUP BY oc.id
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'; -- ESCAPED BY '"'
