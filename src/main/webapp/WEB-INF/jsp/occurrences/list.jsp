@@ -14,10 +14,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="pageName" content="species"/>
         <title>Occurrence Search Results</title>
-        <!-- Combo-handled YUI CSS files: -->
-        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.8.0r4/build/fonts/fonts-min.css&2.8.0r4/build/base/base-min.css&2.8.0r4/build/paginator/assets/skins/sam/paginator.css&2.8.0r4/build/datatable/assets/skins/sam/datatable.css">
-        <!-- Combo-handled YUI JS files: -->
-        <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.8.0r4/build/yahoo/yahoo-debug.js&2.8.0r4/build/event/event-debug.js&2.8.0r4/build/connection/connection-debug.js&2.8.0r4/build/datasource/datasource-debug.js&2.8.0r4/build/dom/dom-debug.js&2.8.0r4/build/element/element-debug.js&2.8.0r4/build/paginator/paginator-debug.js&2.8.0r4/build/datatable/datatable-debug.js&2.8.0r4/build/history/history-debug.js&2.8.0r4/build/json/json-debug.js&2.8.0r4/build/logger/logger-debug.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 var facetLinksSize = $("ul#subnavlist li").size();
@@ -62,22 +58,28 @@
                     </div>
                 </c:if>
             </div>
-            <div id="content" class="yui-skin-sam">
-                <div class="datatable-summary">Search for <a href="?q=<c:out value='${query}'/>"><c:out value="${query}"/></a>
-                    returned <c:out value="${searchResults.totalRecords}"/> record<c:if test="${searchResults.totalRecords > 1}">s</c:if></div>
-                <iframe id="yui-history-iframe" src="<c:url value='${pageContext.request.contextPath}/static/css/blank.html'/>"></iframe>
-                <input id="yui-history-field" type="hidden">
-                <div id="dt-pag-head"></div>
-                <div id="results"></div>
-                <div id="dt-pag-nav"></div>
-                <jsp:include page="yui-datatable.jsp"/>
-                <script type="text/javascript">
-                    <%--var searchQuery = "<s:property value="propertyValue" escapeJavaScript="true" escape="false"/>";//escape("${propertyValue}");//$("#_propertyValue").val();--%>
-                        var searchQuery = '${queryJsEscaped}';
-                        var jsonURL = "${jsonUrl}";
-                        var facetQuery = "${facetQuery}";
-                        loadDatatable(jsonURL, searchQuery, facetQuery);
-                </script>
+            <div id="results" >
+                <h3>Search results for <a href="">${queryJsEscaped}</a> - ${searchResults.totalRecords} results found</h3>
+                <table class="solrResults">
+                    <thead>
+                        <tr>
+                            <th>Scientific Name</th>
+                            <th>Dataset</th>
+                            <th>Type</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="occurrence" items="${searchResults.occurrences}">
+                            <tr>
+                                <td><a href="../${occurrence}">${occurrence.taxonName}</a></td>
+                                <td>${occurrence.dataResource}</td>
+                                <td>${occurrence.basisOfRecord}</td>
+                                <td>${occurrence.year}</td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
             </div>
         </c:if>
     </body>

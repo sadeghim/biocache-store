@@ -13,7 +13,7 @@
     <context:component-scan base-package="org.ala.biocache"/>
 
     <!-- read properties files for variables for jdbc, etc -->
-    <context:property-placeholder location="classpath:biocache.properties"/>
+<!--    <context:property-placeholder location="classpath:biocache.properties"/>-->
     
     <!--<context:property-override location="classpath:portal.properties"/>-->
 
@@ -36,9 +36,9 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>-->
 
-    <bean id="occurrenceRecordDAOBiocache" class="org.ala.biocache.dao.hibernate.OccurrenceRecordDAOImpl">
+<!--    <bean id="occurrenceRecordDAOBiocache" class="org.ala.biocache.dao.hibernate.OccurrenceRecordDAOImpl">
         <property name="sessionFactory" ref="sessionFactory"/>
-    </bean>
+    </bean>-->
 
     <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:order="10">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>

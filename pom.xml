@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -18,74 +19,6 @@
         <netbeans.hint.deploy.server>Tomcat55</netbeans.hint.deploy.server>
     </properties>
     <dependencies>
-        <!-- BIE Hbase -->
-        <!--<dependency>
-            <groupId>org.ala</groupId>
-            <artifactId>bie-hbase</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>-->
-        <!-- BIE Repository -->
-        <!--<dependency>
-            <groupId>ala</groupId>
-            <artifactId>bie-repository</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
-        <!-- GBIF Portal -->
-        <dependency>
-            <groupId>portal</groupId>
-            <artifactId>portal-service</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <!--<scope>provided</scope>-->
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-lang</groupId>
-                    <artifactId>commons-lang</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>portal</groupId>
-            <artifactId>portal-web-jar</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <!--<scope>provided</scope>-->
-        </dependency>
-        <!--<dependency>
-            <groupId>ala</groupId>
-            <artifactId>ala-portal-index</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-lang</groupId>
-                    <artifactId>commons-lang</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
         <!-- Jackson -->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -230,42 +163,7 @@
             <artifactId>com.springsource.com.thoughtworks.xstream</artifactId>
             <version>1.3.0</version>
         </dependency>
-        <!-- Hibernate & Hibernate Annotations -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
-            <version>3.2.0.cr4</version>
-        </dependency>
-        <!--<dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>com.springsource.org.hibernate</artifactId>
-            <version>3.3.2.GA</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>com.springsource.org.hibernate.annotations</artifactId>
-            <version>3.4.0.GA</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>com.springsource.org.hibernate.ejb</artifactId>
-            <version>3.4.0.GA</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>3.4.0.GA</version>
-        </dependency>-->
-        <!--<dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-annotations</artifactId>
-            <version>3.4.0.GA</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>3.4.0.GA</version>
-        </dependency>-->
+        
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -276,37 +174,22 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.5.2</version>
         </dependency>
-        <!--<dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.4.3</version>
-        </dependency>-->
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-            <version>2.0.0</version>
-        </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>
             <version>1.0</version>
             <scope>provided</scope>
         </dependency>
+        <!-- SOLR -->
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
+            <artifactId>solr-core</artifactId>
+            <groupId>org.apache.solr</groupId>
+            <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <artifactId>solr-solrj</artifactId>
+            <groupId>org.apache.solr</groupId>
+            <version>1.4.0</version>
         </dependency>
     </dependencies>
     <repositories>

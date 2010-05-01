@@ -16,11 +16,11 @@
 package org.ala.biocache.web;
 
 import javax.inject.Inject;
+import org.ala.biocache.model.SearchResultDTO;
+import org.ala.biocache.dao.solr.SearchDAOImpl;
+import org.ala.biocache.model.OccurrenceDTO;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.gbif.portal.dto.occurrence.OccurrenceRecordDTO;
-import org.gbif.portal.dto.occurrence.RawOccurrenceRecordDTO;
-import org.gbif.portal.service.OccurrenceManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Occurrences controller for the BIE biocahce site
+ * Occurrences controller for the BIE biocache site
  *
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
@@ -39,9 +39,10 @@ public class OccurrenceController {
 
 	/** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(OccurrenceController.class);
-    /** Occurrence Record DAO bean */
+
+    /** Fulltext search DAO */
     @Inject
-    protected OccurrenceManager occurrenceManager;
+    protected SearchDAOImpl searchDAO;
     //private OccurrenceRecordDAO occurrenceRecordDAO;
     /** Name of view for site home page */
 	private String HOME = "homePage";
@@ -51,9 +52,7 @@ public class OccurrenceController {
 	private final String LIST = "occurrences/list";
 	/** Name of view for a single taxon */
 	private final String SHOW = "occurrences/show";
-    /** URL for JSON web service for YUI  */
-    private String jsonUrl = "http://localhost:8080/solr/select/?fl=*%20score&wt=json&facet=true&facet.field=state&facet.field=biogeographic_region&facet.field=data_resource&facet.field=basis_of_record&facet.mincount=1&facet.limit=10";
-
+    
 	
 	/**
 	 * Custom handler for the welcome view.
@@ -90,23 +89,33 @@ public class OccurrenceController {
      * @return
      * @throws Exception
      */
-	@RequestMapping(value = "/occurrences/search", method = RequestMethod.GET)
+	@RequestMapping(value = "/occurrences/search*", method = RequestMethod.GET)
 	public String occurrenceSearch(
             @RequestParam(value="q", required=false) String query,
-            @RequestParam(value="fq", required=false) String facetQuery,
-            Model model)
+            @RequestParam(value="fq", required=false) String filterQuery,
+            @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
+			@RequestParam(value="pageSize", required=false, defaultValue ="10") Integer pageSize,
+			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
+			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,Model model)
             throws Exception {
-        if (query != null && !query.isEmpty()) {
-            model.addAttribute("query", query);
-            String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
-            model.addAttribute("queryJsEscaped", queryJsEscaped);
-        }
 
-        if (facetQuery != null && !facetQuery.isEmpty()) {
-            model.addAttribute("facetQuery", facetQuery);
-        }
+		SearchResultDTO searchResult = new SearchResultDTO();
 
-        model.addAttribute("jsonUrl", jsonUrl);
+		if (query == null) {
+			return SEARCH;
+		} else if (query.isEmpty()) {
+			return LIST;
+		}
+
+		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+		model.addAttribute("query", query);
+		model.addAttribute("queryJsEscaped", queryJsEscaped);
+		String filterQueryChecked = (filterQuery == null) ? "" : filterQuery;
+		model.addAttribute("facetQuery", filterQueryChecked);
+
+		searchResult = searchDAO.findByScientificName(query, filterQuery, startIndex, pageSize, sortField, sortDirection);
+		model.addAttribute("searchResults", searchResult);
+		logger.debug("query = "+query);
 
         return LIST;
 	}
@@ -123,11 +132,10 @@ public class OccurrenceController {
 	public String showSpecies(@PathVariable("id") String id, Model model) throws Exception {
 		logger.debug("Retrieving occurrence record with guid: "+id+".");
         model.addAttribute("id", id);
-		OccurrenceRecordDTO or = occurrenceManager.getOccurrenceRecordFor(id);
-		model.addAttribute("occurrenceRecord", or);
-        RawOccurrenceRecordDTO ror = occurrenceManager.getRawOccurrenceRecordFor(id);
-        model.addAttribute("rawOccurrenceRecord", ror);
-        
+		OccurrenceDTO occurrence = searchDAO.getById(id);
+        model.addAttribute("occurrence", occurrence);
 		return SHOW;
 	}
+
+
 }
