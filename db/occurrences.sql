@@ -10,23 +10,23 @@ SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource
 'state',
 'biogeographic_region',
 'places',
-'latitude','longitude','cell_id','centi_cell_id','tenmilli_cell_id',
-'year','month','basis_of_record_id','basis_of_record','raw_basis_of_record',
+'latitude','longitude','lat_long_precision','cell_id','centi_cell_id','tenmilli_cell_id',
+'year','month','occurrence_date','basis_of_record_id','basis_of_record','raw_basis_of_record',
 'type_status','identifier_type','identifier_value','identifier_name','identifier_date',
-'collector','taxonomic_issue','geospatial_issue','other_issue','modified_date'
+'collector','taxonomic_issue','geospatial_issue','other_issue','created_date','modified_date'
 UNION
 SELECT oc.id, oc.data_provider_id, dp.name data_provider_name, oc.data_resource_id, dr.name data_resource_name,
 oc.institution_code_id, ic.code institution_code_code, ic.name institution_code_name, ic.lsid institution_code_lsid,
-oc.collection_code_id, cc.code collection_code, oc.catalogue_number_id, cn.code catalogue_number,
+oc.collection_code_id, cc.code collection_code, oc.catalogue_number_id, cn.code catalogue_number, 
 tc.lsid, tn.canonical taxon_name, tn.author, ror.scientific_name, ror.author raw_author, oc.iso_country_code,
 ktc.lsid, ktn.canonical, ftc.lsid, ftn.canonical,
 GROUP_CONCAT(st.name ORDER BY st.name SEPARATOR "|") as states,
 GROUP_CONCAT(bgr.name ORDER BY bgr.name SEPARATOR "|") as bio_geo_regions,
 GROUP_CONCAT(plc.name ORDER BY plc.name SEPARATOR "|") as places,
-oc.latitude, oc.longitude, oc.cell_id, oc.centi_cell_id, oc.tenmilli_cell_id,
-oc.year, oc.month, oc.basis_of_record basis_of_record_id, bor.description basis_of_record, ror.basis_of_record,
+oc.latitude, oc.longitude, ror.lat_long_precision, oc.cell_id, oc.centi_cell_id, oc.tenmilli_cell_id,
+oc.year, oc.month, oc.occurrence_date, oc.basis_of_record basis_of_record_id, bor.description basis_of_record, ror.basis_of_record,
 typ.type_status, lit.it_value, idr.identifier, ror.identifier_name, ror.identification_date,
-ror.collector_name, oc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, oc.modified
+ror.collector_name, oc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, ror.created, ror.modified
 FROM occurrence_record oc
 INNER JOIN raw_occurrence_record ror ON ror.id = oc.id
 INNER JOIN taxon_name tn ON tn.id = oc.taxon_name_id

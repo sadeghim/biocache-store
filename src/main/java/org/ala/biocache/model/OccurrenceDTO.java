@@ -17,6 +17,7 @@ package org.ala.biocache.model;
 
 import java.io.Serializable;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.beans.Field;
 
 /**
@@ -45,6 +46,7 @@ public class OccurrenceDTO implements Serializable {
 	@Field("taxon_concept_lsid") private String taxonConceptLsid;
 	@Field private String year;
 	@Field private String month;
+    @Field("occurrence_date") private String occurrenceDate;
 	@Field("basis_of_record_id") private Integer basisOfRecordId;
 	@Field("basis_of_record") private String basisOfRecord;
 	@Field("raw_basis_of_record") private String rawBasisOfRecord;
@@ -64,7 +66,7 @@ public class OccurrenceDTO implements Serializable {
     @Field("phylum_lsid") private String phylumLsid;
 	@Field private String phylum;
     @Field("class_lsid") private String classLsid;
-	@Field private String clazz;
+	@Field("class") private String clazz;
     @Field("order_lsid") private String orderLsid;
 	@Field private String order;
 	@Field("family_lsid") private String familyLsid;
@@ -75,11 +77,12 @@ public class OccurrenceDTO implements Serializable {
 	@Field private String species;
     // geospatial
 	@Field("country_code") private String countryCode;
-	@Field private List<String> state;
-	@Field("biogeographic_region") private List<String> biogeographicRegion;
+	@Field("state") private List<String> states;
+	@Field("biogeographic_region") private List<String> biogeographicRegions;
 	@Field private List<String> places;
 	@Field private Float latitude;
 	@Field private Float longitude;
+    @Field("lat_long_precision") private Float coordinatePrecision;
 	@Field("cell_id") private Integer cellId;
 	@Field("centi_cell_id") private Integer centiCellId;
 	@Field("tenmilli_cell_id") private Integer tenmilliCellId;
@@ -87,6 +90,7 @@ public class OccurrenceDTO implements Serializable {
 	@Field("taxonomic_issue") private String taxonomicIssue;
 	@Field("geospatial_issue") private String geospatialIssue;
 	@Field("other_issue") private String otherIssue;
+    @Field("created_date") private String createdDate;
 	@Field("modified_date") private String modifiedDate;
 
     /*
@@ -117,12 +121,16 @@ public class OccurrenceDTO implements Serializable {
         this.basisOfRecordId = basisOfRecordId;
     }
 
-    public List<String> getBiogeographicRegion() {
-        return biogeographicRegion;
+    public List<String> getBiogeographicRegions() {
+        return biogeographicRegions;
     }
 
-    public void setBiogeographicRegion(List<String> biogeographicRegion) {
-        this.biogeographicRegion = biogeographicRegion;
+    public String getBiogeographicRegion() {
+        return StringUtils.join(biogeographicRegions, "; ");
+    }
+
+    public void setBiogeographicRegions(List<String> biogeographicRegion) {
+        this.biogeographicRegions = biogeographicRegion;
     }
 
     public String getCatalogueNumber() {
@@ -396,6 +404,14 @@ public class OccurrenceDTO implements Serializable {
     public void setMonth(String month) {
         this.month = month;
     }
+    
+    public String getOccurrenceDate() {
+        return occurrenceDate;
+    }
+
+    public void setOccurrenceDate(String value) {
+        this.occurrenceDate = value;
+    }
 
     public String getOrder() {
         return order;
@@ -439,6 +455,10 @@ public class OccurrenceDTO implements Serializable {
 
     public List<String> getPlaces() {
         return places;
+    }
+
+    public String getPlace() {
+        return StringUtils.join(places, "; ");
     }
 
     public void setPlaces(List<String> places) {
@@ -485,12 +505,16 @@ public class OccurrenceDTO implements Serializable {
         this.speciesLsid = speciesLsid;
     }
 
-    public List<String> getState() {
-        return state;
+    public List<String> getStates() {
+        return states;
     }
 
-    public void setState(List<String> state) {
-        this.state = state;
+    public String getState() {
+        return StringUtils.join(states, "; ");
+    }
+
+    public void setStates(List<String> states) {
+        this.states = states;
     }
 
     public String getTaxonConceptLsid() {
@@ -539,6 +563,22 @@ public class OccurrenceDTO implements Serializable {
 
     public void setYear(String year) {
         this.year = year;
+    }
+
+    public Float getCoordinatePrecision() {
+        return coordinatePrecision;
+    }
+
+    public void setCoordinatePrecision(Float coordinatePrecision) {
+        this.coordinatePrecision = coordinatePrecision;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 
 }

@@ -42,7 +42,7 @@ public class SearchResultDTO {
     /** List of results from search */
     private List<OccurrenceDTO> occurrences;
     /** List of facet results from search */
-    private Collection<FacetResultDTO> facetResults;
+    private List<FacetResultDTO> facetResults;
     /** SOLR query response following search */
     private QueryResponse qr;
     private String query;
@@ -141,7 +141,7 @@ public class SearchResultDTO {
         return facetResults;
     }
 
-    public void setFacetResults(Collection<FacetResultDTO> facetResults) {
+    public void setFacetResults(List<FacetResultDTO> facetResults) {
         this.facetResults = facetResults;
     }
 

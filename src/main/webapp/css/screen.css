@@ -504,6 +504,10 @@ img.galleryImage {
 }
 
 /* Facet links */
+#facets {
+    width: 200px;
+    margin-right: 10px;
+}
 #facetBar {
     float: right;
     width: 200px;
@@ -546,6 +550,24 @@ span#facetName {
 #removeFacet li {
     list-style-type: disc;
 }
+div#accordion > h3.ui-state-active {
+    background-color: #d6d6d6 !important;
+}
+table.solrResults {
+    width:730px;
+    float: right;
+}
+div.occurrenceSection {
+    width:700px;
+}
+table.occurrenceTable {
+    width:100%;
+    border-top: 1px solid #BBBBBB;
+}
+table.occurrenceTable td.label {
+    width:25%;
+}
+
 /* Misc changes to CSS */
 div#body {
     margin: 15px 0 10px 0;

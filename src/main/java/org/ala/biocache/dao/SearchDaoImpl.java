@@ -35,14 +35,15 @@ import org.apache.solr.core.CoreContainer;
 import org.springframework.stereotype.Component;
 
 /**
- * @see org.ala.biocache.dao.SearchDao
+ * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
  *
+ * @see org.ala.biocache.dao.SearchDao
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
 @Component
-public class SearchDaoImplFoo implements SearchDao {
+public class SearchDaoImpl implements SearchDao {
     /** log4 j logger */
-    private static final Logger logger = Logger.getLogger(SearchDaoImplFoo.class);
+    private static final Logger logger = Logger.getLogger(SearchDaoImpl.class);
     /** SOLR home directory */
     private static final String SOLR_HOME = "/data/solr/biocache";
     /** SOLR server instance */
@@ -68,13 +69,14 @@ public class SearchDaoImplFoo implements SearchDao {
      * @see org.ala.biocache.dao.SearchDao#findByFulltextQuery(java.lang.String, java.lang.String,
      *         java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.String)
      */
+    @Override
     public SearchResultDTO findByFulltextQuery(String query, String filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception {
         SearchResultDTO searchResults = new SearchResultDTO();
 
         try {
             // set the query
-            StringBuffer queryString = new StringBuffer();
+            StringBuilder queryString = new StringBuilder();
             if (query.contains(":") && !query.startsWith("urn")) {
                 // search with a field name specified (other than an LSID guid)
                 String[] bits = StringUtils.split(query, ":");
@@ -98,14 +100,17 @@ public class SearchDaoImplFoo implements SearchDao {
     /**
      * @see org.ala.biocache.dao.SearchDao#getById(java.lang.String) 
      */
+    @Override
     public OccurrenceDTO getById(String id) throws Exception {
         OccurrenceDTO oc = null;
         String query = "id:"+ClientUtils.escapeQueryChars(id);
         SearchResultDTO searchResults = doSolrSearch(query, null, 1, 0, "score", "asc");
         List<OccurrenceDTO> ocs = searchResults.getOccurrences();
         
-        if (!ocs.isEmpty()) {
+        if (!ocs.isEmpty() && ocs.size() == 1) {
             oc = ocs.get(0);
+        } else if (!ocs.isEmpty()) {
+            logger.warn("Get by id returned more than ONE result: "+ocs.size()+" for id: "+id);
         }
 
         return oc;
@@ -169,11 +174,11 @@ public class SearchDaoImplFoo implements SearchDao {
         }
 
         QueryResponse qr = server.query(solrQuery); // can throw exception
+        //Iterator it = qr.getResults().iterator()
         SolrDocumentList sdl = qr.getResults();
         List<FacetField> facets = qr.getFacetFields();
         //Map<String, Map<String, List<String>>> highlights = qr.getHighlighting();
         List<OccurrenceDTO> results = qr.getBeans(OccurrenceDTO.class);
-        //List<OccurrenceDTO> results = new ArrayList<OccurrenceDTO>();
         List<FacetResultDTO> facetResults = new ArrayList<FacetResultDTO>();
         searchResult.setTotalRecords(sdl.getNumFound());
         searchResult.setStartIndex(sdl.getStart());
@@ -215,19 +220,20 @@ public class SearchDaoImplFoo implements SearchDao {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQueryType("standard");
         solrQuery.setFacet(true);
-        solrQuery.addFacetField("data_resource");
-        solrQuery.addFacetField("kingdom");
-        solrQuery.addFacetField("family");
-        solrQuery.addFacetField("state");
-        solrQuery.addFacetField("biogeographic_region");
         solrQuery.addFacetField("basis_of_record");
         solrQuery.addFacetField("type_status");
+        solrQuery.addFacetField("data_resource");
+        solrQuery.addFacetField("state");
+        solrQuery.addFacetField("biogeographic_region");
+        solrQuery.addFacetField("kingdom");
+        solrQuery.addFacetField("family");
 
         solrQuery.setFacetMinCount(1);
+        solrQuery.setFacetLimit(20);
         solrQuery.setRows(10);
         solrQuery.setStart(0);
 
-        //add highlights
+//        add highlights
 //        solrQuery.setHighlight(true);
 //        solrQuery.setHighlightFragsize(40);
 //        solrQuery.setHighlightSnippets(1);

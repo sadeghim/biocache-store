@@ -17,7 +17,7 @@ package org.ala.biocache.web;
 
 import javax.inject.Inject;
 import org.ala.biocache.model.SearchResultDTO;
-import org.ala.biocache.dao.solr.SearchDAOImpl;
+import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.OccurrenceDTO;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -34,7 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
-@Controller("occurrenceController")
+@Controller
 public class OccurrenceController {
 
 	/** Logger initialisation */
@@ -42,8 +42,7 @@ public class OccurrenceController {
 
     /** Fulltext search DAO */
     @Inject
-    protected SearchDAOImpl searchDAO;
-    //private OccurrenceRecordDAO occurrenceRecordDAO;
+    protected SearchDao searchDAO;
     /** Name of view for site home page */
 	private String HOME = "homePage";
 	/** Name of view for an empty search page */
@@ -94,27 +93,24 @@ public class OccurrenceController {
             @RequestParam(value="q", required=false) String query,
             @RequestParam(value="fq", required=false) String filterQuery,
             @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
-			@RequestParam(value="pageSize", required=false, defaultValue ="10") Integer pageSize,
+			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
 			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,Model model)
             throws Exception {
-
-		SearchResultDTO searchResult = new SearchResultDTO();
-
-		if (query == null) {
-			return SEARCH;
-		} else if (query.isEmpty()) {
+		
+		if (query == null || query.isEmpty()) {
 			return LIST;
 		}
 
-		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+		SearchResultDTO searchResult = new SearchResultDTO();
+        String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
 		model.addAttribute("query", query);
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		String filterQueryChecked = (filterQuery == null) ? "" : filterQuery;
 		model.addAttribute("facetQuery", filterQueryChecked);
 
-		searchResult = searchDAO.findByScientificName(query, filterQuery, startIndex, pageSize, sortField, sortDirection);
-		model.addAttribute("searchResults", searchResult);
+		searchResult = searchDAO.findByFulltextQuery(query, filterQuery, startIndex, pageSize, sortField, sortDirection);
+		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
 
         return LIST;
