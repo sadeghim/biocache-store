@@ -558,14 +558,21 @@ table.solrResults {
     float: right;
 }
 div.occurrenceSection {
-    width:700px;
+    width:640px;
+}
+div#occurrenceMap {
+    width: 300px;
+    height: 300px;
+    float: right;
+    margin-top: 35px;
+    border: 1px solid gray;
 }
 table.occurrenceTable {
-    width:100%;
+    width: 100%;
     border-top: 1px solid #BBBBBB;
 }
 table.occurrenceTable td.label {
-    width:25%;
+    width: 25%;
 }
 
 /* Misc changes to CSS */

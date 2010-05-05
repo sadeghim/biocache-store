@@ -27,25 +27,46 @@
                 }
 
                 var icons = {
-			header: "ui-icon-circle-arrow-e",
-			headerSelected: "ui-icon-circle-arrow-s"
-		};
-		$("#accordion").accordion({
-			icons: icons,
-                        autoHeight: false
-		});
-		$("#toggle").button().toggle(function() {
-			$("#accordion").accordion("option", "icons", false);
-		}, function() {
-			$("#accordion").accordion("option", "icons", icons);
-		});
+                    header: "ui-icon-circle-arrow-e",
+                    headerSelected: "ui-icon-circle-arrow-s"
+                };
+                $("#accordion").accordion({
+                    icons: icons,
+                    autoHeight: false
+                });
+                $("#toggle").button().toggle(function() {
+                    $("#accordion").accordion("option", "icons", false);
+                }, function() {
+                    $("#accordion").accordion("option", "icons", icons);
+                });
+                //alert('url param string= '+document.location.search.substr(1));
+                //alert('url param string= ${pageContext.request.queryString}');
             });
+
+//            function filterQuery(fq) {
+//                var fqList = $("input#fq").val(); // can be list or string
+//                if (toString.call(fqList) === "[object Array]") {
+//                    fqList.push(fq);
+//                    $("input#fq").val(fqList);
+//                } else {
+//                    var fqArray = new Array();
+//                    if (fqList == null || fqList == "") {
+//                        fqArray.push(fq);
+//                    } else {
+//                        fqArray.push(fqList, fq);
+//                    }
+//
+//                    $("input#fq").val(fqArray);
+//                }
+//                alert("fq is "+$("input#fq").val());
+//                document.searchForm.submit() ;
+//            }
         </script>
     </head>
     <body>
         <h1>Occurrence Search Results</h1>
         <c:if test="${not empty query}">
-            
+
             <div id="searchResults" >
                 <h3>Search results for <a href="">${queryJsEscaped}</a> - ${searchResult.totalRecords} results found</h3>
                 <table class="solrResults">
@@ -72,22 +93,22 @@
             <div id="facets">
                 <h4>Refine your results:</h4>
                 <div id="accordion">
-                    <c:if test="${not empty query}"><c:set var="queryParam">q=<c:out value="${query}&title=${title}" escapeXml="true"/></c:set></c:if>
+                    <c:if test="${not empty query}"><c:set var="queryParam">q=<c:out value="${query}" escapeXml="true"/></c:set></c:if>
                     <c:forEach var="facetResult" items="${searchResult.facetResults}">
                         <c:if test="${!fn:containsIgnoreCase(facetQuery, facetResult.fieldResult[0].label)}">
-                            <h3><a href="#"><span class="FieldName"><fmt:message key="facet.${facetResult.fieldName}"/> [${fn:length(facetResult.fieldResult)}]</span></a></h3>
+                            <h3><a href="#"><span class="FieldName"><fmt:message key="facet.${facetResult.fieldName}"/></span></a></h3>
                             <div id="subnavlist"><ul>
-                                <c:forEach var="fieldResult" items="${facetResult.fieldResult}">
-                                    <%-- test to see if the current facet search is also a listed facet link --%>
-                                    <%--<c:if test="${!fn:containsIgnoreCase(facetQuery, fieldResult.label)}">--%>
-                                    <li><a href="?fq=${facetResult.fieldName}:${fieldResult.label}&${queryParam}">
+                                    <c:forEach var="fieldResult" items="${facetResult.fieldResult}">
+                                        <%-- test to see if the current facet search is also a listed facet link --%>
+                                        <%--<c:if test="${!fn:containsIgnoreCase(facetQuery, fieldResult.label)}">--%>
+                                        <li><a href="?${pageContext.request.queryString}&fq=${facetResult.fieldName}:${fieldResult.label}">
                                             <fmt:message key="${fieldResult.label}"/> (${fieldResult.count})</a>
-                                    </li>
-                                    <%--</c:if>--%>
-                                </c:forEach>
-                            </ul></div>
-                        </c:if>
-                    </c:forEach>
+                                        </li>
+                                        <%--</c:if>--%>
+                                    </c:forEach>
+                                </ul></div>
+                            </c:if>
+                        </c:forEach>
                 </div>
                 <br/>
                 <c:if test="${not empty facetQuery}">

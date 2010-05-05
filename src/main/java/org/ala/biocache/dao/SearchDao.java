@@ -36,7 +36,7 @@ public interface SearchDao {
      * @return
      * @throws Exception
      */
-    SearchResultDTO findByFulltextQuery(String query, String filterQuery, Integer startIndex,
+    SearchResultDTO findByFulltextQuery(String query, String[] filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception;
 
     /**

@@ -91,7 +91,7 @@ public class OccurrenceController {
 	@RequestMapping(value = "/occurrences/search*", method = RequestMethod.GET)
 	public String occurrenceSearch(
             @RequestParam(value="q", required=false) String query,
-            @RequestParam(value="fq", required=false) String filterQuery,
+            @RequestParam(value="fq", required=false) String[] filterQuery,
             @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
 			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
@@ -106,8 +106,8 @@ public class OccurrenceController {
         String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
 		model.addAttribute("query", query);
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
-		String filterQueryChecked = (filterQuery == null) ? "" : filterQuery;
-		model.addAttribute("facetQuery", filterQueryChecked);
+		//String filterQueryChecked = (filterQuery == null) ? "" : filterQuery;
+		model.addAttribute("facetQuery", filterQuery);
 
 		searchResult = searchDAO.findByFulltextQuery(query, filterQuery, startIndex, pageSize, sortField, sortDirection);
 		model.addAttribute("searchResult", searchResult);

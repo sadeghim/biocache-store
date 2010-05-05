@@ -16,6 +16,7 @@
 package org.ala.biocache.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.ala.biocache.model.FacetResultDTO;
 import org.ala.biocache.model.FieldResultDTO;
@@ -70,7 +71,7 @@ public class SearchDaoImpl implements SearchDao {
      *         java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.String)
      */
     @Override
-    public SearchResultDTO findByFulltextQuery(String query, String filterQuery, Integer startIndex,
+    public SearchResultDTO findByFulltextQuery(String query, String[] filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception {
         SearchResultDTO searchResults = new SearchResultDTO();
 
@@ -128,7 +129,7 @@ public class SearchDaoImpl implements SearchDao {
      * @return
      * @throws SolrServerException
      */
-    private SearchResultDTO doSolrSearch(String queryString, String filterQuery, Integer pageSize,
+    private SearchResultDTO doSolrSearch(String queryString, String[] filterQuery, Integer pageSize,
           Integer startIndex, String sortField, String sortDirection) throws SolrServerException {
 
         SolrQuery solrQuery = initSolrQuery(); // general search settings
@@ -149,20 +150,22 @@ public class SearchDaoImpl implements SearchDao {
      * @return
      * @throws SolrServerException
      */
-    private SearchResultDTO doSolrQuery(SolrQuery solrQuery, String filterQuery, Integer pageSize,
+    private SearchResultDTO doSolrQuery(SolrQuery solrQuery, String filterQuery[], Integer pageSize,
             Integer startIndex, String sortField, String sortDirection) throws SolrServerException {
 
         SearchResultDTO searchResult = new SearchResultDTO();
-
-        // set the facet query if set
-        if (filterQuery != null && !filterQuery.isEmpty()) {
-            // pull apart fq. E.g. Rank:species and then sanitize the string parts
-            // so that special characters are escaped apporpriately
-            String[] parts = filterQuery.split(":");
-            String prefix = ClientUtils.escapeQueryChars(parts[0]);
-            String suffix = ClientUtils.escapeQueryChars(parts[1]);
-            solrQuery.addFilterQuery(prefix + ":" + suffix); // solrQuery.addFacetQuery(facetQuery)
-            logger.debug("adding filter query: " + StringUtils.join(solrQuery.getFacetQuery(), ", "));
+        // add any filter queries
+        if (filterQuery != null) {
+            for (String fq : filterQuery) {
+                // pull apart fq. E.g. Rank:species and then sanitize the string parts
+                // so that special characters are escaped apporpriately
+                if (fq.isEmpty()) continue;
+                String[] parts = fq.split(":");
+                String prefix = ClientUtils.escapeQueryChars(parts[0]);
+                String suffix = ClientUtils.escapeQueryChars(parts[1]);
+                solrQuery.addFilterQuery(prefix + ":" + suffix); // solrQuery.addFacetQuery(facetQuery)
+                logger.debug("adding filter query: " + prefix + ":" + suffix);
+            }
         }
 
         solrQuery.setRows(pageSize);
@@ -228,7 +231,7 @@ public class SearchDaoImpl implements SearchDao {
         solrQuery.addFacetField("kingdom");
         solrQuery.addFacetField("family");
 
-        solrQuery.setFacetMinCount(1);
+        solrQuery.setFacetMinCount(2);
         solrQuery.setFacetLimit(20);
         solrQuery.setRows(10);
         solrQuery.setStart(0);

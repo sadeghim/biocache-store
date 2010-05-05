@@ -47,9 +47,10 @@
                         <li class="<c:if test="${pageName == 'pestStatus'}">active</c:if> last"><a href="${pageContext.request.contextPath}/species/status/pestStatus">Pest Status List</a></li>
                     </ul>--%>
                     <span id="searchHint">Search for observations &amp; specimens: </span>
-                    <form action="${pageContext.request.contextPath}/occurrences/search" method="GET" autocomplete="off">
+                    <form name="searchForm"action="${pageContext.request.contextPath}/occurrences/search" method="GET" autocomplete="off">
                         <input name="q" id="q" <c:if test="${not empty query}">value="<c:out value="${query}" />"</c:if> type="text" size="30"/>
                         <input type="submit" value="Search"/>
+<!--                        <input name="fq" id="fq" type="hidden" value="${facetQuery}"/>-->
                     </form>
                 </div>
                 

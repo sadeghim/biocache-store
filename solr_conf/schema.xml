@@ -510,7 +510,7 @@
    <field name="collector" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="taxonomic_issue" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="geospatial_issue" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
-   <field name="other_issue" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="other_issue" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="created_date" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="modified_date" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <!-- end of BIE Lucene Fields -->

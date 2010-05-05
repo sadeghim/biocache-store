@@ -18,8 +18,31 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Occurrence Record: ${id}</title>
     </head>
-    <body>
+    <body onload="initialize()">
         <h1>Occurrence Details: ${occurrence.institutionCode} ${occurrence.collectionCode} ${occurrence.catalogueNumber}</h1>
+        <c:if test="${not empty occurrence.latitude && not empty occurrence.longitude}">
+            <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    var latlng = new google.maps.LatLng(${occurrence.latitude}, ${occurrence.longitude});
+                    var myOptions = {
+                        zoom: 4,
+                        center: latlng,
+                        scaleControl: true,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+
+                    var map = new google.maps.Map(document.getElementById("occurrenceMap"), myOptions);
+
+                    var marker = new google.maps.Marker({
+                        position: latlng,
+                        map: map,
+                        title:"Occurence Location"
+                    });
+                });
+            </script>
+            <div id="occurrenceMap"></div>
+        </c:if>
         <div id="occurrenceDataset" class="occurrenceSection">
             <h2>Datset</h2>
             <table class="occurrenceTable">
@@ -29,10 +52,10 @@
                 <ala:occurrenceTableRow fieldName="Collection Code">${occurrence.collectionCode}</ala:occurrenceTableRow>
                 <ala:occurrenceTableRow fieldName="Catalogue Number">${occurrence.catalogueNumber}</ala:occurrenceTableRow>
                 <ala:occurrenceTableRow fieldName="Basis of Record">${occurrence.basisOfRecord}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="<fmt:message key='${occurrence.identifierType}'/>">${occurrence.identifierValue}</ala:occurrenceTableRow>
+                <ala:occurrenceTableRow fieldName="${occurrence.identifierType}" fieldNameIsMsgCode="true">${occurrence.identifierValue}</ala:occurrenceTableRow>
                 <ala:occurrenceTableRow fieldName="Date Collected">${occurrence.occurrenceDate}</ala:occurrenceTableRow>
                 <ala:occurrenceTableRow fieldName="Type Status">${occurrence.typeStatus}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="taxonomicIssue">${occurrence.taxonomicIssue}</ala:occurrenceTableRow>
+                <ala:occurrenceTableRow fieldName="taxonomic Issue"><c:if test="${occurrence.taxonomicIssue != 0}">${occurrence.taxonomicIssue}</c:if></ala:occurrenceTableRow>
             </table>
         </div>
         <div id="occurrenceTaxonomy" class="occurrenceSection">
@@ -62,5 +85,6 @@
                 <ala:occurrenceTableRow fieldName="Coordinate Precision">${occurrence.coordinatePrecision}</ala:occurrenceTableRow>
             </table>
         </div>
+
     </body>
 </html>
