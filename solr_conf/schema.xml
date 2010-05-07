@@ -476,7 +476,7 @@
    <field name="catalogue_number_id" type="int" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="catalogue_number" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="taxon_concept_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="true" />
-   <field name="occurrence_date" type="string" indexed="true" stored="true" multiValued="false" omitNorms="true" />
+   <field name="occurrence_date" type="tdate" indexed="true" stored="true" multiValued="false" omitNorms="true" />
    <field name="taxon_name" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="taxon_name_text" type="text_ws" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="author" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
@@ -508,7 +508,7 @@
    <field name="identifier_type" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="identifier_value" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="identifier_name" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
-   <field name="identifier_date" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
+   <field name="identifier_date" type="tdate" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="collector" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="taxonomic_issue" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="geospatial_issue" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
