@@ -5,7 +5,7 @@
 SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource',
 'institution_code_id','institution_code','institution_code_name','institution_code_lsid',
 'collection_code_id','collection_code','catalogue_number_id','catalogue_number',
-'taxon_concept_lsid','taxon_name','author','rank','rank_id','raw_taxon_name','raw_author','country_code',
+'taxon_concept_lsid','taxon_name','author','rank_id','rank','raw_taxon_name','raw_author','country_code',
 'kingdom_lsid','kingdom','family_lsid','family',
 'state',
 'biogeographic_region',
