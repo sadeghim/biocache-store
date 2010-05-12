@@ -553,9 +553,31 @@ span#facetName {
 div#accordion > h3.ui-state-active {
     background-color: #d6d6d6 !important;
 }
-table.solrResults {
+div.solrResults {
     width:730px;
     float: right;
+    text-align: center;
+}
+div.solrResults table {
+    width: 720px;
+    margin-bottom: 10px;
+}
+div.solrResults table th {
+    white-space: nowrap;
+}
+div.solrResults #col1, div.solrResults #col2 {
+    width: 38%;
+}
+div.solrResults #col3, div.solrResults #col4 {
+    width: 12%;
+}
+div.solrResults table td {
+    text-overflow:ellipsis;
+    overflow:hidden;
+    white-space:pre-line;
+}
+div#sortWidget {
+    text-align: right;
 }
 div.occurrenceSection {
     width:640px;
@@ -574,7 +596,36 @@ table.occurrenceTable {
 table.occurrenceTable td.label {
     width: 25%;
 }
+a.occurrenceLink {
+    white-space: nowrap;
+}
+/* Styling for Google-style Nav links */
 
+#searchNavBar {
+/*    border:1px solid gray;*/
+    padding-bottom: 10px;
+}
+#pageJumpLink {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+#prevPage, #nextPage {
+    display: inline-block;
+    width: 80px;
+}
+#prevPage {
+    text-align: right;
+    padding-right: 3px;
+}
+#nextPage {
+    text-align: left;
+    padding-left: 3px;
+}
+#currentPage {
+    font-weight: normal;
+    padding: 1px 2px;
+    border: 1px solid gray;
+}
 /* Misc changes to CSS */
 div#body {
     margin: 15px 0 10px 0;

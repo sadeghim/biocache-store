@@ -16,6 +16,7 @@
 package org.ala.biocache.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.beans.Field;
@@ -46,7 +47,7 @@ public class OccurrenceDTO implements Serializable {
 	@Field("taxon_concept_lsid") private String taxonConceptLsid;
 	@Field private String year;
 	@Field private String month;
-    @Field("occurrence_date") private String occurrenceDate;
+    @Field("occurrence_date") private Date occurrenceDate;
 	@Field("basis_of_record_id") private Integer basisOfRecordId;
 	@Field("basis_of_record") private String basisOfRecord;
 	@Field("raw_basis_of_record") private String rawBasisOfRecord;
@@ -55,10 +56,12 @@ public class OccurrenceDTO implements Serializable {
 	@Field("identifier_type") private String identifierType;
 	@Field("identifier_value") private String identifierValue;
 	@Field("identifier_name") private String identifierName;
-	@Field("identifier_date") private String identifierDate;
+	@Field("identifier_date") private Date identifierDate;
     // taxonomy
 	@Field("taxon_name") private String taxonName;
 	@Field private String author;
+    @Field("rank_id") private Integer rankId;
+    @Field private String rank;
 	@Field("raw_taxon_name") private String rawTaxonName;
 	@Field("raw_author") private String rawAuthor;
 	@Field("kingdom_lsid") private String kingdomLsid;
@@ -82,7 +85,7 @@ public class OccurrenceDTO implements Serializable {
 	@Field private List<String> places;
 	@Field private Float latitude;
 	@Field private Float longitude;
-    @Field("lat_long_precision") private Float coordinatePrecision;
+    @Field("lat_long_precision") private String coordinatePrecision;
 	@Field("cell_id") private Integer cellId;
 	@Field("centi_cell_id") private Integer centiCellId;
 	@Field("tenmilli_cell_id") private Integer tenmilliCellId;
@@ -293,11 +296,11 @@ public class OccurrenceDTO implements Serializable {
         this.id = id;
     }
 
-    public String getIdentifierDate() {
+    public Date getIdentifierDate() {
         return identifierDate;
     }
 
-    public void setIdentifierDate(String identifierDate) {
+    public void setIdentifierDate(Date identifierDate) {
         this.identifierDate = identifierDate;
     }
 
@@ -405,11 +408,11 @@ public class OccurrenceDTO implements Serializable {
         this.month = month;
     }
     
-    public String getOccurrenceDate() {
+    public Date getOccurrenceDate() {
         return occurrenceDate;
     }
 
-    public void setOccurrenceDate(String value) {
+    public void setOccurrenceDate(Date value) {
         this.occurrenceDate = value;
     }
 
@@ -565,11 +568,11 @@ public class OccurrenceDTO implements Serializable {
         this.year = year;
     }
 
-    public Float getCoordinatePrecision() {
+    public String getCoordinatePrecision() {
         return coordinatePrecision;
     }
 
-    public void setCoordinatePrecision(Float coordinatePrecision) {
+    public void setCoordinatePrecision(String coordinatePrecision) {
         this.coordinatePrecision = coordinatePrecision;
     }
 
@@ -579,6 +582,22 @@ public class OccurrenceDTO implements Serializable {
 
     public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
+
+    public Integer getRankId() {
+        return rankId;
+    }
+
+    public void setRankId(Integer rankId) {
+        this.rankId = rankId;
     }
 
 }

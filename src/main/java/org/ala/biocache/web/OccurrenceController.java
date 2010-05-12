@@ -95,18 +95,34 @@ public class OccurrenceController {
             @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
 			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
-			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,Model model)
+			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
+            Model model)
             throws Exception {
 		
 		if (query == null || query.isEmpty()) {
 			return LIST;
 		}
+        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
+        if (filterQuery != null && filterQuery.length == 0) {
+            filterQuery = null;
+        }
+        if (startIndex == null) {
+            startIndex = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 20;
+        }
+        if (sortField.isEmpty()) {
+            sortField = "score";
+        }
+        if (sortDirection.isEmpty()) {
+            sortDirection = "asc";
+        }
 
 		SearchResultDTO searchResult = new SearchResultDTO();
         String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
 		model.addAttribute("query", query);
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
-		//String filterQueryChecked = (filterQuery == null) ? "" : filterQuery;
 		model.addAttribute("facetQuery", filterQuery);
 
 		searchResult = searchDAO.findByFulltextQuery(query, filterQuery, startIndex, pageSize, sortField, sortDirection);

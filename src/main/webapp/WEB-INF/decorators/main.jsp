@@ -22,6 +22,8 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $("#q").autocomplete({ source: "${pageContext.request.contextPath}/occurrences/terms", minLength: 2});
+
+                $("#searchForm #submit").click();
             });
         </script>
     </head>
@@ -39,6 +41,7 @@
             <div id="headerLogo">
                 <a href="${pageContext.request.contextPath}/"><img src="${pageContext.request.contextPath}/static/images/ALA-logo-50px.gif" alt="ALA Logo" id="headerLogo" border="0"/></a>
             </div>
+            <form name="searchForm" id="searchForm" action="${pageContext.request.contextPath}/occurrences/search" method="GET" autocomplete="off">
             <div id="header">
                 <div id="menuSearch">
                     <%--<ul class="tabs">
@@ -47,14 +50,13 @@
                         <li class="<c:if test="${pageName == 'pestStatus'}">active</c:if> last"><a href="${pageContext.request.contextPath}/species/status/pestStatus">Pest Status List</a></li>
                     </ul>--%>
                     <span id="searchHint">Search for observations &amp; specimens: </span>
-                    <form name="searchForm"action="${pageContext.request.contextPath}/occurrences/search" method="GET" autocomplete="off">
                         <input name="q" id="q" <c:if test="${not empty query}">value="<c:out value="${query}" />"</c:if> type="text" size="30"/>
                         <input type="submit" value="Search"/>
 <!--                        <input name="fq" id="fq" type="hidden" value="${facetQuery}"/>-->
-                    </form>
+<!--                    </form>-->
                 </div>
-                
             </div>
+            </form>
             <div id="body" class="yui-skin-sam">
                 <decorator:body />
             </div>

@@ -32,6 +32,7 @@ import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.FacetParams;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.stereotype.Component;
 
@@ -49,6 +50,7 @@ public class SearchDaoImpl implements SearchDao {
     private static final String SOLR_HOME = "/data/solr/biocache";
     /** SOLR server instance */
     private EmbeddedSolrServer server;
+    private boolean $debug = true;
 
     /**
      * Initialise the SOLR server instance
@@ -160,9 +162,19 @@ public class SearchDaoImpl implements SearchDao {
                 // pull apart fq. E.g. Rank:species and then sanitize the string parts
                 // so that special characters are escaped apporpriately
                 if (fq.isEmpty()) continue;
-                String[] parts = fq.split(":");
-                String prefix = ClientUtils.escapeQueryChars(parts[0]);
-                String suffix = ClientUtils.escapeQueryChars(parts[1]);
+                String[] parts = fq.split(":", 2); // separate query field from query text
+                logger.debug("fq split into: "+parts.length+" parts: "+parts[0]+" & "+parts[1]);
+                String prefix = null;
+                String suffix = null;
+                // don't escape range queries
+                if (parts[1].contains(" TO ")) {
+                    prefix = parts[0];
+                    suffix = parts[1];
+                } else {
+                    prefix = ClientUtils.escapeQueryChars(parts[0]);
+                    suffix = ClientUtils.escapeQueryChars(parts[1]);
+                }
+                
                 solrQuery.addFilterQuery(prefix + ":" + suffix); // solrQuery.addFacetQuery(facetQuery)
                 logger.debug("adding filter query: " + prefix + ":" + suffix);
             }
@@ -177,14 +189,19 @@ public class SearchDaoImpl implements SearchDao {
         }
 
         QueryResponse qr = server.query(solrQuery); // can throw exception
-        //Iterator it = qr.getResults().iterator()
         SolrDocumentList sdl = qr.getResults();
         List<FacetField> facets = qr.getFacetFields();
+        List<FacetField> facetDates = qr.getFacetDates();
+        if (facetDates != null) {
+            logger.debug("Facet dates size: "+facetDates.size());
+            facets.addAll(facetDates);
+        }
         //Map<String, Map<String, List<String>>> highlights = qr.getHighlighting();
         List<OccurrenceDTO> results = qr.getBeans(OccurrenceDTO.class);
         List<FacetResultDTO> facetResults = new ArrayList<FacetResultDTO>();
         searchResult.setTotalRecords(sdl.getNumFound());
         searchResult.setStartIndex(sdl.getStart());
+        searchResult.setPageSize(pageSize);
         searchResult.setStatus("OK");
         searchResult.setSort(sortField);
         searchResult.setDir(sortDirection);
@@ -222,17 +239,28 @@ public class SearchDaoImpl implements SearchDao {
     protected SolrQuery initSolrQuery() {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQueryType("standard");
+        // Facets
         solrQuery.setFacet(true);
         solrQuery.addFacetField("basis_of_record");
         solrQuery.addFacetField("type_status");
         solrQuery.addFacetField("data_resource");
         solrQuery.addFacetField("state");
         solrQuery.addFacetField("biogeographic_region");
+        solrQuery.addFacetField("rank");
         solrQuery.addFacetField("kingdom");
         solrQuery.addFacetField("family");
+        // Date Facet Params
+        // facet.date=occurrence_date&facet.date.start=1900-01-01T12:00:00Z&facet.date.end=2010-01-01T12:00:00Z&facet.date.gap=%2B1YEAR
+        solrQuery.add("facet.date","occurrence_date");
+        solrQuery.add("facet.date.start", "1850-01-01T12:00:00Z"); // facet date range starts from 1850
+        solrQuery.add("facet.date.end", "NOW/DAY"); // facet date range ends for current date (gap period)
+        solrQuery.add("facet.date.gap", "+10YEAR"); // gap interval of 10 years
+        solrQuery.add("facet.date.other", "before"); // include counts before the facet start date ("before" label)
+        solrQuery.add("facet.date.include", "lower"); // counts will be included for dates on the starting date but not ending date
+        //solrQuery.add("facet.date.other", "after");
 
-        solrQuery.setFacetMinCount(2);
-        solrQuery.setFacetLimit(20);
+        solrQuery.setFacetMinCount(1);
+        solrQuery.setFacetLimit(30);
         solrQuery.setRows(10);
         solrQuery.setStart(0);
 

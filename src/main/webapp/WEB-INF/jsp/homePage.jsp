@@ -14,6 +14,6 @@
           This is an early release of this functionality for <strong>release 2 (March 17th)</strong>.
         </p>
         
-        <p><a href="species/search">Search for Species Pages</a></p>
+        <p><a href="occurrences/search">Search for Occurrence</a></p>
     </body>
 </html>

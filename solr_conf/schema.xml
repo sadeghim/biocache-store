@@ -480,7 +480,7 @@
    <field name="taxon_name" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="taxon_name_text" type="text_ws" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="author" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
-   <field name="rank" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
+   <field name="rank" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="rank_id" type="int" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="raw_taxon_name" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="raw_author" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
@@ -558,6 +558,7 @@
    <copyField source="taxon_name" dest="text"/>
    <copyField source="taxon_name" dest="taxon_name_text"/>
    <copyField source="taxon_concept_lsid" dest="text"/>
+   <copyField source="type_status" dest="text"/>
    
    <copyField source="state" dest="text"/>
    <copyField source="biogeographic_region" dest="text"/>

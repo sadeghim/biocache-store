@@ -5,11 +5,7 @@
 --%>
 
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="ala" %>
+<%@ include file="/common/taglibs.jsp" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -46,43 +42,49 @@
         <div id="occurrenceDataset" class="occurrenceSection">
             <h2>Datset</h2>
             <table class="occurrenceTable">
-                <ala:occurrenceTableRow fieldName="Data Provider">${occurrence.dataProvider}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Data Set">${occurrence.dataResource}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Institution Code">${occurrence.institutionCode}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Collection Code">${occurrence.collectionCode}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Catalogue Number">${occurrence.catalogueNumber}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Basis of Record">${occurrence.basisOfRecord}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="${occurrence.identifierType}" fieldNameIsMsgCode="true">${occurrence.identifierValue}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Date Collected">${occurrence.occurrenceDate}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Type Status">${occurrence.typeStatus}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="taxonomic Issue"><c:if test="${occurrence.taxonomicIssue != 0}">${occurrence.taxonomicIssue}</c:if></ala:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Data Provider">${occurrence.dataProvider}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Data Set">${occurrence.dataResource}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Institution Code">${occurrence.institutionCode}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Collection Code">${occurrence.collectionCode}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Catalogue Number">${occurrence.catalogueNumber}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Basis of Record">${occurrence.basisOfRecord}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Record Date"><fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/></alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="${occurrence.identifierType}" fieldNameIsMsgCode="true">${occurrence.identifierValue}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Identifier">${occurrence.identifierName}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Identified Date"><fmt:formatDate value="${occurrence.identifierDate}" pattern="yyyy-MM-dd"/></alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Collector">${occurrence.collector}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Type Status">${occurrence.typeStatus}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="taxonomic Issue"><c:if test="${occurrence.taxonomicIssue != 0}">${occurrence.taxonomicIssue}</c:if></alatag:occurrenceTableRow>
             </table>
         </div>
         <div id="occurrenceTaxonomy" class="occurrenceSection">
             <h2>Taxonomy</h2>
             <table class="occurrenceTable">
-                <ala:occurrenceTableRow fieldName="Scientific Name">
-                    <i>${occurrence.rawTaxonName}</i> ${occurrence.rawAuthor}
-                    <c:if test="!fn:containsIgnoreCase(occurrence.taxonName, occurrence.rawTaxonName)">
-                        (interpreted as <i>${occurrence.taxonName}</i> ${occurrence.author})
+                <alatag:occurrenceTableRow fieldName="Scientific Name">
+                    <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.rawTaxonName}"/> ${occurrence.rawAuthor}
+                    <c:if test="${!fn:containsIgnoreCase(occurrence.taxonName, occurrence.rawTaxonName)}">
+                        (interpreted as <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author})
                     </c:if>
-                </ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Kingdom">${occurrence.kingdom}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Family">${occurrence.family}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Genus">${occurrence.genus}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Species">${occurrence.species}</ala:occurrenceTableRow>
+                </alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Taxon Rank">
+                    <span style="text-transform: capitalize;">${occurrence.rank}</span>
+                </alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Kingdom">${occurrence.kingdom}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Family">${occurrence.family}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Genus">${occurrence.genus}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Species">${occurrence.species}</alatag:occurrenceTableRow>
             </table>
         </div>
         <div id="occurrenceGeospatial" class="occurrenceSection">
             <h2>Geospatial</h2>
             <table class="occurrenceTable">
-                <ala:occurrenceTableRow fieldName="Country">${occurrence.countryCode}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="State/Province">${occurrence.state}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Biogeographic Region">${occurrence.biogeographicRegion}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Places">${occurrence.place}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Latitude">${occurrence.latitude}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Longitude">${occurrence.longitude}</ala:occurrenceTableRow>
-                <ala:occurrenceTableRow fieldName="Coordinate Precision">${occurrence.coordinatePrecision}</ala:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Country">${occurrence.countryCode}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="State/Province">${occurrence.state}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Biogeographic Region">${occurrence.biogeographicRegion}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Places">${occurrence.place}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Latitude">${occurrence.latitude}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Longitude">${occurrence.longitude}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Coordinate Precision">${occurrence.coordinatePrecision}</alatag:occurrenceTableRow>
             </table>
         </div>
 
