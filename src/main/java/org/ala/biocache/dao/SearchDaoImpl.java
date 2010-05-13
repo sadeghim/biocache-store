@@ -90,7 +90,14 @@ public class SearchDaoImpl implements SearchDao {
                 // regular search
                 queryString.append(ClientUtils.escapeQueryChars(query));
             }
-            searchResults = doSolrSearch(queryString.toString(), filterQuery, pageSize, startIndex, sortField, sortDirection);
+            
+            SolrQuery solrQuery = initSolrQuery(); // general search settings
+            solrQuery.setQuery(queryString.toString());
+
+            QueryResponse qr = runSolrQuery(solrQuery, filterQuery, pageSize, startIndex, sortField, sortDirection);
+            searchResults = processSolrResponse(qr, solrQuery);
+
+
             logger.info("search query: "+queryString.toString());
         } catch (SolrServerException ex) {
             logger.error("Problem communicating with SOLR server. " + ex.getMessage(), ex);
@@ -107,7 +114,11 @@ public class SearchDaoImpl implements SearchDao {
     public OccurrenceDTO getById(String id) throws Exception {
         OccurrenceDTO oc = null;
         String query = "id:"+ClientUtils.escapeQueryChars(id);
-        SearchResultDTO searchResults = doSolrSearch(query, null, 1, 0, "score", "asc");
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQueryType("standard");
+        solrQuery.setQuery(query);
+        QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, "score", "asc");
+        SearchResultDTO searchResults = processSolrResponse(qr, solrQuery);
         List<OccurrenceDTO> ocs = searchResults.getOccurrences();
         
         if (!ocs.isEmpty() && ocs.size() == 1) {
@@ -120,28 +131,7 @@ public class SearchDaoImpl implements SearchDao {
     }
 
     /**
-     * Re-usable method for performing SOLR searches - takes query string input
      *
-     * @param queryString
-     * @param filterQuery
-     * @param pageSize
-     * @param startIndex
-     * @param sortField
-     * @param sortDirection
-     * @return
-     * @throws SolrServerException
-     */
-    private SearchResultDTO doSolrSearch(String queryString, String[] filterQuery, Integer pageSize,
-          Integer startIndex, String sortField, String sortDirection) throws SolrServerException {
-
-        SolrQuery solrQuery = initSolrQuery(); // general search settings
-        solrQuery.setQuery(queryString);
-
-        return doSolrQuery(solrQuery, filterQuery, pageSize, startIndex, sortField, sortDirection);
-    }
-
-    /**
-     * Re-usable method for performing SOLR searches - takes SolrQuery input
      *
      * @param solrQuery
      * @param filterQuery
@@ -152,11 +142,9 @@ public class SearchDaoImpl implements SearchDao {
      * @return
      * @throws SolrServerException
      */
-    private SearchResultDTO doSolrQuery(SolrQuery solrQuery, String filterQuery[], Integer pageSize,
+    private QueryResponse runSolrQuery(SolrQuery solrQuery, String filterQuery[], Integer pageSize,
             Integer startIndex, String sortField, String sortDirection) throws SolrServerException {
 
-        SearchResultDTO searchResult = new SearchResultDTO();
-        // add any filter queries
         if (filterQuery != null) {
             for (String fq : filterQuery) {
                 // pull apart fq. E.g. Rank:species and then sanitize the string parts
@@ -174,7 +162,7 @@ public class SearchDaoImpl implements SearchDao {
                     prefix = ClientUtils.escapeQueryChars(parts[0]);
                     suffix = ClientUtils.escapeQueryChars(parts[1]);
                 }
-                
+
                 solrQuery.addFilterQuery(prefix + ":" + suffix); // solrQuery.addFacetQuery(facetQuery)
                 logger.debug("adding filter query: " + prefix + ":" + suffix);
             }
@@ -188,7 +176,18 @@ public class SearchDaoImpl implements SearchDao {
             this.initSolrServer();
         }
 
-        QueryResponse qr = server.query(solrQuery); // can throw exception
+        return server.query(solrQuery); // can throw exception
+    }
+
+    /**
+     *
+     *
+     * @param qr
+     * @param solrQuery
+     * @return
+     */
+    private SearchResultDTO processSolrResponse(QueryResponse qr, SolrQuery solrQuery) {
+        SearchResultDTO searchResult = new SearchResultDTO();
         SolrDocumentList sdl = qr.getResults();
         List<FacetField> facets = qr.getFacetFields();
         List<FacetField> facetDates = qr.getFacetDates();
@@ -201,10 +200,12 @@ public class SearchDaoImpl implements SearchDao {
         List<FacetResultDTO> facetResults = new ArrayList<FacetResultDTO>();
         searchResult.setTotalRecords(sdl.getNumFound());
         searchResult.setStartIndex(sdl.getStart());
-        searchResult.setPageSize(pageSize);
+        searchResult.setPageSize(solrQuery.getRows()); //pageSize
         searchResult.setStatus("OK");
-        searchResult.setSort(sortField);
-        searchResult.setDir(sortDirection);
+        String[] solrSort = StringUtils.split(solrQuery.getSortField(), " "); // e.g. "taxon_name asc"
+        logger.debug("sortField post-split: "+StringUtils.join(solrSort, "|"));
+        searchResult.setSort(solrSort[0]); // sortField
+        searchResult.setDir(solrSort[1]); // sortDirection
         searchResult.setQuery(solrQuery.getQuery());
         searchResult.setOccurrences(results);
         // populate SOLR facet results
@@ -229,7 +230,6 @@ public class SearchDaoImpl implements SearchDao {
         searchResult.setQr(qr);
         return searchResult;
     }
-
    
     /**
      * Helper method to create SolrQuery object and add facet settings

@@ -63,22 +63,30 @@
                 <alatag:occurrenceTableRow fieldName="Scientific Name">
                     <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.rawTaxonName}"/> ${occurrence.rawAuthor}
                     <c:if test="${!fn:containsIgnoreCase(occurrence.taxonName, occurrence.rawTaxonName)}">
-                        (interpreted as <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author})
+                        (interpreted as <a href="${pageContext.request.contextPath}/species/${occurrence.taxonConceptLsid}"><alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</a>)
                     </c:if>
                 </alatag:occurrenceTableRow>
                 <alatag:occurrenceTableRow fieldName="Taxon Rank">
                     <span style="text-transform: capitalize;">${occurrence.rank}</span>
                 </alatag:occurrenceTableRow>
-                <alatag:occurrenceTableRow fieldName="Kingdom">${occurrence.kingdom}</alatag:occurrenceTableRow>
-                <alatag:occurrenceTableRow fieldName="Family">${occurrence.family}</alatag:occurrenceTableRow>
-                <alatag:occurrenceTableRow fieldName="Genus">${occurrence.genus}</alatag:occurrenceTableRow>
-                <alatag:occurrenceTableRow fieldName="Species">${occurrence.species}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Kingdom" link="${pageContext.request.contextPath}/species/${occurrence.kingdomLsid}">
+                    ${occurrence.kingdom}
+                </alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Family" link="${pageContext.request.contextPath}/species/${occurrence.familyLsid}">
+                    ${occurrence.family}
+                </alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Genus" link="${pageContext.request.contextPath}/species/${occurrence.genusLsid}">
+                    ${occurrence.genus}
+                </alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Species" link="${pageContext.request.contextPath}/species/${occurrence.speciesLsid}">
+                    ${occurrence.species}
+                </alatag:occurrenceTableRow>
             </table>
         </div>
         <div id="occurrenceGeospatial" class="occurrenceSection">
             <h2>Geospatial</h2>
             <table class="occurrenceTable">
-                <alatag:occurrenceTableRow fieldName="Country">${occurrence.countryCode}</alatag:occurrenceTableRow>
+                <alatag:occurrenceTableRow fieldName="Country"><c:if test="${not empty occurrence.countryCode}"><fmt:message key="country.${occurrence.countryCode}"/></c:if></alatag:occurrenceTableRow>
                 <alatag:occurrenceTableRow fieldName="State/Province">${occurrence.state}</alatag:occurrenceTableRow>
                 <alatag:occurrenceTableRow fieldName="Biogeographic Region">${occurrence.biogeographicRegion}</alatag:occurrenceTableRow>
                 <alatag:occurrenceTableRow fieldName="Places">${occurrence.place}</alatag:occurrenceTableRow>
@@ -87,6 +95,5 @@
                 <alatag:occurrenceTableRow fieldName="Coordinate Precision">${occurrence.coordinatePrecision}</alatag:occurrenceTableRow>
             </table>
         </div>
-
     </body>
 </html>
