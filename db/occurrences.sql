@@ -16,17 +16,17 @@ SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource
 'type_status','identifier_type','identifier_value','identifier_name','identifier_date',
 'collector','taxonomic_issue','geospatial_issue','other_issue','created_date','modified_date'
 UNION
-SELECT oc.id, oc.data_provider_id, dp.name data_provider_name, oc.data_resource_id, dr.name data_resource_name,
-oc.institution_code_id, ic.code institution_code_code, ic.name institution_code_name, ic.lsid institution_code_lsid,
-oc.collection_code_id, cc.code collection_code, oc.catalogue_number_id, cn.code catalogue_number, 
-tc.guid, tn.canonical taxon_name, tn.author, tc.rank, rnk.`name`, ror.scientific_name, ror.author raw_author, oc.iso_country_code,
+SELECT oc.id, oc.data_provider_id, dp.`name`, oc.data_resource_id, dr.`name`,
+oc.institution_code_id, ic.code, ic.`name`, ic.lsid,
+oc.collection_code_id, cc.code, oc.catalogue_number_id, cn.code, 
+tc.guid, tn.canonical, tn.author, tc.rank, rnk.`name`, ror.scientific_name, ror.author, oc.iso_country_code,
 kdc.guid, kdn.canonical, phc.guid, phn.canonical, clc.guid, cln.canonical, odc.guid, odn.canonical,
 fmc.guid, fmn.canonical, gnc.guid, gnn.canonical, spc.guid, spn.canonical,
-GROUP_CONCAT(st.name ORDER BY st.name SEPARATOR "|") as states,
-GROUP_CONCAT(bgr.name ORDER BY bgr.name SEPARATOR "|") as bio_geo_regions,
-GROUP_CONCAT(plc.name ORDER BY plc.name SEPARATOR "|") as places,
+GROUP_CONCAT(st.`name` ORDER BY st.`name` SEPARATOR "|") as states,
+GROUP_CONCAT(bgr.`name` ORDER BY bgr.`name` SEPARATOR "|") as bio_geo_regions,
+GROUP_CONCAT(plc.`name` ORDER BY plc.`name` SEPARATOR "|") as places,
 oc.latitude, oc.longitude, ror.lat_long_precision, oc.cell_id, oc.centi_cell_id, oc.tenmilli_cell_id,
-oc.year, oc.month, DATE_FORMAT(oc.occurrence_date,'%Y-%m-%dT%H:%i:%sZ'), oc.basis_of_record basis_of_record_id, bor.description basis_of_record, ror.basis_of_record,
+oc.'year', oc.'month', DATE_FORMAT(oc.occurrence_date,'%Y-%m-%dT%H:%i:%sZ'), oc.basis_of_record, bor.description, ror.basis_of_record,
 typ.type_status, lit.it_value, idr.identifier, ror.identifier_name, DATE_FORMAT(ror.identification_date,'%Y-%m-%dT%H:%i:%sZ'),
 ror.collector_name, oc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, ror.created, ror.modified
 FROM occurrence_record oc
