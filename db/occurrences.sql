@@ -26,7 +26,7 @@ GROUP_CONCAT(st.`name` ORDER BY st.`name` SEPARATOR "|") as states,
 GROUP_CONCAT(bgr.`name` ORDER BY bgr.`name` SEPARATOR "|") as bio_geo_regions,
 GROUP_CONCAT(plc.`name` ORDER BY plc.`name` SEPARATOR "|") as places,
 oc.latitude, oc.longitude, ror.lat_long_precision, oc.cell_id, oc.centi_cell_id, oc.tenmilli_cell_id,
-oc.'year', oc.'month', DATE_FORMAT(oc.occurrence_date,'%Y-%m-%dT%H:%i:%sZ'), oc.basis_of_record, bor.description, ror.basis_of_record,
+oc.`year`, oc.`month`, DATE_FORMAT(oc.occurrence_date,'%Y-%m-%dT%H:%i:%sZ'), oc.basis_of_record, bor.description, ror.basis_of_record,
 typ.type_status, lit.it_value, idr.identifier, ror.identifier_name, DATE_FORMAT(ror.identification_date,'%Y-%m-%dT%H:%i:%sZ'),
 ror.collector_name, oc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, ror.created, ror.modified
 FROM occurrence_record oc
