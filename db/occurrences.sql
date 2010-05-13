@@ -30,30 +30,30 @@ oc.`year`, oc.`month`, DATE_FORMAT(oc.occurrence_date,'%Y-%m-%dT%H:%i:%sZ'), oc.
 typ.type_status, lit.it_value, idr.identifier, ror.identifier_name, DATE_FORMAT(ror.identification_date,'%Y-%m-%dT%H:%i:%sZ'),
 ror.collector_name, oc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, ror.created, ror.modified
 FROM occurrence_record oc
-LEFT JOIN raw_occurrence_record ror ON ror.id = oc.id
-LEFT JOIN taxon_name tn ON tn.id = oc.taxon_name_id
-LEFT JOIN taxon_concept tc ON tc.id = oc.nub_concept_id
-LEFT JOIN rank rnk ON rnk.id = tc.rank
-LEFT JOIN taxon_concept kdc ON kdc.id = oc.kingdom_concept_id
-LEFT JOIN taxon_name kdn ON kdn.id = kdc.taxon_name_id
-LEFT JOIN taxon_concept phc ON phc.id = oc.phylum_concept_id
-LEFT JOIN taxon_name phn ON phn.id = phc.taxon_name_id
-LEFT JOIN taxon_concept clc ON clc.id = oc.class_concept_id
-LEFT JOIN taxon_name cln ON cln.id = clc.taxon_name_id
-LEFT JOIN taxon_concept odc ON odc.id = oc.order_concept_id
-LEFT JOIN taxon_name odn ON odn.id = odc.taxon_name_id
-LEFT JOIN taxon_concept fmc ON fmc.id = oc.family_concept_id
-LEFT JOIN taxon_name fmn ON fmn.id = fmc.taxon_name_id
-LEFT JOIN taxon_concept gnc ON gnc.id = oc.genus_concept_id
-LEFT JOIN taxon_name gnn ON gnn.id = gnc.taxon_name_id
-LEFT JOIN taxon_concept spc ON spc.id = oc.species_concept_id
-LEFT JOIN taxon_name spn ON spn.id = spc.taxon_name_id
-LEFT JOIN data_provider dp ON dp.id = oc.data_provider_id
-LEFT JOIN data_resource dr ON dr.id = oc.data_resource_id
-LEFT JOIN institution_code ic ON ic.id = oc.institution_code_id
-LEFT JOIN collection_code cc ON cc.id = oc.collection_code_id
-LEFT JOIN catalogue_number cn ON cn.id = oc.catalogue_number_id
-LEFT JOIN basis_of_record bor ON bor.id = oc.basis_of_record
+INNER JOIN raw_occurrence_record ror ON ror.id = oc.id
+INNER JOIN taxon_name tn ON tn.id = oc.taxon_name_id
+INNER JOIN taxon_concept tc ON tc.id = oc.nub_concept_id
+INNER JOIN rank rnk ON rnk.id = tc.rank
+INNER JOIN taxon_concept kdc ON kdc.id = oc.kingdom_concept_id
+INNER JOIN taxon_name kdn ON kdn.id = kdc.taxon_name_id
+INNER JOIN taxon_concept phc ON phc.id = oc.phylum_concept_id
+INNER JOIN taxon_name phn ON phn.id = phc.taxon_name_id
+INNER JOIN taxon_concept clc ON clc.id = oc.class_concept_id
+INNER JOIN taxon_name cln ON cln.id = clc.taxon_name_id
+INNER JOIN taxon_concept odc ON odc.id = oc.order_concept_id
+INNER JOIN taxon_name odn ON odn.id = odc.taxon_name_id
+INNER JOIN taxon_concept fmc ON fmc.id = oc.family_concept_id
+INNER JOIN taxon_name fmn ON fmn.id = fmc.taxon_name_id
+INNER JOIN taxon_concept gnc ON gnc.id = oc.genus_concept_id
+INNER JOIN taxon_name gnn ON gnn.id = gnc.taxon_name_id
+INNER JOIN taxon_concept spc ON spc.id = oc.species_concept_id
+INNER JOIN taxon_name spn ON spn.id = spc.taxon_name_id
+INNER JOIN data_provider dp ON dp.id = oc.data_provider_id
+INNER JOIN data_resource dr ON dr.id = oc.data_resource_id
+INNER JOIN institution_code ic ON ic.id = oc.institution_code_id
+INNER JOIN collection_code cc ON cc.id = oc.collection_code_id
+INNER JOIN catalogue_number cn ON cn.id = oc.catalogue_number_id
+INNER JOIN basis_of_record bor ON bor.id = oc.basis_of_record
 LEFT JOIN geo_mapping gm ON gm.occurrence_id = oc.id
 LEFT JOIN geo_region st ON st.id = gm.geo_region_id AND st.region_type <= 2
 LEFT JOIN geo_region bgr ON bgr.id = gm.geo_region_id AND bgr.region_type = 2000
