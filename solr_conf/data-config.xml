@@ -75,7 +75,9 @@
                     WHERE gm.occurrence_id=${occurrence.id}">
                 <field column="places" name="places"/>
             </entity>
-            <entity name="type" query="select typ.type_status type FROM typification_record typ WHERE typ.occurrence_id = ${occurrence.id}"/>
+            <entity name="type" query="select typ.type_status FROM typification_record typ WHERE typ.occurrence_id = ${occurrence.id}">
+                <field column="typ.type_status" name="type"/>
+            </entity>
             <entity name="identifier" query="select lit.it_value, idr.identifier FROM identifier_record idr
                     LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type 
                     WHERE idr.occurrence_id = ${occurrence.id}">
