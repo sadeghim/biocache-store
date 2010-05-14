@@ -433,8 +433,8 @@
          any data added to them will be ignored outright.  --> 
     <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" />
 
-    <!-- Spatial search field type -->
-    <fieldType name="location" class="solr.PointType" dimension="2" subFieldType="double"/>
+    <!-- Spatial search field type - Requires SOLR 1.5 -->
+<!--    <fieldType name="location" class="solr.PointType" dimension="2" subFieldType="double"/>-->
 
  </types>
 
@@ -509,7 +509,8 @@
    <field name="latitude" type="tfloat" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="longitude" type="tfloat" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="lat_long_precision" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
-   <field name="lat_long" type="location" indexed="true" stored="true"/>
+   <!-- <field name="lat_long" type="location" indexed="true" stored="true"/> Requires SOLR 1.5 -->
+   <field name="lat_long" type="string" indexed="false" stored="false"/>
    <field name="cell_id" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="centi_cell_id" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="tenmilli_cell_id" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
