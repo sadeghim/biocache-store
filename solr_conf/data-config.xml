@@ -1,19 +1,3 @@
-<!--
-'id','data_provider_id','data_provider','data_resource_id','data_resource',
-'institution_code_id','institution_code','institution_code_name','institution_code_lsid',
-'collection_code_id','collection_code','catalogue_number_id','catalogue_number',
-'taxon_concept_lsid','taxon_name','author','rank_id','rank','raw_taxon_name','raw_author','country_code',
-'kingdom_lsid','kingdom','phylum_lsid','phylum','class_lsid','class','order_lsid','order',
-'family_lsid','family','genus_lsid','genus','species_lsid','species',
-'state',
-'biogeographic_region',
-'places',
-'latitude','longitude','lat_long_precision','lat_long',
-'cell_id','centi_cell_id','tenmilli_cell_id',
-'year','month','occurrence_date','basis_of_record_id','basis_of_record','raw_basis_of_record',
-'type_status','identifier_type','identifier_value','identifier_name','identifier_date',
-'collector','taxonomic_issue','geospatial_issue','other_issue','created_date','modified_date'
--->
 <dataConfig>
     <dataSource type="JdbcDataSource" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost/portal" user="root" password="password" batchSize="-1"/>
     <document>
@@ -76,7 +60,7 @@
                 <field column="places" name="places"/>
             </entity>
             <entity name="type" query="select typ.type_status FROM typification_record typ WHERE typ.occurrence_id = ${occurrence.id}">
-                <field column="typ.type_status" name="type"/>
+                <field column="type_status" name="type"/>
             </entity>
             <entity name="identifier" query="select lit.it_value, idr.identifier FROM identifier_record idr
                     LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type 
