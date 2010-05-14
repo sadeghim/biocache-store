@@ -11,7 +11,8 @@ SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource
 'state',
 'biogeographic_region',
 'places',
-'latitude','longitude','lat_long_precision','cell_id','centi_cell_id','tenmilli_cell_id',
+'latitude','longitude','lat_long_precision','lat_long',
+'cell_id','centi_cell_id','tenmilli_cell_id',
 'year','month','occurrence_date','basis_of_record_id','basis_of_record','raw_basis_of_record',
 'type_status','identifier_type','identifier_value','identifier_name','identifier_date',
 'collector','taxonomic_issue','geospatial_issue','other_issue','created_date','modified_date'
@@ -25,7 +26,8 @@ fmc.guid, fmn.canonical, gnc.guid, gnn.canonical, spc.guid, spn.canonical,
 GROUP_CONCAT(st.`name` ORDER BY st.`name` SEPARATOR "|") as states,
 GROUP_CONCAT(bgr.`name` ORDER BY bgr.`name` SEPARATOR "|") as bio_geo_regions,
 GROUP_CONCAT(plc.`name` ORDER BY plc.`name` SEPARATOR "|") as places,
-oc.latitude, oc.longitude, ror.lat_long_precision, oc.cell_id, oc.centi_cell_id, oc.tenmilli_cell_id,
+oc.latitude, oc.longitude, ror.lat_long_precision, CONCAT_WS(',', oc.latitude, oc.longitude) as lat_long,
+oc.cell_id, oc.centi_cell_id, oc.tenmilli_cell_id,
 oc.`year`, oc.`month`, DATE_FORMAT(oc.occurrence_date,'%Y-%m-%dT%H:%i:%sZ'), oc.basis_of_record, bor.description, ror.basis_of_record,
 typ.type_status, lit.it_value, idr.identifier, ror.identifier_name, DATE_FORMAT(ror.identification_date,'%Y-%m-%dT%H:%i:%sZ'),
 ror.collector_name, oc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, ror.created, ror.modified
@@ -61,7 +63,7 @@ LEFT JOIN geo_region plc ON plc.id = gm.geo_region_id AND (plc.region_type >= 3 
 LEFT JOIN typification_record typ ON typ.occurrence_id = oc.id
 LEFT JOIN identifier_record idr ON idr.occurrence_id = oc.id
 LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
---WHERE oc.data_resource_id = 56
+--WHERE oc.data_resource_id = 56 -- 1640
 GROUP BY oc.id
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
 --INTO outfile '/data/bie-staging/biocache/occurrences.56.csv'

@@ -431,7 +431,10 @@
 
     <!-- since fields of this type are by default not stored or indexed,
          any data added to them will be ignored outright.  --> 
-    <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" /> 
+    <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" />
+
+    <!-- Spatial search field type -->
+    <fieldType name="location" class="solr.PointType" dimension="2" subFieldType="double"/>
 
  </types>
 
@@ -487,8 +490,18 @@
    <field name="country_code" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="kingdom_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="kingdom" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="phylum_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="phylum" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="class_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="class" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="order_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="order" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="family_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="family" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="genus_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="genus" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="species_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="species" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="geo_regions" type="text_ws" indexed="true" stored="true" multiValued="true" omitNorms="false" />
    <field name="state" type="string" indexed="true" stored="true" multiValued="true" omitNorms="false" />
    <field name="biogeographic_region" type="string" indexed="true" stored="true" multiValued="true" omitNorms="false" />
@@ -496,6 +509,7 @@
    <field name="latitude" type="tfloat" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="longitude" type="tfloat" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="lat_long_precision" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
+   <field name="lat_long" type="location" indexed="true" stored="true"/>
    <field name="cell_id" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="centi_cell_id" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="tenmilli_cell_id" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
