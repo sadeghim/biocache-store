@@ -7,17 +7,54 @@ delimiter $$
 DROP FUNCTION IF EXISTS get_georegion_names$$
 CREATE FUNCTION get_georegion_names(in_oc INT, in_low INT, in_hi INT) returns varchar(1000)
 deterministic
-	BEGIN
-			declare result varchar(1000);
-			SELECT GROUP_CONCAT(gr.name ORDER BY gr.name SEPARATOR "|") into result FROM geo_region gr
-			INNER JOIN geo_mapping gm ON gr.id = gm.geo_region_id
-			AND (gr.region_type >= in_low AND gr.region_type <= in_hi) AND gm.occurrence_id = in_oc;
+    BEGIN
+        declare result varchar(1000);
+        SELECT GROUP_CONCAT(gr.name ORDER BY gr.name SEPARATOR "|") into result FROM geo_region gr
+        INNER JOIN geo_mapping gm ON gr.id = gm.geo_region_id
+        AND (gr.region_type >= in_low AND gr.region_type <= in_hi) AND gm.occurrence_id = in_oc;
 
-			return result;
+        return result;
 
-	END;
-	$$
+    END;
+$$
 delimiter ;
+
+DELIMITER $$
+-- Stored function to lookup taxon guid for a given higher taxa concept id.
+-- Nick dos Remedios 2010-05-16
+-- Args:
+-- concept_id: the input concept id
+DROP FUNCTION IF EXISTS get_taxa_guid$$
+CREATE FUNCTION get_taxa_guid(concept_id INT) returns VARCHAR(1000) -- , OUT guid INT, OUT taxon_name varchar(1000)
+    BEGIN
+        DECLARE guid VARCHAR(1000);
+        SELECT tc.guid
+        INTO guid
+        FROM taxon_concept tc
+        WHERE tc.id = concept_id;
+
+        RETURN guid;
+    END $$
+DELIMITER ;
+
+DELIMITER $$
+-- Stored function to lookup taxon name for a given higher taxa concept id.
+-- Nick dos Remedios 2010-05-16
+-- Args:
+-- concept_id: the input concept id
+DROP FUNCTION IF EXISTS get_taxa_canonical$$
+CREATE FUNCTION get_taxa_canonical(concept_id INT) returns VARCHAR(1000) -- , OUT guid INT, OUT taxon_name varchar(1000)
+    BEGIN
+        DECLARE canonical VARCHAR(1000);
+        SELECT tn.canonical
+        INTO canonical
+        FROM taxon_concept tc
+        INNER JOIN taxon_name tn ON tn.id = tc.taxon_name_id
+        WHERE tc.id = concept_id;
+
+        RETURN canonical;
+    END $$
+DELIMITER ;
 
 SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource',
 'institution_code_id','institution_code','institution_code_name','institution_code_lsid',
@@ -34,39 +71,35 @@ SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource
 'type_status','identifier_type','identifier_value','identifier_name','identifier_date',
 'collector','taxonomic_issue','geospatial_issue','other_issue','created_date','modified_date'
 UNION
-SELECT oc.id, oc.data_provider_id, dp.`name`, oc.data_resource_id, dr.`name`,
-oc.institution_code_id, ic.code, ic.`name`, ic.lsid,
-oc.collection_code_id, cc.code, oc.catalogue_number_id, cn.code,
-tc.lsid, tn.canonical, tn.author, tc.rank, rnk.`name`, ror.scientific_name, ror.author, oc.iso_country_code,
-kdc.lsid, kdn.canonical, phc.lsid, phn.canonical, clc.lsid, cln.canonical, odc.lsid, odn.canonical,
-fmc.lsid, fmn.canonical, gnc.lsid, gnn.canonical, spc.lsid, spn.canonical,
-get_georegion_names(oc.id, 0, 2) as states,
-get_georegion_names(oc.id, 2000, 2000) as bio_geo_regions,
-get_georegion_names(oc.id, 3, 11) as places,
-oc.latitude, oc.longitude, ror.lat_long_precision, CONCAT_WS(',', oc.latitude, oc.longitude) as lat_long,
-oc.cell_id, oc.centi_cell_id, oc.tenmilli_cell_id,
-oc.`year`, oc.`month`, DATE_FORMAT(oc.occurrence_date,'%Y-%m-%dT%H:%i:%sZ'), oc.basis_of_record, bor.description, ror.basis_of_record,
-typ.type_status, lit.it_value, idr.identifier, ror.identifier_name, DATE_FORMAT(ror.identification_date,'%Y-%m-%dT%H:%i:%sZ'),
-ror.collector_name, oc.taxonomic_issue, oc.geospatial_issue, oc.other_issue, ror.created, ror.modified
+SELECT IFNULL(oc.id,''),IFNULL(oc.data_provider_id,''),IFNULL(dp.`name`,''),IFNULL(oc.data_resource_id,''),
+IFNULL(dr.`name`,''),IFNULL(oc.institution_code_id,''),IFNULL(ic.code,''),IFNULL(ic.`name`,''),
+IFNULL(ic.lsid,''),IFNULL(oc.collection_code_id,''),IFNULL(cc.code,''),IFNULL(oc.catalogue_number_id,''),
+IFNULL(cn.code,''),IFNULL(tc.guid,''),IFNULL(tn.canonical,''),IFNULL(tn.author,''),IFNULL(tc.rank,''),
+IFNULL(rnk.`name`,''),IFNULL(ror.scientific_name,''),IFNULL(ror.author,''),IFNULL(oc.iso_country_code,''),
+IFNULL(get_taxa_guid(oc.kingdom_concept_id),''), IFNULL(get_taxa_canonical(oc.kingdom_concept_id),''),
+IFNULL(get_taxa_guid(oc.phylum_concept_id),''), IFNULL(get_taxa_canonical(oc.phylum_concept_id),''),
+IFNULL(get_taxa_guid(oc.class_concept_id),''), IFNULL(get_taxa_canonical(oc.class_concept_id),''),
+IFNULL(get_taxa_guid(oc.order_concept_id),''), IFNULL(get_taxa_canonical(oc.order_concept_id),''),
+IFNULL(get_taxa_guid(oc.family_concept_id),''), IFNULL(get_taxa_canonical(oc.family_concept_id),''),
+IFNULL(get_taxa_guid(oc.genus_concept_id),''), IFNULL(get_taxa_canonical(oc.genus_concept_id),''),
+IFNULL(get_taxa_guid(oc.species_concept_id),''), IFNULL(get_taxa_canonical(oc.species_concept_id),''),
+IFNULL(get_georegion_names(oc.id,0,2),'') as states,
+IFNULL(get_georegion_names(oc.id,2000,2000),'') as bio_geo_regions,
+IFNULL(get_georegion_names(oc.id,3,11),'') as places,
+IFNULL(oc.latitude,''),IFNULL(oc.longitude,''),IFNULL(ror.lat_long_precision,''),
+IFNULL(CONCAT_WS(',', oc.latitude, oc.longitude),'') as lat_long,
+IFNULL(oc.cell_id,''),IFNULL(oc.centi_cell_id,''),IFNULL(oc.tenmilli_cell_id,''),
+IFNULL(oc.`year`,''),IFNULL(oc.`month`,''),IFNULL(DATE_FORMAT(oc.occurrence_date,'%Y-%m-%dT%H:%i:%sZ'),''),
+IFNULL(oc.basis_of_record,''),IFNULL(bor.description,''),IFNULL(ror.basis_of_record,''),
+IFNULL(typ.type_status,''),IFNULL(lit.it_value,''),IFNULL(idr.identifier,''),IFNULL(ror.identifier_name,''),
+IFNULL(DATE_FORMAT(ror.identification_date,'%Y-%m-%dT%H:%i:%sZ'),''),
+IFNULL(ror.collector_name,''),IFNULL(oc.taxonomic_issue,''),IFNULL(oc.geospatial_issue,''),
+IFNULL(oc.other_issue,''),IFNULL(DATE_FORMAT(ror.created,'%Y-%m-%dT%H:%i:%sZ'),''),IFNULL(DATE_FORMAT(ror.modified,'%Y-%m-%dT%H:%i:%sZ'),'')
 FROM occurrence_record oc
 INNER JOIN raw_occurrence_record ror ON ror.id = oc.id
 INNER JOIN taxon_name tn ON tn.id = oc.taxon_name_id
 INNER JOIN taxon_concept tc ON tc.id = oc.nub_concept_id
 INNER JOIN rank rnk ON rnk.id = tc.rank
-LEFT JOIN taxon_concept kdc ON kdc.id = oc.kingdom_concept_id
-LEFT JOIN taxon_name kdn ON kdn.id = kdc.taxon_name_id
-LEFT JOIN taxon_concept phc ON phc.id = oc.phylum_concept_id
-LEFT JOIN taxon_name phn ON phn.id = phc.taxon_name_id
-LEFT JOIN taxon_concept clc ON clc.id = oc.class_concept_id
-LEFT JOIN taxon_name cln ON cln.id = clc.taxon_name_id
-LEFT JOIN taxon_concept odc ON odc.id = oc.order_concept_id
-LEFT JOIN taxon_name odn ON odn.id = odc.taxon_name_id
-LEFT JOIN taxon_concept fmc ON fmc.id = oc.family_concept_id
-LEFT JOIN taxon_name fmn ON fmn.id = fmc.taxon_name_id
-LEFT JOIN taxon_concept gnc ON gnc.id = oc.genus_concept_id
-LEFT JOIN taxon_name gnn ON gnn.id = gnc.taxon_name_id
-LEFT JOIN taxon_concept spc ON spc.id = oc.species_concept_id
-LEFT JOIN taxon_name spn ON spn.id = spc.taxon_name_id
 INNER JOIN data_provider dp ON dp.id = oc.data_provider_id
 INNER JOIN data_resource dr ON dr.id = oc.data_resource_id
 INNER JOIN institution_code ic ON ic.id = oc.institution_code_id
@@ -79,4 +112,4 @@ LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
 --WHERE oc.data_resource_id = 56
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
 --INTO outfile '/data/bie-staging/biocache/occurrences.56.csv'
-FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'; -- ESCAPED BY '"';
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED BY '"' LINES TERMINATED BY '\n'; -- ESCAPED BY '"';
