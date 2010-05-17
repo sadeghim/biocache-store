@@ -47,19 +47,19 @@
                     WHERE oc.data_resource_id = 56"> <!--  where data_resource_id = 71 -->
             <entity name="state" query="select st.name
                     FROM geo_mapping gm
-                    INNER JOIN geo_region st ON st.id = gm.geo_region_id AND st.region_type &lt;= 2
+                    LEFT JOIN geo_region st ON st.id = gm.geo_region_id AND st.region_type &lt;= 2
                     WHERE gm.occurrence_id=${occurrence.id}">
                 <field column="name" name="state"/>
             </entity>
             <entity name="biogeographic_region" query="select bgr.name
                     FROM geo_mapping gm
-                    INNER JOIN geo_region bgr ON bgr.id = gm.geo_region_id AND bgr.region_type = 2000
+                    LEFT JOIN geo_region bgr ON bgr.id = gm.geo_region_id AND bgr.region_type = 2000
                     WHERE gm.occurrence_id=${occurrence.id}">
                 <field column="name" name="biogeographic_region"/>
             </entity>
             <entity name="places" query="select plc.name
                     FROM geo_mapping gm
-                    INNER JOIN geo_region plc ON plc.id = gm.geo_region_id AND (plc.region_type &gt;= 3 AND plc.region_type &lt;= 11)
+                    LEFT JOIN geo_region plc ON plc.id = gm.geo_region_id AND (plc.region_type &gt;= 3 AND plc.region_type &lt;= 11)
                     WHERE gm.occurrence_id=${occurrence.id}">
                 <field column="name" name="places"/>
             </entity>

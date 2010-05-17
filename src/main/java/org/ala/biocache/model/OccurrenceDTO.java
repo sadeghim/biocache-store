@@ -93,8 +93,8 @@ public class OccurrenceDTO implements Serializable {
 	@Field("taxonomic_issue") private String taxonomicIssue;
 	@Field("geospatial_issue") private String geospatialIssue;
 	@Field("other_issue") private String otherIssue;
-    @Field("created_date") private String createdDate;
-	@Field("modified_date") private String modifiedDate;
+    @Field("created_date") private Date createdDate;
+	@Field("modified_date") private Date modifiedDate;
 
     /*
      * Getters & Setters
@@ -392,11 +392,11 @@ public class OccurrenceDTO implements Serializable {
         this.longitude = longitude;
     }
 
-    public String getModifiedDate() {
+    public Date getModifiedDate() {
         return modifiedDate;
     }
 
-    public void setModifiedDate(String modifiedDate) {
+    public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
 
@@ -576,11 +576,11 @@ public class OccurrenceDTO implements Serializable {
         this.coordinatePrecision = coordinatePrecision;
     }
 
-    public String getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(String createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
