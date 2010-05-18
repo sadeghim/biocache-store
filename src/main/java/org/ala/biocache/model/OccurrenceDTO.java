@@ -18,8 +18,11 @@ package org.ala.biocache.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import org.ala.biocache.web.CustomDateSerializer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.beans.Field;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
  * Occurrence DTO bean to be populated by SOLR query via SOLRJ
@@ -296,6 +299,7 @@ public class OccurrenceDTO implements Serializable {
         this.id = id;
     }
 
+    @JsonSerialize(using=CustomDateSerializer.class)
     public Date getIdentifierDate() {
         return identifierDate;
     }
@@ -392,6 +396,7 @@ public class OccurrenceDTO implements Serializable {
         this.longitude = longitude;
     }
 
+    @JsonSerialize(using = CustomDateSerializer.class)
     public Date getModifiedDate() {
         return modifiedDate;
     }
@@ -407,7 +412,8 @@ public class OccurrenceDTO implements Serializable {
     public void setMonth(String month) {
         this.month = month;
     }
-    
+
+    @JsonSerialize(using = CustomDateSerializer.class)
     public Date getOccurrenceDate() {
         return occurrenceDate;
     }
@@ -576,6 +582,7 @@ public class OccurrenceDTO implements Serializable {
         this.coordinatePrecision = coordinatePrecision;
     }
 
+    @JsonSerialize(using = CustomDateSerializer.class)
     public Date getCreatedDate() {
         return createdDate;
     }
