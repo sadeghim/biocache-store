@@ -477,6 +477,11 @@ img.galleryImage {
     max-width: 640px;
 }
 
+#occurrenceMetadata {
+    font-size: 11px;
+    color: #666;
+}
+
 /* footer */
 #footer {
     clear: both;
