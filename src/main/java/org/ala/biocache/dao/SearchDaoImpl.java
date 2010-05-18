@@ -51,6 +51,7 @@ public class SearchDaoImpl implements SearchDao {
     /** SOLR server instance */
     private EmbeddedSolrServer server;
     private boolean $debug = true;
+    private Integer MAX_DOWNLOAD_SIZE = 1000000;
 
     /**
      * Initialise the SOLR server instance
@@ -78,33 +79,57 @@ public class SearchDaoImpl implements SearchDao {
         SearchResultDTO searchResults = new SearchResultDTO();
 
         try {
-            // set the query
-            StringBuilder queryString = new StringBuilder();
-            if (query.contains(":") && !query.startsWith("urn")) {
-                // search with a field name specified (other than an LSID guid)
-                String[] bits = StringUtils.split(query, ":");
-                queryString.append(ClientUtils.escapeQueryChars(bits[0]));
-                queryString.append(":");
-                queryString.append(ClientUtils.escapeQueryChars(bits[1]));
-            } else {
-                // regular search
-                queryString.append(ClientUtils.escapeQueryChars(query));
-            }
+            String queryString = formatSearchQuery(query);
             
             SolrQuery solrQuery = initSolrQuery(); // general search settings
-            solrQuery.setQuery(queryString.toString());
+            solrQuery.setQuery(queryString);
 
             QueryResponse qr = runSolrQuery(solrQuery, filterQuery, pageSize, startIndex, sortField, sortDirection);
             searchResults = processSolrResponse(qr, solrQuery);
 
-
-            logger.info("search query: "+queryString.toString());
+            logger.info("search query: "+queryString);
         } catch (SolrServerException ex) {
             logger.error("Problem communicating with SOLR server. " + ex.getMessage(), ex);
             searchResults.setStatus("ERROR"); // TODO also set a message field on this bean with the error message(?)
         }
 
         return searchResults;
+    }
+
+    /**
+     * Generate a download for a given search (with parameters) returning the path to the
+     * generated download file on the file system.
+     *
+     * @param query
+     * @param filterQuery
+     * @param startIndex
+     * @param pageSize
+     * @param sortField
+     * @param sortDirection
+     * @return
+     * @throws Exception
+     */
+    public String getDownloadForSearch(String query, String[] filterQuery, Integer startIndex,
+            Integer pageSize, String sortField, String sortDirection) throws Exception {
+        String downloadFilePath = "";
+
+        try {
+            String queryString = formatSearchQuery(query);
+            SolrQuery solrQuery = new SolrQuery();
+            solrQuery.setQueryType("standard");
+            solrQuery.setRows(MAX_DOWNLOAD_SIZE);
+            solrQuery.setQuery(queryString);
+
+            QueryResponse qr = runSolrQuery(solrQuery, filterQuery, pageSize, startIndex, sortField, sortDirection);
+            //searchResults = processSolrResponse(qr, solrQuery);
+            downloadFilePath = generateDownloadFile(qr, solrQuery);  // Dave to implement based on processSolrResponse() but using iterator
+            logger.info("search query: "+queryString);
+        } catch (SolrServerException ex) {
+            logger.error("Problem communicating with SOLR server. " + ex.getMessage(), ex);
+            //searchResults.setStatus("ERROR"); // TODO also set a message field on this bean with the error message(?)
+        }
+
+        return downloadFilePath;
     }
 
     /**
@@ -189,6 +214,7 @@ public class SearchDaoImpl implements SearchDao {
     private SearchResultDTO processSolrResponse(QueryResponse qr, SolrQuery solrQuery) {
         SearchResultDTO searchResult = new SearchResultDTO();
         SolrDocumentList sdl = qr.getResults();
+        // Iterator it = qr.getResults().iterator() // Use for download 
         List<FacetField> facets = qr.getFacetFields();
         List<FacetField> facetDates = qr.getFacetDates();
         if (facetDates != null) {
@@ -229,6 +255,26 @@ public class SearchDaoImpl implements SearchDao {
         // returned is available later on if needed
         searchResult.setQr(qr);
         return searchResult;
+    }
+
+    private String generateDownloadFile(QueryResponse qr, SolrQuery solrQuery) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    protected String formatSearchQuery(String query) {
+        // set the query
+        StringBuilder queryString = new StringBuilder();
+        if (query.contains(":") && !query.startsWith("urn")) {
+            // search with a field name specified (other than an LSID guid)
+            String[] bits = StringUtils.split(query, ":");
+            queryString.append(ClientUtils.escapeQueryChars(bits[0]));
+            queryString.append(":");
+            queryString.append(ClientUtils.escapeQueryChars(bits[1]));
+        } else {
+            // regular search
+            queryString.append(ClientUtils.escapeQueryChars(query));
+        }
+        return queryString.toString();
     }
    
     /**
@@ -274,4 +320,5 @@ public class SearchDaoImpl implements SearchDao {
 
         return solrQuery;
     }
+
 }
