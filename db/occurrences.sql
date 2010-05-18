@@ -17,15 +17,13 @@ deterministic
 
     END;
 $$
-delimiter ;
 
-DELIMITER $$
 -- Stored function to lookup taxon guid for a given higher taxa concept id.
 -- Nick dos Remedios 2010-05-16
 -- Args:
 -- concept_id: the input concept id
 DROP FUNCTION IF EXISTS get_taxa_guid$$
-CREATE FUNCTION get_taxa_guid(concept_id INT) returns VARCHAR(1000) -- , OUT guid INT, OUT taxon_name varchar(1000)
+CREATE FUNCTION get_taxa_guid(concept_id INT) returns VARCHAR(1000) 
     BEGIN
         DECLARE guid VARCHAR(1000);
         SELECT tc.guid
@@ -35,15 +33,13 @@ CREATE FUNCTION get_taxa_guid(concept_id INT) returns VARCHAR(1000) -- , OUT gui
 
         RETURN guid;
     END $$
-DELIMITER ;
 
-DELIMITER $$
 -- Stored function to lookup taxon name for a given higher taxa concept id.
 -- Nick dos Remedios 2010-05-16
 -- Args:
 -- concept_id: the input concept id
 DROP FUNCTION IF EXISTS get_taxa_canonical$$
-CREATE FUNCTION get_taxa_canonical(concept_id INT) returns VARCHAR(1000) -- , OUT guid INT, OUT taxon_name varchar(1000)
+CREATE FUNCTION get_taxa_canonical(concept_id INT) returns VARCHAR(1000)
     BEGIN
         DECLARE canonical VARCHAR(1000);
         SELECT tn.canonical
@@ -54,6 +50,56 @@ CREATE FUNCTION get_taxa_canonical(concept_id INT) returns VARCHAR(1000) -- , OU
 
         RETURN canonical;
     END $$
+
+-- Stored function to lookup type status.
+-- Nick dos Remedios 2010-05-16
+-- Args:
+-- concept_id: the input concept id
+DROP FUNCTION IF EXISTS get_type_status$$
+CREATE FUNCTION get_type_status(occurrence_id INT) returns VARCHAR(1000)
+    BEGIN
+        DECLARE type_status VARCHAR(1000);
+        SELECT typ.type_status
+        INTO type_status
+        FROM typification_record typ
+        WHERE typ.occurrence_id = occurrence_id;
+
+        RETURN type_status;
+    END $$
+
+-- Stored function to lookup type status.
+-- Nick dos Remedios 2010-05-16
+-- Args:
+-- concept_id: the input concept id
+DROP FUNCTION IF EXISTS get_identifier_type$$
+CREATE FUNCTION get_identifier_type(occurrence_id INT) returns VARCHAR(1000)
+    BEGIN
+        DECLARE identifier_type VARCHAR(1000);
+        SELECT lit.it_value
+        INTO identifier_type
+        FROM identifier_record idr
+        LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
+        WHERE idr.occurrence_id = occurrence_id;
+
+        RETURN identifier_type;
+    END $$
+
+-- Stored function to lookup type status.
+-- Nick dos Remedios 2010-05-16
+-- Args:
+-- concept_id: the input concept id
+DROP FUNCTION IF EXISTS get_identifier_name$$
+CREATE FUNCTION get_identifier_name(occurrence_id INT) returns VARCHAR(1000)
+    BEGIN
+        DECLARE identifier_name VARCHAR(1000);
+        SELECT idr.identifier
+        INTO identifier_name
+        FROM identifier_record idr
+        WHERE idr.occurrence_id = occurrence_id;
+
+        RETURN identifier_name;
+    END $$
+
 DELIMITER ;
 
 SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource',
@@ -91,8 +137,8 @@ IFNULL(CONCAT_WS(',', oc.latitude, oc.longitude),'') as lat_long,
 IFNULL(oc.cell_id,''),IFNULL(oc.centi_cell_id,''),IFNULL(oc.tenmilli_cell_id,''),
 IFNULL(oc.`year`,''),IFNULL(oc.`month`,''),IFNULL(DATE_FORMAT(oc.occurrence_date,'%Y-%m-%dT%H:%i:%sZ'),''),
 IFNULL(oc.basis_of_record,''),IFNULL(bor.description,''),IFNULL(ror.basis_of_record,''),
-IFNULL(typ.type_status,''),IFNULL(lit.it_value,''),IFNULL(idr.identifier,''),IFNULL(ror.identifier_name,''),
-IFNULL(DATE_FORMAT(ror.identification_date,'%Y-%m-%dT%H:%i:%sZ'),''),
+IFNULL(get_type_status(oc.id),''),IFNULL(get_identifier_type(oc.id),''),IFNULL(get_identifier_name(oc.id),''),
+IFNULL(ror.identifier_name,''),IFNULL(DATE_FORMAT(ror.identification_date,'%Y-%m-%dT%H:%i:%sZ'),''),
 IFNULL(ror.collector_name,''),IFNULL(oc.taxonomic_issue,''),IFNULL(oc.geospatial_issue,''),
 IFNULL(oc.other_issue,''),IFNULL(DATE_FORMAT(ror.created,'%Y-%m-%dT%H:%i:%sZ'),''),IFNULL(DATE_FORMAT(ror.modified,'%Y-%m-%dT%H:%i:%sZ'),'')
 FROM occurrence_record oc
@@ -106,9 +152,6 @@ INNER JOIN institution_code ic ON ic.id = oc.institution_code_id
 INNER JOIN collection_code cc ON cc.id = oc.collection_code_id
 INNER JOIN catalogue_number cn ON cn.id = oc.catalogue_number_id
 INNER JOIN basis_of_record bor ON bor.id = oc.basis_of_record
-LEFT JOIN typification_record typ ON typ.occurrence_id = oc.id
-LEFT JOIN identifier_record idr ON idr.occurrence_id = oc.id
-LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
 --WHERE oc.data_resource_id = 56
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
 --INTO outfile '/data/bie-staging/biocache/occurrences.56.csv'
