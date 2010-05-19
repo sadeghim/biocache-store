@@ -16,6 +16,9 @@
 package org.ala.biocache.web;
 
 import javax.inject.Inject;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import org.ala.biocache.model.SearchResultDTO;
 import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.OccurrenceDTO;
@@ -45,8 +48,6 @@ public class OccurrenceController {
     protected SearchDao searchDAO;
     /** Name of view for site home page */
 	private String HOME = "homePage";
-	/** Name of view for an empty search page */
-	private final String SEARCH = "occurrences/search";
 	/** Name of view for list of taxa */
 	private final String LIST = "occurrences/list";
 	/** Name of view for a single taxon */
@@ -133,6 +134,42 @@ public class OccurrenceController {
 	}
 
     /**
+	 * Occurrence search page uses SOLR JSON to display results
+	 * 
+     * @param query
+     * @param model
+     * @return
+     * @throws Exception
+     */
+	@RequestMapping(value = "/occurrences/download*", method = RequestMethod.GET)
+	public String occurrenceDownload(
+            @RequestParam(value="q", required=false) String query,
+            @RequestParam(value="fq", required=false) String[] filterQuery,
+            HttpServletResponse response)
+            throws Exception {
+		
+		if (query == null || query.isEmpty()) {
+			return LIST;
+		}
+        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
+        if (filterQuery != null && filterQuery.length == 0) {
+            filterQuery = null;
+        }
+        
+        response.setHeader("Cache-Control", "must-revalidate");
+        response.setHeader("Pragma", "must-revalidate");
+        response.setHeader("Content-Disposition", "attachment;filename=data");
+        response.setContentType("application/vnd.ms-excel");
+        
+        ServletOutputStream out = response.getOutputStream();
+        
+        searchDAO.writeResultsToStream(query, filterQuery, out, 100000);
+
+        return null;
+	}
+	
+	
+    /**
 	 * Occurrence record page
 	 *
      * @param id
@@ -148,6 +185,4 @@ public class OccurrenceController {
         model.addAttribute("occurrence", occurrence);
 		return SHOW;
 	}
-
-
 }
