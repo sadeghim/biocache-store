@@ -18,10 +18,10 @@ package org.ala.biocache.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
 import org.ala.biocache.web.CustomDateSerializer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.beans.Field;
-import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -606,5 +606,4 @@ public class OccurrenceDTO implements Serializable {
     public void setRankId(Integer rankId) {
         this.rankId = rankId;
     }
-
 }
