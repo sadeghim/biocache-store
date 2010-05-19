@@ -19,6 +19,12 @@
         <netbeans.hint.deploy.server>Tomcat55</netbeans.hint.deploy.server>
     </properties>
     <dependencies>
+        <!-- CSV -->
+        <dependency>
+            <groupId>au.com.bytecode</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>2.2</version>
+        </dependency>
         <!-- Jackson -->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
