@@ -15,6 +15,8 @@
 
 package org.ala.biocache.dao;
 
+import javax.servlet.ServletOutputStream;
+
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.SearchResultDTO;
 
@@ -48,4 +50,15 @@ public interface SearchDao {
      */
     OccurrenceDTO getById(String id) throws Exception;
 
+    /**
+     * Write out the results of this query to the output stream
+     * 
+     * @param query
+     * @param filterQuery
+     * @param out
+     * @param maxNoOfRecords
+     * @return
+     * @throws Exception
+     */
+	int writeResultsToStream(String query, String[] filterQuery, ServletOutputStream out, int maxNoOfRecords) throws Exception;
 }

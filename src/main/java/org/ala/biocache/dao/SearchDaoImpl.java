@@ -1,4 +1,4 @@
-/* *************************************************************************
+/**************************************************************************
  *  Copyright (C) 2010 Atlas of Living Australia
  *  All Rights Reserved.
  * 
@@ -15,9 +15,12 @@
 
 package org.ala.biocache.dao;
 
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import javax.servlet.ServletOutputStream;
+
 import org.ala.biocache.model.FacetResultDTO;
 import org.ala.biocache.model.FieldResultDTO;
 import org.ala.biocache.model.OccurrenceDTO;
@@ -25,16 +28,16 @@ import org.ala.biocache.model.SearchResultDTO;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.params.FacetParams;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.stereotype.Component;
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
@@ -50,7 +53,6 @@ public class SearchDaoImpl implements SearchDao {
     private static final String SOLR_HOME = "/data/solr/biocache";
     /** SOLR server instance */
     private EmbeddedSolrServer server;
-    private boolean $debug = true;
     private Integer MAX_DOWNLOAD_SIZE = 1000000;
 
     /**
@@ -97,41 +99,97 @@ public class SearchDaoImpl implements SearchDao {
     }
 
     /**
-     * Generate a download for a given search (with parameters) returning the path to the
-     * generated download file on the file system.
-     *
-     * @param query
-     * @param filterQuery
-     * @param startIndex
-     * @param pageSize
-     * @param sortField
-     * @param sortDirection
-     * @return
-     * @throws Exception
+     * @see org.ala.biocache.dao.SearchDao#writeResultsToStream(java.lang.String, java.lang.String[], javax.servlet.ServletOutputStream, int)
      */
-    public String getDownloadForSearch(String query, String[] filterQuery, Integer startIndex,
-            Integer pageSize, String sortField, String sortDirection) throws Exception {
-        String downloadFilePath = "";
+    public int writeResultsToStream(String query, String[] filterQuery, ServletOutputStream out, int i) throws Exception {
 
+        int resultsCount = 0;
         try {
             String queryString = formatSearchQuery(query);
+            logger.info("search query: "+queryString);
             SolrQuery solrQuery = new SolrQuery();
             solrQuery.setQueryType("standard");
             solrQuery.setRows(MAX_DOWNLOAD_SIZE);
             solrQuery.setQuery(queryString);
 
-            QueryResponse qr = runSolrQuery(solrQuery, filterQuery, pageSize, startIndex, sortField, sortDirection);
-            //searchResults = processSolrResponse(qr, solrQuery);
-            downloadFilePath = generateDownloadFile(qr, solrQuery);  // Dave to implement based on processSolrResponse() but using iterator
-            logger.info("search query: "+queryString);
+            int startIndex = 0;
+            int pageSize = 1000;
+            
+            QueryResponse qr = runSolrQuery(solrQuery, filterQuery, pageSize, startIndex, "score", "asc");
+            CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), '\t', '"');
+            
+            csvWriter.writeNext(new String[]{
+            		"Record id",
+            		"Concept lsid",
+            		"Original taxon name",
+            		"Recognised taxon name",
+            		"Taxon rank",
+            		"Family",
+            		"latitude",
+            		"longitude",
+            		"locality",
+            		"bio region",
+            		"Basis of record",
+            		"State/Territory",
+            		"Collection code",
+            		"Institution code",
+            		"Collector",
+            		"Catalogue number",
+            		"Data provider",
+            		"Data resource",
+            		"Identifier name",
+            });
+            
+            while(qr.getResults().size()>0 && resultsCount<=MAX_DOWNLOAD_SIZE){
+            	logger.debug("Start index: "+startIndex);
+	            List<OccurrenceDTO> results = qr.getBeans(OccurrenceDTO.class);
+	            for(OccurrenceDTO result : results){
+	            	resultsCount++;
+	            	
+	            	String latitude = null, longitude = null;
+	            	
+	            	if(result.getLatitude()!=null){
+	            		latitude = result.getLatitude().toString();
+	            	}
+	            	if(result.getLatitude()!=null){
+	            		longitude = result.getLongitude().toString();
+	            	}
+	            	
+	            	String[] record = new String[]{
+            			result.getId().toString(),
+            			result.getTaxonConceptLsid(),
+            			result.getRawTaxonName(),
+            			result.getTaxonName(),
+            			result.getRank(),
+            			result.getFamily(),
+            			latitude,
+            			longitude,
+            			result.getPlace(),
+            			result.getBiogeographicRegion(),
+            			result.getBasisOfRecord(),
+            			result.getState(),
+            			result.getCollectionCode(),
+            			result.getInstitutionCode(),
+            			result.getCollector(),
+            			result.getCatalogueNumber(),
+            			result.getDataProvider(),
+            			result.getDataResource(),
+            			result.getIdentifierName(),
+	            	};
+	            	csvWriter.writeNext(record);
+	            	csvWriter.flush();
+	            }
+	            startIndex +=pageSize;
+	            qr = runSolrQuery(solrQuery, filterQuery, pageSize, startIndex, "score", "asc");
+            }
+            
         } catch (SolrServerException ex) {
             logger.error("Problem communicating with SOLR server. " + ex.getMessage(), ex);
             //searchResults.setStatus("ERROR"); // TODO also set a message field on this bean with the error message(?)
         }
-
-        return downloadFilePath;
+        return resultsCount;
     }
-
+    
     /**
      * @see org.ala.biocache.dao.SearchDao#getById(java.lang.String) 
      */
@@ -241,7 +299,7 @@ public class SearchDaoImpl implements SearchDao {
                 if ((facetEntries != null) && (facetEntries.size() > 0)) {
                     ArrayList<FieldResultDTO> r = new ArrayList<FieldResultDTO>();
                     for (FacetField.Count fcount : facetEntries) {
-                        String msg = fcount.getName() + ": " + fcount.getCount();
+//                        String msg = fcount.getName() + ": " + fcount.getCount();
                         //logger.trace(fcount.getName() + ": " + fcount.getCount());
                         r.add(new FieldResultDTO(fcount.getName(), fcount.getCount()));
                     }
@@ -255,10 +313,6 @@ public class SearchDaoImpl implements SearchDao {
         // returned is available later on if needed
         searchResult.setQr(qr);
         return searchResult;
-    }
-
-    private String generateDownloadFile(QueryResponse qr, SolrQuery solrQuery) {
-        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     protected String formatSearchQuery(String query) {
@@ -320,5 +374,4 @@ public class SearchDaoImpl implements SearchDao {
 
         return solrQuery;
     }
-
 }
