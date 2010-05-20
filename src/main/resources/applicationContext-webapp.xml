@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans SYSTEM "http://www.springframework.org/dtd/spring-beans.dtd">
 <!-- The home of web app config that is shared across dispatchers-->
-<beans>	
+<beans>
+<!-- 	
     <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
-        <property name="resourceLoaderPath" value="/WEB-INF/classes/"/>
+      <property name="configLocation">
+        <value>WEB-INF/classes/velocity.properties</value>
+      </property>
     </bean>
-
+ -->    
 </beans>	

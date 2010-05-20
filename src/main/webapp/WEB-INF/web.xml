@@ -9,10 +9,7 @@
     <!-- For spring context initialisation -->
     <context-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>
-                classpath*:/applicationContext-*.xml,
-                classpath*:/org/ala/**/*-servlet.xml
-            </param-value>
+            <param-value>classpath*:/applicationContext-webapp.xml</param-value>
     </context-param>
 
     <listener>

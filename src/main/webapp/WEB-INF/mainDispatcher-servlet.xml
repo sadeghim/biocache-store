@@ -15,7 +15,7 @@
     <!-- read properties files for variables for jdbc, etc -->
 <!--    <context:property-placeholder location="classpath:biocache.properties"/>-->
     
-    <!--<context:property-override location="classpath:portal.properties"/>-->
+    <context:property-override location="classpath:biocache.properties"/>
 
     <!--<context:spring-configured/>-->
 
@@ -105,7 +105,6 @@
     <bean id="htmlMediaType" class="org.springframework.http.MediaType">
         <constructor-arg value="text/html" />
     </bean>
-
     
     <!-- BoBo Lucene add-on for facet browsing -->
     <!--<bean id="rank" class="com.browseengine.bobo.facets.impl.SimpleFacetHandler">
