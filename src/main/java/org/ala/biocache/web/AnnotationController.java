@@ -12,11 +12,9 @@
  *  implied. See the License for the specific language governing
  *  rights and limitations under the License.
  ***************************************************************************/
-
 package org.ala.biocache.web;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -62,11 +60,6 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.XPath;
 import org.dom4j.io.SAXReader;
-//import org.gbif.portal.dto.occurrence.IdentifierRecordDTO;
-//import org.gbif.portal.dto.occurrence.OccurrenceRecordDTO;
-//import org.gbif.portal.dto.occurrence.RawOccurrenceRecordDTO;
-//import org.gbif.portal.service.OccurrenceManager;
-//import org.gbif.portal.util.text.DateFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -87,8 +80,9 @@ public class AnnotationController {
 
 	/** Name of view for an empty search page */
 	private final String JSON = "annotation/annotationJson";
-    private final String XML_RDF = "annotation/annotationRdf";
+//    private final String XML_RDF = "annotation/annotationRdf";
 
+//    protected String annoteaServerUrl = "http://localhost/danno/annotea";
     protected String annoteaServerUrl = "http://localhost/danno/annotea";
 	protected String annotationTemplate = "annotation.vm";
 
@@ -107,6 +101,9 @@ public class AnnotationController {
 	private String twitterPassword;
 
     private boolean enableTwitterSync = false;
+    
+    /** This is the URL used in the annotations */
+    protected String hostUrl = "http://localhost:8888/biocache-webapp/";
 
     /**
      * Constructor to populate fields with values from the portal.properties file.
@@ -223,7 +220,6 @@ public class AnnotationController {
 
 		StringBuffer annotationBody = new StringBuffer();
 		String title = "Occurrence Record Annotation";
-		String url = request.getParameter("url");
 		String xpath = request.getParameter("xpath");
         String comment = HtmlUtils.htmlEscape(request.getParameter("comment"));
         String ident = request.getParameter("ident");
@@ -262,7 +258,7 @@ public class AnnotationController {
 			if(StringUtils.isNotEmpty(newValue)){
 				addFieldUpdate(annotationBody, paramName, oldValue, newValue);
 				if(tw==null){
-					tw = createTweeter(tw, url, dataResourceKey);
+					tw = createTweeter(tw, hostUrl, dataResourceKey);
 					tw.setFieldName(paramName);
 					tw.setNewValue(newValue);
 					tw.setOldValue(oldValue);
@@ -271,7 +267,7 @@ public class AnnotationController {
 		}
 
         if (tw==null && StringUtils.isNotEmpty(comment)){
-        	tw = createTweeter(tw, url, dataResourceKey); // comment-only annotation
+        	tw = createTweeter(tw, hostUrl, dataResourceKey); // comment-only annotation
         	tw.setComment(comment);
             type = "Comment";
         }
@@ -287,14 +283,19 @@ public class AnnotationController {
 		logger.debug("annotationBody: "+annotationBody);
         logger.debug("email address: "+email);
 		//create an annotea RDF message
+        
+        Velocity.setProperty("resource.loader", "class");
+        Velocity.setProperty("class.resource.loader.class","org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        Velocity.init();
+        
 		VelocityContext ctx = new VelocityContext();
-		Template t = Velocity.getTemplate(annotationTemplate);
+		Template t = Velocity.getTemplate("annotation.vm");
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		PrintWriter ow = new PrintWriter(bout, true);
 		ctx.put("type", type);
         ctx.put("annotationType", annotationType);  // Annotation or Reply
         ctx.put("replyRoot", replyRoot);  // for replies
-		ctx.put("url", url);
+		ctx.put("url", hostUrl);
 		ctx.put("xpath", replyField);  // was xpath
 		ctx.put("creator", creator);
         //ctx.put("email", email);
@@ -711,5 +712,12 @@ public class AnnotationController {
 	 */
 	public void setEnableTwitterSync(boolean enableTwitterSync) {
 		this.enableTwitterSync = enableTwitterSync;
+	}
+
+	/**
+	 * @param hostUrl the hostUrl to set
+	 */
+	public void setHostUrl(String hostUrl) {
+		this.hostUrl = hostUrl;
 	}
 }
