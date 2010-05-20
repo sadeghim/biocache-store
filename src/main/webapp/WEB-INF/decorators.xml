@@ -10,6 +10,7 @@
         <pattern>/ajaxTree*</pattern>
         <pattern>/query*</pattern>
         <pattern>/taxon*</pattern>
+        <pattern>/annotation/*</pattern>
         <pattern>/index.jsp</pattern>
     </excludes>
 

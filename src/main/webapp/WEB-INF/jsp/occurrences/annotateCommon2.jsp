@@ -12,5 +12,5 @@
             <span class="btn"><input type="button" value="Cancel" class="close"></span>
         </div>
         <div class="errorMsg">&nbsp;</div>
-        <div class="loading"><img src="${pageContext.request.contextPath}/skins/ala/sam/wait.gif" alt="loading data..."/></div>
+        <div class="loading"><img src="${pageContext.request.contextPath}/static/css/images/wait.gif" alt="loading data..."/></div>
         <div class='message'><span id="msgTextGeospatial" class="msgText"></span><input type="button" value="Close" class="finish"></div>

@@ -49,6 +49,12 @@
                     var val = $("option:selected", this).val();
                     reloadWithParam('dir',val);
                 });
+
+                $("#searchHeader > button").button();
+                $("#searchHeader > button").click(function() {
+                    var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?q=${query}&fq=${fn:join(facetQuery, '&fq=')}";
+                    window.location.replace(downloadUrl);
+                });
             });
 
             /**
@@ -136,11 +142,14 @@
         <c:if test="${not empty searchResult && searchResult.totalRecords > 0}">
 
             <div id="searchResults" >
-                <h3><fmt:formatNumber var="currentPage" value="${(searchResult.startIndex / searchResult.pageSize) + 1}" pattern="0"/>
-                    Search results for <a href="">${queryJsEscaped}</a> - <c:if test="${searchResult.startIndex > 0}">page ${currentPage} of</c:if>
-                    <fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###"/> results<a name="searchResults">&nbsp;</a>
-                </h3>
-                <div class="solrResults">
+                <div id="searchHeader" >
+                    <button>Download</button>
+                    <h3><fmt:formatNumber var="currentPage" value="${(searchResult.startIndex / searchResult.pageSize) + 1}" pattern="0"/>
+                        Search results for <a href="">${queryJsEscaped}</a> - <c:if test="${searchResult.startIndex > 0}">page ${currentPage} of</c:if>
+                        <fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###"/> results<a name="searchResults">&nbsp;</a>
+                    </h3>
+                </div>
+                <div class="solrResults" style="clear: both">
                     <div id="sortWidget" style="font-size: 85%;">
                         sort by
                         <select id="sort" name="sort">

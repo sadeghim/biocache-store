@@ -213,6 +213,32 @@ public class SearchDaoImpl implements SearchDao {
         return oc;
     }
 
+    /*
+    public List<Term> query(String q, int limit) {
+        List<Term> items = null;
+        initSolrServer();
+
+        // escape special characters
+        SolrQuery query = new SolrQuery();
+        query.addTermsField("spell");
+        query.setTerms(true);
+        query.setTermsLimit(limit);
+        query.setTermsLower(q);
+        query.setTermsPrefix(q);
+        query.setQueryType("/terms");
+
+        try {
+            QueryResponse qr = server.query(query);
+            TermsResponse resp = qr.getTermsResponse();
+            items = resp.getTerms("spell");
+        } catch (SolrServerException e) {
+            items = null;
+        }
+
+        return items;
+    }
+    */
+
     /**
      *
      *

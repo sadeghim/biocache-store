@@ -10,7 +10,6 @@
     <context-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>
-                classpath*:/org/gbif/portal/**/applicationContext-*.xml,
                 classpath*:/applicationContext-*.xml,
                 classpath*:/org/ala/**/*-servlet.xml
             </param-value>

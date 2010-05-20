@@ -106,6 +106,7 @@
         <constructor-arg value="text/html" />
     </bean>
 
+    
     <!-- BoBo Lucene add-on for facet browsing -->
     <!--<bean id="rank" class="com.browseengine.bobo.facets.impl.SimpleFacetHandler">
         <constructor-arg value="rankId" />

@@ -1,0 +1,366 @@
+#twopartheader    {
+	/* moved to speciesGlobal.css */
+	background: transparent url(images/ALA-doc-3-occurrences.gif) no-repeat scroll 0% 10px;
+}
+/* hack for IE */
+* html #twopartheader {
+    height: 80px;
+}
+
+#content h1 { margin: 0; padding: 4px 0 0 96px; font-size: 1.1em ; /* color: #0166B9;*//* #872f2f; */ }
+#content h4 { margin: 15px 0 5px 0; padding: 0 ; font-size: 1.1em ; /* color: #0166B9;*//* #872f2f; */ }
+#content h5 { /* color: #872f2f;*/ }
+
+.lt , a.lt  { color: #BBB }
+
+input#search { margin: 0 0 0 18px; }
+
+/* table.results th { background-color:#ffeeee; } */
+
+th.sortable a { color: #872f2f; border-bottom: none; }
+
+.occurrenceContainer {
+    margin-top: -10px;
+    line-height: normal;
+}
+
+.occurrenceContainer p {
+	margin: 2px 0px;
+}
+.prev_next , a.prev_next { color: #A6A6A6; }
+
+.pagelinks strong { color: #494949; background-color: #ffeeee ; }
+
+/* Added by Dave */
+.occurrenceFieldset p { clear: left; }
+#occurrenceActions { border: 0px solid #CCCCCC; background-color:#DDD; padding:5px; margin-right:10px; margin-left:0px; -webkit-border-radius: 5px; -moz-border-radius: 5px;}
+#occurrenceActions h4 { margin:5px; }
+#occurrenceMedia { margin-left: 10px; margin-bottom: 10px; }
+#occurrenceMedia a { border-bottom: none; }
+#occurrenceGeospatial { margin-bottom: 10px; }
+#constructedFilters #warnings { margin-top:10px; float: left; width: 300px; }
+#constructedFilters #warnings ul { margin-top:0px; margin-left:5px;  margin-bottom:5px;}
+
+.generaSubject { font-weight:bold; }
+div#warnings { 
+	/* float: left; */
+	background-color: #F8F2E5;
+	border: 2px solid #D75A20;
+	width: 57%;
+	margin-bottom: 20px;
+	padding-bottom: 6px;
+	line-height: 1.2em;
+	-webkit-border-radius: 5px; 
+	-moz-border-radius: 5px;
+}
+.occurrenceContainer #furtherActions { 
+	float: right;
+    width: 38%;
+    margin-right: 10px;
+    line-height: 1.2em;
+    -webkit-border-radius: 5px; 
+    -moz-border-radius: 5px;
+}
+
+.occurrenceContainer > #furtherActions {
+    width: 39%;
+}
+
+.occurrenceContainer #furtherActions p { padding:5px; }
+
+#furtherActions h4 { margin: 0 0 6px 0; }
+#changeSearch {/* background: url('images/tip1.jpg') no-repeat; padding: 7px 0 10px 35px; border-bottom: none; */}
+
+/* classification wizard */
+.conceptLink { margin: 0; padding-left: 10px; padding-right: 5px; border:none; background: url('../standard/images/plusSignBumpBG1.gif') no-repeat 8px 3px; border:none; }
+a.treeNodeLinkTentative .conceptLink { background: url('../standard/images/plusSignFlatBG1.gif') no-repeat 8px 3px; }
+#smalltree { width:625px; }
+
+/* Downloads */
+h5#datasetFieldsTitle { margin-top:0px; /* color: #6abbe3;*/ }
+h5#taxonomyFieldsTitle { margin-top:10px; /* color: #8425a6;*/ }
+h5#geospatialFieldsTitle { margin-top:10px; /* color: #f19d5d;*/ }
+#citationDownload { font-weight: bold; margin-top:10px; margin-bottom:10px; }
+
+/* End of Added by Dave */
+
+/* Added by Tim */
+.feedback { background: url('../../images/feedbackLink.gif') no-repeat 0px 0px; padding-left:40px; }
+
+/* Searching */
+h4#addSearchFilter, h4#currentSearch  { margin: 0px 0 5px 0px; padding: 0; }
+
+.cellNote { font-size: 0.7em; }
+
+.helpList { margin-top:10px; margin-left:10px; }
+
+fieldset p { clear:left; }
+
+.noHoverDecoration :hover { text-decoration: none; }
+
+.modellingLayers td { vertical-align: top; }
+.hidden { display: none; }
+
+.selectedLayerSet { font-weight: bold; }
+.nonSelectedLayerSet { font-weight: normal; }
+
+.generatedModel { height:360px; width: 720px; border: 1px solid #CCCCCC; } 
+.lastModified { color: gray; font-size: 0.81em;  }
+
+#actionsAndResults .actionsListInline a, #occurrenceActions .actionsListInline a  {
+	display: block;
+	height: 16px;
+}
+.actionsListInline .iconDownload {
+    padding-left: 18px;
+    background: url('images/page_white_put.png') no-repeat 0px 0px;
+}
+.actionsListInline .iconEarth {
+    padding-left: 18px;
+    background: url('images/google_earth_icon.gif') no-repeat 0px 0px;
+}
+.actionsListInline .iconTable {
+    padding-left: 18px;
+    background: url('images/table_icon.png') no-repeat 0px 0px;
+}
+.actionsListInline .iconMap {
+    padding-left: 18px;
+    background: url('images/map_icon.png') no-repeat 0px 0px;
+}
+.actionsListInline .iconSearchAdd {
+    padding-left: 18px;
+    background: url('images/icon_magnifier_plus.png') no-repeat 0px 0px;
+}
+.actionsListInline .iconModel {
+    padding-left: 18px;
+    background: url('images/icon_wand.png') no-repeat 0px 0px;
+}
+
+ul.actionsListInline li {
+	display:block;
+}
+
+.occurrenceContainer #furtherActions ul.actionsListInline li {
+    display: list-item;
+}
+
+table.taxonClassificationComparison {
+    line-height: 1.6em;
+    width: 100%;
+}
+
+div.annotate {
+    float: right;
+    /* background: url('images/icon_comment_add.png') no-repeat 0px 0px; */
+    
+}
+
+div.annotation {
+   /*  float:left;
+   margin-right: 50px;*/
+   position: absolute;
+   left: 170px;
+}
+
+div.annotation.tr {
+    margin-top: -19px;
+}
+
+#mask {
+    position:absolute;
+    left:0;
+    top:0;
+    z-index:9000;
+    background-color:#000;
+    display:none;
+}
+
+.boxes .window {
+    position:absolute;
+    left:0;
+    top:0;
+    width:440px;
+    height:200px;
+    display:none;
+    z-index:9999;
+    padding:10px;
+    font-size: 11px;
+}
+
+.boxes #dataset, .boxes #taxonomy, .boxes #geospatial, .boxes #comment, .boxes #replyTo {
+    width: 550px;
+    height: auto;
+    padding: 10px;
+    background-color: #ffffff;
+    /*-webkit-border-radius: 9px;
+    -moz-border-radius: 9px;*/
+}
+
+div#occurrenceDataset, div#occurrenceTaxonomy, div#occurrenceGeospatial, div#comment, div#replyTo {
+/*div.boxes > div.window { */
+    width: 58%;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #BBB;
+}
+
+a.annotationIcon {
+    padding-left: 14px;
+    background: url('images/icon_comment_add.png') no-repeat 0px 0px;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+a.annotatedIcon {
+    padding-left: 14px;
+    background: url('images/icon_comment.png') no-repeat 0px 2px;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+div.annoDetails {
+    font-size: 10px;
+    line-height: 1.4em;
+}
+
+span.oldValue {
+    display: none;
+    text-decoration:line-through;
+}
+
+span.newValue {
+    color: #CE573E;/*#F26649*/
+}
+
+table.occurrenceTable {
+    width: 100%;
+    margin: 0;
+   /* border-spacing:1px;*/
+}
+
+table.occurrenceTable td {
+    padding: 4px 0 4px 4px;
+    vertical-align: top;
+    line-height: 18px;
+}
+
+table.occurrenceTable th {
+    /*color: #316AC5;*/
+}
+
+tr.annoInfo, tr.annoComment {
+    display: none;
+}
+
+td.annoText {
+    text-align: right;
+}
+
+td.label { width: 25%; max-width: 25%; color: #777; }
+td.annoText { width: 5%; max-width: 5%; }
+td.value { width: 65%; max-width: 65%; }
+td.recordedValue { width: 33%; max-width: 33%; }
+td.matchedValue { width: 32%; max-width: 32%; }
+td.annoIcon { width: 5%; max-width: 5%; }
+/*td.value, td.recordedValue, td.annoInfo { padding-left: 4px; }*/
+td.annoInfo { border-bottom: 1px solid white; }
+/*tr.annoInfo > td.annoReply { border-left: 4px solid #6590D4; border-bottom: none; border-spacing:1px }*/
+
+tr.annoInfo > td.annoReply { 
+    background-color: #CBDAF0;
+    padding:0px;
+    border-bottom: 1px solid white;
+}
+
+div.replyBody { 
+    border-left: 4px solid #6590D4;
+    border-bottom: 1px;
+    padding: 4px 0 4px 4px;
+}
+
+input, textarea, select {
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    color: #494949;
+}
+
+.oldValues {
+    border: none;
+}
+
+input.newValues, textarea.newValues {
+    width: 95%;
+}
+
+textarea.comment {
+    width: 100%;
+}
+
+div#ajaxLoading {
+    width: 160px;
+    position: absolute;
+    top: 150px;
+    left: 30%;
+    margin-left: -100px;
+    padding: 8px;
+    text-align: center;
+    background-color: #CBDAF0;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+div.loading, div.message, div.errorMsg {
+    display: none;
+    padding: 5px 2px;
+}
+div.errorMsg {
+    display: block;
+}
+
+div.creatorInfo  {
+    padding-top: 4px;
+}
+
+/*div.creatorInfo label {
+    display:block;
+    float: left;
+    width: 30%;
+    max-width: 30%;
+    text-align: right;
+    padding-right: 5%;
+    padding-top: 4px;
+}
+
+div.creatorInfo input {
+    display:block;
+    float: right;
+    width: 65%;
+    max-width: 65%;
+}*/
+
+td.identification {
+    background-color: #DDDDDD;
+    padding: 5px;
+}
+
+div.creatorInfo {
+    text-align: right;
+    margin-right: 30px;
+    line-height: 2.5em;
+}
+
+div.formIdentity {
+    line-height: 2em;
+}
+
+h4.annotatable {
+    padding-right: 8px !important;
+}
+
+div.reply_button {
+    float: right;
+    margin-right: 5px;
+}
+
+div.reply_button > input {
+    font-size: 10px;
+}
