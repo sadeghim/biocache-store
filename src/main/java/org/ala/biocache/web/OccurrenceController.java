@@ -52,7 +52,8 @@ public class OccurrenceController {
 	private final String LIST = "occurrences/list";
 	/** Name of view for a single taxon */
 	private final String SHOW = "occurrences/show";
-    
+	
+	protected String hostUrl = "http://localhost:8888/biocache-webapp";
 	
 	/**
 	 * Custom handler for the welcome view.
@@ -178,11 +179,19 @@ public class OccurrenceController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = {"/occurrences/{id}", "/occurrences/{id}.json"}, method = RequestMethod.GET)
-	public String showSpecies(@PathVariable("id") String id, Model model) throws Exception {
+	public String showOccurrence(@PathVariable("id") String id, Model model) throws Exception {
 		logger.debug("Retrieving occurrence record with guid: "+id+".");
         model.addAttribute("id", id);
 		OccurrenceDTO occurrence = searchDAO.getById(id);
         model.addAttribute("occurrence", occurrence);
+        model.addAttribute("hostUrl", hostUrl);
 		return SHOW;
+	}
+
+	/**
+	 * @param hostUrl the hostUrl to set
+	 */
+	public void setHostUrl(String hostUrl) {
+		this.hostUrl = hostUrl;
 	}
 }

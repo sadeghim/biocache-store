@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -102,9 +103,6 @@ public class AnnotationController {
 
     private boolean enableTwitterSync = false;
     
-    /** This is the URL used in the annotations */
-    protected String hostUrl = "http://localhost:8888/biocache-webapp/";
-
     /**
      * Constructor to populate fields with values from the portal.properties file.
      * N.B. Because of a class loading order issue, the fields could not be loaded
@@ -221,6 +219,7 @@ public class AnnotationController {
 		StringBuffer annotationBody = new StringBuffer();
 		String title = "Occurrence Record Annotation";
 		String xpath = request.getParameter("xpath");
+		String url = request.getParameter("url");
         String comment = HtmlUtils.htmlEscape(request.getParameter("comment"));
         String ident = request.getParameter("ident");
         String creator = HtmlUtils.htmlEscape(request.getParameter("creator"));
@@ -258,7 +257,7 @@ public class AnnotationController {
 			if(StringUtils.isNotEmpty(newValue)){
 				addFieldUpdate(annotationBody, paramName, oldValue, newValue);
 				if(tw==null){
-					tw = createTweeter(tw, hostUrl, dataResourceKey);
+					tw = createTweeter(tw, url, dataResourceKey);
 					tw.setFieldName(paramName);
 					tw.setNewValue(newValue);
 					tw.setOldValue(oldValue);
@@ -267,7 +266,7 @@ public class AnnotationController {
 		}
 
         if (tw==null && StringUtils.isNotEmpty(comment)){
-        	tw = createTweeter(tw, hostUrl, dataResourceKey); // comment-only annotation
+        	tw = createTweeter(tw, url, dataResourceKey); // comment-only annotation
         	tw.setComment(comment);
             type = "Comment";
         }
@@ -295,7 +294,7 @@ public class AnnotationController {
 		ctx.put("type", type);
         ctx.put("annotationType", annotationType);  // Annotation or Reply
         ctx.put("replyRoot", replyRoot);  // for replies
-		ctx.put("url", hostUrl);
+		ctx.put("url", url);
 		ctx.put("xpath", replyField);  // was xpath
 		ctx.put("creator", creator);
         //ctx.put("email", email);
@@ -543,8 +542,12 @@ public class AnnotationController {
 	            Attribute pageUrl = (Attribute) node.selectSingleNode( "j.2:annotates/@rdf:resource" );
 	            if (pageUrl!=null) oa.setAnnotates(pageUrl.getValue());
 	            oa.setCreator(node.valueOf("j.1:creator")); // node.valueOf("j.1:creator/vcard:fn")
-	            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-	            oa.setDate(df.parse(node.valueOf("j.2:created")));
+	            
+//	            String createdDateAsString = node.valueOf("j.2:created");
+//	            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+//	            oa.setDate(df.parse(createdDateAsString));
+	            oa.setDate(new Date());
+	            
                 Attribute replyUrl = (Attribute) node.selectSingleNode( "j.3:inReplyTo/@rdf:resource" );
 	            if (replyUrl!=null) {
                     oa.setInReplyTo(replyUrl.getValue());
@@ -712,12 +715,5 @@ public class AnnotationController {
 	 */
 	public void setEnableTwitterSync(boolean enableTwitterSync) {
 		this.enableTwitterSync = enableTwitterSync;
-	}
-
-	/**
-	 * @param hostUrl the hostUrl to set
-	 */
-	public void setHostUrl(String hostUrl) {
-		this.hostUrl = hostUrl;
 	}
 }
