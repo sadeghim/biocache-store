@@ -3,7 +3,7 @@
         <input type="hidden" name="lim" value="9" id="tn" />
         <input type="hidden" name="act" value="2" id="act"/>
         <input type="hidden" name="xpath" value="${param.section}" id="xpath"/>
-        <input type="hidden" name="url" value="<gbif:propertyLoader bundle='portal' property='hostName'/>/occurrences/${rawOccurrenceRecord.key}/" size="128"/>
+        <input type="hidden" name="url" value="${hostUrl}/occurrences/${occurrence.id}" size="128"/>
         <input type="hidden" name="recordKey" value="${rawOccurrenceRecord.key}" id="recordKey"/>
         <input type="hidden" name="ref" value="" size="128"/>
         <input type="hidden" name="token" value="/tmp/TUEb3WK"/>
