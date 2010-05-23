@@ -84,16 +84,16 @@ public class AnnotationController {
 //    private final String XML_RDF = "annotation/annotationRdf";
 
 //    protected String annoteaServerUrl = "http://localhost/danno/annotea";
-    protected String annoteaServerUrl = "http://localhost/danno/annotea";
+    protected String annoteaServerUrl = "http://alatstdb1-cbr.vm.csiro.au/danno/annotea";
 	protected String annotationTemplate = "annotation.vm";
 
     //protected String jsonView; // Spring-injected view name
     //protected String jsonAnnotations; // Spring-injected view name
 
-    private String dannoServer = "localhost";
+    private String dannoServer = "alatstdb1-cbr.vm.csiro.au";
     private int dannoPort = 80;
-    private String dannoUser = "test";
-    private String dannoPassword = "secret";
+    private String dannoUser = "nickdos";
+    private String dannoPassword = "action";
     private int timeoutInMillisec = 10000;
 
 	private String bitlyLogin;

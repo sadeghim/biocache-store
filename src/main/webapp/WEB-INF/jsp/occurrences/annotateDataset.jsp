@@ -5,10 +5,13 @@
         <h4 style="margin:0 0 10px 0">Dataset Annotation</h4>
         <table>
           <thead>
-            <th>&nbsp;</th>
-            <th>Current</th>
-            <th>Suggested</th>
+            <tr>
+              <th>&nbsp;</th>
+              <th>Current</th>
+              <th>Suggested</th>
+            </tr>
           </thead>
+          <tbody>
           <tr>
             <td>Institution code<input name="1" type="hidden" value="institution-name"/></td>
             <td><input class="oldValues" name="old.institutionCode" type="text" readonly="true" value=""/></td>
@@ -65,6 +68,7 @@
             <td><input class="newValues" name="new.collectionDate" type="text" id="collectionDate" /></td>
           </tr>
           <jsp:include page="annotateCommon1.jsp"/>
+          </tbody>
         </table>
           <jsp:include page="annotateCommon2.jsp"><jsp:param name="section" value="dataset" /></jsp:include>
         </form>

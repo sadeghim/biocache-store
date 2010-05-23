@@ -55,9 +55,10 @@
         </c:if>
         <c:if test="${not empty occurrence}">
             <h1>Occurrence Details: ${occurrence.institutionCode} ${occurrence.collectionCode} ${occurrence.catalogueNumber}</h1>
+            <div id="debug"></div>
             <div id="occurrenceDataset" class="occurrenceSection">
                 <h2>Datset</h2>
-                <table class="occurrenceTable">
+                <table class="occurrenceTable" id="datasetTable">
                     <alatag:occurrenceTableRow annotate="false" section="dataset" fieldCode="dataProvider" fieldName="Data Provider">${occurrence.dataProvider}</alatag:occurrenceTableRow>
                     <alatag:occurrenceTableRow annotate="false" section="dataset" fieldCode="dataResource" fieldName="Data Set">${occurrence.dataResource}</alatag:occurrenceTableRow>
                     <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="institutionCode" fieldName="Institution Code">${occurrence.institutionCode}
@@ -79,7 +80,7 @@
             </div>
             <div id="occurrenceTaxonomy" class="occurrenceSection">
                 <h2>Taxonomy</h2>
-                <table class="occurrenceTable">
+                <table class="occurrenceTable"  id="taxonomyTable">
                     <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Scientific Name">
                         <c:choose>
                             <c:when test="${!(fn:containsIgnoreCase(occurrence.taxonName, occurrence.rawTaxonName) || fn:containsIgnoreCase(occurrence.author, occurrence.rawAuthor))}">
@@ -120,7 +121,7 @@
             </div>
             <div id="occurrenceGeospatial" class="occurrenceSection">
                 <h2>Geospatial</h2>
-                <table class="occurrenceTable">
+                <table class="occurrenceTable"  id="geospatialTable">
                     <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="" fieldName="Country"><c:if test="${not empty occurrence.countryCode}"><fmt:message key="country.${occurrence.countryCode}"/></c:if></alatag:occurrenceTableRow>
                     <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="" fieldName="State/Province">${occurrence.state}</alatag:occurrenceTableRow>
                     <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="" fieldName="Biogeographic Region">${occurrence.biogeographicRegion}</alatag:occurrenceTableRow>

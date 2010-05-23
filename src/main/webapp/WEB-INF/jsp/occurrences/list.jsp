@@ -53,7 +53,10 @@
                 $("#searchHeader > button").button();
                 $("#searchHeader > button").click(function() {
                     var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?q=${query}&fq=${fn:join(facetQuery, '&fq=')}";
-                    window.location.replace(downloadUrl);
+                    //alert("URL is "+downloadUrl);
+                    if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
+                        window.location.replace(downloadUrl);
+                    }
                 });
             });
 
@@ -97,6 +100,38 @@
                 window.location.replace(window.location.pathname + '?' + paramList.join('&'));
             }
 
+            function removeFacet(facet) {
+                var q = $.getQueryParam('q'); //$.query.get('q')[0];
+                var fqList = $.getQueryParam('fq'); //$.query.get('fq');
+                var paramList = [];
+                if (q != null) {
+                    paramList.push("q=" + q);
+                }
+                //alert("this.facet = "+facet+"; fqList = "+fqList.join('|'));
+                
+                if (fqList instanceof Array) {
+                    //alert("fqList is an array");
+                    for (var i in fqList) {
+                        //alert("i == "+i+"| fq = "+fqList[i]);
+                        if (decodeURI(fqList[i]) == facet) {
+                            //alert("removing fq: "+fqList[i]);
+                            fqList.splice(fqList.indexOf(fqList[i]),1);
+                        }
+                    }
+                } else {
+                    //alert("fqList is NOT an array");
+                    if (decodeURI(fqList) == facet) {
+                        fqList = null;
+                    }
+                }
+                //alert("(post) fqList = "+fqList.join('|'));
+                if (fqList != null) {
+                    paramList.push("fq=" + fqList.join("&fq="));
+                }
+                
+                window.location.replace(window.location.pathname + '?' + paramList.join('&'));
+            }
+
             // jQuery getQueryParam Plugin 1.0.0 (20100429)
             // By John Terenzio | http://plugins.jquery.com/project/getqueryparam | MIT License
             // Adapted by Nick dos Remedios to handle multiple params with same name - return a list
@@ -130,7 +165,7 @@
                 //var params = document.location.search.substr(1);
                 //var fqList = $.getQueryParam("fq");
                 //alert("fq param = "+fqList.join("|"));
-                alert("debug: "+$(this).val());
+                //alert("debug: "+$(this).val());
                 var fqList = $.query.get('fq');
                 $("#searchForm").submit();
                 window.location.replace(url);
@@ -138,19 +173,35 @@
         </script>
     </head>
     <body>
-        <h1>Occurrence Search Results</h1>
         <c:if test="${not empty searchResult && searchResult.totalRecords > 0}">
-
-            <div id="searchResults" >
-                <div id="searchHeader" >
-                    <button>Download</button>
-                    <h3><fmt:formatNumber var="currentPage" value="${(searchResult.startIndex / searchResult.pageSize) + 1}" pattern="0"/>
-                        Search results for <a href="">${queryJsEscaped}</a> - <c:if test="${searchResult.startIndex > 0}">page ${currentPage} of</c:if>
-                        <fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###"/> results<a name="searchResults">&nbsp;</a>
-                    </h3>
+            <fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###" var="totalHits"/>
+            <div id="searchHeader" >
+                <button title="Download all ${totalHits} results as XLS (tab-delimited) file">Download</button>
+                <h1>Occurrence Search Results</h1>
+            </div>
+            <div id="searchResults">
+                <fmt:formatNumber var="currentPage" value="${(searchResult.startIndex / searchResult.pageSize) + 1}" pattern="0"/>
+                <div id="searchTerms">
+                    <div class="queryTermBox">
+                        Search: <a href="?q=${queryJsEscaped}">${queryJsEscaped}</a><a name="searchResults">&nbsp;</a>
+                    </div>
+                    <c:forEach var="filter" items="${paramValues.fq}">
+                        <c:set var="fqField" value="${fn:substringBefore(filter, ':')}"/>
+                        <c:set var="fqValue" value="${fn:substringAfter(filter, ':')}"/>
+                        <c:if test="${not empty fqValue}">
+                            <div class="facetTermBox">
+                                <!-- <b class="facetTermDivider ui-icon ui-icon-triangle-1-e">&nbsp;</b>-->
+                                <span class="facetFieldName"><fmt:message key="facet.${fqField}"/>:</span>
+                                ${fn:replace(fqValue,'-01-01T12:00:00Z','')} <a href="#" onClick="removeFacet('${filter}'); return false;" class="facetCloseLink ui-icon ui-icon-closethick" title="Remove this restriction">&nbsp;</a>
+                            </div>
+                        </c:if>
+                    </c:forEach>
                 </div>
-                <div class="solrResults" style="clear: both">
-                    <div id="sortWidget" style="font-size: 85%;">
+                <div class="solrResults">
+                    <div id="sortWidget">
+                        <div id="resultsStats">
+                            Page ${currentPage} of <fmt:formatNumber value="${lastPage}" pattern="#,###,###"/> (<fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###"/> results)
+                        </div>
                         sort by
                         <select id="sort" name="sort">
                             <option value="score" <c:if test="${param.sort eq 'score'}">selected</c:if>>best match</option>
@@ -186,7 +237,8 @@
                         </tbody>
                     </table>
                     <div id="searchNavBar">
-                        <alatag:searchNavigationLinks totalRecords="${searchResult.totalRecords}" startIndex="${searchResult.startIndex}" pageSize="${searchResult.pageSize}"/>
+                        <alatag:searchNavigationLinks totalRecords="${searchResult.totalRecords}" startIndex="${searchResult.startIndex}"
+                             lastPage="${lastPage}" pageSize="${searchResult.pageSize}"/>
                     </div>
                 </div>
             </div>
@@ -229,18 +281,23 @@
                     </c:forEach>
                 </div>
                 <br/><!-- TODO: redo the "remove current facet" UI -->
-                <c:if test="${not empty facetQuery}">
+                <c:if test="${false && not empty facetQuery}">
                     <div id="removeFacet">
                         <h4>Displaying subset of results, restricted to: <ul id="facetName">
-                                <c:forEach var="filter" items="${paramValues.fq}">
-                                    <c:set var="fqField" value="${fn:substringBefore(filter, ':')}"/>
-                                    <c:set var="fqValue" value="${fn:substringAfter(filter, ':')}"/>
-                                    <li><span style="color:#666666;">${fqField}:</span>${fqValue}</li>
-                                </c:forEach></ul></h4>
+                            <c:forEach var="filter" items="${paramValues.fq}">
+                                <c:set var="fqField" value="${fn:substringBefore(filter, ':')}"/>
+                                <c:set var="fqValue" value="${fn:substringAfter(filter, ':')}"/>
+                                <li><span style="color:#666666;">${fqField}:</span>${fqValue}</li>
+                            </c:forEach></ul></h4>
                         <p>&rarr; <a href="?q=${query}">Return to full result list</a></p>
                     </div>
                 </c:if>
             </div>
+            <!-- totalRecords = ${totalRecords} || lastPage = ${lastPage} -->
+        </c:if>
+        <c:if test="${empty searchResult || searchResult.totalRecords == 0}">
+            <h1>Occurrence Search Results</h1>
+            <p>Your search - <b>${queryJsEscaped}</b> - did not match any documents.</p>
         </c:if>
     </body>
 </html>

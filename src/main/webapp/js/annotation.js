@@ -184,7 +184,7 @@ $(document).ready(function() {
           $("input[name='old.latitude']").val(data.occurrence.latitude);
           $("input[name='old.longitude']").val(data.occurrence.longitude);
           $("input[name='old.state']").val(data.occurrence.state);
-          $("textarea[name='old.locality']").val(data.occurrence.places[0]);
+          $("textarea[name='old.locality']").val(data.occurrence.places.join(', '));
        }
     );
 
@@ -289,6 +289,7 @@ $(document).ready(function() {
 
             } else {
                 // iterate over each of the "fieldUpdateSet" nodes in json data
+                $("#debug").append("processing fieldUpdateSet nodes<br/>");
                 $(this.fieldUpdateSet).each(function(i) {
                     var fieldName = this.fieldName;
                     // substitute fieldNames that don't have their own display fields on page.
@@ -306,6 +307,8 @@ $(document).ready(function() {
                                    '<div class="annoDetails">'+ comment + 'by: ' + creator +
                                    ' on: '+rec.date+'</div></td></tr>';
                     $("table#"+rec.section+"Table tr#"+fieldName+":last").after(annoText);
+                    $("#debug").append("table#"+rec.section+"Table tr#"+fieldName+":last"+"<br>");
+                    $("#debug").append("<quote>"+annoText+"</quote><br/>");
                     $("table#"+rec.section+"Table tr#"+fieldName+" > td.annoInfo").css("background-color","#CBDAF0"); // style the annotation background-color
                 });
             }

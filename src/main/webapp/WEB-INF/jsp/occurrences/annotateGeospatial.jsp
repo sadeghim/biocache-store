@@ -5,10 +5,13 @@
         <h4 style="margin:0 0 10px 0">Geospatial Annotation</h4>
         <table>
           <thead>
-            <th>&nbsp;</th>
-            <th>Current</th>
-            <th>Suggested</th>
+            <tr>
+              <th>&nbsp;</th>
+              <th>Current</th>
+              <th>Suggested</th>
+            </tr>
           </thead>
+          <tbody>
           <tr>
             <td>State/Territory<input type="hidden" name="4" value="state"/></td>
             <td><input class="oldValues" name="old.state" type="text" readonly="true" value=""/></td>
@@ -40,6 +43,7 @@
             <td><input class="newValues" name="new.longitude" type="text" id="longitude" /></td>
           </tr>
           <jsp:include page="annotateCommon1.jsp"/>
+          </tbody>
         </table>
         <jsp:include page="annotateCommon2.jsp"><jsp:param name="section" value="geospatial" /></jsp:include>
         </form>

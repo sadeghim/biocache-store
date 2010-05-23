@@ -16,6 +16,7 @@
 package org.ala.biocache.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -83,9 +84,9 @@ public class OccurrenceDTO implements Serializable {
 	@Field private String species;
     // geospatial
 	@Field("country_code") private String countryCode;
-	@Field("state") private List<String> states;
-	@Field("biogeographic_region") private List<String> biogeographicRegions;
-	@Field private List<String> places;
+	@Field("state") private List<String> states = new ArrayList<String>();
+	@Field("biogeographic_region") private List<String> biogeographicRegions = new ArrayList<String>();
+	@Field private List<String> places = new ArrayList<String>();
 	@Field private Float latitude;
 	@Field private Float longitude;
     @Field("lat_long_precision") private String coordinatePrecision;

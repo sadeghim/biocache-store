@@ -18,7 +18,7 @@
         <td class="annoText" name="${fieldCode}"></td>
         <td class="value">
             <c:if test="${not empty link}"><a href="${link}"></c:if>${bodyText}<c:if test="${not empty link}"></a></c:if>
-            <div class="annoText"/>
+            <div class="annoText"></div>
         </td>
         <td class="${annoIcon}" name="${fieldCode}"></td>
     </tr>

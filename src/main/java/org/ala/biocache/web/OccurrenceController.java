@@ -130,6 +130,10 @@ public class OccurrenceController {
 		searchResult = searchDAO.findByFulltextQuery(query, filterQuery, startIndex, pageSize, sortField, sortDirection);
 		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
+        Long totalRecords = searchResult.getTotalRecords();
+        model.addAttribute("totalRecords", totalRecords);
+        Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+        model.addAttribute("lastPage", lastPage);
 
         return LIST;
 	}
