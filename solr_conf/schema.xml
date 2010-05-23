@@ -536,6 +536,7 @@
         via copyField further on in this schema  -->
    <field name="text" type="text" indexed="true" stored="false" multiValued="true"/>
    <field name="record_type" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="lsid" type="string" indexed="true" stored="false" multiValued="false"/>
 
    <!-- Some ALA dynamic fields -->
    <dynamicField name="*_id"  type="string" indexed="true" stored="true"/>
@@ -572,16 +573,16 @@
    <copyField source="catalogue_number" dest="text"/>
    <copyField source="taxon_name" dest="text"/>
    <copyField source="taxon_name" dest="taxon_name_text"/>
+   <copyField source="taxon_concept_lsid" dest="lsid"/>
    <copyField source="taxon_concept_lsid" dest="text"/>
    <copyField source="type_status" dest="text"/>
-   
+
    <copyField source="state" dest="text"/>
    <copyField source="biogeographic_region" dest="text"/>
    <copyField source="places" dest="text"/>
    <copyField source="state" dest="geo_regions"/>
    <copyField source="biogeographic_region" dest="geo_regions"/>
    <copyField source="places" dest="geo_regions"/>
-   
    
    <copyField source="basis_of_record" dest="text"/>   
    <copyField source="basis_of_record" dest="record_type"/>   
