@@ -1,9 +1,9 @@
 delimiter $$
 -- Function to get the names for a geo regino
---The arguments:
---in_oc: The occurrence record id
---in_low: The id for the lowest region type to include
---in_hi: The id for the highest region type to include
+-- The arguments:
+-- in_oc: The occurrence record id
+-- in_low: The id for the lowest region type to include
+-- in_hi: The id for the highest region type to include
 DROP FUNCTION IF EXISTS get_georegion_names$$
 CREATE FUNCTION get_georegion_names(in_oc INT, in_low INT, in_hi INT) returns varchar(1000)
 deterministic
@@ -24,6 +24,8 @@ $$
 -- concept_id: the input concept id
 DROP FUNCTION IF EXISTS get_taxa_guid$$
 CREATE FUNCTION get_taxa_guid(concept_id INT) returns VARCHAR(1000) 
+DETERMINISTIC
+READS SQL DATA
     BEGIN
         DECLARE guid VARCHAR(1000);
         SELECT tc.guid
@@ -40,6 +42,8 @@ CREATE FUNCTION get_taxa_guid(concept_id INT) returns VARCHAR(1000)
 -- concept_id: the input concept id
 DROP FUNCTION IF EXISTS get_taxa_canonical$$
 CREATE FUNCTION get_taxa_canonical(concept_id INT) returns VARCHAR(1000)
+DETERMINISTIC
+READS SQL DATA
     BEGIN
         DECLARE canonical VARCHAR(1000);
         SELECT tn.canonical
@@ -57,6 +61,8 @@ CREATE FUNCTION get_taxa_canonical(concept_id INT) returns VARCHAR(1000)
 -- concept_id: the input concept id
 DROP FUNCTION IF EXISTS get_type_status$$
 CREATE FUNCTION get_type_status(occurrence_id INT) returns VARCHAR(1000)
+DETERMINISTIC
+READS SQL DATA
     BEGIN
         DECLARE type_status VARCHAR(1000);
         SELECT typ.type_status
@@ -73,6 +79,8 @@ CREATE FUNCTION get_type_status(occurrence_id INT) returns VARCHAR(1000)
 -- concept_id: the input concept id
 DROP FUNCTION IF EXISTS get_identifier_type$$
 CREATE FUNCTION get_identifier_type(occurrence_id INT) returns VARCHAR(1000)
+DETERMINISTIC
+READS SQL DATA
     BEGIN
         DECLARE identifier_type VARCHAR(1000);
         SELECT lit.it_value
@@ -90,6 +98,8 @@ CREATE FUNCTION get_identifier_type(occurrence_id INT) returns VARCHAR(1000)
 -- concept_id: the input concept id
 DROP FUNCTION IF EXISTS get_identifier_name$$
 CREATE FUNCTION get_identifier_name(occurrence_id INT) returns VARCHAR(1000)
+DETERMINISTIC
+READS SQL DATA
     BEGIN
         DECLARE identifier_name VARCHAR(1000);
         SELECT idr.identifier
@@ -115,7 +125,7 @@ SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource
 'cell_id','centi_cell_id','tenmilli_cell_id',
 'year','month','occurrence_date','basis_of_record_id','basis_of_record','raw_basis_of_record',
 'type_status','identifier_type','identifier_value','identifier_name','identifier_date',
-'collector','taxonomic_issue','geospatial_issue','other_issue','created_date','modified_date'
+'collector','taxonomic_issue','geospatial_issue','other_issue','created_date','modified_date','point'
 UNION
 SELECT IFNULL(oc.id,''),IFNULL(oc.data_provider_id,''),IFNULL(dp.`name`,''),IFNULL(oc.data_resource_id,''),
 IFNULL(dr.`name`,''),IFNULL(oc.institution_code_id,''),IFNULL(ic.code,''),IFNULL(ic.`name`,''),
@@ -140,7 +150,8 @@ IFNULL(oc.basis_of_record,''),IFNULL(bor.description,''),IFNULL(ror.basis_of_rec
 IFNULL(get_type_status(oc.id),''),IFNULL(get_identifier_type(oc.id),''),IFNULL(get_identifier_name(oc.id),''),
 IFNULL(ror.identifier_name,''),IFNULL(DATE_FORMAT(ror.identification_date,'%Y-%m-%dT%H:%i:%sZ'),''),
 IFNULL(ror.collector_name,''),IFNULL(oc.taxonomic_issue,''),IFNULL(oc.geospatial_issue,''),
-IFNULL(oc.other_issue,''),IFNULL(DATE_FORMAT(ror.created,'%Y-%m-%dT%H:%i:%sZ'),''),IFNULL(DATE_FORMAT(ror.modified,'%Y-%m-%dT%H:%i:%sZ'),'')
+IFNULL(oc.other_issue,''),IFNULL(DATE_FORMAT(ror.created,'%Y-%m-%dT%H:%i:%sZ'),''),IFNULL(DATE_FORMAT(ror.modified,'%Y-%m-%dT%H:%i:%sZ'),''),
+CONCAT(CONCAT(round(oc.latitude *10000)/10000, '|'), round(oc.longitude *10000)/10000)
 FROM occurrence_record oc
 INNER JOIN raw_occurrence_record ror ON ror.id = oc.id
 INNER JOIN taxon_name tn ON tn.id = oc.taxon_name_id
@@ -152,7 +163,7 @@ INNER JOIN institution_code ic ON ic.id = oc.institution_code_id
 INNER JOIN collection_code cc ON cc.id = oc.collection_code_id
 INNER JOIN catalogue_number cn ON cn.id = oc.catalogue_number_id
 INNER JOIN basis_of_record bor ON bor.id = oc.basis_of_record
---WHERE oc.data_resource_id = 56
+WHERE oc.data_resource_id = 56
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
---INTO outfile '/data/bie-staging/biocache/occurrences.56.csv'
+-- INTO outfile '/data/bie-staging/biocache/occurrences.56.csv'
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'; -- ESCAPED BY '"';
