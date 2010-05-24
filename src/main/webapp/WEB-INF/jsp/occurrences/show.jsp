@@ -57,7 +57,7 @@
             <h1>Occurrence Details: ${occurrence.institutionCode} ${occurrence.collectionCode} ${occurrence.catalogueNumber}</h1>
             <div id="debug"></div>
             <div id="occurrenceDataset" class="occurrenceSection">
-                <h2>Datset</h2>
+                <h2>Dataset</h2>
                 <table class="occurrenceTable" id="datasetTable">
                     <alatag:occurrenceTableRow annotate="false" section="dataset" fieldCode="dataProvider" fieldName="Data Provider">${occurrence.dataProvider}</alatag:occurrenceTableRow>
                     <alatag:occurrenceTableRow annotate="false" section="dataset" fieldCode="dataResource" fieldName="Data Set">${occurrence.dataResource}</alatag:occurrenceTableRow>
