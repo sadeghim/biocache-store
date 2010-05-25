@@ -102,7 +102,7 @@
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
             <version>${spring.version}</version>
@@ -237,6 +237,12 @@
             <artifactId>jtwitter</artifactId>
             <version>1.2</version>
         </dependency>
+        <!-- GEOSERVER -->
+        <!-- <dependency>
+            <groupId>org.geoserver</groupId>
+            <artifactId>wfs</artifactId>
+            <version>2.1-SNAPSHOT</version>
+        </dependency> -->
     </dependencies>
     <repositories>
         <!-- ALA repository  -->

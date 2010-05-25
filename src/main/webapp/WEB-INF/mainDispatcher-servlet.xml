@@ -15,7 +15,7 @@
     <!-- read properties files for variables for jdbc, etc -->
 <!--    <context:property-placeholder location="classpath:biocache.properties"/>-->
     
-    <context:property-override location="classpath:biocache.properties"/>
+    <context:property-override location="classpath:biocache.properties" ignore-resource-not-found="true" ignore-unresolvable="true"/>
 
     <!--<context:spring-configured/>-->
 
