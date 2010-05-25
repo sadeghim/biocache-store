@@ -90,7 +90,7 @@
                 if (paramName != null && paramValue != null) {
                     if (paramName == 'sort') {
                         paramList.push(paramName + "=" +paramValue);
-                    } else if (paramName == 'dir' && !(sort == null || sort == 'taxon_name')) {
+                    } else if (paramName == 'dir' && !(sort == null || sort == 'score')) {
                         paramList.push(paramName + "=" +paramValue);
                     }
                 }
@@ -267,14 +267,14 @@
                                                 <li><c:set var="startYear" value="${fn:substring(fieldResult.label, 0, 4)}"/>
                                                     <a href="?${queryParam}&fq=${facetResult.fieldName}:[${fieldResult.label} TO ${dateRangeTo}]">${startYear} - ${startYear + 10}</a>
                                                     (<fmt:formatNumber value="${fieldResult.count}" pattern="#,###,###"/>)</li>
-                                                </c:when>
-                                                <c:when test="${fn:endsWith(fieldResult.label, 'before')}"><%-- skip --%></c:when>
-                                                <c:otherwise>
+                                            </c:when>
+                                            <c:when test="${fn:endsWith(fieldResult.label, 'before')}"><%-- skip --%></c:when>
+                                            <c:otherwise>
                                                 <li><a href="?${queryParam}&fq=${facetResult.fieldName}:${fieldResult.label}"><fmt:message key="${fieldResult.label}"/></a>
-                                                    (<fmt:formatNumber value="${fieldResult.count}" pattern="#,###,###"/>)</li>
-                                                </c:otherwise>
-                                            </c:choose> 
-                                        </c:forEach>
+                                                (<fmt:formatNumber value="${fieldResult.count}" pattern="#,###,###"/>)</li>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:forEach>
                                 </ul>
                             </div>
                         </c:if>
