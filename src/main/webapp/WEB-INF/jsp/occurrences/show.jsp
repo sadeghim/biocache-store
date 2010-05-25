@@ -86,36 +86,36 @@
                         <c:choose>
                             <c:when test="${!(fn:containsIgnoreCase(occurrence.taxonName, occurrence.rawTaxonName) || fn:containsIgnoreCase(occurrence.author, occurrence.rawAuthor))}">
                                 <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.rawTaxonName}"/> ${occurrence.rawAuthor}
-                                (interpreted as <a href="${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.taxonConceptLsid}">
+                                (interpreted as <a href="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.taxonConceptLsid}">
                                     <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</a>)
                             </c:when>
                             <c:otherwise>
-                                <a href="${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.taxonConceptLsid}"><alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</a>
+                                <a href="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.taxonConceptLsid}"><alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</a>
                             </c:otherwise>
                         </c:choose>
                     </alatag:occurrenceTableRow>
                     <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Taxon Rank">
                         <span style="text-transform: capitalize;">${occurrence.rank}</span>
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Kingdom" link="${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.kingdomLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Kingdom" link="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.kingdomLsid}">
                         ${occurrence.kingdom}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Phylum" link="${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.phylumLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Phylum" link="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.phylumLsid}">
                         ${occurrence.phylum}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Class" link="${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.classLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Class" link="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.classLsid}">
                         ${occurrence.clazz}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Order" link="${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.orderLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Order" link="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.orderLsid}">
                         ${occurrence.order}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Family" link="${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.familyLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Family" link="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.familyLsid}">
                         ${occurrence.family}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Genus" link="${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.genusLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Genus" link="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.genusLsid}">
                         ${occurrence.genus}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Species" link="${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.speciesLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Species" link="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.speciesLsid}">
                         ${occurrence.species}
                     </alatag:occurrenceTableRow>
                 </table>
