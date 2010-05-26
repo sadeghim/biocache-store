@@ -11,6 +11,7 @@
         <pattern>/query*</pattern>
         <pattern>/taxon*</pattern>
         <pattern>/annotation/*</pattern>
+        <pattern>/occurrences/json/*</pattern>
         <pattern>/index.jsp</pattern>
     </excludes>
 

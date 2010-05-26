@@ -80,7 +80,7 @@ public class AnnotationController {
 	private final static Logger logger = Logger.getLogger(AnnotationController.class);
 
 	/** Name of view for an empty search page */
-	private final String JSON = "annotation/annotationJson";
+	private final String JSON = "json/annotationJson";
 //    private final String XML_RDF = "annotation/annotationRdf";
 
 //    protected String annoteaServerUrl = "http://localhost/danno/annotea";

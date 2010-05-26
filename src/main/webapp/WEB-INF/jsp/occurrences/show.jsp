@@ -93,7 +93,7 @@
                                 <a href="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.taxonConceptLsid}"><alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</a>
                             </c:otherwise>
                         </c:choose>
-                    </alatag:occurrenceTableRow>
+                    </alatag:occurrenceTableRow> 
                     <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Taxon Rank">
                         <span style="text-transform: capitalize;">${occurrence.rank}</span>
                     </alatag:occurrenceTableRow>

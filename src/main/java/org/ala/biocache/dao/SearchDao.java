@@ -15,9 +15,11 @@
 
 package org.ala.biocache.dao;
 
+import java.util.List;
 import javax.servlet.ServletOutputStream;
 
 import org.ala.biocache.model.OccurrenceDTO;
+import org.ala.biocache.model.OccurrencePoint;
 import org.ala.biocache.model.SearchResultDTO;
 
 /**
@@ -61,4 +63,14 @@ public interface SearchDao {
      * @throws Exception
      */
 	int writeResultsToStream(String query, String[] filterQuery, ServletOutputStream out, int maxNoOfRecords) throws Exception;
+
+    /**
+     * Retrieve an OccurrencePoint (distinct list of points - lat-long to 4 decimal places) for a given search
+     *
+     * @param query
+     * @param filterQuery
+     * @return
+     * @throws Exception
+     */
+    List<OccurrencePoint> getFacetPoints(String query, String[] filterQuery) throws Exception;
 }

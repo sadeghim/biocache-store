@@ -24,6 +24,7 @@ import javax.servlet.ServletOutputStream;
 import org.ala.biocache.model.FacetResultDTO;
 import org.ala.biocache.model.FieldResultDTO;
 import org.ala.biocache.model.OccurrenceDTO;
+import org.ala.biocache.model.OccurrencePoint;
 import org.ala.biocache.model.SearchResultDTO;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -38,6 +39,7 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.stereotype.Component;
 import au.com.bytecode.opencsv.CSVWriter;
+import org.ala.biocache.model.OccurrencePoint.PointType;
 
 /**
  * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
@@ -47,6 +49,7 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 @Component
 public class SearchDaoImpl implements SearchDao {
+    public static final String POINT = "point";
     /** log4 j logger */
     private static final Logger logger = Logger.getLogger(SearchDaoImpl.class);
     /** SOLR home directory */
@@ -211,6 +214,58 @@ public class SearchDaoImpl implements SearchDao {
         }
 
         return oc;
+    }
+
+
+    @Override
+    public List<OccurrencePoint> getFacetPoints(String query, String[] filterQuery) throws Exception {
+        List<OccurrencePoint> points = new ArrayList<OccurrencePoint>(); // new OccurrencePoint(PointType.POINT);
+        String queryString = formatSearchQuery(query);
+        logger.info("search query: "+queryString);
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQueryType("standard");
+        solrQuery.setRows(0);
+        solrQuery.setFacet(true);
+        solrQuery.addFacetField(POINT);
+        solrQuery.setQuery(queryString);
+        solrQuery.setFacetMinCount(1);
+        solrQuery.setFacetLimit(MAX_DOWNLOAD_SIZE);  // unlimited = -1
+
+        QueryResponse qr = runSolrQuery(solrQuery, filterQuery, 1, 0, "score", "asc");
+        List<FacetField> facets = qr.getFacetFields();
+
+        if (facets != null) {
+            for (FacetField facet : facets) {
+                List<FacetField.Count> facetEntries = facet.getValues();
+                if (facet.getName().contains(POINT) && (facetEntries != null) && (facetEntries.size() > 0)) {
+
+                    for (FacetField.Count fcount : facetEntries) {
+                        //String msg = fcount.getName() + ": " + fcount.getCount();
+                        //logger.trace(fcount.getName() + ": " + fcount.getCount());
+                        OccurrencePoint point = new OccurrencePoint(PointType.POINT);
+                        point.setCount(fcount.getCount());
+                        String[] pointsDelimited = StringUtils.split(fcount.getName(),'|');
+                        List<Float> coords = new ArrayList<Float>();
+
+                        for (String coord : pointsDelimited) {
+                            try {
+                                Float decimalCoord = Float.parseFloat(coord);
+                                coords.add(decimalCoord);
+                            } catch (NumberFormatException numberFormatException) {
+                                logger.warn("Error parsing Float for Lat/Long: "+numberFormatException.getMessage(), numberFormatException);
+                            }
+                        }
+
+                        if (!coords.isEmpty()) {
+                            point.setCoordinates(coords);
+                            points.add(point);
+                        }
+                    }
+                }
+            }
+        }
+
+        return points;
     }
 
     /*
@@ -400,4 +455,5 @@ public class SearchDaoImpl implements SearchDao {
 
         return solrQuery;
     }
+
 }

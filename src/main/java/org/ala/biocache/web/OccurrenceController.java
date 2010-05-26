@@ -15,6 +15,7 @@
 
 package org.ala.biocache.web;
 
+import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.ala.biocache.model.SearchResultDTO;
 import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.OccurrenceDTO;
+import org.ala.biocache.model.OccurrencePoint;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -52,6 +54,8 @@ public class OccurrenceController {
 	private final String LIST = "occurrences/list";
 	/** Name of view for a single taxon */
 	private final String SHOW = "occurrences/show";
+    /** Name of view for a point GeoJSON service */
+	private final String POINTS_GEOJSON = "json/pointsGeoJson";
 	
 	protected String hostUrl = "http://localhost:8888/biocache-webapp";
 	
@@ -191,6 +195,27 @@ public class OccurrenceController {
         model.addAttribute("hostUrl", hostUrl);
 		return SHOW;
 	}
+
+    @RequestMapping(value = "/occurrences/json/points.geojson", method = RequestMethod.GET)
+	public String pointsGeoJson(
+            @RequestParam(value="q", required=true) String query,
+            @RequestParam(value="fq", required=false) String[] filterQuery,
+            @RequestParam(value="callback", required=false) String callback,
+            Model model,
+            HttpServletResponse response)
+            throws Exception {
+
+        if (callback != null && !callback.isEmpty()) {
+            response.setContentType("text/javascript");
+        } else {
+            response.setContentType("application/json");
+        }
+
+        List<OccurrencePoint> points = searchDAO.getFacetPoints(query, filterQuery);
+        model.addAttribute("points", points);
+
+        return POINTS_GEOJSON;
+    }
 
 	/**
 	 * @param hostUrl the hostUrl to set
