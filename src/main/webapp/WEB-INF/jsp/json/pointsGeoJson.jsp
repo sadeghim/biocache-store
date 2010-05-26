@@ -8,7 +8,7 @@
 <c:if test="${not empty param['callback']}">${param['callback']}(</c:if>
 <json:object prettyPrint="true">
     <json:property name="type" value="FeatureCollection"/>
-    <json:array name="featues" var="point" items="${points}">
+    <json:array name="features" var="point" items="${points}">
         <json:object>
             <json:property name="type" value="Feature"/>
             <json:object name="geometry">

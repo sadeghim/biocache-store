@@ -39,6 +39,7 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.stereotype.Component;
 import au.com.bytecode.opencsv.CSVWriter;
+import java.util.Collections;
 import org.ala.biocache.model.OccurrencePoint.PointType;
 
 /**
@@ -224,10 +225,10 @@ public class SearchDaoImpl implements SearchDao {
         logger.info("search query: "+queryString);
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQueryType("standard");
+        solrQuery.setQuery(queryString);
         solrQuery.setRows(0);
         solrQuery.setFacet(true);
         solrQuery.addFacetField(POINT);
-        solrQuery.setQuery(queryString);
         solrQuery.setFacetMinCount(1);
         solrQuery.setFacetLimit(MAX_DOWNLOAD_SIZE);  // unlimited = -1
 
@@ -240,8 +241,6 @@ public class SearchDaoImpl implements SearchDao {
                 if (facet.getName().contains(POINT) && (facetEntries != null) && (facetEntries.size() > 0)) {
 
                     for (FacetField.Count fcount : facetEntries) {
-                        //String msg = fcount.getName() + ": " + fcount.getCount();
-                        //logger.trace(fcount.getName() + ": " + fcount.getCount());
                         OccurrencePoint point = new OccurrencePoint(PointType.POINT);
                         point.setCount(fcount.getCount());
                         String[] pointsDelimited = StringUtils.split(fcount.getName(),'|');
@@ -257,6 +256,7 @@ public class SearchDaoImpl implements SearchDao {
                         }
 
                         if (!coords.isEmpty()) {
+                            Collections.reverse(coords); // must be long, lat order
                             point.setCoordinates(coords);
                             points.add(point);
                         }
