@@ -141,7 +141,7 @@ IFNULL(get_taxa_guid(oc.family_concept_id),''), IFNULL(get_taxa_canonical(oc.fam
 IFNULL(get_taxa_guid(oc.genus_concept_id),''), IFNULL(get_taxa_canonical(oc.genus_concept_id),''),
 IFNULL(get_taxa_guid(oc.species_concept_id),''), IFNULL(get_taxa_canonical(oc.species_concept_id),''),
 IFNULL(get_georegion_names(oc.id,0,2),'') as states,
-IFNULL(get_georegion_names(oc.id,2000,2000),'') as bio_geo_regions,
+IFNULL(get_georegion_names(oc.id,2000,3999),'') as bio_geo_regions,
 IFNULL(get_georegion_names(oc.id,3,11),'') as places,
 IFNULL(oc.latitude,''),IFNULL(oc.longitude,''),IFNULL(ror.lat_long_precision,''),
 IFNULL(CONCAT_WS(',', oc.latitude, oc.longitude),'') as lat_long,
