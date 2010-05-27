@@ -149,7 +149,7 @@ IFNULL(oc.cell_id,''),IFNULL(oc.centi_cell_id,''),IFNULL(oc.tenmilli_cell_id,'')
 CONCAT(CONCAT(round(oc.latitude *10)/10, ','), round(oc.longitude *10)/10),
 CONCAT(CONCAT(round(oc.latitude *100)/100, ','), round(oc.longitude *100)/100),
 CONCAT(CONCAT(round(oc.latitude *1000)/1000, ','), round(oc.longitude *1000)/1000),
-CONCAT(CONCAT(round(oc.latitude *10000)/10000, ','), round(oc.longitude *10000)/10000)
+CONCAT(CONCAT(round(oc.latitude *10000)/10000, ','), round(oc.longitude *10000)/10000),
 IFNULL(oc.`year`,''),IFNULL(oc.`month`,''),IFNULL(DATE_FORMAT(oc.occurrence_date,'%Y-%m-%dT%H:%i:%sZ'),''),
 IFNULL(oc.basis_of_record,''),IFNULL(bor.description,''),IFNULL(ror.basis_of_record,''),
 IFNULL(get_type_status(oc.id),''),IFNULL(get_identifier_type(oc.id),''),IFNULL(get_identifier_name(oc.id),''),
