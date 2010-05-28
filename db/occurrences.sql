@@ -168,7 +168,7 @@ INNER JOIN institution_code ic ON ic.id = oc.institution_code_id
 INNER JOIN collection_code cc ON cc.id = oc.collection_code_id
 INNER JOIN catalogue_number cn ON cn.id = oc.catalogue_number_id
 INNER JOIN basis_of_record bor ON bor.id = oc.basis_of_record
-WHERE oc.data_resource_id = 56
+--WHERE oc.data_resource_id = 56
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
 -- INTO outfile '/data/bie-staging/biocache/occurrences.56.csv'
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'; -- ESCAPED BY '"';
