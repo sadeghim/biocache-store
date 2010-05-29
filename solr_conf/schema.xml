@@ -530,6 +530,7 @@
    <field name="other_issue" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="created_date" type="tdate" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="modified_date" type="tdate" indexed="false" stored="true" multiValued="false" omitNorms="false" />
+   <field name="point-1" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="point-0.1" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="point-0.01" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="point-0.001" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
