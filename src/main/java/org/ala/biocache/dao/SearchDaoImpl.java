@@ -48,13 +48,13 @@ import org.ala.biocache.model.PointType;
  * @see org.ala.biocache.dao.SearchDao
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
-@Component
+@Component("searchDaoImpl")
 public class SearchDaoImpl implements SearchDao {
     public static final String POINT = "point-0.1";
     /** log4 j logger */
     private static final Logger logger = Logger.getLogger(SearchDaoImpl.class);
     /** SOLR home directory */
-    private static final String SOLR_HOME = "/data/solr/biocache";
+    protected  String solrHome;
     /** SOLR server instance */
     private EmbeddedSolrServer server;
     private Integer MAX_DOWNLOAD_SIZE = 1000000;
@@ -63,9 +63,9 @@ public class SearchDaoImpl implements SearchDao {
      * Initialise the SOLR server instance
      */
     protected void initSolrServer() {
-        if (this.server == null & SOLR_HOME != null) {
+        if (this.server == null & solrHome != null) {
             try {
-                System.setProperty("solr.solr.home", SOLR_HOME);
+                System.setProperty("solr.solr.home", solrHome);
                 CoreContainer.Initializer initializer = new CoreContainer.Initializer();
                 CoreContainer coreContainer = initializer.initialize();
                 server = new EmbeddedSolrServer(coreContainer, "");
@@ -456,6 +456,14 @@ public class SearchDaoImpl implements SearchDao {
 //        solrQuery.addHighlightField("commonName");
 
         return solrQuery;
+    }
+
+    public String getSolrHome() {
+        return solrHome;
+    }
+
+    public void setSolrHome(String solrHome) {
+        this.solrHome = solrHome;
     }
 
 }
