@@ -14,8 +14,88 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.query.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.simplemodal.js"></script>
+        <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
         <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8">
+        <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/basic.css" charset="utf-8">
+        <!--[if lt IE 7]>
+        <link type='text/css' href='${pageContext.request.contextPath}/static/css/basic_ie.css' rel='stylesheet' media='screen' />
+        <![endif]-->
         <script type="text/javascript">
+            /* Openlayers vars */
+            var lon = 133;
+            var lat = -27;
+            var zoom = 4;
+            var map, layer, myStyles, style;
+
+            /* Openlayers map */
+            function loadMap() {
+                map = new OpenLayers.Map('pointsMap');
+                layer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+                        "http://labs.metacarta.com/wms/vmap0",
+                        {layers: 'basic'} );
+                map.addLayer(layer);
+                map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
+
+                myStyles = new OpenLayers.StyleMap({
+                    "default": new OpenLayers.Style({
+                        pointRadius: 5, //"${'${count}'}", // sized according to count attribute
+                        fillColor: "${'${color}'}",//"#ffcc66",
+                        strokeColor: "${'${color}'}",
+                        fillOpacity: 0.8,
+                        strokeWidth: 1,
+                        graphicZIndex: 1
+                    })
+                });
+
+                style = new OpenLayers.Style();
+
+                var ruleLow = new OpenLayers.Rule({
+                  filter: new OpenLayers.Filter.Comparison({
+                      type: OpenLayers.Filter.Comparison.LESS_THAN,
+                      property: "count",
+                      value: 10
+                  }),
+                  symbolizer: {pointRadius: 5, fillColor: "#ffcc66",
+                               fillOpacity: 0.5, strokeColor: "#ff99#33"}
+                });
+
+                var ruleHigh = new OpenLayers.Rule({
+                  filter: new OpenLayers.Filter.Comparison({
+                      type: OpenLayers.Filter.Comparison.GREATER_THAN_OR_EQUAL_TO,
+                      property: "count",
+                      value: 10
+                  }),
+                  symbolizer: {pointRadius: 5, fillColor: "blue",
+                               fillOpacity: 0.4, strokeColor: "blue"}
+                });
+
+                var elseRule = new OpenLayers.Rule({
+                    elseFilter: true,
+                    symbolizer: {strokeColor: "#0000FF" }
+                });
+
+                style.addRules([ruleLow, ruleHigh, elseRule]);
+
+                var fqs = "&<c:if test="${not empty facetQuery}">fq=${fn:join(facetQuery, '&fq=')}</c:if>";
+
+                $.getJSON("http://localhost:8888/biocache-webapp/occurrences/json/points.geojson?q=${query}"+fqs+"&zoom=4&callback=?", function(data){
+                    //alert("getJson success... "+data.type);
+                    var geojson_format = new OpenLayers.Format.GeoJSON();
+                    var vector_layer = new OpenLayers.Layer.Vector("GeoJSON",{ styleMap: myStyles }); // new OpenLayers.StyleMap( { "default": style })
+                    vector_layer.addFeatures(geojson_format.read(data));
+                    map.addLayer(vector_layer);
+                });
+            }
+
+            function destroyMap() {
+                if (map != null) {
+                    //alert("destroying map");
+                    map.destroy();
+                    $("#pointsMap").html('');
+                }
+            }
+
             $(document).ready(function() {
                 var facetLinksSize = $("ul#subnavlist li").size();
                 
@@ -51,14 +131,22 @@
                 });
 
                 $("#searchHeader > button").button();
-                $("#searchHeader > button").click(function() {
+                $("#searchHeader > button#download").click(function() {
                     var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?q=${query}&fq=${fn:join(facetQuery, '&fq=')}";
                     //alert("URL is "+downloadUrl);
                     if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
                         window.location.replace(downloadUrl);
                     }
                 });
-            });
+
+                $('button#showMap').click(function (e) {
+                    $("#pointsMap").show();
+                    loadMap();
+                    $('#pointsMap').modal();
+                    
+                });
+
+           });
 
             /**
              * Catch sort drop-down and build GET URL manually
@@ -176,7 +264,8 @@
         <c:if test="${not empty searchResult && searchResult.totalRecords > 0}">
             <fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###" var="totalHits"/>
             <div id="searchHeader" >
-                <button title="Download all ${totalHits} results as XLS (tab-delimited) file">Download</button>
+                <button id="download" title="Download all ${totalHits} results as XLS (tab-delimited) file">Download</button>
+                <button id="showMap" title="Display a small map showing points for records">View as Map</button>
                 <h1>Occurrence Search Results</h1>
             </div>
             <div id="searchResults">
@@ -294,6 +383,8 @@
                 </c:if>
             </div>
             <!-- totalRecords = ${totalRecords} || lastPage = ${lastPage} -->
+            <div id="pointsMap">
+            </div>
         </c:if>
         <c:if test="${empty searchResult || searchResult.totalRecords == 0}">
             <h1>Occurrence Search Results</h1>

@@ -667,6 +667,13 @@ a.occurrenceLink {
     padding: 0 !important;
 }
 
+/* Openlayers map */
+
+div#pointsMap {
+    display: none;
+    height: 480px;
+    width: 580px;
+}
 /* Styling for Google-style Nav links */
 
 #searchNavBar {

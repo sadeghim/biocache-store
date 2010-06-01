@@ -1,0 +1,880 @@
+2010-05-20 12:22:43,697 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 12:22:43,697 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 12:22:43,697 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-20 12:22:43,706 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2010-05-20 12:22:43,706 - Do unicode file recognition:  false
+2010-05-20 12:22:43,706 - FileResourceLoader : adding path '.'
+2010-05-20 12:22:43,707 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-20 12:22:43,878 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-20 12:22:43,879 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-20 12:22:43,879 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-20 12:22:43,879 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-20 12:22:43,879 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-20 12:22:43,880 - Created '20' parsers.
+2010-05-20 12:22:43,880 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-20 12:22:43,881 - Velocimacro : Default library not found.
+2010-05-20 12:22:43,881 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-20 12:22:43,881 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-20 12:22:43,881 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-20 12:22:43,881 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-20 12:22:43,881 - ResourceManager : unable to find resource 'annotation.vm' in any resource loader.
+2010-05-20 12:38:21,658 - Log4JLogChute initialized using file 'velocity.log'
+2010-05-20 12:38:21,658 - Velocity not initialized yet. Calling init()...
+2010-05-20 12:38:21,658 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2010-05-20 12:38:21,658 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2010-05-20 12:38:21,658 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2010-05-20 12:38:21,659 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1099)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1077)
+	at org.apache.velocity.runtime.RuntimeSingleton.getTemplate(RuntimeSingleton.java:303)
+	at org.apache.velocity.app.Velocity.getTemplate(Velocity.java:503)
+	at org.ala.biocache.web.AnnotationController.saveAnnotation(AnnotationController.java:291)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.doInvokeMethod(HandlerMethodInvoker.java:710)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.invokeHandlerMethod(HandlerMethodInvoker.java:167)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:414)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:402)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:771)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:716)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:647)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:563)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:713)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:806)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:502)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1121)
+	at com.opensymphony.sitemesh.webapp.SiteMeshFilter.doFilter(SiteMeshFilter.java:65)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1112)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:363)
+	at org.mortbay.jetty.security.ConstraintsSecurityHandler.handle(ConstraintsSecurityHandler.java:220)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:181)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:822)
+	at org.mortbay.jetty.webapp.WebAppContext.handle(WebAppContext.java:305)
+	at org.mortbay.jetty.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:229)
+	at org.mortbay.jetty.handler.HandlerCollection.handle(HandlerCollection.java:113)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:324)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:550)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.content(HttpConnection.java:890)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:743)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:215)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:407)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:421)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:520)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:326)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:279)
+	... 47 more
+2010-05-20 12:38:21,660 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 12:38:21,660 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 12:38:21,661 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-20 12:38:21,661 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2010-05-20 12:38:21,661 - Do unicode file recognition:  false
+2010-05-20 12:38:21,661 - FileResourceLoader : adding path '.'
+2010-05-20 12:38:21,661 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-20 12:38:21,661 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-20 12:38:21,661 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-20 12:38:21,661 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-20 12:38:21,662 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-20 12:38:21,662 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-20 12:38:21,663 - Created '20' parsers.
+2010-05-20 12:38:21,663 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-20 12:38:21,663 - Velocimacro : Default library not found.
+2010-05-20 12:38:21,663 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-20 12:38:21,663 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-20 12:38:21,663 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-20 12:38:21,663 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-20 12:38:21,663 - ResourceManager : unable to find resource '/WEB-INF/classes/annotation.vm' in any resource loader.
+2010-05-20 12:41:09,983 - Log4JLogChute initialized using file 'velocity.log'
+2010-05-20 12:41:09,984 - Velocity not initialized yet. Calling init()...
+2010-05-20 12:41:09,984 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2010-05-20 12:41:09,984 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2010-05-20 12:41:09,984 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2010-05-20 12:41:09,985 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1099)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1077)
+	at org.apache.velocity.runtime.RuntimeSingleton.getTemplate(RuntimeSingleton.java:303)
+	at org.apache.velocity.app.Velocity.getTemplate(Velocity.java:503)
+	at org.ala.biocache.web.AnnotationController.saveAnnotation(AnnotationController.java:291)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.doInvokeMethod(HandlerMethodInvoker.java:710)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.invokeHandlerMethod(HandlerMethodInvoker.java:167)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:414)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:402)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:771)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:716)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:647)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:563)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:713)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:806)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:502)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1121)
+	at com.opensymphony.sitemesh.webapp.SiteMeshFilter.doFilter(SiteMeshFilter.java:65)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1112)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:363)
+	at org.mortbay.jetty.security.ConstraintsSecurityHandler.handle(ConstraintsSecurityHandler.java:220)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:181)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:822)
+	at org.mortbay.jetty.webapp.WebAppContext.handle(WebAppContext.java:305)
+	at org.mortbay.jetty.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:229)
+	at org.mortbay.jetty.handler.HandlerCollection.handle(HandlerCollection.java:113)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:324)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:550)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.content(HttpConnection.java:890)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:743)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:215)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:407)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:421)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:520)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:326)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:279)
+	... 47 more
+2010-05-20 12:41:09,987 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 12:41:09,987 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 12:41:09,987 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-20 12:41:09,987 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2010-05-20 12:41:09,987 - Do unicode file recognition:  false
+2010-05-20 12:41:09,987 - FileResourceLoader : adding path '.'
+2010-05-20 12:41:09,987 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-20 12:41:09,987 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-20 12:41:09,987 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-20 12:41:09,987 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-20 12:41:09,988 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-20 12:41:09,988 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-20 12:41:09,995 - Created '20' parsers.
+2010-05-20 12:41:09,995 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-20 12:41:09,995 - Velocimacro : Default library not found.
+2010-05-20 12:41:09,995 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-20 12:41:09,995 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-20 12:41:09,995 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-20 12:41:09,995 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-20 12:41:09,995 - ResourceManager : unable to find resource 'classpath:annotation.vm' in any resource loader.
+2010-05-20 13:25:51,556 - Log4JLogChute initialized using file 'velocity.log'
+2010-05-20 13:25:51,556 - Velocity not initialized yet. Calling init()...
+2010-05-20 13:25:51,556 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2010-05-20 13:25:51,556 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2010-05-20 13:25:51,556 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2010-05-20 13:25:51,557 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1099)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1077)
+	at org.apache.velocity.runtime.RuntimeSingleton.getTemplate(RuntimeSingleton.java:303)
+	at org.apache.velocity.app.Velocity.getTemplate(Velocity.java:503)
+	at org.ala.biocache.web.AnnotationController.saveAnnotation(AnnotationController.java:291)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.doInvokeMethod(HandlerMethodInvoker.java:710)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.invokeHandlerMethod(HandlerMethodInvoker.java:167)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:414)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:402)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:771)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:716)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:647)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:563)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:713)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:806)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:502)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1121)
+	at com.opensymphony.sitemesh.webapp.SiteMeshFilter.doFilter(SiteMeshFilter.java:65)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1112)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:363)
+	at org.mortbay.jetty.security.ConstraintsSecurityHandler.handle(ConstraintsSecurityHandler.java:220)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:181)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:822)
+	at org.mortbay.jetty.webapp.WebAppContext.handle(WebAppContext.java:305)
+	at org.mortbay.jetty.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:229)
+	at org.mortbay.jetty.handler.HandlerCollection.handle(HandlerCollection.java:113)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:324)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:550)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.content(HttpConnection.java:890)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:743)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:215)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:407)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:421)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:520)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:326)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:279)
+	... 47 more
+2010-05-20 13:25:51,558 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 13:25:51,558 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 13:25:51,558 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-20 13:25:51,558 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2010-05-20 13:25:51,558 - Do unicode file recognition:  false
+2010-05-20 13:25:51,558 - FileResourceLoader : adding path '.'
+2010-05-20 13:25:51,558 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-20 13:25:51,559 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-20 13:25:51,559 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-20 13:25:51,559 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-20 13:25:51,559 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-20 13:25:51,559 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-20 13:25:51,562 - Created '20' parsers.
+2010-05-20 13:25:51,562 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-20 13:25:51,563 - Velocimacro : Default library not found.
+2010-05-20 13:25:51,563 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-20 13:25:51,563 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-20 13:25:51,563 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-20 13:25:51,563 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-20 13:25:51,563 - ResourceManager : unable to find resource 'classpath:annotation.vm' in any resource loader.
+2010-05-20 13:27:32,958 - Log4JLogChute initialized using file 'velocity.log'
+2010-05-20 13:27:32,958 - Velocity not initialized yet. Calling init()...
+2010-05-20 13:27:32,958 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2010-05-20 13:27:32,958 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2010-05-20 13:27:32,958 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2010-05-20 13:27:32,959 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1099)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1077)
+	at org.apache.velocity.runtime.RuntimeSingleton.getTemplate(RuntimeSingleton.java:303)
+	at org.apache.velocity.app.Velocity.getTemplate(Velocity.java:503)
+	at org.ala.biocache.web.AnnotationController.saveAnnotation(AnnotationController.java:291)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.doInvokeMethod(HandlerMethodInvoker.java:710)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.invokeHandlerMethod(HandlerMethodInvoker.java:167)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:414)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:402)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:771)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:716)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:647)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:563)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:713)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:806)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:502)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1121)
+	at com.opensymphony.sitemesh.webapp.SiteMeshFilter.doFilter(SiteMeshFilter.java:65)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1112)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:363)
+	at org.mortbay.jetty.security.ConstraintsSecurityHandler.handle(ConstraintsSecurityHandler.java:220)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:181)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:822)
+	at org.mortbay.jetty.webapp.WebAppContext.handle(WebAppContext.java:305)
+	at org.mortbay.jetty.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:229)
+	at org.mortbay.jetty.handler.HandlerCollection.handle(HandlerCollection.java:113)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:324)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:550)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.content(HttpConnection.java:890)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:743)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:215)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:407)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:421)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:520)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:326)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:279)
+	... 47 more
+2010-05-20 13:27:32,960 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 13:27:32,960 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 13:27:32,960 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-20 13:27:32,960 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2010-05-20 13:27:32,960 - Do unicode file recognition:  false
+2010-05-20 13:27:32,960 - FileResourceLoader : adding path '.'
+2010-05-20 13:27:32,960 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-20 13:27:32,961 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-20 13:27:32,961 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-20 13:27:32,961 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-20 13:27:32,961 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-20 13:27:32,961 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-20 13:27:32,962 - Created '20' parsers.
+2010-05-20 13:27:32,962 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-20 13:27:32,962 - Velocimacro : Default library not found.
+2010-05-20 13:27:32,962 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-20 13:27:32,962 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-20 13:27:32,962 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-20 13:27:32,962 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-20 13:27:32,962 - ResourceManager : unable to find resource 'annotation.vm' in any resource loader.
+2010-05-20 13:38:01,165 - Log4JLogChute initialized using file 'velocity.log'
+2010-05-20 13:38:01,165 - Velocity not initialized yet. Calling init()...
+2010-05-20 13:38:01,166 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2010-05-20 13:38:01,166 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2010-05-20 13:38:01,166 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2010-05-20 13:38:01,166 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1099)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1077)
+	at org.apache.velocity.runtime.RuntimeSingleton.getTemplate(RuntimeSingleton.java:303)
+	at org.apache.velocity.app.Velocity.getTemplate(Velocity.java:503)
+	at org.ala.biocache.web.AnnotationController.saveAnnotation(AnnotationController.java:291)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.doInvokeMethod(HandlerMethodInvoker.java:710)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.invokeHandlerMethod(HandlerMethodInvoker.java:167)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:414)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:402)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:771)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:716)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:647)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:563)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:713)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:806)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:502)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1121)
+	at com.opensymphony.sitemesh.webapp.SiteMeshFilter.doFilter(SiteMeshFilter.java:65)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1112)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:363)
+	at org.mortbay.jetty.security.ConstraintsSecurityHandler.handle(ConstraintsSecurityHandler.java:220)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:181)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:822)
+	at org.mortbay.jetty.webapp.WebAppContext.handle(WebAppContext.java:305)
+	at org.mortbay.jetty.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:229)
+	at org.mortbay.jetty.handler.HandlerCollection.handle(HandlerCollection.java:113)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:324)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:550)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.content(HttpConnection.java:890)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:743)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:215)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:407)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:421)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:520)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:326)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:279)
+	... 47 more
+2010-05-20 13:38:01,168 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 13:38:01,168 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 13:38:01,168 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-20 13:38:01,168 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2010-05-20 13:38:01,168 - Do unicode file recognition:  false
+2010-05-20 13:38:01,168 - FileResourceLoader : adding path '.'
+2010-05-20 13:38:01,168 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-20 13:38:01,168 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-20 13:38:01,168 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-20 13:38:01,168 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-20 13:38:01,168 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-20 13:38:01,169 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-20 13:38:01,170 - Created '20' parsers.
+2010-05-20 13:38:01,170 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-20 13:38:01,170 - Velocimacro : Default library not found.
+2010-05-20 13:38:01,170 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-20 13:38:01,170 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-20 13:38:01,170 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-20 13:38:01,170 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-20 13:38:01,170 - ResourceManager : unable to find resource 'annotation.vm' in any resource loader.
+2010-05-20 13:42:33,425 - Log4JLogChute initialized using file 'velocity.log'
+2010-05-20 13:42:33,425 - Velocity not initialized yet. Calling init()...
+2010-05-20 13:42:33,425 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2010-05-20 13:42:33,425 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2010-05-20 13:42:33,425 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2010-05-20 13:42:33,426 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1099)
+	at org.apache.velocity.runtime.RuntimeInstance.getTemplate(RuntimeInstance.java:1077)
+	at org.apache.velocity.runtime.RuntimeSingleton.getTemplate(RuntimeSingleton.java:303)
+	at org.apache.velocity.app.Velocity.getTemplate(Velocity.java:503)
+	at org.ala.biocache.web.AnnotationController.saveAnnotation(AnnotationController.java:291)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.doInvokeMethod(HandlerMethodInvoker.java:710)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.invokeHandlerMethod(HandlerMethodInvoker.java:167)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:414)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:402)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:771)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:716)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:647)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:563)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:713)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:806)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:502)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1121)
+	at com.opensymphony.sitemesh.webapp.SiteMeshFilter.doFilter(SiteMeshFilter.java:65)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1112)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:363)
+	at org.mortbay.jetty.security.ConstraintsSecurityHandler.handle(ConstraintsSecurityHandler.java:220)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:181)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:822)
+	at org.mortbay.jetty.webapp.WebAppContext.handle(WebAppContext.java:305)
+	at org.mortbay.jetty.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:229)
+	at org.mortbay.jetty.handler.HandlerCollection.handle(HandlerCollection.java:113)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:324)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:550)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.content(HttpConnection.java:890)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:743)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:215)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:407)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:421)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:520)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:326)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:279)
+	... 47 more
+2010-05-20 13:42:33,429 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 13:42:33,429 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-20 13:42:33,429 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-20 13:42:33,429 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.FileResourceLoader
+2010-05-20 13:42:33,430 - Do unicode file recognition:  false
+2010-05-20 13:42:33,430 - FileResourceLoader : adding path '.'
+2010-05-20 13:42:33,430 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-20 13:42:33,430 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-20 13:42:33,430 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-20 13:42:33,430 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-20 13:42:33,430 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-20 13:42:33,430 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-20 13:42:33,432 - Created '20' parsers.
+2010-05-20 13:42:33,432 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-20 13:42:33,432 - Velocimacro : Default library not found.
+2010-05-20 13:42:33,432 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-20 13:42:33,432 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-20 13:42:33,432 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-20 13:42:33,432 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-20 13:42:33,433 - ResourceManager : unable to find resource 'annotation.vm' in any resource loader.
+2010-05-21 12:17:22,360 - Log4JLogChute initialized using file 'velocity.log'
+2010-05-21 12:17:22,383 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2010-05-21 12:17:22,383 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2010-05-21 12:17:22,383 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2010-05-21 12:17:22,384 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeSingleton.init(RuntimeSingleton.java:113)
+	at org.apache.velocity.app.Velocity.init(Velocity.java:83)
+	at org.ala.biocache.web.AnnotationController.saveAnnotation(AnnotationController.java:288)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.doInvokeMethod(HandlerMethodInvoker.java:710)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.invokeHandlerMethod(HandlerMethodInvoker.java:167)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:414)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:402)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:771)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:716)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:647)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:563)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:713)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:806)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:502)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1121)
+	at com.opensymphony.sitemesh.webapp.SiteMeshFilter.doFilter(SiteMeshFilter.java:65)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1112)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:363)
+	at org.mortbay.jetty.security.ConstraintsSecurityHandler.handle(ConstraintsSecurityHandler.java:220)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:181)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:822)
+	at org.mortbay.jetty.webapp.WebAppContext.handle(WebAppContext.java:305)
+	at org.mortbay.jetty.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:229)
+	at org.mortbay.jetty.handler.HandlerCollection.handle(HandlerCollection.java:113)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:324)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:550)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.content(HttpConnection.java:890)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:743)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:215)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:407)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:421)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:520)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:326)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:279)
+	... 45 more
+2010-05-21 12:17:22,397 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-21 12:17:22,397 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-21 12:17:22,399 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-21 12:17:22,401 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 12:17:22,408 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-21 12:17:22,409 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-21 12:17:22,410 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-21 12:17:22,411 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-21 12:17:22,413 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-21 12:17:22,413 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-21 12:17:22,439 - Created '20' parsers.
+2010-05-21 12:17:22,444 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-21 12:17:22,445 - Velocimacro : Default library not found.
+2010-05-21 12:17:22,445 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-21 12:17:22,445 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-21 12:17:22,445 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-21 12:17:22,445 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-21 12:17:22,477 - ResourceManager : found annotation.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 12:17:22,479 - Null reference [template 'annotation.vm', line 21, column 22] : ${xpath} cannot be resolved.
+2010-05-21 12:23:03,781 - ResourceManager : found annotation.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 12:23:03,802 - Null reference [template 'annotation.vm', line 21, column 22] : ${xpath} cannot be resolved.
+2010-05-21 12:39:34,682 - ResourceManager : found annotation.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 12:39:34,705 - Null reference [template 'annotation.vm', line 21, column 22] : ${xpath} cannot be resolved.
+2010-05-21 13:47:03,778 - ResourceManager : found annotation.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 13:47:03,802 - Null reference [template 'annotation.vm', line 21, column 22] : ${xpath} cannot be resolved.
+2010-05-21 15:39:44,151 - Log4JLogChute initialized using file 'velocity.log'
+2010-05-21 15:39:44,218 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2010-05-21 15:39:44,218 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2010-05-21 15:39:44,218 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2010-05-21 15:39:44,220 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeSingleton.init(RuntimeSingleton.java:113)
+	at org.apache.velocity.app.Velocity.init(Velocity.java:83)
+	at org.ala.biocache.web.AnnotationController.saveAnnotation(AnnotationController.java:288)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.doInvokeMethod(HandlerMethodInvoker.java:710)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.invokeHandlerMethod(HandlerMethodInvoker.java:167)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:414)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:402)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:771)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:716)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:647)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:563)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:713)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:806)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:502)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1121)
+	at com.opensymphony.sitemesh.webapp.SiteMeshFilter.doFilter(SiteMeshFilter.java:65)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1112)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:363)
+	at org.mortbay.jetty.security.ConstraintsSecurityHandler.handle(ConstraintsSecurityHandler.java:220)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:181)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:822)
+	at org.mortbay.jetty.webapp.WebAppContext.handle(WebAppContext.java:305)
+	at org.mortbay.jetty.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:229)
+	at org.mortbay.jetty.handler.HandlerCollection.handle(HandlerCollection.java:113)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:324)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:550)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.content(HttpConnection.java:890)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:743)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:215)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:407)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:421)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:520)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:326)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:279)
+	... 45 more
+2010-05-21 15:39:44,221 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-21 15:39:44,221 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-21 15:39:44,224 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-21 15:39:44,226 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 15:39:44,234 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-21 15:39:44,235 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-21 15:39:44,236 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-21 15:39:44,237 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-21 15:39:44,238 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-21 15:39:44,239 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-21 15:39:44,263 - Created '20' parsers.
+2010-05-21 15:39:44,269 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-21 15:39:44,270 - Velocimacro : Default library not found.
+2010-05-21 15:39:44,270 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-21 15:39:44,270 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-21 15:39:44,270 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-21 15:39:44,270 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-21 15:39:44,305 - ResourceManager : found annotation.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 15:39:44,308 - Null reference [template 'annotation.vm', line 21, column 22] : ${xpath} cannot be resolved.
+2010-05-21 16:33:44,928 - Log4JLogChute initialized using file 'velocity.log'
+2010-05-21 16:33:44,941 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2010-05-21 16:33:44,941 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2010-05-21 16:33:44,941 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2010-05-21 16:33:44,942 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeSingleton.init(RuntimeSingleton.java:113)
+	at org.apache.velocity.app.Velocity.init(Velocity.java:83)
+	at org.ala.biocache.web.AnnotationController.saveAnnotation(AnnotationController.java:288)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.doInvokeMethod(HandlerMethodInvoker.java:710)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.invokeHandlerMethod(HandlerMethodInvoker.java:167)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:414)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:402)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:771)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:716)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:647)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:563)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:713)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:806)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:502)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1121)
+	at com.opensymphony.sitemesh.webapp.SiteMeshFilter.doFilter(SiteMeshFilter.java:65)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1112)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:363)
+	at org.mortbay.jetty.security.ConstraintsSecurityHandler.handle(ConstraintsSecurityHandler.java:220)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:181)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:822)
+	at org.mortbay.jetty.webapp.WebAppContext.handle(WebAppContext.java:305)
+	at org.mortbay.jetty.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:229)
+	at org.mortbay.jetty.handler.HandlerCollection.handle(HandlerCollection.java:113)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:324)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:550)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.content(HttpConnection.java:890)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:743)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:215)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:407)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:421)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:520)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:326)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:279)
+	... 45 more
+2010-05-21 16:33:44,943 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-21 16:33:44,943 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-21 16:33:44,946 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-21 16:33:44,947 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 16:33:44,954 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-21 16:33:44,956 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-21 16:33:44,957 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-21 16:33:44,958 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-21 16:33:44,959 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-21 16:33:44,960 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-21 16:33:44,985 - Created '20' parsers.
+2010-05-21 16:33:44,991 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-21 16:33:44,992 - Velocimacro : Default library not found.
+2010-05-21 16:33:44,992 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-21 16:33:44,992 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-21 16:33:44,992 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-21 16:33:44,992 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-21 16:33:45,027 - ResourceManager : found annotation.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 16:33:45,030 - Null reference [template 'annotation.vm', line 21, column 22] : ${xpath} cannot be resolved.
+2010-05-21 17:25:22,210 - Log4JLogChute initialized using file 'velocity.log'
+2010-05-21 17:25:22,211 - Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+2010-05-21 17:25:22,211 - Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+2010-05-21 17:25:22,211 - Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+2010-05-21 17:25:22,211 - Couldn't find class org.apache.velocity.runtime.log.AvalonLogChute or necessary supporting classes in classpath.
+java.lang.NoClassDefFoundError: org/apache/log/format/Formatter
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:247)
+	at org.apache.velocity.util.ClassUtils.getClass(ClassUtils.java:63)
+	at org.apache.velocity.util.ClassUtils.getNewInstance(ClassUtils.java:95)
+	at org.apache.velocity.runtime.log.LogManager.createLogChute(LogManager.java:147)
+	at org.apache.velocity.runtime.log.LogManager.updateLog(LogManager.java:208)
+	at org.apache.velocity.runtime.RuntimeInstance.initializeLog(RuntimeInstance.java:728)
+	at org.apache.velocity.runtime.RuntimeInstance.init(RuntimeInstance.java:240)
+	at org.apache.velocity.runtime.RuntimeSingleton.init(RuntimeSingleton.java:113)
+	at org.apache.velocity.app.Velocity.init(Velocity.java:83)
+	at org.ala.biocache.web.AnnotationController.saveAnnotation(AnnotationController.java:288)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.doInvokeMethod(HandlerMethodInvoker.java:710)
+	at org.springframework.web.bind.annotation.support.HandlerMethodInvoker.invokeHandlerMethod(HandlerMethodInvoker.java:167)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.invokeHandlerMethod(AnnotationMethodHandlerAdapter.java:414)
+	at org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter.handle(AnnotationMethodHandlerAdapter.java:402)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:771)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:716)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:647)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:563)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:713)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:806)
+	at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:502)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1121)
+	at com.opensymphony.sitemesh.webapp.SiteMeshFilter.doFilter(SiteMeshFilter.java:65)
+	at org.mortbay.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1112)
+	at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:363)
+	at org.mortbay.jetty.security.ConstraintsSecurityHandler.handle(ConstraintsSecurityHandler.java:220)
+	at org.mortbay.jetty.servlet.SessionHandler.handle(SessionHandler.java:181)
+	at org.mortbay.jetty.handler.ContextHandler.handle(ContextHandler.java:822)
+	at org.mortbay.jetty.webapp.WebAppContext.handle(WebAppContext.java:305)
+	at org.mortbay.jetty.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:229)
+	at org.mortbay.jetty.handler.HandlerCollection.handle(HandlerCollection.java:113)
+	at org.mortbay.jetty.handler.HandlerWrapper.handle(HandlerWrapper.java:152)
+	at org.mortbay.jetty.Server.handle(Server.java:324)
+	at org.mortbay.jetty.HttpConnection.handleRequest(HttpConnection.java:550)
+	at org.mortbay.jetty.HttpConnection$RequestHandler.content(HttpConnection.java:890)
+	at org.mortbay.jetty.HttpParser.parseNext(HttpParser.java:743)
+	at org.mortbay.jetty.HttpParser.parseAvailable(HttpParser.java:215)
+	at org.mortbay.jetty.HttpConnection.handle(HttpConnection.java:407)
+	at org.mortbay.io.nio.SelectChannelEndPoint.run(SelectChannelEndPoint.java:421)
+	at org.mortbay.thread.QueuedThreadPool$PoolThread.run(QueuedThreadPool.java:520)
+Caused by: java.lang.ClassNotFoundException: org.apache.log.format.Formatter
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:307)
+	at org.codehaus.classworlds.RealmClassLoader.loadClassDirect(RealmClassLoader.java:195)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:255)
+	at org.codehaus.classworlds.DefaultClassRealm.loadClass(DefaultClassRealm.java:274)
+	at org.codehaus.classworlds.RealmClassLoader.loadClass(RealmClassLoader.java:214)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:248)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:326)
+	at org.mortbay.jetty.webapp.WebAppClassLoader.loadClass(WebAppClassLoader.java:279)
+	... 45 more
+2010-05-21 17:25:22,213 - Trying to use logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-21 17:25:22,213 - Using logger class org.apache.velocity.runtime.log.Log4JLogChute
+2010-05-21 17:25:22,215 - Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+2010-05-21 17:25:22,217 - ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 17:25:22,224 - ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+2010-05-21 17:25:22,225 - Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+2010-05-21 17:25:22,226 - Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+2010-05-21 17:25:22,227 - Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+2010-05-21 17:25:22,228 - Loaded System Directive: org.apache.velocity.runtime.directive.Include
+2010-05-21 17:25:22,229 - Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+2010-05-21 17:25:22,253 - Created '20' parsers.
+2010-05-21 17:25:22,258 - Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+2010-05-21 17:25:22,259 - Velocimacro : Default library not found.
+2010-05-21 17:25:22,259 - Velocimacro : allowInline = true : VMs can be defined inline in templates
+2010-05-21 17:25:22,259 - Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+2010-05-21 17:25:22,259 - Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+2010-05-21 17:25:22,259 - Velocimacro : autoload off : VM system will not automatically reload global library macros
+2010-05-21 17:25:22,296 - ResourceManager : found annotation.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+2010-05-21 17:25:22,299 - Null reference [template 'annotation.vm', line 21, column 22] : ${xpath} cannot be resolved.

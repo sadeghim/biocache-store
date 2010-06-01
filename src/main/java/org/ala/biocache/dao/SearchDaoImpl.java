@@ -40,7 +40,7 @@ import org.apache.solr.core.CoreContainer;
 import org.springframework.stereotype.Component;
 import au.com.bytecode.opencsv.CSVWriter;
 import java.util.Collections;
-import org.ala.biocache.model.OccurrencePoint.PointType;
+import org.ala.biocache.model.PointType;
 
 /**
  * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
@@ -50,7 +50,7 @@ import org.ala.biocache.model.OccurrencePoint.PointType;
  */
 @Component
 public class SearchDaoImpl implements SearchDao {
-    public static final String POINT = "point";
+    public static final String POINT = "point-0.1";
     /** log4 j logger */
     private static final Logger logger = Logger.getLogger(SearchDaoImpl.class);
     /** SOLR home directory */
@@ -217,9 +217,11 @@ public class SearchDaoImpl implements SearchDao {
         return oc;
     }
 
-
+    /**
+     * @see org.ala.biocache.dao.SearchDao#getFacetPoints(java.lang.String, java.lang.String[], PointType pointType)
+     */
     @Override
-    public List<OccurrencePoint> getFacetPoints(String query, String[] filterQuery) throws Exception {
+    public List<OccurrencePoint> getFacetPoints(String query, String[] filterQuery, PointType pointType) throws Exception {
         List<OccurrencePoint> points = new ArrayList<OccurrencePoint>(); // new OccurrencePoint(PointType.POINT);
         String queryString = formatSearchQuery(query);
         logger.info("search query: "+queryString);
@@ -228,7 +230,7 @@ public class SearchDaoImpl implements SearchDao {
         solrQuery.setQuery(queryString);
         solrQuery.setRows(0);
         solrQuery.setFacet(true);
-        solrQuery.addFacetField(POINT);
+        solrQuery.addFacetField(pointType.getLabel());
         solrQuery.setFacetMinCount(1);
         solrQuery.setFacetLimit(MAX_DOWNLOAD_SIZE);  // unlimited = -1
 
@@ -238,12 +240,12 @@ public class SearchDaoImpl implements SearchDao {
         if (facets != null) {
             for (FacetField facet : facets) {
                 List<FacetField.Count> facetEntries = facet.getValues();
-                if (facet.getName().contains(POINT) && (facetEntries != null) && (facetEntries.size() > 0)) {
+                if (facet.getName().contains(pointType.getLabel()) && (facetEntries != null) && (facetEntries.size() > 0)) {
 
                     for (FacetField.Count fcount : facetEntries) {
-                        OccurrencePoint point = new OccurrencePoint(PointType.POINT);
+                        OccurrencePoint point = new OccurrencePoint(pointType);
                         point.setCount(fcount.getCount());
-                        String[] pointsDelimited = StringUtils.split(fcount.getName(),'|');
+                        String[] pointsDelimited = StringUtils.split(fcount.getName(),',');
                         List<Float> coords = new ArrayList<Float>();
 
                         for (String coord : pointsDelimited) {

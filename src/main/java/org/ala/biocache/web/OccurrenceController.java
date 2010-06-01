@@ -24,6 +24,7 @@ import org.ala.biocache.model.SearchResultDTO;
 import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.OccurrencePoint;
+import org.ala.biocache.model.PointType;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -201,6 +202,7 @@ public class OccurrenceController {
             @RequestParam(value="q", required=true) String query,
             @RequestParam(value="fq", required=false) String[] filterQuery,
             @RequestParam(value="callback", required=false) String callback,
+            @RequestParam(value="zoom", required=false, defaultValue="0") Integer zoomLevel,
             Model model,
             HttpServletResponse response)
             throws Exception {
@@ -211,7 +213,30 @@ public class OccurrenceController {
             response.setContentType("application/json");
         }
 
-        List<OccurrencePoint> points = searchDAO.getFacetPoints(query, filterQuery);
+        PointType pointType = PointType.POINT_1;
+
+        // Map zoom levels to lat/long accuracy levels
+        if (zoomLevel != null) {
+            if (zoomLevel >= 0 && zoomLevel <= 6) {
+                // 0-6 levels
+                pointType = PointType.POINT_1;
+            } else if (zoomLevel > 6 && zoomLevel <= 8) {
+                // 6-7 levels
+                pointType = PointType.POINT_01;
+            } else if (zoomLevel > 8 && zoomLevel <= 10) {
+                // 8-9 levels
+                pointType = PointType.POINT_001;
+            } else if (zoomLevel > 10 && zoomLevel <= 12) {
+                // 10-12 levels
+                pointType = PointType.POINT_0001;
+            } else if (zoomLevel > 12 ) {
+                // 12-n levels
+                pointType = PointType.POINT_00001;
+            }
+        }
+
+        List<OccurrencePoint> points = searchDAO.getFacetPoints(query, filterQuery, pointType);
+        logger.debug("Points search for "+pointType.getLabel()+" - found: "+points.size());
         model.addAttribute("points", points);
 
         return POINTS_GEOJSON;

@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml" debug="true">
+  <head>
+    <link rel="stylesheet" href="http://trac.openlayers.org/browser/trunk/openlayers/theme/default/style.css?format=raw" type="text/css" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+    <script type="text/javascript">
+        var lon = 133;
+        var lat = -27;
+        var zoom = 4;
+        var map, layer;
+
+        function init() {
+            map = new OpenLayers.Map( 'map' );
+            layer = new OpenLayers.Layer.WMS( "OpenLayers WMS", 
+                    "http://labs.metacarta.com/wms/vmap0",
+                    {layers: 'basic'} );
+            map.addLayer(layer);
+            map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
+            
+            $.getJSON("http://localhost:8888/biocache-webapp/occurrences/json/points.geojson?q=acacia&callback=?",
+                function(data){
+                    //alert("getJson success... "+data.type);
+                    var geojson_format = new OpenLayers.Format.GeoJSON();
+                    var vector_layer = new OpenLayers.Layer.Vector(); 
+                    map.addLayer(vector_layer);
+                    vector_layer.addFeatures(geojson_format.read(data));
+                });
+        }
+    </script>
+  </head>
+  <body onload="init()">
+    <h1 id="title">GeoJSON Example</h1>
+    <div id="map" class="smallmap"></div>
+  </body>
+</html>

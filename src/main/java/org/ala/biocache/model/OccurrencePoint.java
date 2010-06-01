@@ -26,7 +26,7 @@ import java.util.List;
 public class OccurrencePoint {
     protected Long count = -1L;
     protected PointType type;
-    protected List<Float> coordinates = new ArrayList<Float>();
+    protected List<Float> coordinates = new ArrayList<Float>(); // long, lat order
 
     public OccurrencePoint() {}
 
@@ -61,24 +61,5 @@ public class OccurrencePoint {
 
     public void setType(PointType type) {
         this.type = type;
-    }
-
-    public enum PointType {
-        POINT ("point"),
-        OCCURRENCE("occurrence");
-
-        private String label;
-        PointType(String label) {
-            this.label = label;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public void setLabel(String label) {
-            this.label = label;
-        }
-        
     }
 }

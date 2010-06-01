@@ -20,6 +20,7 @@ import javax.servlet.ServletOutputStream;
 
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.OccurrencePoint;
+import org.ala.biocache.model.PointType;
 import org.ala.biocache.model.SearchResultDTO;
 
 /**
@@ -72,5 +73,5 @@ public interface SearchDao {
      * @return
      * @throws Exception
      */
-    List<OccurrencePoint> getFacetPoints(String query, String[] filterQuery) throws Exception;
+    List<OccurrencePoint> getFacetPoints(String query, String[] filterQuery, PointType pointType) throws Exception;
 }
