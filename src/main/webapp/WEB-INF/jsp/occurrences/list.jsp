@@ -31,11 +31,11 @@
             /* Openlayers map */
             function loadMap() {
                 map = new OpenLayers.Map('pointsMap');
-                layer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+                baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
                         "http://labs.metacarta.com/wms/vmap0",
                         {layers: 'basic'} );
-                map.addLayer(layer);
-                map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
+                //map.addLayer(baseLayer);
+                //map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
 
                 myStyles = new OpenLayers.StyleMap({
                     "default": new OpenLayers.Style({
@@ -48,16 +48,30 @@
                     })
                 });
                 
-                var fqs = "&<c:if test="${not empty facetQuery}">fq=${fn:join(facetQuery, '&fq=')}</c:if>";
+                var fqs = "<c:if test="${not empty facetQuery}">&fq=${fn:join(facetQuery, '&fq=')}</c:if>";
+                var geoJsonUrl = "http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/occurrences/json/cells.geojson"; //+"&zoom=4&callback=?";
+                //var params = "q=${query}&zoom=4";
+                var params = {
+                    q: "${query}",
+                    <c:forEach items="${facetQuery}" var="fq">fq: "${fq}",</c:forEach>
+                    zoom: 4
+                };
 
-                $.getJSON("http://localhost:8888/biocache-webapp/occurrences/json/cells.geojson?q=${query}"+fqs+"&zoom=4&callback=?", function(data){
-                    //alert("getJson success... "+data.type);
-                    var geojson_format = new OpenLayers.Format.GeoJSON();
-                    var vector_layer = new OpenLayers.Layer.Vector("GeoJSON",{ styleMap: myStyles }); // new OpenLayers.StyleMap( { "default": style })
-                    vector_layer.addFeatures(geojson_format.read(data));
-                    map.addLayer(vector_layer);
+                var vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
+                    //scales: map.getScales(8,10),
+                    styleMap: myStyles,
+                    strategies: [new OpenLayers.Strategy.BBOX()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
+                    protocol: new OpenLayers.Protocol.HTTP({
+                        url: geoJsonUrl,
+                        params: params,
+                        format: new OpenLayers.Format.GeoJSON()
+                    })
                 });
-            }
+                
+                map.addLayers([baseLayer,vectorLayer]);
+                map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
+                
+            } 
 
             function destroyMap() {
                 if (map != null) {

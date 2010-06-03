@@ -1,6 +1,6 @@
 <%@ include file="/common/taglibs.jsp"%><%
 /*
- * GeoJSON representation of "distinct" points for a given occurrence search
+ * GeoJSON representation of "distinct" points as polygons "cells" for a given occurrence search
  *
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
 */

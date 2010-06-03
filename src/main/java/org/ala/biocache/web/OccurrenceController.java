@@ -16,6 +16,7 @@
 package org.ala.biocache.web;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
@@ -28,6 +29,7 @@ import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.OccurrencePoint;
 import org.ala.biocache.model.PointType;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -207,6 +209,7 @@ public class OccurrenceController {
             @RequestParam(value="fq", required=false) String[] filterQuery,
             @RequestParam(value="callback", required=false) String callback,
             @RequestParam(value="zoom", required=false, defaultValue="0") Integer zoomLevel,
+            @RequestParam(value="bbox", required=false) String bbox,
             Model model,
             HttpServletResponse response)
             throws Exception {
@@ -217,29 +220,15 @@ public class OccurrenceController {
             response.setContentType("application/json");
         }
 
+        // Convert array to list so we append more values onto it
+        ArrayList<String> fqList = new ArrayList<String>(Arrays.asList(filterQuery));
+        bboxToQuery(bbox, fqList);
+
         PointType pointType = PointType.POINT_1;
+        pointType = getPointTypeForZoomLevel(zoomLevel);
 
-        // Map zoom levels to lat/long accuracy levels
-        if (zoomLevel != null) {
-            if (zoomLevel >= 0 && zoomLevel <= 6) {
-                // 0-6 levels
-                pointType = PointType.POINT_1;
-            } else if (zoomLevel > 6 && zoomLevel <= 8) {
-                // 6-7 levels
-                pointType = PointType.POINT_01;
-            } else if (zoomLevel > 8 && zoomLevel <= 10) {
-                // 8-9 levels
-                pointType = PointType.POINT_001;
-            } else if (zoomLevel > 10 && zoomLevel <= 12) {
-                // 10-12 levels
-                pointType = PointType.POINT_0001;
-            } else if (zoomLevel > 12 ) {
-                // 12-n levels
-                pointType = PointType.POINT_00001;
-            }
-        }
-
-        List<OccurrencePoint> points = searchDAO.getFacetPoints(query, filterQuery, pointType);
+        String[] newFilterQuery = (String[]) fqList.toArray (new String[fqList.size()]); // convert back to array
+        List<OccurrencePoint> points = searchDAO.getFacetPoints(query, newFilterQuery, pointType);
         logger.debug("Points search for "+pointType.getLabel()+" - found: "+points.size());
         model.addAttribute("points", points);
 
@@ -252,6 +241,7 @@ public class OccurrenceController {
             @RequestParam(value="fq", required=false) String[] filterQuery,
             @RequestParam(value="callback", required=false) String callback,
             @RequestParam(value="zoom", required=false, defaultValue="0") Integer zoomLevel,
+            @RequestParam(value="bbox", required=false) String bbox,
             Model model,
             HttpServletResponse response)
             throws Exception {
@@ -262,8 +252,32 @@ public class OccurrenceController {
             response.setContentType("application/json");
         }
 
-        PointType pointType = PointType.POINT_1;
+        // Convert array to list so we append more values onto it
+        ArrayList<String> fqList = new ArrayList<String>(Arrays.asList(filterQuery));
+        bboxToQuery(bbox, fqList);
 
+        PointType pointType = PointType.POINT_1;
+        pointType = getPointTypeForZoomLevel(zoomLevel);
+        
+        String[] newFilterQuery = (String[]) fqList.toArray (new String[fqList.size()]); // convert back to array
+        List<OccurrencePoint> points = searchDAO.getFacetPoints(query, newFilterQuery, pointType);
+
+        logger.debug("Cells search for "+pointType.getLabel()+" - found: "+points.size());
+        List<OccurrenceCell> cells = new ArrayList<OccurrenceCell>();
+
+        // Convert points to cells 
+        for (OccurrencePoint point : points) {
+            OccurrenceCell cell = new OccurrenceCell(point);
+            cells.add(cell);
+        }
+
+        model.addAttribute("cells", cells);
+
+        return CELLS_GEOJSON;
+    }
+
+    protected PointType getPointTypeForZoomLevel(Integer zoomLevel) {
+        PointType pointType = null;
         // Map zoom levels to lat/long accuracy levels
         if (zoomLevel != null) {
             if (zoomLevel >= 0 && zoomLevel <= 6) {
@@ -278,27 +292,27 @@ public class OccurrenceController {
             } else if (zoomLevel > 10 && zoomLevel <= 12) {
                 // 10-12 levels
                 pointType = PointType.POINT_0001;
-            } else if (zoomLevel > 12 ) {
+            } else if (zoomLevel > 12) {
                 // 12-n levels
                 pointType = PointType.POINT_00001;
             }
         }
+        return pointType;
+    }
 
-        List<OccurrencePoint> points = searchDAO.getFacetPoints(query, filterQuery, pointType);
-        logger.debug("Cells search for "+pointType.getLabel()+" - found: "+points.size());
-        List<OccurrenceCell> cells = new ArrayList<OccurrenceCell>();
-
-        for (OccurrencePoint point : points) {
-            //logger.debug("point => "+point);
-            OccurrenceCell cell = new OccurrenceCell(point);
-            //logger.debug("cell => "+cell);
-            //cell.createCellCoords();
-            cells.add(cell);
+    protected void bboxToQuery(String bbox, ArrayList<String> fqList) {
+        // e.g. bbox=122.013671875,-53.015625,172.990234375,-10.828125
+        if (bbox != null && !bbox.isEmpty()) {
+            String[] bounds = StringUtils.split(bbox, ",");
+            if (bounds.length == 4) {
+                String fq1 = "longitude:[" + bounds[0] + " TO " + bounds[2] + "]";
+                fqList.add(fq1);
+                String fq2 = "latitude:[" + bounds[1] + " TO " + bounds[3] + "]";
+                fqList.add(fq2);
+            } else {
+                logger.warn("BBOX does not contain the expected number of coords (4). Found: " + bounds.length);
+            }
         }
-
-        model.addAttribute("cells", cells);
-
-        return CELLS_GEOJSON;
     }
 
 	/**
