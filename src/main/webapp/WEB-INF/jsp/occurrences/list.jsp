@@ -26,7 +26,7 @@
             var lon = 133;
             var lat = -27;
             var zoom = 4;
-            var map, layer, myStyles;
+            var map, layer;
 
             /* Openlayers map */
             function loadMap() {
@@ -34,10 +34,8 @@
                 baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
                         "http://labs.metacarta.com/wms/vmap0",
                         {layers: 'basic'} );
-                //map.addLayer(baseLayer);
-                //map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
 
-                myStyles = new OpenLayers.StyleMap({
+                var myStyles = new OpenLayers.StyleMap({
                     "default": new OpenLayers.Style({
                         //pointRadius: 5, //"${'${count}'}", // sized according to count attribute
                         fillColor: "${'${color}'}",//"#ffcc66",
@@ -48,9 +46,7 @@
                     })
                 });
                 
-                var fqs = "<c:if test="${not empty facetQuery}">&fq=${fn:join(facetQuery, '&fq=')}</c:if>";
                 var geoJsonUrl = "http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/occurrences/json/cells.geojson"; //+"&zoom=4&callback=?";
-                //var params = "q=${query}&zoom=4";
                 var params = {
                     q: "${query}",
                     <c:forEach items="${facetQuery}" var="fq">fq: "${fq}",</c:forEach>
@@ -58,7 +54,6 @@
                 };
 
                 var vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
-                    //scales: map.getScales(8,10),
                     styleMap: myStyles,
                     strategies: [new OpenLayers.Strategy.BBOX()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
                     protocol: new OpenLayers.Protocol.HTTP({
