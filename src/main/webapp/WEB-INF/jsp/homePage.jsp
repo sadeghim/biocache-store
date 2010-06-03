@@ -5,13 +5,13 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="pageName" content="home"/>
-        <title>Welcome to the Atlas of Living Australia</title>
+        <title>Atlas of Living Australia - Biocache</title>
     </head>
     <body>
-        <p>Welcome to the Atlas of Living Australia <strong>Biodiversity Information Explorer</strong>.</p>
+        <p>Welcome to the Atlas of Living Australia <strong>Biocache</strong>.</p>
         
         <p>
-          This is an early release of this functionality for <strong>release 2 (March 17th)</strong>.
+          This is an early release of this functionality for <strong>release 3</strong>.
         </p>
         
         <p><a href="occurrences/search">Search for Occurrence</a></p>

@@ -15,6 +15,7 @@
 
 package org.ala.biocache.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ala.biocache.model.SearchResultDTO;
 import org.ala.biocache.dao.SearchDao;
+import org.ala.biocache.model.OccurrenceCell;
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.OccurrencePoint;
 import org.ala.biocache.model.PointType;
@@ -55,8 +57,10 @@ public class OccurrenceController {
 	private final String LIST = "occurrences/list";
 	/** Name of view for a single taxon */
 	private final String SHOW = "occurrences/show";
-    /** Name of view for a point GeoJSON service */
+    /** Name of view for points GeoJSON service */
 	private final String POINTS_GEOJSON = "json/pointsGeoJson";
+    /** Name of view for square cells GeoJSON service */
+	private final String CELLS_GEOJSON = "json/cellsGeoJson";
 	
 	protected String hostUrl = "http://localhost:8888/biocache-webapp";
 	
@@ -240,6 +244,61 @@ public class OccurrenceController {
         model.addAttribute("points", points);
 
         return POINTS_GEOJSON;
+    }
+
+    @RequestMapping(value = "/occurrences/json/cells.geojson", method = RequestMethod.GET)
+	public String cellsGeoJson(
+            @RequestParam(value="q", required=true) String query,
+            @RequestParam(value="fq", required=false) String[] filterQuery,
+            @RequestParam(value="callback", required=false) String callback,
+            @RequestParam(value="zoom", required=false, defaultValue="0") Integer zoomLevel,
+            Model model,
+            HttpServletResponse response)
+            throws Exception {
+
+        if (callback != null && !callback.isEmpty()) {
+            response.setContentType("text/javascript");
+        } else {
+            response.setContentType("application/json");
+        }
+
+        PointType pointType = PointType.POINT_1;
+
+        // Map zoom levels to lat/long accuracy levels
+        if (zoomLevel != null) {
+            if (zoomLevel >= 0 && zoomLevel <= 6) {
+                // 0-6 levels
+                pointType = PointType.POINT_1;
+            } else if (zoomLevel > 6 && zoomLevel <= 8) {
+                // 6-7 levels
+                pointType = PointType.POINT_01;
+            } else if (zoomLevel > 8 && zoomLevel <= 10) {
+                // 8-9 levels
+                pointType = PointType.POINT_001;
+            } else if (zoomLevel > 10 && zoomLevel <= 12) {
+                // 10-12 levels
+                pointType = PointType.POINT_0001;
+            } else if (zoomLevel > 12 ) {
+                // 12-n levels
+                pointType = PointType.POINT_00001;
+            }
+        }
+
+        List<OccurrencePoint> points = searchDAO.getFacetPoints(query, filterQuery, pointType);
+        logger.debug("Cells search for "+pointType.getLabel()+" - found: "+points.size());
+        List<OccurrenceCell> cells = new ArrayList<OccurrenceCell>();
+
+        for (OccurrencePoint point : points) {
+            //logger.debug("point => "+point);
+            OccurrenceCell cell = new OccurrenceCell(point);
+            //logger.debug("cell => "+cell);
+            //cell.createCellCoords();
+            cells.add(cell);
+        }
+
+        model.addAttribute("cells", cells);
+
+        return CELLS_GEOJSON;
     }
 
 	/**

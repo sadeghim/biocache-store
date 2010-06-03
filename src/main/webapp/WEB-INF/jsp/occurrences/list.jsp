@@ -26,7 +26,7 @@
             var lon = 133;
             var lat = -27;
             var zoom = 4;
-            var map, layer, myStyles, style;
+            var map, layer, myStyles;
 
             /* Openlayers map */
             function loadMap() {
@@ -39,47 +39,18 @@
 
                 myStyles = new OpenLayers.StyleMap({
                     "default": new OpenLayers.Style({
-                        pointRadius: 5, //"${'${count}'}", // sized according to count attribute
+                        //pointRadius: 5, //"${'${count}'}", // sized according to count attribute
                         fillColor: "${'${color}'}",//"#ffcc66",
                         strokeColor: "${'${color}'}",
-                        fillOpacity: 0.8,
-                        strokeWidth: 1,
+                        fillOpacity: 0.7,
+                        strokeWidth: 0,
                         graphicZIndex: 1
                     })
                 });
-
-                style = new OpenLayers.Style();
-
-                var ruleLow = new OpenLayers.Rule({
-                  filter: new OpenLayers.Filter.Comparison({
-                      type: OpenLayers.Filter.Comparison.LESS_THAN,
-                      property: "count",
-                      value: 10
-                  }),
-                  symbolizer: {pointRadius: 5, fillColor: "#ffcc66",
-                               fillOpacity: 0.5, strokeColor: "#ff99#33"}
-                });
-
-                var ruleHigh = new OpenLayers.Rule({
-                  filter: new OpenLayers.Filter.Comparison({
-                      type: OpenLayers.Filter.Comparison.GREATER_THAN_OR_EQUAL_TO,
-                      property: "count",
-                      value: 10
-                  }),
-                  symbolizer: {pointRadius: 5, fillColor: "blue",
-                               fillOpacity: 0.4, strokeColor: "blue"}
-                });
-
-                var elseRule = new OpenLayers.Rule({
-                    elseFilter: true,
-                    symbolizer: {strokeColor: "#0000FF" }
-                });
-
-                style.addRules([ruleLow, ruleHigh, elseRule]);
-
+                
                 var fqs = "&<c:if test="${not empty facetQuery}">fq=${fn:join(facetQuery, '&fq=')}</c:if>";
 
-                $.getJSON("http://localhost:8888/biocache-webapp/occurrences/json/points.geojson?q=${query}"+fqs+"&zoom=4&callback=?", function(data){
+                $.getJSON("http://localhost:8888/biocache-webapp/occurrences/json/cells.geojson?q=${query}"+fqs+"&zoom=4&callback=?", function(data){
                     //alert("getJson success... "+data.type);
                     var geojson_format = new OpenLayers.Format.GeoJSON();
                     var vector_layer = new OpenLayers.Layer.Vector("GeoJSON",{ styleMap: myStyles }); // new OpenLayers.StyleMap( { "default": style })
