@@ -403,6 +403,7 @@ p > a.showHideLink {
 }
 table#cellCountsLegend {
     margin: 0;
+    font-size: 11px;
     float: right;
     width: 100%;
 }
