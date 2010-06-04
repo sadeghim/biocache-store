@@ -26,16 +26,37 @@
             var lon = 133;
             var lat = -27;
             var zoom = 4;
-            var map, layer;
+            var map, vectorLayer;
 
             /* Openlayers map */
             function loadMap() {
-                map = new OpenLayers.Map('pointsMap');
+                map = new OpenLayers.Map('pointsMap',{numZoomLevels: 16,controls: []});
+                //add controls
+                map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled: false}));
+                map.addControl(new OpenLayers.Control.MousePosition());
+                map.addControl(new OpenLayers.Control.PanZoomBar({zoomWorldIcon: false}));
+                
                 baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
                         "http://labs.metacarta.com/wms/vmap0",
                         {layers: 'basic'} );
+                map.addLayer(baseLayer);
+                map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
+                // reload vector layer on zoom event
+                map.events.register('zoomend', map, function (e) {
+                    loadVectorLayer();
+                });
 
-                var myStyles = new OpenLayers.StyleMap({
+                //map.addLayers([baseLayer,vectorLayer]);
+                loadVectorLayer();
+                
+            }
+
+            function loadVectorLayer() {
+                if (vectorLayer != null) {
+                    vectorLayer.destroy();
+                }
+
+               var myStyles = new OpenLayers.StyleMap({
                     "default": new OpenLayers.Style({
                         //pointRadius: 5, //"${'${count}'}", // sized according to count attribute
                         fillColor: "${'${color}'}",//"#ffcc66",
@@ -47,13 +68,14 @@
                 });
                 
                 var geoJsonUrl = "http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/occurrences/json/cells.geojson"; //+"&zoom=4&callback=?";
+                var zoomLevel = map.getZoom();
                 var params = {
                     q: "${query}",
                     <c:forEach items="${facetQuery}" var="fq">fq: "${fq}",</c:forEach>
-                    zoom: 4
+                    zoom: zoomLevel
                 };
 
-                var vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
+                vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
                     styleMap: myStyles,
                     strategies: [new OpenLayers.Strategy.BBOX()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
                     protocol: new OpenLayers.Protocol.HTTP({
@@ -62,11 +84,10 @@
                         format: new OpenLayers.Format.GeoJSON()
                     })
                 });
-                
-                map.addLayers([baseLayer,vectorLayer]);
-                map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
-                
-            } 
+
+                map.addLayer(vectorLayer);
+                vectorLayer.refresh();
+            }
 
             function destroyMap() {
                 if (map != null) {
