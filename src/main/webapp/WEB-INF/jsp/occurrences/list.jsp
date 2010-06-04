@@ -33,9 +33,9 @@
                 map = new OpenLayers.Map('pointsMap',{numZoomLevels: 16,controls: []});
                 //add controls
                 map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled: false}));
-                map.addControl(new OpenLayers.Control.MousePosition());
+                //map.addControl(new OpenLayers.Control.MousePosition());
                 map.addControl(new OpenLayers.Control.PanZoomBar({zoomWorldIcon: false}));
-                
+                map.addControl(new OpenLayers.Control.Attribution());
                 baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
                         "http://labs.metacarta.com/wms/vmap0",
                         {layers: 'basic'} );
@@ -75,8 +75,11 @@
                     zoom: zoomLevel
                 };
 
+                var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Occurrences per cell:&nbsp;</td><td style="width:60px;background-color:#ffff00;">1&ndash;9</td><td style="width:60px;background-color:#ffcc00;">10&ndash;49</td><td style="width:60px;background-color:#ff9900;">50&ndash;99</td><td style="width:60px;background-color:#ff6600;">100&ndash;249</td><td style="width:60px;background-color:#ff3300;">250&ndash;499</td><td style="width:60px;background-color:#cc0000;">500+</td></tr></table>';
+
                 vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
                     styleMap: myStyles,
+                    attribution: legend,
                     strategies: [new OpenLayers.Strategy.BBOX()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
                     protocol: new OpenLayers.Protocol.HTTP({
                         url: geoJsonUrl,

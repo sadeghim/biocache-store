@@ -411,6 +411,7 @@ table#cellCountsLegend {
     border: none;
     color: #000;
     padding: 3px 2px;
+    opacity:.70;
 }
 table.rdfProperties {
     margin-bottom: 0;
@@ -890,3 +891,8 @@ em, dfn {
     font-size:inherit;
 }
 
+/*  OpenLayers overrides */
+
+div.olControlAttribution {
+    bottom: 3px !important;
+}
