@@ -26,7 +26,7 @@
                          test="${point.count >= 50 && point.count < 100}">#ff9900</c:if><c:if
                          test="${point.count >= 100 && point.count < 250}">#ff6600</c:if><c:if
                          test="${point.count >= 250 && point.count < 500}">#ff3300</c:if><c:if
-                         test="${point.count >= 500}">#ff9900</c:if></json:property>
+                         test="${point.count >= 500}">#cc0000</c:if></json:property>
             </json:object>
         </json:object>
     </json:array>

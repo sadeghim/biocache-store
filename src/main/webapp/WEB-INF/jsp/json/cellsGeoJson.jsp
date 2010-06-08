@@ -30,7 +30,7 @@
                          test="${cell.count >= 50 && cell.count < 100}">#ff9900</c:if><c:if
                          test="${cell.count >= 100 && cell.count < 250}">#ff6600</c:if><c:if
                          test="${cell.count >= 250 && cell.count < 500}">#ff3300</c:if><c:if
-                         test="${cell.count >= 500}">#ff9900</c:if></json:property>
+                         test="${cell.count >= 500}">#cc0000</c:if></json:property>
             </json:object>
         </json:object>
     </json:array>

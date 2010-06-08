@@ -26,7 +26,7 @@
             var lon = 133;
             var lat = -27;
             var zoom = 4;
-            var map, vectorLayer;
+            var map, vectorLayer, selectControl, selectFeature;
 
             /* Openlayers map */
             function loadMap() {
@@ -62,8 +62,7 @@
                         fillColor: "${'${color}'}",//"#ffcc66",
                         strokeColor: "${'${color}'}",
                         fillOpacity: 0.7,
-                        strokeWidth: 0,
-                        graphicZIndex: 1
+                        strokeWidth: 0
                     })
                 });
                 
@@ -75,7 +74,7 @@
                     zoom: zoomLevel
                 };
 
-                var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Occurrences per cell:&nbsp;</td><td style="width:60px;background-color:#ffff00;">1&ndash;9</td><td style="width:60px;background-color:#ffcc00;">10&ndash;49</td><td style="width:60px;background-color:#ff9900;">50&ndash;99</td><td style="width:60px;background-color:#ff6600;">100&ndash;249</td><td style="width:60px;background-color:#ff3300;">250&ndash;499</td><td style="width:60px;background-color:#cc0000;">500+</td></tr></table>';
+                var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Record counts:&nbsp;</td><td style="width:60px;background-color:#ffff00;">1&ndash;9</td><td style="width:60px;background-color:#ffcc00;">10&ndash;49</td><td style="width:60px;background-color:#ff9900;">50&ndash;99</td><td style="width:60px;background-color:#ff6600;">100&ndash;249</td><td style="width:60px;background-color:#ff3300;">250&ndash;499</td><td style="width:60px;background-color:#cc0000;">500+</td></tr></table>';
 
                 vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
                     styleMap: myStyles,
@@ -90,6 +89,41 @@
 
                 map.addLayer(vectorLayer);
                 vectorLayer.refresh();
+
+                if (selectControl != null) {
+                    map.removeControl(selectControl);
+                    selectControl.destroy();
+                    selectControl = null;
+                }
+
+                selectControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
+                    //hover: true,
+                    onSelect: onFeatureSelect,
+                    onUnselect: onFeatureUnselect
+                });
+                
+                map.addControl(selectControl);
+                selectControl.activate();
+            }
+
+            function onPopupClose(evt) {
+                selectControl.unselect(selectedFeature);
+            }
+
+            function onFeatureSelect(feature) {
+                selectedFeature = feature;
+                popup = new OpenLayers.Popup.FramedCloud("chicken", feature.geometry.getBounds().getCenterLonLat(),
+                    null, "<div style='font-size:.8em'>Records in area: " + feature.attributes.count, // +
+                        //"<br /><a href=''>View records in this area</a> " + feature.geometry.getBounds() + "</div>",
+                    null, true, onPopupClose);
+                feature.popup = popup;
+                map.addPopup(popup);
+            }
+
+            function onFeatureUnselect(feature) {
+                map.removePopup(feature.popup);
+                feature.popup.destroy();
+                feature.popup = null;
             }
 
             function destroyMap() {
