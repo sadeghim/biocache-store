@@ -60,13 +60,15 @@
                     "default": new OpenLayers.Style({
                         //pointRadius: 5, //"${'${count}'}", // sized according to count attribute
                         fillColor: "${'${color}'}",//"#ffcc66",
-                        strokeColor: "${'${color}'}",
+                        //fillColor: "#D75A25",
+                        //strokeColor: "${'${color}'}",
                         fillOpacity: 0.7,
+                        graphicZIndex: 1,
                         strokeWidth: 0
                     })
                 });
-                
-                var geoJsonUrl = "http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/occurrences/json/cells.geojson"; //+"&zoom=4&callback=?";
+
+                var geoJsonUrl = "${pageContext.request.contextPath}/occurrences/json/cells.geojson"; //+"&zoom=4&callback=?";
                 var zoomLevel = map.getZoom();
                 var params = {
                     q: "${query}",
@@ -101,7 +103,7 @@
                     onSelect: onFeatureSelect,
                     onUnselect: onFeatureUnselect
                 });
-                
+
                 map.addControl(selectControl);
                 selectControl.activate();
             }
@@ -178,6 +180,7 @@
                 });
 
                 $('button#showMap').click(function (e) {
+                    window.location.replace("#searchResults");
                     $("#pointsMap").show();
                     loadMap();
                     $('#pointsMap').modal();

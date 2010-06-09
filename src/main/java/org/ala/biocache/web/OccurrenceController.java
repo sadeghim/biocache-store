@@ -203,6 +203,19 @@ public class OccurrenceController {
 		return SHOW;
 	}
 
+    /**
+     * GeoJSON view of records as clusters of points
+     *
+     * @param query
+     * @param filterQuery
+     * @param callback
+     * @param zoomLevel
+     * @param bbox
+     * @param model
+     * @param response
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/occurrences/json/points.geojson", method = RequestMethod.GET)
 	public String pointsGeoJson(
             @RequestParam(value="q", required=true) String query,
@@ -235,6 +248,19 @@ public class OccurrenceController {
         return POINTS_GEOJSON;
     }
 
+    /**
+     * GeoJSON view of records as square (cell) polygons
+     *
+     * @param query
+     * @param filterQuery
+     * @param callback
+     * @param zoomLevel
+     * @param bbox
+     * @param model
+     * @param response
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/occurrences/json/cells.geojson", method = RequestMethod.GET)
 	public String cellsGeoJson(
             @RequestParam(value="q", required=true) String query,
@@ -253,7 +279,13 @@ public class OccurrenceController {
         }
 
         // Convert array to list so we append more values onto it
-        ArrayList<String> fqList = new ArrayList<String>(Arrays.asList(filterQuery));
+        ArrayList<String> fqList = null;
+        if (filterQuery != null) {
+            fqList = new ArrayList<String>(Arrays.asList(filterQuery));
+        } else {
+            fqList = new ArrayList<String>();
+        }
+        
         bboxToQuery(bbox, fqList);
 
         PointType pointType = PointType.POINT_1;
@@ -276,6 +308,12 @@ public class OccurrenceController {
         return CELLS_GEOJSON;
     }
 
+    /**
+     * Map a zoom level to a coordinate accuracy level
+     *
+     * @param zoomLevel
+     * @return
+     */
     protected PointType getPointTypeForZoomLevel(Integer zoomLevel) {
         PointType pointType = null;
         // Map zoom levels to lat/long accuracy levels
@@ -300,6 +338,12 @@ public class OccurrenceController {
         return pointType;
     }
 
+    /**
+     * Reformat bbox param to SOLR spatial query and add to fq list
+     *
+     * @param bbox
+     * @param fqList
+     */
     protected void bboxToQuery(String bbox, ArrayList<String> fqList) {
         // e.g. bbox=122.013671875,-53.015625,172.990234375,-10.828125
         if (bbox != null && !bbox.isEmpty()) {
