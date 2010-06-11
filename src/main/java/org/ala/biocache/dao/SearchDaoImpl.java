@@ -297,6 +297,62 @@ public class SearchDaoImpl implements SearchDao {
     */
 
     /**
+     * @see org.ala.biocache.dao.SearchDao#findRecordsForLocation(Float, Float, Integer)
+     */
+    @Override
+    public List<OccurrencePoint> findRecordsForLocation(Float latitude, Float longitude, Integer radius, PointType pointType) throws Exception {
+        List<OccurrencePoint> points = new ArrayList<OccurrencePoint>(); // new OccurrencePoint(PointType.POINT);
+        String queryString = "{!spatial lat="+ latitude.toString() +" long="+ longitude.toString() +
+                " radius=" + radius.toString() + " unit=km calc=plane threadCount=2}*:*";
+        //String queryString = formatSearchQuery(query);
+        logger.info("location search query: "+queryString+"; pointType: "+pointType.getLabel());
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQueryType("standard");
+        solrQuery.setQuery(queryString);
+        solrQuery.setRows(0);
+        solrQuery.setFacet(true);
+        solrQuery.addFacetField(pointType.getLabel());
+        solrQuery.setFacetMinCount(1);
+        solrQuery.setFacetLimit(MAX_DOWNLOAD_SIZE);  // unlimited = -1
+
+        QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, "score", "asc");
+        List<FacetField> facets = qr.getFacetFields();
+
+        if (facets != null) {
+            for (FacetField facet : facets) {
+                List<FacetField.Count> facetEntries = facet.getValues();
+                if (facet.getName().contains(pointType.getLabel()) && (facetEntries != null) && (facetEntries.size() > 0)) {
+
+                    for (FacetField.Count fcount : facetEntries) {
+                        OccurrencePoint point = new OccurrencePoint(pointType);
+                        point.setCount(fcount.getCount());
+                        String[] pointsDelimited = StringUtils.split(fcount.getName(),',');
+                        List<Float> coords = new ArrayList<Float>();
+
+                        for (String coord : pointsDelimited) {
+                            try {
+                                Float decimalCoord = Float.parseFloat(coord);
+                                coords.add(decimalCoord);
+                            } catch (NumberFormatException numberFormatException) {
+                                logger.warn("Error parsing Float for Lat/Long: "+numberFormatException.getMessage(), numberFormatException);
+                            }
+                        }
+
+                        if (!coords.isEmpty()) {
+                            Collections.reverse(coords); // must be long, lat order
+                            point.setCoordinates(coords);
+                            points.add(point);
+                        }
+                    }
+                }
+            }
+        }
+
+        return points;
+    }
+
+
+    /**
      *
      *
      * @param solrQuery

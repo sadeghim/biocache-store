@@ -11,7 +11,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="pageName" content="species"/>
         <title>Occurrence Search Results</title>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.query.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.simplemodal.js"></script>
@@ -68,7 +67,7 @@
                     })
                 });
 
-                var geoJsonUrl = "${pageContext.request.contextPath}/occurrences/json/cells.geojson"; //+"&zoom=4&callback=?";
+                var geoJsonUrl = "${pageContext.request.contextPath}/geojson/cells"; //+"&zoom=4&callback=?";
                 var zoomLevel = map.getZoom();
                 var params = {
                     q: "${query}",
@@ -116,7 +115,7 @@
                 selectedFeature = feature;
                 popup = new OpenLayers.Popup.FramedCloud("chicken", feature.geometry.getBounds().getCenterLonLat(),
                     null, "<div style='font-size:.8em'>Records in area: " + feature.attributes.count, // +
-                        //"<br /><a href=''>View records in this area</a> " + feature.geometry.getBounds() + "</div>",
+                        //"<br /><a href=''>View records in this area</a> " + feature.geometry.getBounds().toBBOX() + "</div>",
                     null, true, onPopupClose);
                 feature.popup = popup;
                 map.addPopup(popup);

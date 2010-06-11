@@ -74,4 +74,15 @@ public interface SearchDao {
      * @throws Exception
      */
     List<OccurrencePoint> getFacetPoints(String query, String[] filterQuery, PointType pointType) throws Exception;
+
+    /**
+     * Get a list of occurrence points for a given lat/long and distance (radius)
+     *
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @return
+     * @throws Exception
+     */
+    List<OccurrencePoint> findRecordsForLocation(Float latitude, Float longitude, Integer radius, PointType pointType) throws Exception;
 }

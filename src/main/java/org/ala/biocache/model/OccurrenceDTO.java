@@ -87,8 +87,8 @@ public class OccurrenceDTO implements Serializable {
 	@Field("state") private List<String> states = new ArrayList<String>();
 	@Field("biogeographic_region") private List<String> biogeographicRegions = new ArrayList<String>();
 	@Field private List<String> places = new ArrayList<String>();
-	@Field private Float latitude;
-	@Field private Float longitude;
+	@Field private Double latitude;
+	@Field private Double longitude;
     @Field("lat_long_precision") private String coordinatePrecision;
 	@Field("cell_id") private Integer cellId;
 	@Field("centi_cell_id") private Integer centiCellId;
@@ -381,19 +381,19 @@ public class OccurrenceDTO implements Serializable {
         this.kingdomLsid = kingdomLsid;
     }
 
-    public Float getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Float latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public Float getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Float longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 

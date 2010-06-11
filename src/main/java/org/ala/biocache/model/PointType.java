@@ -3,7 +3,8 @@ package org.ala.biocache.model;
 /**
  * Enum to store the groupings or lat/long accuracy level (for zoom levels)
  *
- * Labels correspond to SOLR fields in $SOLR_HOME/conf/schema.xml
+ * label correspond to SOLR fields in $SOLR_HOME/conf/schema.xml
+ * value corresponds to the "accuracy" in decimal degrees
  *
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */

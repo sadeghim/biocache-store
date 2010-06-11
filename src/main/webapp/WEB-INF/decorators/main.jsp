@@ -21,7 +21,7 @@
         <!--[if IE]><link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/lib/ie.css" type="text/css" media="screen, projection" /><![endif]-->
         <script type="text/javascript">
             $(document).ready(function() {
-                $("#q").autocomplete({ source: "${pageContext.request.contextPath}/occurrences/terms", minLength: 2});
+                //$("#q").autocomplete({ source: "${pageContext.request.contextPath}/occurrences/terms", minLength: 2});
 
                 $("#searchForm #submit").click();
             });
