@@ -51,17 +51,20 @@ import org.ala.biocache.model.TaxaCountDTO;
  */
 @Component("searchDaoImpl")
 public class SearchDaoImpl implements SearchDao {
-    public static final String POINT = "point-0.1";
-    public static final String SPECIES = "species";
-    public static final String SPECIES_LSID = "species_lsid";
+
     /** log4 j logger */
     private static final Logger logger = Logger.getLogger(SearchDaoImpl.class);
-    /** SOLR home directory */
-    protected  String solrHome;
+    /** SOLR home directory - injected by Spring from properties file */
+    protected String solrHome;
     /** SOLR server instance */
-    private EmbeddedSolrServer server;
-    private Integer MAX_DOWNLOAD_SIZE = 1000000;
-
+    protected EmbeddedSolrServer server;
+    /** Limit search results - for performance reasons */
+    protected static final Integer MAX_DOWNLOAD_SIZE = 100000;
+    protected static final String POINT = "point-0.1";
+    protected static final String KINGDOM = "kingdom";
+    protected static final String KINGDOM_LSID = "kingdom_lsid";
+    protected static final String SPECIES = "species";
+    protected static final String SPECIES_LSID = "species_lsid";
     /**
      * Initialise the SOLR server instance
      */
@@ -354,7 +357,7 @@ public class SearchDaoImpl implements SearchDao {
     }
 
     /**
-     * @see org.ala.biocache.dao.SearchDao#findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude,
+     * @see org.ala.biocache.dao.SearchDao#findAllSpeciesByCircleAreaAndHigherTaxa(Float latitude, Float longitude,
      *     Integer radius, String rank, String higherTaxon, String filterQuery, Integer startIndex, Integer pageSize,
      *     String sortField, String sortDirection)
      */
@@ -363,30 +366,49 @@ public class SearchDaoImpl implements SearchDao {
             Integer radius, String rank, String higherTaxon, String filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception {
 
-        String queryString =  rank + ":" + higherTaxon;
-        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, pageSize, sortField, sortDirection);
+        String queryString =  buildSpatialQueryString(rank + ":" + higherTaxon, latitude, longitude, radius);
+        List<String> facetFields = new ArrayList<String>();
+        facetFields.add(SPECIES);
+        facetFields.add(SPECIES_LSID);
+        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, facetFields, pageSize, sortField, sortDirection);
 
         return speciesWithCounts;
     }
 
     /**
-     * @see org.ala.biocache.dao.SearchDao#findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude,
+     * @see org.ala.biocache.dao.SearchDao#findAllSpeciesByCircleAreaAndHigherTaxa(Float latitude, Float longitude,
      *     Integer radius, String rank, String higherTaxon, String filterQuery, Integer startIndex, Integer pageSize, 
      *     String sortField, String sortDirection)
      */
     @Override
-    public List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude,
+    public List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxa(Float latitude, Float longitude,
             Integer radius, String rank, List<String> higherTaxa, String filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception {
 
-        ArrayList<String> queryUnits = new ArrayList<String>(); // rank + ":" + higherTaxon;
+        ArrayList<String> queryUnits = new ArrayList<String>(); 
         
         for (String higherTaxon: higherTaxa) {
             queryUnits.add(rank + ":" + higherTaxon);
         }
         
         String queryString = buildSpatialQueryString(StringUtils.join(queryUnits, " OR "), latitude, longitude, radius);
-        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, pageSize, sortField, sortDirection);
+        List<String> facetFields = new ArrayList<String>();
+        facetFields.add(SPECIES);
+        facetFields.add(SPECIES_LSID);
+        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, facetFields, pageSize, sortField, sortDirection);
+
+        return speciesWithCounts;
+    }
+
+    public List<TaxaCountDTO> findAllKingdomsByCircleArea(Float latitude, Float longitude,
+            Integer radius, String filterQuery, Integer startIndex,
+            Integer pageSize, String sortField, String sortDirection) throws Exception {
+
+        String queryString =  buildSpatialQueryString("*:*", latitude, longitude, radius);
+        List<String> facetFields = new ArrayList<String>();
+        facetFields.add(KINGDOM);
+        facetFields.add(KINGDOM_LSID);
+        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, facetFields, pageSize, sortField, sortDirection);
 
         return speciesWithCounts;
     }
@@ -583,7 +605,7 @@ public class SearchDaoImpl implements SearchDao {
      * @return
      * @throws SolrServerException
      */
-    protected List<TaxaCountDTO> getSpeciesCounts(String queryString, Integer pageSize,
+    protected List<TaxaCountDTO> getSpeciesCounts(String queryString, List<String> facetFields, Integer pageSize,
             String sortField, String sortDirection) throws SolrServerException {
         //LinkedHashMap<String, Long> speciesWithCounts = new LinkedHashMap<String, Long>();
         List<TaxaCountDTO> speciesCounts = new ArrayList<TaxaCountDTO>();
@@ -592,38 +614,32 @@ public class SearchDaoImpl implements SearchDao {
         solrQuery.setQuery(queryString);
         solrQuery.setRows(0);
         solrQuery.setFacet(true);
-        solrQuery.addFacetField(SPECIES);
-        solrQuery.addFacetField(SPECIES_LSID);
+        solrQuery.setFacetSort(sortField);
+        for (String facet : facetFields) {
+            solrQuery.addFacetField(facet);
+        }
         solrQuery.setFacetMinCount(1);
         solrQuery.setFacetLimit(pageSize); // unlimited = -1
-        logger.info("SOLR query: " + solrQuery.getQuery());
-        QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, sortField, sortDirection);
+        QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, "score", sortDirection);
+        logger.info("SOLR query: " + solrQuery.getQuery() + "; total hits: " + qr.getResults().getNumFound());
         List<FacetField> facets = qr.getFacetFields();
+        logger.info("Facets: " +facets.size()+"; facet #1: "+qr.getFacetFields().get(0).getName());
 
-        if (facets != null) {
-//            for (FacetField facet : facets) {
-//                List<FacetField.Count> facetEntries = facet.getValues();
-//                if (facet.getName().contains(SPECIES) && (facetEntries != null) && (facetEntries.size() > 0)) {
-//                    for (FacetField.Count fcount : facetEntries) {
-//                        speciesWithCounts.put(fcount.getName(), fcount.getCount());
-//                    }
-//                }
-//            }
-            
+        if (facets != null) {            
             for (FacetField facet : facets) {
                 List<FacetField.Count> facetEntries = facet.getValues();
-                if (facet.getName().contains(SPECIES) && (facetEntries != null) && (facetEntries.size() > 0)) {
+                if ((facetEntries != null) && (facetEntries.size() > 0)) {
                     for (int i = 0; i < facetEntries.size(); i++) {
                         FacetField.Count fcount = facetEntries.get(i);
-                        speciesCounts.add(i, new TaxaCountDTO(fcount.getName(), fcount.getCount()));
-                    }
-                } else if (facet.getName().contains(SPECIES_LSID) && (facetEntries != null) && (facetEntries.size() > 0)) {
-                    for (int i = 0; i < facetEntries.size(); i++) {
-                        FacetField.Count fcount = facetEntries.get(i);
-                        TaxaCountDTO tcDTO = speciesCounts.get(i);
-                        if (tcDTO != null) {
+                        //speciesCounts.add(i, new TaxaCountDTO(fcount.getName(), fcount.getCount()));
+                        TaxaCountDTO tcDTO = null;
+                        try {
+                            tcDTO = speciesCounts.get(i);
                             tcDTO.setGuid(fcount.getName());
                             speciesCounts.set(i, tcDTO);
+                        } catch (Exception e) {
+                            tcDTO = new TaxaCountDTO(fcount.getName(), fcount.getCount());
+                            speciesCounts.add(i, tcDTO);
                         }
                     }
                 }

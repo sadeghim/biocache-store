@@ -90,6 +90,9 @@ public interface SearchDao {
     List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude, Integer radius, String rank, String higherTaxon,
     		String filterQuery, Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception;
 
-    List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude, Integer radius, String rank, List<String> higherTaxon,
+    List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxa(Float latitude, Float longitude, Integer radius, String rank, List<String> higherTaxa,
     		String filterQuery, Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception;
+
+    List<TaxaCountDTO> findAllKingdomsByCircleArea(Float latitude, Float longitude, Integer radius, String filterQuery, Integer startIndex,
+            Integer pageSize, String sortField, String sortDirection) throws Exception;
 }

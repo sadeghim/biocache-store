@@ -47,7 +47,7 @@
                 var feature = new OpenLayers.Feature.Vector(
                     new OpenLayers.Geometry.Point(lon, lat),
                     {title:'Your location'},
-                    {externalGraphic: 'http://geocoder.ca/marker.png', graphicHeight: 28, graphicWidth: 18, graphicZIndex: 1000, rendererOptions: {zIndexing: true}});
+                    {externalGraphic: 'http://geocoder.ca/marker.png', graphicHeight: 28, graphicWidth: 18, graphicYOffset: -14, graphicZIndex: 1000, rendererOptions: {zIndexing: true}});
                 markerLayer.addFeatures(feature);
                 
                 map.addLayer(markerLayer);
@@ -88,7 +88,7 @@
                     "radius": ${radius}
                 };
 
-                var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Record counts:&nbsp;</td><td style="width:60px;background-color:#ffff00;">1&ndash;9</td><td style="width:60px;background-color:#ffcc00;">10&ndash;49</td><td style="width:60px;background-color:#ff9900;">50&ndash;99</td><td style="width:60px;background-color:#ff6600;">100&ndash;249</td><td style="width:60px;background-color:#ff3300;">250&ndash;499</td><td style="width:60px;background-color:#cc0000;">500+</td></tr></table>';
+                var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td><td style="width:50px;background-color:#ffff00;">1&ndash;9</td><td style="width:50px;background-color:#ffcc00;">10&ndash;49</td><td style="width:50px;background-color:#ff9900;">50&ndash;99</td><td style="width:50px;background-color:#ff6600;">100&ndash;249</td><td style="width:50px;background-color:#ff3300;">250&ndash;499</td><td style="width:50px;background-color:#cc0000;">500+</td></tr></table>';
 
                 vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
                     styleMap: myStyles,
@@ -167,7 +167,7 @@
                     fillOpacity: 0.5,
                     strokeColor: "lightBlue",
                     strokeOpacity: 1,
-                    strokeWidth: 3,
+                    strokeWidth: 1,
                     //graphicZIndex: 10,
                     pointRadius: rad
                     //pointerEvents: "visiblePainted"
@@ -185,22 +185,39 @@
     </head>
     <body>
         <h1>Explore Your Area</h1>
-        <p>Your Location is: latitude = ${latitude}; longitude = ${longitude}</p>
-        <h3>Results for ${location}</h3>
+        <div id="map" style="width: 400px; height: 400px;float:right;"></div>
+        <form name="searchForm" id="searchForm" action="" method="GET" autocomplete="off">
+        <p>Your Location is:<br/>
+            latitude <input name="latitude" id="latitude" <c:if test="${not empty latitude}">value="<c:out value="${latitude}" />"</c:if> type="text" size="8"/> <br/>
+            longitude <input name="longitude" id="longitude" <c:if test="${not empty longitude}">value="<c:out value="${longitude}" />"</c:if> type="text" size="8"/></p>
         <p>Show records in a
             <select id="radius" name="radius">
                 <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
                 <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
                 <option value="50" <c:if test="${radius eq '50'}">selected</c:if>>50</option>
-            </select> km radius</p>
-        <div id="map" style="width: 500px; height: 400px;"></div>
-        <br/>
-        <h3>Summary of Species Groups</h3>
+            </select> km radius <input type="submit" value="Reload"/></p>
+        <h3>Results for ${location} (${totalRecords} records found)</h3>
+<!--        <h3>Summary of Species Groups</h3>-->
         <table>
+            <tr>
+                <th>Kingdom</th>
+                <th>Records</th>
+            </tr>
+            <c:forEach var="kingdom" items="${kingdoms}">
+                <tr>
+                    <td>${kingdom.name} <!--${kingdom.guid}--></td>
+                    <td>${kingdom.count}</td>
+                </tr>
+            </c:forEach>
+        </table>
+        <table>
+            <tr>
+                <th>Animal Grouping</th>
+                <th>Species</th>
+            </tr>
             <tr>
                 <td>Mammals</td>
                 <td>${fn:length(mammals)}</td>
-                <td>${mammals[0].name}||${mammals[0].guid}||${mammals[0].count}</td>
             </tr>
             <tr>
                 <td>Birds:</td>
@@ -223,5 +240,6 @@
                 <td>${fn:length(plants)}</td>
             </tr>
         </table>
+        </form>
     </body>
 </html>
