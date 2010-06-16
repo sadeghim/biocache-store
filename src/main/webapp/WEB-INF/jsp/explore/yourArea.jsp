@@ -17,14 +17,13 @@
             var lon = ${longitude};
             var lat = ${latitude};
             var zoom = ${zoom};
-            var map, vectorLayer, selectControl, selectFeature, markerLayer;
+            var map, vectorLayer, selectControl, selectFeature, markerLayer, circleLayer;
 
             /* Openlayers map */
             function loadMap() {
                 map = new OpenLayers.Map('map',{numZoomLevels: 16,controls: []});
                 //add controls
                 map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled: false}));
-                //map.addControl(new OpenLayers.Control.MousePosition());
                 map.addControl(new OpenLayers.Control.PanZoomBar({zoomWorldIcon: false}));
                 map.addControl(new OpenLayers.Control.Attribution());
                 map.addControl(new OpenLayers.Control.ScaleLine());
@@ -38,26 +37,33 @@
                 map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
                 // reload vector layer on zoom event
                 map.events.register('zoomend', map, function (e) {
+                    drawCircleRadius();
                     loadVectorLayer();
+                    loadSelectControl();
                 });
-
+                
+                // marker pin (Google-style)
                 markerLayer = new OpenLayers.Layer.Vector("Pin");
                 var feature = new OpenLayers.Feature.Vector(
                     new OpenLayers.Geometry.Point(lon, lat),
                     {title:'Your location'},
-                    {externalGraphic: 'http://geocoder.ca/marker.png', graphicHeight: 38, graphicWidth: 24, graphicZIndex: 1000, rendererOptions: {zIndexing: true}});
+                    {externalGraphic: 'http://geocoder.ca/marker.png', graphicHeight: 28, graphicWidth: 18, graphicZIndex: 1000, rendererOptions: {zIndexing: true}});
                 markerLayer.addFeatures(feature);
                 
                 map.addLayer(markerLayer);
                 markerLayer.setZIndex(1000);
-
-                //map.addLayers([baseLayer,vectorLayer]);
+                
+                // circle showing area included in search
+                
+                drawCircleRadius();
                 loadVectorLayer();
+                loadSelectControl();
             }
 
             function loadVectorLayer() {
                 if (vectorLayer != null) {
                     vectorLayer.destroy();
+                    vectorLayer = null;
                 }
 
                var myStyles = new OpenLayers.StyleMap({
@@ -73,7 +79,7 @@
                 });
 
                 var geoJsonUrl = "${pageContext.request.contextPath}/geojson/radius-points"; //+"&zoom=4&callback=?";
-                var zoomLevel = map.getZoom();
+                //var zoomLevel = map.getZoom();
                 var params = {
                     //q: "${query}",
                     //zoom: zoomLevel
@@ -84,7 +90,7 @@
 
                 var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Record counts:&nbsp;</td><td style="width:60px;background-color:#ffff00;">1&ndash;9</td><td style="width:60px;background-color:#ffcc00;">10&ndash;49</td><td style="width:60px;background-color:#ff9900;">50&ndash;99</td><td style="width:60px;background-color:#ff6600;">100&ndash;249</td><td style="width:60px;background-color:#ff3300;">250&ndash;499</td><td style="width:60px;background-color:#cc0000;">500+</td></tr></table>';
 
-                vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
+                vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
                     styleMap: myStyles,
                     rendererOptions: {zIndexing: true},
                     attribution: legend,
@@ -99,21 +105,6 @@
                 map.addLayer(vectorLayer);
                 vectorLayer.refresh();
                 markerLayer.setZIndex(1000); // so pin icon isn't covered with points
-
-                if (selectControl != null) {
-                    map.removeControl(selectControl);
-                    selectControl.destroy();
-                    selectControl = null;
-                }
-
-                selectControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
-                    //hover: true,
-                    onSelect: onFeatureSelect,
-                    onUnselect: onFeatureUnselect
-                });
-
-                map.addControl(selectControl);
-                selectControl.activate();
             }
 
             function onPopupClose(evt) {
@@ -144,6 +135,49 @@
                 }
             }
 
+            function loadSelectControl() {
+                if (selectControl != null) {
+                    map.removeControl(selectControl);
+                    selectControl.destroy();
+                    selectControl = null;
+                }
+                
+                selectControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
+                    //hover: true,
+                    onSelect: onFeatureSelect,
+                    onUnselect: onFeatureUnselect
+                });
+
+                map.addControl(selectControl);
+                //selectControl.activate();  // errors on map re-size/zoom change so commented-out for now
+            }
+
+            function drawCircleRadius() {
+                if (circleLayer != null) {
+                    circleLayer.destroy();
+                    circleLayer = null;
+                }
+
+                circleLayer = new OpenLayers.Layer.Vector("Cirlce", {});
+                var point = new OpenLayers.Geometry.Point(lon, lat);
+                var DOTS_PER_UNIT = OpenLayers.INCHES_PER_UNIT.km * OpenLayers.DOTS_PER_INCH;
+                var rad = ${radius} * DOTS_PER_UNIT / map.getScale();
+                var style_green = {
+                    fillColor: "lightBlue",
+                    fillOpacity: 0.5,
+                    strokeColor: "lightBlue",
+                    strokeOpacity: 1,
+                    strokeWidth: 3,
+                    //graphicZIndex: 10,
+                    pointRadius: rad
+                    //pointerEvents: "visiblePainted"
+                };
+                var pointFeature = new OpenLayers.Feature.Vector(point,null,style_green);
+                circleLayer.addFeatures([pointFeature]);
+                map.addLayer(circleLayer);
+                //circleLayer.setZIndex(10);
+            }
+
             $(document).ready(function() {
                 loadMap();
             });
@@ -155,12 +189,39 @@
         <h3>Results for ${location}</h3>
         <p>Show records in a
             <select id="radius" name="radius">
+                <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
                 <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
                 <option value="50" <c:if test="${radius eq '50'}">selected</c:if>>50</option>
-                <option value="100" <c:if test="${radius eq '100'}">selected</c:if>>100</option>
             </select> km radius</p>
         <div id="map" style="width: 500px; height: 400px;"></div>
+        <br/>
         <h3>Summary of Species Groups</h3>
-        <p></p>
+        <table>
+            <tr>
+                <td>Mammals</td>
+                <td>${fn:length(mammals)}</td>
+                <td>${mammals[0].name}||${mammals[0].guid}||${mammals[0].count}</td>
+            </tr>
+            <tr>
+                <td>Birds:</td>
+                <td>${fn:length(birds)}</td>
+            </tr>
+            <tr>
+                <td>Reptiles:</td>
+                <td>${fn:length(reptiles)}</td>
+            </tr>
+            <tr>
+                <td>Amphibians:</td>
+                <td>${fn:length(amphibians)}</td>
+            </tr>
+            <tr>
+                <td>Fish:</td>
+                <td>${fn:length(fish)}</td>
+            </tr>
+            <tr>
+                <td>Plants:</td>
+                <td>${fn:length(plants)}</td>
+            </tr>
+        </table>
     </body>
 </html>

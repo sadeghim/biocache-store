@@ -22,6 +22,7 @@ import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.OccurrencePoint;
 import org.ala.biocache.model.PointType;
 import org.ala.biocache.model.SearchResultDTO;
+import org.ala.biocache.model.TaxaCountDTO;
 
 /**
  *
@@ -85,4 +86,10 @@ public interface SearchDao {
      * @throws Exception
      */
     List<OccurrencePoint> findRecordsForLocation(Float latitude, Float longitude, Integer radius, PointType pointType) throws Exception;
+
+    List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude, Integer radius, String rank, String higherTaxon,
+    		String filterQuery, Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception;
+
+    List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude, Integer radius, String rank, List<String> higherTaxon,
+    		String filterQuery, Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception;
 }

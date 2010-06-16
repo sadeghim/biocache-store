@@ -80,8 +80,12 @@ public class GeoJsonController {
         }
 
         // Convert array to list so we append more values onto it
-        ArrayList<String> fqList = new ArrayList<String>(Arrays.asList(filterQuery));
-        bboxToQuery(bbox, fqList);
+        ArrayList<String> fqList = null;
+        if (filterQuery != null) {
+            fqList = new ArrayList<String>(Arrays.asList(filterQuery));
+        } else {
+            fqList = new ArrayList<String>();
+        }
 
         PointType pointType = PointType.POINT_1;
         pointType = getPointTypeForZoomLevel(zoomLevel);

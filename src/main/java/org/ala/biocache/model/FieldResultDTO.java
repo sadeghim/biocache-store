@@ -7,7 +7,7 @@ package org.ala.biocache.model;
 
 /**
  *
- * @author oak021
+ * @author 
  */
 public class FieldResultDTO {
     String label;

@@ -41,6 +41,7 @@ import org.springframework.stereotype.Component;
 import au.com.bytecode.opencsv.CSVWriter;
 import java.util.Collections;
 import org.ala.biocache.model.PointType;
+import org.ala.biocache.model.TaxaCountDTO;
 
 /**
  * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
@@ -51,6 +52,8 @@ import org.ala.biocache.model.PointType;
 @Component("searchDaoImpl")
 public class SearchDaoImpl implements SearchDao {
     public static final String POINT = "point-0.1";
+    public static final String SPECIES = "species";
+    public static final String SPECIES_LSID = "species_lsid";
     /** log4 j logger */
     private static final Logger logger = Logger.getLogger(SearchDaoImpl.class);
     /** SOLR home directory */
@@ -302,8 +305,7 @@ public class SearchDaoImpl implements SearchDao {
     @Override
     public List<OccurrencePoint> findRecordsForLocation(Float latitude, Float longitude, Integer radius, PointType pointType) throws Exception {
         List<OccurrencePoint> points = new ArrayList<OccurrencePoint>(); // new OccurrencePoint(PointType.POINT);
-        String queryString = "{!spatial lat="+ latitude.toString() +" long="+ longitude.toString() +
-                " radius=" + radius.toString() + " unit=km calc=plane threadCount=2}*:*";
+        String queryString = buildSpatialQueryString("*:*", latitude, longitude, radius);
         //String queryString = formatSearchQuery(query);
         logger.info("location search query: "+queryString+"; pointType: "+pointType.getLabel());
         SolrQuery solrQuery = new SolrQuery();
@@ -349,6 +351,44 @@ public class SearchDaoImpl implements SearchDao {
         }
 
         return points;
+    }
+
+    /**
+     * @see org.ala.biocache.dao.SearchDao#findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude,
+     *     Integer radius, String rank, String higherTaxon, String filterQuery, Integer startIndex, Integer pageSize,
+     *     String sortField, String sortDirection)
+     */
+    @Override
+    public List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude,
+            Integer radius, String rank, String higherTaxon, String filterQuery, Integer startIndex,
+            Integer pageSize, String sortField, String sortDirection) throws Exception {
+
+        String queryString =  rank + ":" + higherTaxon;
+        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, pageSize, sortField, sortDirection);
+
+        return speciesWithCounts;
+    }
+
+    /**
+     * @see org.ala.biocache.dao.SearchDao#findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude,
+     *     Integer radius, String rank, String higherTaxon, String filterQuery, Integer startIndex, Integer pageSize, 
+     *     String sortField, String sortDirection)
+     */
+    @Override
+    public List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude,
+            Integer radius, String rank, List<String> higherTaxa, String filterQuery, Integer startIndex,
+            Integer pageSize, String sortField, String sortDirection) throws Exception {
+
+        ArrayList<String> queryUnits = new ArrayList<String>(); // rank + ":" + higherTaxon;
+        
+        for (String higherTaxon: higherTaxa) {
+            queryUnits.add(rank + ":" + higherTaxon);
+        }
+        
+        String queryString = buildSpatialQueryString(StringUtils.join(queryUnits, " OR "), latitude, longitude, radius);
+        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, pageSize, sortField, sortDirection);
+
+        return speciesWithCounts;
     }
 
 
@@ -454,15 +494,34 @@ public class SearchDaoImpl implements SearchDao {
         return searchResult;
     }
 
+    /**
+     * Build the query string for a spatial query (using Spatial-Solr plugin syntax)
+     *
+     * @param fullTextQuery
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @return
+     */
+    protected String buildSpatialQueryString(String fullTextQuery, Float latitude, Float longitude, Integer radius) {
+        String queryString = "{!spatial lat=" + latitude.toString() + " long=" + longitude.toString() +
+                " radius=" + radius.toString() + " unit=km calc=plane threadCount=2}" + fullTextQuery;
+        return queryString;
+    }
+
+
+
     protected String formatSearchQuery(String query) {
         // set the query
         StringBuilder queryString = new StringBuilder();
-        if (query.contains(":") && !query.startsWith("urn")) {
+        if (query.contains(":") && !query.startsWith("urn") && !query.startsWith("*")) {
             // search with a field name specified (other than an LSID guid)
             String[] bits = StringUtils.split(query, ":");
             queryString.append(ClientUtils.escapeQueryChars(bits[0]));
             queryString.append(":");
             queryString.append(ClientUtils.escapeQueryChars(bits[1]));
+        } else if (query.equals("*:*")) {
+            queryString.append(query);
         } else {
             // regular search
             queryString.append(ClientUtils.escapeQueryChars(query));
@@ -513,6 +572,67 @@ public class SearchDaoImpl implements SearchDao {
 
         return solrQuery;
     }
+
+    /**
+     * Get a distinct list of species and their counts using a facet search
+     *
+     * @param queryString
+     * @param pageSize
+     * @param sortField
+     * @param sortDirection
+     * @return
+     * @throws SolrServerException
+     */
+    protected List<TaxaCountDTO> getSpeciesCounts(String queryString, Integer pageSize,
+            String sortField, String sortDirection) throws SolrServerException {
+        //LinkedHashMap<String, Long> speciesWithCounts = new LinkedHashMap<String, Long>();
+        List<TaxaCountDTO> speciesCounts = new ArrayList<TaxaCountDTO>();
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQueryType("standard");
+        solrQuery.setQuery(queryString);
+        solrQuery.setRows(0);
+        solrQuery.setFacet(true);
+        solrQuery.addFacetField(SPECIES);
+        solrQuery.addFacetField(SPECIES_LSID);
+        solrQuery.setFacetMinCount(1);
+        solrQuery.setFacetLimit(pageSize); // unlimited = -1
+        logger.info("SOLR query: " + solrQuery.getQuery());
+        QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, sortField, sortDirection);
+        List<FacetField> facets = qr.getFacetFields();
+
+        if (facets != null) {
+//            for (FacetField facet : facets) {
+//                List<FacetField.Count> facetEntries = facet.getValues();
+//                if (facet.getName().contains(SPECIES) && (facetEntries != null) && (facetEntries.size() > 0)) {
+//                    for (FacetField.Count fcount : facetEntries) {
+//                        speciesWithCounts.put(fcount.getName(), fcount.getCount());
+//                    }
+//                }
+//            }
+            
+            for (FacetField facet : facets) {
+                List<FacetField.Count> facetEntries = facet.getValues();
+                if (facet.getName().contains(SPECIES) && (facetEntries != null) && (facetEntries.size() > 0)) {
+                    for (int i = 0; i < facetEntries.size(); i++) {
+                        FacetField.Count fcount = facetEntries.get(i);
+                        speciesCounts.add(i, new TaxaCountDTO(fcount.getName(), fcount.getCount()));
+                    }
+                } else if (facet.getName().contains(SPECIES_LSID) && (facetEntries != null) && (facetEntries.size() > 0)) {
+                    for (int i = 0; i < facetEntries.size(); i++) {
+                        FacetField.Count fcount = facetEntries.get(i);
+                        TaxaCountDTO tcDTO = speciesCounts.get(i);
+                        if (tcDTO != null) {
+                            tcDTO.setGuid(fcount.getName());
+                            speciesCounts.set(i, tcDTO);
+                        }
+                    }
+                }
+            }
+        }
+
+        return speciesCounts;
+    }
+
 
     public String getSolrHome() {
         return solrHome;
