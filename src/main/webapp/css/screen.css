@@ -776,6 +776,47 @@ table.propertyTable td.propertyNames {
     font-weight: bold;
     text-align: right;
 }
+/* Your-Area page styles */
+
+#taxaBox {
+    width: 550px;
+    font-size: 12px;
+}
+#taxaBox #rightList {
+    float: right;
+    width: 290px;
+    margin-right: 10px;
+}
+#taxaBox #leftList {
+    width: 250px;
+}
+#taxaBox td {
+    padding: 4px 10px 4px 2px;
+}
+#taxaBox td.indent {
+    padding-left: 10px;
+}
+#taxaBox td.indent2 {
+    padding-left: 20px;
+}
+#taxaBox #taxaDiv {
+    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 24.6em; /*260px;*/
+    background-color: #DDD;
+    padding: 2px 4px;
+}
+#taxaDiv ol, #taxaDiv ul {
+    margin: 0px 1em 0.5em 2.5em;
+}
+#taxaDiv li {
+    margin: 2px 0px 2px 0px;
+}
+#taxaBox #taxa-level-1 tbody td {
+    margin: 0;
+    padding: 0;
+}
 /* YUI modifications */
 div.yui-dt > table {
     width: 100%;

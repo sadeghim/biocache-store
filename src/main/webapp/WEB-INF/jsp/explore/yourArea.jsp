@@ -47,7 +47,7 @@
                 var feature = new OpenLayers.Feature.Vector(
                     new OpenLayers.Geometry.Point(lon, lat),
                     {title:'Your location'},
-                    {externalGraphic: 'http://geocoder.ca/marker.png', graphicHeight: 28, graphicWidth: 18, graphicYOffset: -14, graphicZIndex: 1000, rendererOptions: {zIndexing: true}});
+                    {externalGraphic: '${pageContext.request.contextPath}/static/css/images/marker.png', graphicHeight: 28, graphicWidth: 18, graphicYOffset: -14, graphicZIndex: 1000, rendererOptions: {zIndexing: true}});
                 markerLayer.addFeatures(feature);
                 
                 map.addLayer(markerLayer);
@@ -180,6 +180,42 @@
 
             $(document).ready(function() {
                 loadMap();
+//                $("#treeView").treeview({
+//			url: "/biocache-webapp/explore/species.json"
+//		});
+                $('.taxonBrowse').click(
+                    function(e) {
+                        e.preventDefault(); // ignore the href text - used for data
+                        var taxon = $(this).attr('href');
+                        var rank = $(this).attr('id');
+                        $('.taxonBrowse').parent().parent().css('background-color','inherit');
+                        $(this).parent().parent().css('background-color','#DDD');
+                        $('#taxa-level-1 tbody tr').css('background-color','#DDD');
+                        // AJAX...
+                        var uri = "/biocache-webapp/explore/species.json";
+                        var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxon+"&rank="+rank;
+                        $('#taxa-level-1 tbody:last').html('<tr><td>[loading...]</td></tr>');
+                        $.getJSON(uri + params, function(data) {
+                            //alert(data.rank + "|" + data.taxa)
+                            $('#taxa-level-1 tbody:last').html('<tr></tr>');
+                            if (data.speciesCount > 0) {
+                                //$('#taxa-level-1 tbody:last tr:last').html('<td>'+data.species[0].name+' ('+data.species[0].count+')</td>');
+                                $('#taxa-level-1 tbody:last tr:last').html('<td rowspan="12"><div id="taxaDiv"><ol></ol></div></td>');
+                                for (i=0;i<data.species.length;i++) {
+                                    //$('#taxa-level-1 tr:last').after('<tr><td>'+data.species[i].name+' ('+data.species[i].count+')</td></tr>');
+                                    $('#taxa-level-1 #taxaDiv ol').append('<li><a href="${speciesPageUrl}'+
+                                        data.species[i].guid+'"><i>'+data.species[i].name+'</i></a> ('+
+                                        data.species[i].count+' records)</li>');
+                                }
+                            } else {
+                                $('#taxa-level-1 tbody:last tr:last').html('<td>[no species found]</td>');
+                            }
+                            $('#taxa-level-1 tbody td').css('background-color','#DDD');
+                        });
+                    }
+                );
+
+                $('#taxa-level-0 tbody td:first a.taxonBrowse').click();
             });
         </script>
     </head>
@@ -187,8 +223,8 @@
         <h1>Explore Your Area</h1>
         <div id="map" style="width: 400px; height: 400px;float:right;"></div>
         <form name="searchForm" id="searchForm" action="" method="GET" autocomplete="off">
-        <p>Your Location is:<br/>
-            latitude <input name="latitude" id="latitude" <c:if test="${not empty latitude}">value="<c:out value="${latitude}" />"</c:if> type="text" size="8"/> <br/>
+        <p>Your Location is:
+            latitude <input name="latitude" id="latitude" <c:if test="${not empty latitude}">value="<c:out value="${latitude}" />"</c:if> type="text" size="8"/>
             longitude <input name="longitude" id="longitude" <c:if test="${not empty longitude}">value="<c:out value="${longitude}" />"</c:if> type="text" size="8"/></p>
         <p>Show records in a
             <select id="radius" name="radius">
@@ -196,50 +232,90 @@
                 <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
                 <option value="50" <c:if test="${radius eq '50'}">selected</c:if>>50</option>
             </select> km radius <input type="submit" value="Reload"/></p>
-        <h3>Results for ${location} (${totalRecords} records found)</h3>
-<!--        <h3>Summary of Species Groups</h3>-->
-        <table>
-            <tr>
-                <th>Kingdom</th>
-                <th>Records</th>
-            </tr>
-            <c:forEach var="kingdom" items="${kingdoms}">
-                <tr>
-                    <td>${kingdom.name} <!--${kingdom.guid}--></td>
-                    <td>${kingdom.count}</td>
-                </tr>
-            </c:forEach>
-        </table>
-        <table>
-            <tr>
-                <th>Animal Grouping</th>
-                <th>Species</th>
-            </tr>
-            <tr>
-                <td>Mammals</td>
-                <td>${fn:length(mammals)}</td>
-            </tr>
-            <tr>
-                <td>Birds:</td>
-                <td>${fn:length(birds)}</td>
-            </tr>
-            <tr>
-                <td>Reptiles:</td>
-                <td>${fn:length(reptiles)}</td>
-            </tr>
-            <tr>
-                <td>Amphibians:</td>
-                <td>${fn:length(amphibians)}</td>
-            </tr>
-            <tr>
-                <td>Fish:</td>
-                <td>${fn:length(fish)}</td>
-            </tr>
-            <tr>
-                <td>Plants:</td>
-                <td>${fn:length(plants)}</td>
-            </tr>
-        </table>
+        <h3>Results for ${location} (<fmt:formatNumber value="${allLifeCounts}" pattern="#,###,###"/> records found)</h3>
+
+        <div id="taxaBox">
+            <div id="rightList" style="float:right; width:290px; margin-right: 10px;">
+                <table id="taxa-level-1" style="width:100%;">
+                    <thead><tr><th>&nbsp;</th></tr></thead>
+                    <tbody><tr></tr></tbody>
+                </table>
+            </div>
+            <div id="leftList">
+                <table id="taxa-level-0" style="width:100%;">
+                    <tr>
+                        <th>Group</th>
+                        <th>Records</th>
+                        <th>Species</th>
+                    </tr>
+                    <tr>
+                        <td><a href="*" id="*" class="taxonBrowse">All Life</a>
+                        <td>${allLifeCounts}</td>
+                        <td>${fn:length(allLife)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent"><a href="Animalia" id="kingdom" class="taxonBrowse">Animals</a>
+                        <td>${animalsCount}</td>
+                        <td>${fn:length(animals)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent2"><a href="Mammalia" id="class" class="taxonBrowse">Mammals</a></td>
+                        <td>${mammalsCount}</td>
+                        <td>${fn:length(mammals)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent2"><a href="Aves" id="class" class="taxonBrowse">Birds</a></td>
+                        <td>${birdsCount}</td>
+                        <td>${fn:length(birds)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Reptiles</a></td>
+                        <td>${reptilesCount}</td>
+                        <td>${fn:length(reptiles)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent2"><a href="Amphibia" id="class" class="taxonBrowse">Amphibians</a></td>
+                        <td>${frogsCount}</td>
+                        <td>${fn:length(frogs)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Fish</a></td>
+                        <td>${fishCount}</td>
+                        <td>${fn:length(fish)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent2"><a href="Insecta" id="class" class="taxonBrowse">Insects</a></td>
+                        <td>${insectsCount}</td>
+                        <td>${fn:length(insects)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent"><a href="Plantae" id="kingdom" class="taxonBrowse">Plants</a></td>
+                        <td>${plantsCount}</td>
+                        <td>${fn:length(plants)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent"><a href="Fungi" id="kingdom" class="taxonBrowse">Fungi</a></td>
+                        <td>${fungiCount}</td>
+                        <td>${fn:length(fungi)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent"><a href="Chromista" id="kingdom" class="taxonBrowse">Chromista</a></td>
+                        <td>${chromistaCount}</td>
+                        <td>${fn:length(chromista)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent"><a href="Protozoa" id="kingdom" class="taxonBrowse">Protozoa</a></td>
+                        <td>${protozoaCount}</td>
+                        <td>${fn:length(protozoa)}</td>
+                    </tr>
+                    <tr>
+                        <td class="indent"><a href="Bacteria" id="kingdom" class="taxonBrowse">Bacteria</a></td>
+                        <td>${bacteriaCount}</td>
+                        <td>${fn:length(bacteria)}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
         </form>
     </body>
 </html>

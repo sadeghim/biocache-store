@@ -357,9 +357,8 @@ public class SearchDaoImpl implements SearchDao {
     }
 
     /**
-     * @see org.ala.biocache.dao.SearchDao#findAllSpeciesByCircleAreaAndHigherTaxa(Float latitude, Float longitude,
-     *     Integer radius, String rank, String higherTaxon, String filterQuery, Integer startIndex, Integer pageSize,
-     *     String sortField, String sortDirection)
+     * @see org.ala.biocache.dao.SearchDao#findAllSpeciesByCircleAreaAndHigherTaxa(Float, Float,
+     *     Integer, String, String, String, Integer, Integer, String, String)
      */
     @Override
     public List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude,
@@ -376,9 +375,8 @@ public class SearchDaoImpl implements SearchDao {
     }
 
     /**
-     * @see org.ala.biocache.dao.SearchDao#findAllSpeciesByCircleAreaAndHigherTaxa(Float latitude, Float longitude,
-     *     Integer radius, String rank, String higherTaxon, String filterQuery, Integer startIndex, Integer pageSize, 
-     *     String sortField, String sortDirection)
+     * @see org.ala.biocache.dao.SearchDao#findAllSpeciesByCircleAreaAndHigherTaxa(Float, Float,
+     *     Integer, String, String, String, Integer, Integer, String, String)
      */
     @Override
     public List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxa(Float latitude, Float longitude,
@@ -400,6 +398,10 @@ public class SearchDaoImpl implements SearchDao {
         return speciesWithCounts;
     }
 
+    /**
+     * @see org.ala.biocache.dao.SearchDao#findAllKingdomsByCircleArea(Float, Float, Integer, String,
+     *       Integer, Integer, String, String)
+     */
     public List<TaxaCountDTO> findAllKingdomsByCircleArea(Float latitude, Float longitude,
             Integer radius, String filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception {
@@ -415,7 +417,7 @@ public class SearchDaoImpl implements SearchDao {
 
 
     /**
-     *
+     * Perform SOLR query - takes a SolrQuery and search params
      *
      * @param solrQuery
      * @param filterQuery
@@ -464,7 +466,8 @@ public class SearchDaoImpl implements SearchDao {
     }
 
     /**
-     *
+     * Process the {@see org.​apache.​solr.​client.​solrj.​response.QueryResponse} from a SOLR search and return
+     * a {@link org.ala.biocache.model.SearchResultDTO}
      *
      * @param qr
      * @param solrQuery
@@ -531,8 +534,12 @@ public class SearchDaoImpl implements SearchDao {
         return queryString;
     }
 
-
-
+    /**
+     * Format the search input query for a full-text search
+     *
+     * @param query
+     * @return
+     */
     protected String formatSearchQuery(String query) {
         // set the query
         StringBuilder queryString = new StringBuilder();

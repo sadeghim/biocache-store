@@ -87,12 +87,58 @@ public interface SearchDao {
      */
     List<OccurrencePoint> findRecordsForLocation(Float latitude, Float longitude, Integer radius, PointType pointType) throws Exception;
 
+    /**
+     * Location-based search using circular area around a point and for a given radius (in km)
+     *
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @param rank
+     * @param higherTaxon
+     * @param filterQuery
+     * @param startIndex
+     * @param pageSize
+     * @param sortField
+     * @param sortDirection
+     * @return
+     * @throws Exception
+     */
     List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude, Integer radius, String rank, String higherTaxon,
     		String filterQuery, Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception;
 
+    /**
+     * Find all species (and counts) for a given location search (lat/long and radius) and a higher taxon (with rank)
+     *
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @param rank
+     * @param higherTaxa
+     * @param filterQuery
+     * @param startIndex
+     * @param pageSize
+     * @param sortField
+     * @param sortDirection
+     * @return
+     * @throws Exception
+     */
     List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxa(Float latitude, Float longitude, Integer radius, String rank, List<String> higherTaxa,
     		String filterQuery, Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception;
 
-    List<TaxaCountDTO> findAllKingdomsByCircleArea(Float latitude, Float longitude, Integer radius, String filterQuery, Integer startIndex,
-            Integer pageSize, String sortField, String sortDirection) throws Exception;
+    /**
+     * Find all species (and counts) for a given location search (lat/long and radius) and higher taxa (with rank)
+     *
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @param filterQuery
+     * @param startIndex
+     * @param pageSize
+     * @param sortField
+     * @param sortDirection
+     * @return
+     * @throws Exception
+     */
+    List<TaxaCountDTO> findAllKingdomsByCircleArea(Float latitude, Float longitude, Integer radius, String filterQuery,
+             Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception;
 }
