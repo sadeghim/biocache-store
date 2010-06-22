@@ -11,56 +11,79 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Explore Your Area</title>
-        <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+        <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensorfalse&amp;key=${googleKey}" type="text/javascript"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>
         <script type="text/javascript">
             /* Openlayers vars - ${param['radius']} */
             var lon = ${longitude};
             var lat = ${latitude};
             var zoom = ${zoom};
             var map, vectorLayer, selectControl, selectFeature, markerLayer, circleLayer;
-
+            var geocoder;
+            var proj900913 = new OpenLayers.Projection("EPSG:900913");
+            var proj4326 = new OpenLayers.Projection("EPSG:4326");
             /* Openlayers map */
             function loadMap() {
-                map = new OpenLayers.Map('map',{numZoomLevels: 16,controls: []});
+                map = new OpenLayers.Map('yourMap',{
+                    projection: proj900913,
+                    numZoomLevels: 20,
+                    controls: []});
                 //add controls
                 map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled: false}));
                 map.addControl(new OpenLayers.Control.PanZoomBar({zoomWorldIcon: false}));
                 map.addControl(new OpenLayers.Control.Attribution());
-                map.addControl(new OpenLayers.Control.ScaleLine());
+                //map.addControl(new OpenLayers.Control.ScaleLine());
                 map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
-                map.addControl(new OpenLayers.Control.OverviewMap());
-                baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-                        "http://labs.metacarta.com/wms/vmap0",// "http://labs.metacarta.com/wms-c/Basic.py?"
-                        {layers: 'basic'}, // {layers: 'satellite'},
-                        {wrapDateLine: true} ); 
-                map.addLayer(baseLayer);
-                map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
+                //map.addControl(new OpenLayers.Control.OverviewMap());
+//                var baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+//                        "http://labs.metacarta.com/wms/vmap0",// "http://labs.metacarta.com/wms-c/Basic.py?"
+//                        {layers: 'basic'}, // {layers: 'satellite'},
+//                        {wrapDateLine: true} );
+//                map.addLayer(baseLayer);
+                var satellite = new OpenLayers.Layer.Google(
+                    "Google Satellite" , {type: G_SATELLITE_MAP, 'sphericalMercator': true}
+                );
+                var gphy = new OpenLayers.Layer.Google(
+                    "Google Physical",
+                    {type: G_PHYSICAL_MAP,'sphericalMercator': true}
+                );
+                var gmap = new OpenLayers.Layer.Google(
+                    "Google Streets", // the default
+                    {numZoomLevels: 20,'sphericalMercator': true}
+                );
+                map.addLayers([satellite, gphy, gmap]);
+
+                var point = new OpenLayers.LonLat(lon, lat);
+                map.setCenter(point.transform(proj4326, map.getProjectionObject()), zoom);
+               
+                //map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
                 // reload vector layer on zoom event
                 map.events.register('zoomend', map, function (e) {
                     drawCircleRadius();
-                    loadVectorLayer();
+                    loadRecordsLayer();
                     loadSelectControl();
                 });
                 
                 // marker pin (Google-style)
                 markerLayer = new OpenLayers.Layer.Vector("Pin");
+                var pinPoint = new OpenLayers.Geometry.Point(lon, lat);
                 var feature = new OpenLayers.Feature.Vector(
-                    new OpenLayers.Geometry.Point(lon, lat),
-                    {title:'Your location'},
-                    {externalGraphic: '${pageContext.request.contextPath}/static/css/images/marker.png', graphicHeight: 28, graphicWidth: 18, graphicYOffset: -14, graphicZIndex: 1000, rendererOptions: {zIndexing: true}});
+                    pinPoint.transform(proj4326, map.getProjectionObject()),
+                    {title:'Your location' },
+                    {externalGraphic: '${pageContext.request.contextPath}/static/css/images/marker.png', graphicHeight: 28, graphicWidth: 18, graphicYOffset: -24 , graphicZIndex: 1000, rendererOptions: {zIndexing: true}});
+                //feature.transform(proj4326, map.getProjectionObject());
                 markerLayer.addFeatures(feature);
-                
                 map.addLayer(markerLayer);
                 markerLayer.setZIndex(1000);
                 
                 // circle showing area included in search
                 
                 drawCircleRadius();
-                loadVectorLayer();
+                //loadVectorLayer();
                 loadSelectControl();
             }
 
-            function loadVectorLayer() {
+            function loadRecordsLayer(taxa, rank) {
                 if (vectorLayer != null) {
                     vectorLayer.destroy();
                     vectorLayer = null;
@@ -72,7 +95,7 @@
                         fillColor: "${'${color}'}",//"#ffcc66",
                         //fillColor: "#D75A25",
                         strokeColor: "${'${color}'}",
-                        fillOpacity: 0.7,
+                        fillOpacity: 0.6,
                         graphicZIndex: "${'${count}'}",
                         strokeWidth: 0
                     })
@@ -80,9 +103,12 @@
 
                 var geoJsonUrl = "${pageContext.request.contextPath}/geojson/radius-points"; //+"&zoom=4&callback=?";
                 //var zoomLevel = map.getZoom();
+
                 var params = {
                     //q: "${query}",
                     //zoom: zoomLevel
+                    "taxa": taxa,
+                    "rank": rank,
                     "lat": ${latitude},
                     "long":  ${longitude},
                     "radius": ${radius}
@@ -91,6 +117,7 @@
                 var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td><td style="width:50px;background-color:#ffff00;">1&ndash;9</td><td style="width:50px;background-color:#ffcc00;">10&ndash;49</td><td style="width:50px;background-color:#ff9900;">50&ndash;99</td><td style="width:50px;background-color:#ff6600;">100&ndash;249</td><td style="width:50px;background-color:#ff3300;">250&ndash;499</td><td style="width:50px;background-color:#cc0000;">500+</td></tr></table>';
 
                 vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
+                    projection: proj4326,
                     styleMap: myStyles,
                     rendererOptions: {zIndexing: true},
                     attribution: legend,
@@ -158,7 +185,7 @@
                     circleLayer = null;
                 }
 
-                circleLayer = new OpenLayers.Layer.Vector("Cirlce", {});
+                circleLayer = new OpenLayers.Layer.Vector("Cirlce", {projection: proj4326});
                 var point = new OpenLayers.Geometry.Point(lon, lat);
                 var DOTS_PER_UNIT = OpenLayers.INCHES_PER_UNIT.km * OpenLayers.DOTS_PER_INCH;
                 var rad = ${radius} * DOTS_PER_UNIT / map.getScale();
@@ -172,28 +199,70 @@
                     pointRadius: rad
                     //pointerEvents: "visiblePainted"
                 };
-                var pointFeature = new OpenLayers.Feature.Vector(point,null,style_green);
+                var pointFeature = new OpenLayers.Feature.Vector(point.transform(proj4326, map.getProjectionObject()),{},style_green);
+                //pointFeature.transform(proj4326, map.getProjectionObject());
                 circleLayer.addFeatures([pointFeature]);
                 map.addLayer(circleLayer);
                 //circleLayer.setZIndex(10);
             }
 
+            function addAddressToPage(response) {
+                //map.clearOverlays();
+                if (!response || response.Status.code != 200) {
+                    alert("Sorry, we were unable to geocode that address");
+                } else {
+                    var location = response.Placemark[0];
+                    var lat = location.Point.coordinates[1]
+                    var lon = location.Point.coordinates[0];
+                    var locationStr = response.Placemark[0].address;
+                    $('input#location').val(locationStr);
+                    $('input#latitude').val(lat);
+                    $('input#longitude').val(lon);
+                    $('form#searchForm').submit();
+                }
+            }            
+            
+            function codeAddress(coordinates) {
+                var address = $('input#address').val();
+                var lat = $('input#longitude').val();
+                var lon =$('input#latitude').val();
+
+                if (geocoder) {
+                    if (coordinates && lat && lon) {
+                        var latLon = new GLatLng(lon,lat);
+                        geocoder.getLocations(latLon, addAddressToPage);
+                    }
+                    else if (address) {
+                        geocoder.getLocations(address, addAddressToPage);
+                    }
+                }
+            }
+
             $(document).ready(function() {
+                // load OpenLayers map
                 loadMap();
-//                $("#treeView").treeview({
-//			url: "/biocache-webapp/explore/species.json"
-//		});
+                geocoder = new GClientGeocoder(); //new google.maps.Geocoder();
+                geocoder.setBaseCountryCode("AU");
+                // catch the link on the taxon groups table
                 $('.taxonBrowse').click(
                     function(e) {
                         e.preventDefault(); // ignore the href text - used for data
                         var taxon = $(this).attr('href');
                         var rank = $(this).attr('id');
+                        var taxa = []; // array of taxa
+                        if (taxon.contains("|")) {
+                            taxa = taxon.split("|");
+                        } else {
+                            taxa[0] = taxon;
+                        }
                         $('.taxonBrowse').parent().parent().css('background-color','inherit');
                         $(this).parent().parent().css('background-color','#DDD');
                         $('#taxa-level-1 tbody tr').css('background-color','#DDD');
+                        // load records layer on map
+                        loadRecordsLayer(taxa, rank);
                         // AJAX...
                         var uri = "/biocache-webapp/explore/species.json";
-                        var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxon+"&rank="+rank;
+                        var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank="+rank;
                         $('#taxa-level-1 tbody:last').html('<tr><td>[loading...]</td></tr>');
                         $.getJSON(uri + params, function(data) {
                             //alert(data.rank + "|" + data.taxa)
@@ -203,9 +272,9 @@
                                 $('#taxa-level-1 tbody:last tr:last').html('<td rowspan="12"><div id="taxaDiv"><ol></ol></div></td>');
                                 for (i=0;i<data.species.length;i++) {
                                     //$('#taxa-level-1 tr:last').after('<tr><td>'+data.species[i].name+' ('+data.species[i].count+')</td></tr>');
-                                    $('#taxa-level-1 #taxaDiv ol').append('<li><a href="${speciesPageUrl}'+
+                                    $('#taxa-level-1 #taxaDiv ol').append('<li><span><a href="${speciesPageUrl}'+
                                         data.species[i].guid+'"><i>'+data.species[i].name+'</i></a> ('+
-                                        data.species[i].count+' records)</li>');
+                                        data.species[i].count+' records)</span></li>');
                                 }
                             } else {
                                 $('#taxa-level-1 tbody:last tr:last').html('<td>[no species found]</td>');
@@ -215,25 +284,56 @@
                     }
                 );
 
+                // By default show the all records group
                 $('#taxa-level-0 tbody td:first a.taxonBrowse').click();
+                
+                $('input#locationSearch').click(
+                    function(e) {
+                        e.preventDefault(); // ignore the href text - used for data
+                        codeAddress();
+                    }
+                );
+                    
+                $('input#coordSearch').click(
+                    function(e) {
+                        e.preventDefault(); // ignore the href text - used for data
+                        $().val("");
+                        codeAddress(true);
+                    }
+                );
             });
         </script>
     </head>
     <body>
         <h1>Explore Your Area</h1>
-        <div id="map" style="width: 400px; height: 400px;float:right;"></div>
+        <div id="yourMap" style="width: 400px; height: 400px; float:right;"></div>
         <form name="searchForm" id="searchForm" action="" method="GET" autocomplete="off">
-        <p>Your Location is:
-            latitude <input name="latitude" id="latitude" <c:if test="${not empty latitude}">value="<c:out value="${latitude}" />"</c:if> type="text" size="8"/>
-            longitude <input name="longitude" id="longitude" <c:if test="${not empty longitude}">value="<c:out value="${longitude}" />"</c:if> type="text" size="8"/></p>
-        <p>Show records in a
-            <select id="radius" name="radius">
-                <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
-                <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
-                <option value="50" <c:if test="${radius eq '50'}">selected</c:if>>50</option>
-            </select> km radius <input type="submit" value="Reload"/></p>
-        <h3>Results for ${location} (<fmt:formatNumber value="${allLifeCounts}" pattern="#,###,###"/> records found)</h3>
-
+        <table id="locationInput">
+            <tr>
+                <td width="45%">
+                    Enter a location or address:<br/>
+                    <input name="address" id="address" size="30" value="${param['address']}"/>
+                    <input id="locationSearch" type="submit" value="Search"/>
+                </td>
+                <td width="10%">OR</td>
+                <td width="45%">
+                    Enter coordinates:<br/>
+                    latitude <input name="latitude" id="latitude" <c:if test="${not empty latitude}">value="<c:out value="${latitude}" />"</c:if> type="text" size="8"/>
+<!--                    <br/>-->
+                    longitude <input name="longitude" id="longitude" <c:if test="${not empty longitude}">value="<c:out value="${longitude}" />"</c:if> type="text" size="8"/>
+                    <input id="coordSearch" type="submit" value="Load"/>
+                    <input type="hidden" value="${location}" id="location" name="location"/>
+                </td>
+            </tr>
+        </table>
+        <p id="locationMatch">Showing records for: <b>${location}</b></p>
+        <p>Display records in a
+        <select id="radius" name="radius">
+            <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
+            <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
+            <option value="50" <c:if test="${radius eq '50'}">selected</c:if>>50</option>
+        </select> km radius <input type="submit" value="Reload"/></p>
+<!--        <p>Results - <fmt:formatNumber value="${allLifeCounts}" pattern="#,###,###"/> records found</p>-->
         <div id="taxaBox">
             <div id="rightList" style="float:right; width:290px; margin-right: 10px;">
                 <table id="taxa-level-1" style="width:100%;">
@@ -249,8 +349,8 @@
                         <th>Species</th>
                     </tr>
                     <tr>
-                        <td><a href="*" id="*" class="taxonBrowse">All Life</a>
-                        <td>${allLifeCounts}</td>
+                        <td><a href="*" id="*" class="taxonBrowse">All Records</a>
+                        <td><a href="../occurrences/search?q=location.search&lat=${latitude}&lon=${longitude}&rad=${radius}" title="See all ${allLifeCounts} records">${allLifeCounts}</a></td>
                         <td>${fn:length(allLife)}</td>
                     </tr>
                     <tr>
@@ -279,7 +379,7 @@
                         <td>${fn:length(frogs)}</td>
                     </tr>
                     <tr>
-                        <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Fish</a></td>
+                        <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes" id="class" class="taxonBrowse">Fish</a></td>
                         <td>${fishCount}</td>
                         <td>${fn:length(fish)}</td>
                     </tr>
