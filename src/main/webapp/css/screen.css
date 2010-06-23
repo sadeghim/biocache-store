@@ -776,8 +776,8 @@ table.propertyTable td.propertyNames {
     font-weight: bold;
     text-align: right;
 }
-/* Your-Area page styles */
 
+/* Your-Area page styles */
 #taxaBox {
     width: 550px;
     font-size: 12px;
@@ -809,14 +809,25 @@ table.propertyTable td.propertyNames {
 }
 #taxaDiv ol, #taxaDiv ul {
     margin: 0px 1em 0.5em 2.5em;
+    font-size: 11px;
 }
 #taxaDiv li {
-    margin: 2px 0px 2px 0px;
+    margin: 2px 0px 3px 0px;
+}
+#taxaDiv li span {
+    font-size: 12px;
 }
 #taxaBox #taxa-level-1 tbody td {
     margin: 0;
     padding: 0;
 }
+#taxaBox p {
+    margin-bottom: 5px;
+}
+#address {
+    width: 300px;
+}
+
 /* YUI modifications */
 div.yui-dt > table {
     width: 100%;
@@ -936,5 +947,5 @@ em, dfn {
 /*  OpenLayers overrides */
 
 div.olControlAttribution {
-    bottom: 3px !important;
+    bottom: 11px !important;
 }

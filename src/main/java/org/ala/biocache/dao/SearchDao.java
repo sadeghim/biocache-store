@@ -85,7 +85,7 @@ public interface SearchDao {
      * @return
      * @throws Exception
      */
-    List<OccurrencePoint> findRecordsForLocation(Float latitude, Float longitude, Integer radius, PointType pointType) throws Exception;
+    List<OccurrencePoint> findRecordsForLocation(List<String> taxa, String rank,Float latitude, Float longitude, Integer radius, PointType pointType) throws Exception;
 
     /**
      * Location-based search using circular area around a point and for a given radius (in km)

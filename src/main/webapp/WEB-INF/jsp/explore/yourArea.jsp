@@ -25,7 +25,7 @@
             /* Openlayers map */
             function loadMap() {
                 map = new OpenLayers.Map('yourMap',{
-                    projection: proj900913,
+                    //projection: proj900913,
                     numZoomLevels: 20,
                     controls: []});
                 //add controls
@@ -35,23 +35,24 @@
                 //map.addControl(new OpenLayers.Control.ScaleLine());
                 map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
                 //map.addControl(new OpenLayers.Control.OverviewMap());
-//                var baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-//                        "http://labs.metacarta.com/wms/vmap0",// "http://labs.metacarta.com/wms-c/Basic.py?"
-//                        {layers: 'basic'}, // {layers: 'satellite'},
-//                        {wrapDateLine: true} );
-//                map.addLayer(baseLayer);
+                var baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
+                        "http://labs.metacarta.com/wms/vmap0",// "http://labs.metacarta.com/wms-c/Basic.py?"
+                        {layers: 'basic'}, // {layers: 'satellite'},
+                        {wrapDateLine: true} );
+                map.addLayer(baseLayer);
                 var satellite = new OpenLayers.Layer.Google(
-                    "Google Satellite" , {type: G_SATELLITE_MAP, 'sphericalMercator': true}
+                    "Google Satellite" , {type: G_SATELLITE_MAP}
                 );
-                var gphy = new OpenLayers.Layer.Google(
-                    "Google Physical",
-                    {type: G_PHYSICAL_MAP,'sphericalMercator': true}
-                );
-                var gmap = new OpenLayers.Layer.Google(
-                    "Google Streets", // the default
-                    {numZoomLevels: 20,'sphericalMercator': true}
-                );
-                map.addLayers([satellite, gphy, gmap]);
+                map.addLayer(satellite);
+//                var gphy = new OpenLayers.Layer.Google(
+//                    "Google Physical",
+//                    {type: G_PHYSICAL_MAP,'sphericalMercator': true}
+//                );
+//                var gmap = new OpenLayers.Layer.Google(
+//                    "Google Streets", // the default
+//                    {numZoomLevels: 20,'sphericalMercator': true}
+//                );
+//                map.addLayers([satellite, gphy, gmap]);
 
                 var point = new OpenLayers.LonLat(lon, lat);
                 map.setCenter(point.transform(proj4326, map.getProjectionObject()), zoom);
@@ -70,8 +71,9 @@
                 var feature = new OpenLayers.Feature.Vector(
                     pinPoint.transform(proj4326, map.getProjectionObject()),
                     {title:'Your location' },
-                    {externalGraphic: '${pageContext.request.contextPath}/static/css/images/marker.png', graphicHeight: 28, graphicWidth: 18, graphicYOffset: -24 , graphicZIndex: 1000, rendererOptions: {zIndexing: true}});
-                //feature.transform(proj4326, map.getProjectionObject());
+                    {externalGraphic: '${pageContext.request.contextPath}/static/css/images/marker.png', graphicHeight: 28, graphicWidth: 18, graphicYOffset: -24 , graphicZIndex: 1000, rendererOptions: {zIndexing: true}}
+                );
+
                 markerLayer.addFeatures(feature);
                 map.addLayer(markerLayer);
                 markerLayer.setZIndex(1000);
@@ -114,13 +116,13 @@
                     "radius": ${radius}
                 };
 
-                var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td><td style="width:50px;background-color:#ffff00;">1&ndash;9</td><td style="width:50px;background-color:#ffcc00;">10&ndash;49</td><td style="width:50px;background-color:#ff9900;">50&ndash;99</td><td style="width:50px;background-color:#ff6600;">100&ndash;249</td><td style="width:50px;background-color:#ff3300;">250&ndash;499</td><td style="width:50px;background-color:#cc0000;">500+</td></tr></table>';
+                //var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td><td style="width:50px;background-color:#ffff00;">1&ndash;9</td><td style="width:50px;background-color:#ffcc00;">10&ndash;49</td><td style="width:50px;background-color:#ff9900;">50&ndash;99</td><td style="width:50px;background-color:#ff6600;">100&ndash;249</td><td style="width:50px;background-color:#ff3300;">250&ndash;499</td><td style="width:50px;background-color:#cc0000;">500+</td></tr></table>';
 
                 vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
                     projection: proj4326,
                     styleMap: myStyles,
                     rendererOptions: {zIndexing: true},
-                    attribution: legend,
+                    //attribution: legend,
                     strategies: [new OpenLayers.Strategy.Fixed()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
                     protocol: new OpenLayers.Protocol.HTTP({
                         url: geoJsonUrl,
@@ -306,116 +308,122 @@
     </head>
     <body>
         <h1>Explore Your Area</h1>
-        <div id="yourMap" style="width: 400px; height: 400px; float:right;"></div>
-        <form name="searchForm" id="searchForm" action="" method="GET" autocomplete="off">
-        <table id="locationInput">
-            <tr>
-                <td width="45%">
-                    Enter a location or address:<br/>
-                    <input name="address" id="address" size="30" value="${param['address']}"/>
-                    <input id="locationSearch" type="submit" value="Search"/>
-                </td>
-                <td width="10%">OR</td>
-                <td width="45%">
-                    Enter coordinates:<br/>
-                    latitude <input name="latitude" id="latitude" <c:if test="${not empty latitude}">value="<c:out value="${latitude}" />"</c:if> type="text" size="8"/>
-<!--                    <br/>-->
-                    longitude <input name="longitude" id="longitude" <c:if test="${not empty longitude}">value="<c:out value="${longitude}" />"</c:if> type="text" size="8"/>
-                    <input id="coordSearch" type="submit" value="Load"/>
-                    <input type="hidden" value="${location}" id="location" name="location"/>
-                </td>
-            </tr>
-        </table>
-        <p id="locationMatch">Showing records for: <b>${location}</b></p>
-        <p>Display records in a
-        <select id="radius" name="radius">
-            <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
-            <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
-            <option value="50" <c:if test="${radius eq '50'}">selected</c:if>>50</option>
-        </select> km radius <input type="submit" value="Reload"/></p>
-<!--        <p>Results - <fmt:formatNumber value="${allLifeCounts}" pattern="#,###,###"/> records found</p>-->
-        <div id="taxaBox">
-            <div id="rightList" style="float:right; width:290px; margin-right: 10px;">
-                <table id="taxa-level-1" style="width:100%;">
-                    <thead><tr><th>&nbsp;</th></tr></thead>
-                    <tbody><tr></tr></tbody>
-                </table>
-            </div>
-            <div id="leftList">
-                <table id="taxa-level-0" style="width:100%;">
+        <div id="mapOuter" style="width: 400px; height: 450px; float:right;">
+            <div id="yourMap" style="width: 400px; height: 400px;"></div>
+            <div style="font-size:11px;width:400px;">
+                <table id="cellCountsLegend">
                     <tr>
-                        <th>Group</th>
-                        <th>Records</th>
-                        <th>Species</th>
-                    </tr>
-                    <tr>
-                        <td><a href="*" id="*" class="taxonBrowse">All Records</a>
-                        <td><a href="../occurrences/search?q=location.search&lat=${latitude}&lon=${longitude}&rad=${radius}" title="See all ${allLifeCounts} records">${allLifeCounts}</a></td>
-                        <td>${fn:length(allLife)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent"><a href="Animalia" id="kingdom" class="taxonBrowse">Animals</a>
-                        <td>${animalsCount}</td>
-                        <td>${fn:length(animals)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent2"><a href="Mammalia" id="class" class="taxonBrowse">Mammals</a></td>
-                        <td>${mammalsCount}</td>
-                        <td>${fn:length(mammals)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent2"><a href="Aves" id="class" class="taxonBrowse">Birds</a></td>
-                        <td>${birdsCount}</td>
-                        <td>${fn:length(birds)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Reptiles</a></td>
-                        <td>${reptilesCount}</td>
-                        <td>${fn:length(reptiles)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent2"><a href="Amphibia" id="class" class="taxonBrowse">Amphibians</a></td>
-                        <td>${frogsCount}</td>
-                        <td>${fn:length(frogs)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes" id="class" class="taxonBrowse">Fish</a></td>
-                        <td>${fishCount}</td>
-                        <td>${fn:length(fish)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent2"><a href="Insecta" id="class" class="taxonBrowse">Insects</a></td>
-                        <td>${insectsCount}</td>
-                        <td>${fn:length(insects)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent"><a href="Plantae" id="kingdom" class="taxonBrowse">Plants</a></td>
-                        <td>${plantsCount}</td>
-                        <td>${fn:length(plants)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent"><a href="Fungi" id="kingdom" class="taxonBrowse">Fungi</a></td>
-                        <td>${fungiCount}</td>
-                        <td>${fn:length(fungi)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent"><a href="Chromista" id="kingdom" class="taxonBrowse">Chromista</a></td>
-                        <td>${chromistaCount}</td>
-                        <td>${fn:length(chromista)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent"><a href="Protozoa" id="kingdom" class="taxonBrowse">Protozoa</a></td>
-                        <td>${protozoaCount}</td>
-                        <td>${fn:length(protozoa)}</td>
-                    </tr>
-                    <tr>
-                        <td class="indent"><a href="Bacteria" id="kingdom" class="taxonBrowse">Bacteria</a></td>
-                        <td>${bacteriaCount}</td>
-                        <td>${fn:length(bacteria)}</td>
+                      <td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td>
+                      <td style="width:60px;background-color:#ffff00;">1&ndash;9</td>
+                      <td style="width:60px;background-color:#ffcc00;">10&ndash;49</td>
+                      <td style="width:60px;background-color:#ff9900;">50&ndash;99</td>
+                      <td style="width:60px;background-color:#ff6600;">100&ndash;249</td>
+                      <td style="width:60px;background-color:#ff3300;">250&ndash;499</td>
+                      <td style="width:60px;background-color:#cc0000;">500+</td>
                     </tr>
                 </table>
             </div>
         </div>
+        
+        <form name="searchForm" id="searchForm" action="" method="GET" autocomplete="off">
+            <p>
+                Enter a location or address:<br/>
+                <input name="address" id="address" size="40" value="${address}"/>
+                <input id="locationSearch" type="submit" value="Search"/>
+                <input type="hidden" name="latitude" id="latitude" value="${latitude}"/>
+                <input type="hidden" name="longitude" id="longitude" value="${longitude}"/>
+                <input type="hidden" name="location" id="location" value="${location}"/>
+            </p>
+            <p id="locationMatch">Showing records for: <b>${location}</b></p>
+            <p>Display records in a
+            <select id="radius" name="radius">
+                <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
+                <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
+                <option value="50" <c:if test="${radius eq '50'}">selected</c:if>>50</option>
+            </select> km radius <input type="submit" value="Reload"/></p>
+    <!--        <p>Results - <fmt:formatNumber value="${allLifeCounts}" pattern="#,###,###"/> records found</p>-->
+            <div id="taxaBox">
+                <div id="rightList" style="float:right; width:290px; margin-right: 10px;">
+                    <table id="taxa-level-1" style="width:100%;">
+                        <thead><tr><th>&nbsp;</th></tr></thead>
+                        <tbody><tr></tr></tbody>
+                    </table>
+                </div>
+                <div id="leftList">
+                    <table id="taxa-level-0" style="width:100%;">
+                        <tr>
+                            <th>Group</th>
+                            <th>Records</th>
+                            <th>Species</th>
+                        </tr>
+                        <tr>
+                            <td><a href="*" id="*" class="taxonBrowse">All Records</a>
+                            <td><a href="../occurrences/search?q=location.search&lat=${latitude}&lon=${longitude}&rad=${radius}" title="See all ${allLifeCounts} records">${allLifeCounts}</a></td>
+                            <td>${fn:length(allLife)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent"><a href="Animalia" id="kingdom" class="taxonBrowse">Animals</a>
+                            <td>${animalsCount}</td>
+                            <td>${fn:length(animals)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent2"><a href="Mammalia" id="class" class="taxonBrowse">Mammals</a></td>
+                            <td>${mammalsCount}</td>
+                            <td>${fn:length(mammals)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent2"><a href="Aves" id="class" class="taxonBrowse">Birds</a></td>
+                            <td>${birdsCount}</td>
+                            <td>${fn:length(birds)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Reptiles</a></td>
+                            <td>${reptilesCount}</td>
+                            <td>${fn:length(reptiles)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent2"><a href="Amphibia" id="class" class="taxonBrowse">Amphibians</a></td>
+                            <td>${frogsCount}</td>
+                            <td>${fn:length(frogs)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes" id="class" class="taxonBrowse">Fish</a></td>
+                            <td>${fishCount}</td>
+                            <td>${fn:length(fish)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent2"><a href="Insecta" id="class" class="taxonBrowse">Insects</a></td>
+                            <td>${insectsCount}</td>
+                            <td>${fn:length(insects)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent"><a href="Plantae" id="kingdom" class="taxonBrowse">Plants</a></td>
+                            <td>${plantsCount}</td>
+                            <td>${fn:length(plants)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent"><a href="Fungi" id="kingdom" class="taxonBrowse">Fungi</a></td>
+                            <td>${fungiCount}</td>
+                            <td>${fn:length(fungi)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent"><a href="Chromista" id="kingdom" class="taxonBrowse">Chromista</a></td>
+                            <td>${chromistaCount}</td>
+                            <td>${fn:length(chromista)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent"><a href="Protozoa" id="kingdom" class="taxonBrowse">Protozoa</a></td>
+                            <td>${protozoaCount}</td>
+                            <td>${fn:length(protozoa)}</td>
+                        </tr>
+                        <tr>
+                            <td class="indent"><a href="Bacteria" id="kingdom" class="taxonBrowse">Bacteria</a></td>
+                            <td>${bacteriaCount}</td>
+                            <td>${fn:length(bacteria)}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </form>
     </body>
 </html>

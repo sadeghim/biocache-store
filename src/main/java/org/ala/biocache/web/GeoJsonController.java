@@ -106,6 +106,8 @@ public class GeoJsonController {
             @RequestParam(value="callback", required=false) String callback,
             @RequestParam(value="zoom", required=false, defaultValue="0") Integer zoomLevel,
             @RequestParam(value="bbox", required=false) String bbox,
+            @RequestParam(value="taxa", required=false, defaultValue="*") String taxa,
+            @RequestParam(value="rank", required=false, defaultValue="*") String rank,
             Model model,
             HttpServletResponse response)
             throws Exception {
@@ -116,10 +118,19 @@ public class GeoJsonController {
             response.setContentType("application/json");
         }
 
+        // Convert array to list so we append more values onto it
+        String[] taxaArray = StringUtils.split(taxa, ",");
+        ArrayList<String> taxaList = null;
+        if (taxaArray != null) {
+            taxaList = new ArrayList<String>(Arrays.asList(taxaArray));
+        } else {
+            taxaList = new ArrayList<String>();
+        }
+
         PointType pointType = PointType.POINT_00001;
         //pointType = getPointTypeForZoomLevel(zoomLevel);
         
-        List<OccurrencePoint> points = searchDAO.findRecordsForLocation(latitude, longitude, radius, pointType);
+        List<OccurrencePoint> points = searchDAO.findRecordsForLocation(taxaList, rank, latitude, longitude, radius, pointType);
         logger.debug("Points search for "+pointType.getLabel()+" - found: "+points.size());
         model.addAttribute("points", points);
 

@@ -16,26 +16,27 @@
 package org.ala.biocache.web;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import javax.inject.Inject;
 import org.ala.biocache.dao.SearchDao;
+import org.ala.biocache.model.Address;
 import org.ala.biocache.model.TaxaCountDTO;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Controller for the "explore your area" page
  *
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
-@Controller
+@Controller("exploreController")
 public class ExploreController {
     /** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(ExploreController.class);
@@ -46,7 +47,8 @@ public class ExploreController {
     /** Name of view for site home page */
 	private String YOUR_AREA = "explore/yourArea";
     private String speciesPageUrl = "http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp/species/";
-    
+    private String googleKey; // set in properties override
+    private HashMap<String, List<Float>> addressCache = new HashMap<String, List<Float>>();
     /** Mapping of radius in km to OpenLayers zoom level */
     public final static HashMap<Integer, Integer> radiusToZoomLevelMap = new HashMap<Integer, Integer>();
 	static {
@@ -60,12 +62,15 @@ public class ExploreController {
             @RequestParam(value="radius", required=false, defaultValue="10") Integer radius,
             @RequestParam(value="latitude", required=false, defaultValue="-35.27412f") Float latitude,
             @RequestParam(value="longitude", required=false, defaultValue="149.11288f") Float longitude,
+            @RequestParam(value="address", required=false, defaultValue="-35.27412,149.11288") String address,
+            @RequestParam(value="location", required=false, defaultValue="") String location,
             Model model) throws Exception {
-
+        
+        model.addAttribute("googleKey", googleKey);
         model.addAttribute("latitude", latitude);
         model.addAttribute("longitude", longitude);
-        String location = "Canberra, ACT"; // TODO: get via gazateer service
         model.addAttribute("location", location);
+        model.addAttribute("address", address);
         model.addAttribute("radius", radius);
         model.addAttribute("zoom", radiusToZoomLevelMap.get(radius));
 
@@ -109,12 +114,11 @@ public class ExploreController {
 		model.addAttribute("frogs", frogs);
         model.addAttribute("frogsCount", calculateRecordCount(frogs));
         List<String> fishTaxa = new ArrayList<String>();
-		fishTaxa.add("Myxini");
-		fishTaxa.add("Petromyzontida");
+        // Agnatha|Chondrichthyes|
+		fishTaxa.add("Agnatha");
 		fishTaxa.add("Chondrichthyes");
-		fishTaxa.add("Sarcopterygii");
-		fishTaxa.add("Actinopterygii");
-		List<TaxaCountDTO> fish = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, "order", fishTaxa, null, 0, -1, "species", "asc");
+		fishTaxa.add("Osteichthyes");
+		List<TaxaCountDTO> fish = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, "class", fishTaxa, null, 0, -1, "species", "asc");
 		model.addAttribute("fish", fish);
         model.addAttribute("fishCount", calculateRecordCount(fish));
         // TODO: get from properties file or load via Spring
@@ -126,11 +130,9 @@ public class ExploreController {
     protected Long calculateRecordCount(List<TaxaCountDTO> taxa) {
         // Get full count of records in area from facet breakdowns
         Long totalRecords = 0l;
-
         for (TaxaCountDTO taxon : taxa) {
             totalRecords = totalRecords + taxon.getCount();
         }
-
         return totalRecords;
     }
 
@@ -151,14 +153,30 @@ public class ExploreController {
             @RequestParam(value="radius", required=false, defaultValue="10") Integer radius,
             @RequestParam(value="latitude", required=false, defaultValue="0f") Float latitude,
             @RequestParam(value="longitude", required=false, defaultValue="0f") Float longitude,
-            @RequestParam(value="taxa", required=false, defaultValue="") String taxa,
+            @RequestParam(value="taxa", required=false, defaultValue="") String taxa, // comma separated list
             @RequestParam(value="rank", required=false, defaultValue="") String rank,
             Model model) throws Exception {
 
+        String[] taxaArray = StringUtils.split(taxa, ",");
+        ArrayList<String> taxaList = null;
+        if (taxaArray != null) {
+            taxaList = new ArrayList<String>(Arrays.asList(taxaArray));
+        } else {
+            taxaList = new ArrayList<String>();
+        }
+
         model.addAttribute("taxa", taxa);
         model.addAttribute("rank", rank);
-        List<TaxaCountDTO> species = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, rank, taxa, null, 0, -1, "count", "asc");
+        List<TaxaCountDTO> species = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, taxaList, null, 0, -1, "count", "asc");
         model.addAttribute("species", species);
         model.addAttribute("speciesCount", species.size());
+    }
+
+    public String getGoogleKey() {
+        return googleKey;
+    }
+
+    public void setGoogleKey(String googleKey) {
+        this.googleKey = googleKey;
     }
 }

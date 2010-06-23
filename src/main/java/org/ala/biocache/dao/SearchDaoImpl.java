@@ -39,6 +39,7 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.stereotype.Component;
 import au.com.bytecode.opencsv.CSVWriter;
+import java.util.Arrays;
 import java.util.Collections;
 import org.ala.biocache.model.PointType;
 import org.ala.biocache.model.TaxaCountDTO;
@@ -306,7 +307,7 @@ public class SearchDaoImpl implements SearchDao {
      * @see org.ala.biocache.dao.SearchDao#findRecordsForLocation(Float, Float, Integer)
      */
     @Override
-    public List<OccurrencePoint> findRecordsForLocation(Float latitude, Float longitude, Integer radius, PointType pointType) throws Exception {
+    public List<OccurrencePoint> findRecordsForLocation(List<String> taxa, String rank, Float latitude, Float longitude, Integer radius, PointType pointType) throws Exception {
         List<OccurrencePoint> points = new ArrayList<OccurrencePoint>(); // new OccurrencePoint(PointType.POINT);
         String queryString = buildSpatialQueryString("*:*", latitude, longitude, radius);
         //String queryString = formatSearchQuery(query);
@@ -314,6 +315,15 @@ public class SearchDaoImpl implements SearchDao {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQueryType("standard");
         solrQuery.setQuery(queryString);
+
+        ArrayList<String> filterQueries = new ArrayList<String>();
+        for (String taxon : taxa) {
+            filterQueries.add(rank + ":" + taxon);
+        }
+        
+        solrQuery.setFilterQueries("(" + StringUtils.join(filterQueries, " OR ") + ")");
+        logger.info("filterQueries: "+solrQuery.getFilterQueries()[0]);
+        
         solrQuery.setRows(0);
         solrQuery.setFacet(true);
         solrQuery.addFacetField(pointType.getLabel());
@@ -352,6 +362,7 @@ public class SearchDaoImpl implements SearchDao {
                 }
             }
         }
+        logger.info("findRecordsForLocation: number of points = "+points.size());
 
         return points;
     }
@@ -365,11 +376,12 @@ public class SearchDaoImpl implements SearchDao {
             Integer radius, String rank, String higherTaxon, String filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception {
 
-        String queryString =  buildSpatialQueryString(rank + ":" + higherTaxon, latitude, longitude, radius);
+        String queryString = buildSpatialQueryString("*:*", latitude, longitude, radius);
+        List<String> filterQueries = Arrays.asList(rank + ":" + higherTaxon);
         List<String> facetFields = new ArrayList<String>();
         facetFields.add(SPECIES);
         facetFields.add(SPECIES_LSID);
-        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, facetFields, pageSize, sortField, sortDirection);
+        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, filterQueries, facetFields, pageSize, sortField, sortDirection);
 
         return speciesWithCounts;
     }
@@ -383,17 +395,17 @@ public class SearchDaoImpl implements SearchDao {
             Integer radius, String rank, List<String> higherTaxa, String filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception {
 
-        ArrayList<String> queryUnits = new ArrayList<String>(); 
+        ArrayList<String> filterQueries = new ArrayList<String>();
         
-        for (String higherTaxon: higherTaxa) {
-            queryUnits.add(rank + ":" + higherTaxon);
+        for (String higherTaxon : higherTaxa) {
+            filterQueries.add(rank + ":" + higherTaxon);
         }
         
-        String queryString = buildSpatialQueryString(StringUtils.join(queryUnits, " OR "), latitude, longitude, radius);
+        String queryString = buildSpatialQueryString("*:*", latitude, longitude, radius);
         List<String> facetFields = new ArrayList<String>();
         facetFields.add(SPECIES);
         facetFields.add(SPECIES_LSID);
-        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, facetFields, pageSize, sortField, sortDirection);
+        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, filterQueries, facetFields, pageSize, sortField, sortDirection);
 
         return speciesWithCounts;
     }
@@ -410,7 +422,7 @@ public class SearchDaoImpl implements SearchDao {
         List<String> facetFields = new ArrayList<String>();
         facetFields.add(KINGDOM);
         facetFields.add(KINGDOM_LSID);
-        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, facetFields, pageSize, sortField, sortDirection);
+        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, new ArrayList<String>(), facetFields, pageSize, sortField, sortDirection);
 
         return speciesWithCounts;
     }
@@ -612,13 +624,17 @@ public class SearchDaoImpl implements SearchDao {
      * @return
      * @throws SolrServerException
      */
-    protected List<TaxaCountDTO> getSpeciesCounts(String queryString, List<String> facetFields, Integer pageSize,
+    protected List<TaxaCountDTO> getSpeciesCounts(String queryString, List<String> filterQueries, List<String> facetFields, Integer pageSize,
             String sortField, String sortDirection) throws SolrServerException {
         //LinkedHashMap<String, Long> speciesWithCounts = new LinkedHashMap<String, Long>();
         List<TaxaCountDTO> speciesCounts = new ArrayList<TaxaCountDTO>();
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQueryType("standard");
         solrQuery.setQuery(queryString);
+//        for (String fq : filterQueries) {
+//            solrQuery.addFilterQuery(fq);
+//        }
+        solrQuery.addFilterQuery("(" + StringUtils.join(filterQueries, " OR ") + ")");
         solrQuery.setRows(0);
         solrQuery.setFacet(true);
         solrQuery.setFacetSort(sortField);
@@ -630,7 +646,7 @@ public class SearchDaoImpl implements SearchDao {
         QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, "score", sortDirection);
         logger.info("SOLR query: " + solrQuery.getQuery() + "; total hits: " + qr.getResults().getNumFound());
         List<FacetField> facets = qr.getFacetFields();
-        logger.info("Facets: " +facets.size()+"; facet #1: "+qr.getFacetFields().get(0).getName());
+        logger.debug("Facets: " +facets.size()+"; facet #1: "+qr.getFacetFields().get(0).getName());
 
         if (facets != null) {            
             for (FacetField facet : facets) {
