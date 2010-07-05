@@ -63,11 +63,14 @@ public class OccurrenceDTO implements Serializable {
 	@Field("identifier_date") private Date identifierDate;
     // taxonomy
 	@Field("taxon_name") private String taxonName;
+        @Field("common_name") private String commonName;
 	@Field private String author;
     @Field("rank_id") private Integer rankId;
     @Field private String rank;
 	@Field("raw_taxon_name") private String rawTaxonName;
 	@Field("raw_author") private String rawAuthor;
+        @Field("lft") private Integer left;
+        @Field("rgt") private Integer right;
 	@Field("kingdom_lsid") private String kingdomLsid;
 	@Field private String kingdom;
     @Field("phylum_lsid") private String phylumLsid;
@@ -607,4 +610,29 @@ public class OccurrenceDTO implements Serializable {
     public void setRankId(Integer rankId) {
         this.rankId = rankId;
     }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
+    public Integer getLeft() {
+        return left;
+    }
+
+    public void setLeft(Integer left) {
+        this.left = left;
+    }
+
+    public Integer getRight() {
+        return right;
+    }
+
+    public void setRight(Integer right) {
+        this.right = right;
+    }
+    
 }

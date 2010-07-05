@@ -483,11 +483,14 @@
    <field name="taxon_name" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="taxon_name_text" type="text_ws" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="author" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
+   <field name="common_name" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="rank" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="rank_id" type="int" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="raw_taxon_name" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="raw_author" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="country_code" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="lft" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="rgt" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="kingdom_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="kingdom" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="phylum_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
@@ -575,6 +578,7 @@
    <copyField source="catalogue_number" dest="text"/>
    <copyField source="taxon_name" dest="text"/>
    <copyField source="taxon_name" dest="taxon_name_text"/>
+   <copyField source="common_name" dest="text"/>
    <copyField source="taxon_concept_lsid" dest="lsid"/>
    <copyField source="taxon_concept_lsid" dest="text"/>
    <copyField source="type_status" dest="text"/>

@@ -17,6 +17,24 @@ deterministic
 
     END;
 $$
+-- Function to get the first common name listed for the supplied taxon_concept
+-- Natasha Carter 2010-07-01
+-- The args:
+-- concept_id: The input concept id
+DROP FUNCTION IF EXISTS get_first_taxa_cn$$
+CREATE FUNCTION get_first_taxa_cn(concept_id INT) returns VARCHAR(255) 
+DETERMINISTIC
+READS SQL DATA
+    BEGIN
+        DECLARE cname VARCHAR(255);
+        SELECT cn.name
+        INTO cname
+        FROM common_name cn
+        WHERE cn.taxon_concept_id = concept_id order by id limit 1;
+
+        RETURN cname;
+    END $$
+
 
 -- Stored function to lookup taxon guid for a given higher taxa concept id.
 -- Nick dos Remedios 2010-05-16
@@ -115,8 +133,8 @@ DELIMITER ;
 SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource',
 'institution_code_id','institution_code','institution_code_name','institution_code_lsid',
 'collection_code_id','collection_code','catalogue_number_id','catalogue_number',
-'taxon_concept_lsid','taxon_name','author','rank_id','rank','raw_taxon_name','raw_author','country_code',
-'kingdom_lsid','kingdom','phylum_lsid','phylum','class_lsid','class','order_lsid','order',
+'taxon_concept_lsid','taxon_name','author', 'common_name','rank_id','rank','raw_taxon_name','raw_author','country_code',
+'lft','rgt','kingdom_lsid','kingdom','phylum_lsid','phylum','class_lsid','class','order_lsid','order',
 'family_lsid','family','genus_lsid','genus','species_lsid','species',
 'state',
 'biogeographic_region',
@@ -131,8 +149,9 @@ UNION
 SELECT IFNULL(oc.id,''),IFNULL(oc.data_provider_id,''),IFNULL(dp.`name`,''),IFNULL(oc.data_resource_id,''),
 IFNULL(dr.`name`,''),IFNULL(oc.institution_code_id,''),IFNULL(ic.code,''),IFNULL(ic.`name`,''),
 IFNULL(ic.lsid,''),IFNULL(oc.collection_code_id,''),IFNULL(cc.code,''),IFNULL(oc.catalogue_number_id,''),
-IFNULL(cn.code,''),IFNULL(tc.guid,''),IFNULL(tn.canonical,''),IFNULL(tn.author,''),IFNULL(tc.rank,''),
-IFNULL(rnk.`name`,''),IFNULL(ror.scientific_name,''),IFNULL(ror.author,''),IFNULL(oc.iso_country_code,''),
+IFNULL(cn.code,''),IFNULL(tc.guid,''),IFNULL(tn.canonical,''),IFNULL(tn.author,''), IFNULL(get_first_taxa_cn(oc.taxon_concept_id),''),
+IFNULL(tc.rank,''), IFNULL(rnk.`name`,''),IFNULL(ror.scientific_name,''),IFNULL(ror.author,''),
+IFNULL(oc.iso_country_code,''), IFNULL(tc.lft,''), IFNULL(tc.rgt,''),
 IFNULL(get_taxa_guid(oc.kingdom_concept_id),''), IFNULL(get_taxa_canonical(oc.kingdom_concept_id),''),
 IFNULL(get_taxa_guid(oc.phylum_concept_id),''), IFNULL(get_taxa_canonical(oc.phylum_concept_id),''),
 IFNULL(get_taxa_guid(oc.class_concept_id),''), IFNULL(get_taxa_canonical(oc.class_concept_id),''),
@@ -170,5 +189,5 @@ INNER JOIN catalogue_number cn ON cn.id = oc.catalogue_number_id
 INNER JOIN basis_of_record bor ON bor.id = oc.basis_of_record
 --WHERE oc.data_resource_id = 56
 INTO outfile '/data/bie-staging/biocache/occurrences.csv'
--- INTO outfile '/data/bie-staging/biocache/occurrences.56.csv'
+--INTO outfile '/data/bie-staging/biocache/occurrences.56.csv'
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n'; -- ESCAPED BY '"';

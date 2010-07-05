@@ -335,6 +335,7 @@
                         <select id="sort" name="sort">
                             <option value="score" <c:if test="${param.sort eq 'score'}">selected</c:if>>best match</option>
                             <option value="taxon_name" <c:if test="${param.sort eq 'taxon_name'}">selected</c:if>>scientific name</option>
+                            <option value="common_name" <c:if test="${param.sort eq 'common_name'}">selected</c:if>>common name</option>
                             <!--                            <option value="rank">rank</option>-->
                             <option value="occurrence_date" <c:if test="${param.sort eq 'occurrence_date'}">selected</c:if>>record date</option>
                             <option value="record_type" <c:if test="${param.sort eq 'record_type'}">selected</c:if>>record type</option>
@@ -349,6 +350,7 @@
                         <thead>
                             <tr>
                                 <th>Scientific Name</th>
+                                <th>Common Name</th>
                                 <th>Dataset</th>
                                 <th>Record Type</th>
                                 <th>Record Date</th>
@@ -358,6 +360,7 @@
                             <c:forEach var="occurrence" items="${searchResult.occurrences}">
                                 <tr>
                                     <td id="col1"><a href="${occurrence.id}" class="occurrenceLink"><alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/></a></td>
+                                    <td id="col5">${occurrence.commonName}</td>
                                     <td id="col2">${occurrence.dataResource}</td>
                                     <td id="col3">${occurrence.basisOfRecord}</td>
                                     <td id="col4"><fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/></td>
