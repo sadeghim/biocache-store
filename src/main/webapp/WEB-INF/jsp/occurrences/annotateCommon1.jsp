@@ -9,7 +9,7 @@
                 <div class="formIdentity"><input type="radio" name="ident" value="name" checked="checked" onClick="$('.creatorInfo').show();"/>
                     <label for="ident">Registered User</label>
                 </div>
-                <div class="creatorInfo"><ala:loginStatus occurrenceId="${occurrence.id}" />
+                <div class="creatorInfo"><ala:loginStatus returnUrlPath="/occurrences/${occurrence.id}" />
                 </div>
                 <div class="formIdentity"><input type="radio" name="ident" value="anon" onClick="$('.creatorInfo').hide();"/>
                     <label for="creator">Anonymous</label>
