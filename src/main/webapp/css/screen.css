@@ -210,6 +210,15 @@ th, td {
     padding: 3px 10px;
 }
 
+#loginStatus {
+	float: right;
+    margin:0;
+    margin-right: 10px;
+    padding:0;
+    position:relative;
+    top:-20px;
+}
+
 #speciesTitle {
     float: left;
     position: relative;
