@@ -1,12 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans SYSTEM "http://www.springframework.org/dtd/spring-beans.dtd">
-<!-- The home of web app config that is shared across dispatchers-->
-<beans>
-<!-- 	
-    <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
-      <property name="configLocation">
-        <value>WEB-INF/classes/velocity.properties</value>
-      </property>
-    </bean>
- -->    
-</beans>	
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+  <!-- Scan source files for annotations for DI -->
+  <context:component-scan base-package="org.ala"/>
+  <!-- override bean fields with values from properties file -->
+  <context:property-override location="classpath:overrides.properties"/>
+  <!-- load properties file into the context -->
+  <context:property-placeholder location="classpath:repository.properties"/>
+
+
+  <!-- data source -->
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="${jdbc.driver}"/>
+    <property name="url" value="${jdbc.url}"/>
+    <property name="username" value="${jdbc.username}"/>
+    <property name="password" value="${jdbc.password}"/>
+    <property name="initialSize" value="1"/>
+    <property name="maxActive" value="25"/>
+    <property name="maxIdle" value="10"/>
+    <property name="maxWait" value="30000"/>
+    <property name="poolPreparedStatements" value="true"/>
+</bean>
+
+	<bean id="dataResourceDAO" class="org.ala.biocache.dao.DataResourceDAOImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="dataProviderDAO" class="org.ala.biocache.dao.DataProviderDAOImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
+</beans>

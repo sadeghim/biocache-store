@@ -249,11 +249,24 @@
             <artifactId>spatial-solr</artifactId>
             <version>1.0-RC4</version>
         </dependency>
-        <!--  Central Authorisation Service (CAS) client -->
         <dependency>
-        	<groupId>org.jasig.cas</groupId>
-        	<artifactId>cas-client-core</artifactId>
-        	<version>3.1.10</version>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-jdbc</artifactId>
+        	<version>3.0.3.RELEASE</version>
+        	<type>jar</type>
+        	<scope>compile</scope>
+        </dependency>
+        <dependency>
+        	<groupId>com.kenai.nbpwr</groupId>
+        	<artifactId>org-apache-commons-dbcp</artifactId>
+        	<version>1.2.2-201002241055</version>
+        	<type>nbm</type>
+        	<scope>compile</scope>
+        </dependency>
+        <dependency>
+        	<groupId>mysql</groupId>
+        	<artifactId>mysql-connector-java</artifactId>
+        	<version>5.1.13</version>
         	<type>jar</type>
         	<scope>compile</scope>
         </dependency>
