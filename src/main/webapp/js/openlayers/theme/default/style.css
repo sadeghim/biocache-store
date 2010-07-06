@@ -22,11 +22,11 @@ div.olLayerDiv {
     bottom: 15px;   
 }
 .olControlAttribution {
-    font-size: smaller; 
     right: 3px; 
-    bottom: 4.5em; 
+    bottom: 0.5em;
     position: absolute; 
     display: block;
+    font-size: smaller; 
 }
 .olControlScale {
     right: 3px;

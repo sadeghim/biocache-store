@@ -14,7 +14,7 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.query.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.simplemodal.js"></script>
-        <script type="text/javascript" src="http://openlayers.org/api/OpenLayers.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>
         <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8">
         <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/basic.css" charset="utf-8">
         <!--[if lt IE 7]>
@@ -29,11 +29,11 @@
 
             /* Openlayers map */
             function loadMap() {
-                map = new OpenLayers.Map('pointsMap',{numZoomLevels: 16,controls: []});
+                map = new OpenLayers.Map('pointsMap',{controls: []});
                 //add controls
-                map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled: false}));
-                //map.addControl(new OpenLayers.Control.MousePosition());
-                map.addControl(new OpenLayers.Control.PanZoomBar({zoomWorldIcon: false}));
+//                map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled: false, autoActivate: false}));
+//                map.addControl(new OpenLayers.Control.ZoomPanel({autoActivate: false}));
+//                map.addControl(new OpenLayers.Control.PanPanel({autoActivate: false}));
                 map.addControl(new OpenLayers.Control.Attribution());
                 baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
                         "http://labs.metacarta.com/wms/vmap0",
@@ -47,7 +47,7 @@
 
                 //map.addLayers([baseLayer,vectorLayer]);
                 loadVectorLayer();
-                
+
             }
 
             function loadVectorLayer() {
@@ -137,7 +137,7 @@
 
             $(document).ready(function() {
                 var facetLinksSize = $("ul#subnavlist li").size();
-                
+
                 if (facetLinksSize == 0) {
                     // Hide an empty facet link list
                     $("#facetBar > h4").hide();
@@ -169,8 +169,8 @@
                     reloadWithParam('dir',val);
                 });
 
-                $("#searchHeader > button").button();
-                $("#searchHeader > button#download").click(function() {
+                $("#searchButtons > button").button();
+                $("#searchButtons > button#download").click(function() {
                     var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?q=${query}&fq=${fn:join(facetQuery, '&fq=')}";
                     //alert("URL is "+downloadUrl);
                     if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
@@ -183,7 +183,21 @@
                     $("#pointsMap").show();
                     loadMap();
                     $('#pointsMap').modal();
-                    
+
+                });
+
+                // more/fewer search option links
+                $("#refineMore a").click(function(e) {
+                    e.preventDefault();
+                    $("#accordion").slideDown();
+                    $("#refineLess").show('slow');
+                    $("#refineMore").hide('slow');
+                });
+                $("#refineLess a").click(function(e) {
+                    e.preventDefault();
+                    $("#accordion").slideUp();
+                    $("#refineLess").hide('slow');
+                    $("#refineMore").show('slow');
                 });
 
            });
@@ -209,11 +223,6 @@
                 if (paramName != 'sort' && sort != null) {
                     paramList.push('sort' + "=" + sort);
                 }
-                // add dir param if already set
-//                if (paramName != 'dir' && dir != null) {
-//                    paramList.push('dir' + "=" + dir);
-//                }
-                //alert("sort = "+sort+" | paramName = "+paramName);
                 // add the triggered param
                 if (paramName != null && paramValue != null) {
                     if (paramName == 'sort') {
@@ -222,9 +231,7 @@
                         paramList.push(paramName + "=" +paramValue);
                     }
                 }
-                
-                //alert("params = "+paramList.join("&"));
-                //alert("url = "+window.location.pathname);
+
                 window.location.replace(window.location.pathname + '?' + paramList.join('&'));
             }
 
@@ -236,7 +243,7 @@
                     paramList.push("q=" + q);
                 }
                 //alert("this.facet = "+facet+"; fqList = "+fqList.join('|'));
-                
+
                 if (fqList instanceof Array) {
                     //alert("fqList is an array");
                     for (var i in fqList) {
@@ -256,7 +263,7 @@
                 if (fqList != null) {
                     paramList.push("fq=" + fqList.join("&fq="));
                 }
-                
+
                 window.location.replace(window.location.pathname + '?' + paramList.join('&'));
             }
 
@@ -278,22 +285,18 @@
                             values.push(params[1]);
                         }
                     }
-                    
+
                     if (values.length > 0) {
                         return values;
                     } else {
                         //otherwise return undefined to signify that the param does not exist
                         return undefined;
                     }
-                    
+
                 };
             })(jQuery);
 
             function changeSort(el) {
-                //var params = document.location.search.substr(1);
-                //var fqList = $.getQueryParam("fq");
-                //alert("fq param = "+fqList.join("|"));
-                //alert("debug: "+$(this).val());
                 var fqList = $.query.get('fq');
                 $("#searchForm").submit();
                 window.location.replace(url);
@@ -301,33 +304,33 @@
         </script>
     </head>
     <body>
+        <h1>Occurrence Search Results</h1>
         <c:if test="${not empty searchResult && searchResult.totalRecords > 0}">
             <fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###" var="totalHits"/>
-            <div id="searchHeader" >
-                <button id="download" title="Download all ${totalHits} results as XLS (tab-delimited) file">Download</button>
-                <button id="showMap" title="Display a small map showing points for records">View as Map</button>
-                <h1>Occurrence Search Results</h1>
-            </div>
             <div id="searchResults">
                 <fmt:formatNumber var="currentPage" value="${(searchResult.startIndex / searchResult.pageSize) + 1}" pattern="0"/>
-                <div id="searchTerms">
-                    <div class="queryTermBox">
-                        Search: <a href="?q=${queryJsEscaped}">${queryJsEscaped}</a><a name="searchResults">&nbsp;</a>
-                    </div>
-                    <c:forEach var="filter" items="${paramValues.fq}">
-                        <c:set var="fqField" value="${fn:substringBefore(filter, ':')}"/>
-                        <c:set var="fqValue" value="${fn:substringAfter(filter, ':')}"/>
-                        <c:if test="${not empty fqValue}">
-                            <div class="facetTermBox">
-                                <!-- <b class="facetTermDivider ui-icon ui-icon-triangle-1-e">&nbsp;</b>-->
-                                <span class="facetFieldName"><fmt:message key="facet.${fqField}"/>:</span>
-                                ${fn:replace(fqValue,'-01-01T12:00:00Z','')} <a href="#" onClick="removeFacet('${filter}'); return false;" class="facetCloseLink ui-icon ui-icon-closethick" title="Remove this restriction">&nbsp;</a>
-                            </div>
-                        </c:if>
-                    </c:forEach>
-                </div>
                 <div class="solrResults">
-                    <div id="sortWidget">
+                    <div id="searchHeader">
+                        <div id="searchButtons">
+                            <button id="download" title="Download all ${totalHits} results as XLS (tab-delimited) file">Download</button>
+                            <button id="showMap" title="Display a small map showing points for records">View as Map</button>
+                        </div>
+                        <div id="searchTerms">
+                            <div class="queryTermBox">
+                                Search: <a href="?q=${queryJsEscaped}">${queryJsEscaped}</a><a name="searchResults">&nbsp;</a>
+                            </div>
+                            <c:forEach var="filter" items="${paramValues.fq}">
+                                <c:set var="fqField" value="${fn:substringBefore(filter, ':')}"/>
+                                <c:set var="fqValue" value="${fn:substringAfter(filter, ':')}"/>
+                                <c:if test="${not empty fqValue}">
+                                    <div class="facetTermBox">
+                                        <!-- <b class="facetTermDivider ui-icon ui-icon-triangle-1-e">&nbsp;</b>-->
+                                        <span class="facetFieldName"><fmt:message key="facet.${fqField}"/>:</span>
+                                        ${fn:replace(fqValue,'-01-01T12:00:00Z','')} <a href="#" onClick="removeFacet('${filter}'); return false;" class="facetCloseLink ui-icon ui-icon-closethick" title="Remove this restriction">&nbsp;</a>
+                                    </div>
+                                </c:if>
+                            </c:forEach>
+                        </div>
                         <div id="resultsStats">
                             Page ${currentPage} of <fmt:formatNumber value="${lastPage}" pattern="#,###,###"/> (<fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###"/> results)
                         </div>
@@ -375,7 +378,19 @@
                 </div>
             </div>
             <div id="facets">
-                <h4>Refine search:</h4>
+                <div id="searchTypes">
+                    <ul>
+                        <li><a href="#">Site Pages</a></li>
+                        <li><a href="/bie-webapp/species/search?q=${param['q']}">Species</a></li>
+                        <li><a href="#">Regions</a></li>
+                        <li class="active"><strike>Occurrence Records</strike></li>
+                        <li><a href="#">Institutions</a></li>
+                        <li><a href="#">Collections</a></li>
+                        <li><a href="#">Data Providers</a></li>
+                        <li><a href="#">Data Sets</a></li>
+                    </ul>
+                </div>
+                <div id="refineMore"><a href="#">More Search Options</a></div>
                 <div id="accordion">
                     <c:if test="${not empty query}">
                         <c:set var="queryParam">q=<c:out value="${query}" escapeXml="true"/><c:if test="${not empty param.fq}">&fq=${fn:join(paramValues.fq, "&fq=")}</c:if></c:set>
@@ -412,21 +427,9 @@
                         </c:if>
                     </c:forEach>
                 </div>
-                <br/><!-- TODO: redo the "remove current facet" UI -->
-                <c:if test="${false && not empty facetQuery}">
-                    <div id="removeFacet">
-                        <h4>Displaying subset of results, restricted to: <ul id="facetName">
-                            <c:forEach var="filter" items="${paramValues.fq}">
-                                <c:set var="fqField" value="${fn:substringBefore(filter, ':')}"/>
-                                <c:set var="fqValue" value="${fn:substringAfter(filter, ':')}"/>
-                                <li><span style="color:#666666;">${fqField}:</span>${fqValue}</li>
-                            </c:forEach></ul></h4>
-                        <p>&rarr; <a href="?q=${query}">Return to full result list</a></p>
-                    </div>
-                </c:if>
-            </div>
-            <!-- totalRecords = ${totalRecords} || lastPage = ${lastPage} -->
-            <div id="pointsMap">
+                <div id="refineLess"><a href="#">Fewer Search Options</a></div>
+                <br/>
+                <div id="pointsMap"></div>
             </div>
         </c:if>
         <c:if test="${empty searchResult || searchResult.totalRecords == 0}">
