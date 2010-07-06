@@ -249,6 +249,14 @@
             <artifactId>spatial-solr</artifactId>
             <version>1.0-RC4</version>
         </dependency>
+        <!--  Central Authorisation Service (CAS) client -->
+        <dependency>
+        	<groupId>org.jasig.cas</groupId>
+        	<artifactId>cas-client-core</artifactId>
+        	<version>3.1.10</version>
+        	<type>jar</type>
+        	<scope>compile</scope>
+        </dependency>
     </dependencies>
     <repositories>
         <!-- ALA repository  -->
