@@ -35,8 +35,8 @@
     <tag-class>org.ala.biocache.web.LoginStatusTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
-     <description>the occurrence id</description>
-     <name>occurrenceId</name>
+     <description>The return url path that is appended to the context path</description>
+     <name>returnUrlPath</name>
      <required>true</required>
      <rtexprvalue>true</rtexprvalue>
     </attribute>              
