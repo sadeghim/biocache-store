@@ -29,5 +29,17 @@
     </attribute>			  
   </tag>	
 	
+  <tag>
+    <description>Login Status Tag</description>
+    <name>loginStatus</name>
+    <tag-class>org.ala.biocache.web.LoginStatusTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+     <description>the occurrence id</description>
+     <name>occurrenceId</name>
+     <required>true</required>
+     <rtexprvalue>true</rtexprvalue>
+    </attribute>              
+  </tag>    
  
 </taglib>
