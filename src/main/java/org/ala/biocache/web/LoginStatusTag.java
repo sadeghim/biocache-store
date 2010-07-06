@@ -34,7 +34,7 @@ public class LoginStatusTag extends TagSupport {
 	private static final long serialVersionUID = -6406031197753714478L;
 	protected static Logger logger = Logger.getLogger(LoginStatusTag.class);
 	
-	private String occurrenceId = "";
+	private String returnUrlPath = "";
 	
 	/**
 	 * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -49,7 +49,7 @@ public class LoginStatusTag extends TagSupport {
 
 		String html;
 		if (principal == null) {
-			html = "<p>You are not logged in.  <a href='" + casServer + "/cas/login?service=" + thisServer + "/biocache-webapp/occurrences/" + occurrenceId + "'>Log in</a></p>\n";
+			html = "<p>You are not logged in.  <a href='" + casServer + "/cas/login?service=" + thisServer + "/biocache-webapp" + returnUrlPath + "'>Log in</a></p>\n";
 		} else {
 			String userId = ((AttributePrincipalImpl) principal).getName();
 			String email = ((AttributePrincipalImpl) principal).getAttributes().get("email").toString();
@@ -68,11 +68,11 @@ public class LoginStatusTag extends TagSupport {
 		return super.doStartTag();
 	}
 
-	public String getOccurrenceId() {
-		return occurrenceId;
+	public String getReturnUrlPath() {
+		return returnUrlPath;
 	}
 
-	public void setOccurrenceId(String occurrenceId) {
-		this.occurrenceId = occurrenceId;
+	public void setReturnUrlPath(String returnUrlPath) {
+		this.returnUrlPath = returnUrlPath;
 	}
 }
