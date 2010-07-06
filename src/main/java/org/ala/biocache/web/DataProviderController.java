@@ -91,9 +91,10 @@ public class DataProviderController {
 		int dataRId = Integer.parseInt(dataResourceId);
 
 		DataResource dataResource = dataResourceDAO.getById(dataRId);
+		DataProvider dataProvider = dataProviderDAO.getById(dataResource.getDataProviderId());
 
 		if (dataResource != null) {
-
+			model.addAttribute("dataProvider", dataProvider);
 			model.addAttribute("dataResource", dataResource);
 		} 
 
