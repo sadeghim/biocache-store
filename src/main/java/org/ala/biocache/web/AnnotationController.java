@@ -34,7 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TimeZone;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -92,8 +92,8 @@ public class AnnotationController {
 
     private String dannoServer = "alatstdb1-cbr.vm.csiro.au";
     private int dannoPort = 80;
-    private String dannoUser = "nickdos";
-    private String dannoPassword = "action";
+    private String dannoUser = "biocache-webapp";
+    private String dannoPassword = "biocache";
     private int timeoutInMillisec = 10000;
 
 	private String bitlyLogin;
@@ -118,7 +118,7 @@ public class AnnotationController {
             bitlyLogin = rb.getString("annotationController.bitlyLogin");
             bitlyApiKey = rb.getString("annotationController.bitlyApiKey");
 		} catch (Exception e){
-			logger.warn("Unable to retrieve annotationController.* from portal.properties. Using default values.");
+			logger.warn("Unable to retrieve annotationController.* from portal.properties. Using default values.", e);
 		}
 	}
 
@@ -141,7 +141,7 @@ public class AnnotationController {
 
         if (pageUrl == null) return null;
         String url = annoteaServerUrl + "?w3c_annotates=" + pageUrl;
-        logger.debug("annotea url = " + url);
+        logger.info("annotea url = " + url);
         List<OccurrenceAnnotation> occurrenceAnnotations = getAnnotationsForUrl(url);
         // sort annotations by date so we can ensure replies are processed after their inReplyTo
         Comparator dateComparator = new Comparator() {
@@ -273,7 +273,9 @@ public class AnnotationController {
 
         if ("name".equals(ident)) {
             // Name & Email supplied
-            creator = fullName + " | mailto:" + email;
+            creator = creator + " | mailto:" + email;
+        } else if ("anon".equals(ident)) {
+        	creator = "anon | mailto:";
         }
 
         if ("reply".equals(annotationType)) type = "Comment";
@@ -517,6 +519,7 @@ public class AnnotationController {
         namespaceURIs.put("j.2", "http://www.w3.org/2000/10/annotation-ns#" );
         namespaceURIs.put("j.3", "http://www.w3.org/2001/03/thread#" );
         namespaceURIs.put("ala", "http://ala.org.au/2009/annotation/0.1/" );
+        namespaceURIs.put("dc",  "http://purl.org/dc/elements/1.1/");
 		DocumentFactory.getInstance().setXPathNamespaceURIs(namespaceURIs);
         Document document = saxReader.read(reader);
 		return document;
@@ -541,12 +544,11 @@ public class AnnotationController {
                 oa.setAnnoteaKey(node.valueOf("@rdf:about"));
 	            Attribute pageUrl = (Attribute) node.selectSingleNode( "j.2:annotates/@rdf:resource" );
 	            if (pageUrl!=null) oa.setAnnotates(pageUrl.getValue());
-	            oa.setCreator(node.valueOf("j.1:creator")); // node.valueOf("j.1:creator/vcard:fn")
+	            oa.setCreator(formatCreator(node.valueOf("dc:creator"))); // node.valueOf("j.1:creator/vcard:fn")
 	            
-//	            String createdDateAsString = node.valueOf("j.2:created");
-//	            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-//	            oa.setDate(df.parse(createdDateAsString));
-	            oa.setDate(new Date());
+	            String createdDateAsString = adjustTimezone(node.valueOf("dc:date"));
+	            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+	            oa.setDate(df.parse(createdDateAsString));
 	            
                 Attribute replyUrl = (Attribute) node.selectSingleNode( "j.3:inReplyTo/@rdf:resource" );
 	            if (replyUrl!=null) {
@@ -561,6 +563,36 @@ public class AnnotationController {
     }
 
     /**
+     * Removes ':' from time zone since the SimpleDateFormat parser will not parse dates formatted like,
+     * 
+     * <p><code>2010-07-05T23:21:33.467+10:00</code></p>
+     * 
+     * According to Java doc the time zone should be <code>GMT+hh:mm</code> or <code>+hhmm</code>.
+     * <p/>
+     * @param date
+     * @return date string with ':' removed from time zone.
+     */
+    private String adjustTimezone(String date) {
+    	if (date.charAt(26) == ':') {
+    		return date.substring(0, date.lastIndexOf(':')) + date.substring(date.lastIndexOf(':') + 1);
+    	} else {
+    		return date;
+    	}
+	}
+
+	private String formatCreator(String creator) {
+		String pattern = " | mailto:";
+		String name = creator.substring(0, creator.indexOf(pattern));
+		String email = creator.substring(creator.indexOf(pattern) + pattern.length());
+		
+		StringBuilder sb = new StringBuilder(name);
+		if (!email.equalsIgnoreCase("null") && !email.equals("")) {
+			sb.append(" [" + email + "]");
+		}
+		return sb.toString();
+	}
+
+	/**
      * Parse integer, return null if not integer.
      *
      * @param intAsString
