@@ -10,25 +10,20 @@
 <c:if test="${not empty dataResources}">
 	<c:if test="${dataProvider.description!=null}">	
 	<br />
-	<h3>Data Provider Description</h3>
+	<b>Data Provider Description</b>
 	<div><c:out value="${dataProvider['description']}" /></div><br />
 	</c:if>
 	<table>
 		<tr>
-			<th><b>Resource ID</b></th>
 			<th><b>Resource Name</b></th>
+			<th><b>Number of Records</b></th>
+			<th><b>Basis of Record</b></th>
 		</tr>
 		<c:forEach var="dataResource" items="${dataResources}">
 			<tr>
-				<td><c:out value="${dataResource['id']}" /></td>
-				<c:choose>
-				<c:when test="${dataResource['websiteUrl']!=null}">
-					<td><a href="<c:out value="${dataResource['websiteUrl']}" />"><c:out value="${dataResource['name']}" /></a></td>
-				</c:when>
-				<c:otherwise>
-					<td><c:out value="${dataResource['name']}" /></td>
-				</c:otherwise>
-				</c:choose>
+				<td><a href="../occurrences/search?q=<c:out value="${dataResource['name']}" />"><c:out value="${dataResource['name']}" /></a></td>
+				<td><c:out value="${dataResource['providerRecordCount']}" /></td>
+				<td><c:out value="${dataResource['basisOfRecord']}" /></td>
 			</tr>
 		</c:forEach>
 	</table>
