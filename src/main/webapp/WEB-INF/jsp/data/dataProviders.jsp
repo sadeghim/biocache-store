@@ -6,7 +6,7 @@
  * @author "Tommy Wang <tommy.wang@csiro.au>"
 */
 %><%@ page contentType="text/html" pageEncoding="UTF-8" %>
-<h1><c:out value="${dataProvider.name}" /></h1>
+<h2><c:out value="${dataProvider.name}" /></h2>
 <c:if test="${not empty dataResources}">
 	<c:if test="${dataProvider.description!=null}">	
 	<br />
@@ -15,8 +15,8 @@
 	</c:if>
 	<table>
 		<tr>
-			<th>Resource ID</th>
-			<th>Resource Name</th>
+			<th><b>Resource ID</b></th>
+			<th><b>Resource Name</b></th>
 		</tr>
 		<c:forEach var="dataResource" items="${dataResources}">
 			<tr>

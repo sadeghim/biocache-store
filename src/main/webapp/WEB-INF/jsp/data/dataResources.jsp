@@ -6,8 +6,8 @@
 	 * @author "Tommy Wang <tommy.wang@csiro.au>"
 	 */
 %><%@ page contentType="text/html" pageEncoding="UTF-8"%>
-<h1><c:out value="${dataResource.name}" /></h1>
-<c:if test="${dataResource.description!=null}">
+<h2><c:out value="${dataResource.name}" /></h2>
+<c:if test="${dataResource.description!=null && not empty dataResource.description}">
 	<br />
 	<h3>Data Resource Description</h3>
 	<div><c:out value="${dataResource['description']}" /></div>
@@ -19,8 +19,8 @@
 	<br />
 <table>
 	<tr>
-		<th>Resource ID</th>
-		<th>Resource Name</th>
+		<th><b>Resource ID</b></th>
+		<th><b>Resource Name</b></th>
 	</tr>
 	<tr>
 		<td><c:out value="${dataResource['id']}" /></td>
