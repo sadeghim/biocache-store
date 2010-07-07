@@ -22,6 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.ala.biocache.model.SearchResultDTO;
 import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.OccurrenceDTO;
+import org.ala.biocache.model.SearchResultDTO;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -31,6 +34,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import atg.taglib.json.util.JSONArray;
+import atg.taglib.json.util.JSONObject;
 
 /**
  * Occurrences controller for the BIE biocache site
@@ -58,6 +64,7 @@ public class OccurrenceController {
 	private final String CELLS_GEOJSON = "json/cellsGeoJson";
 	
 	protected String hostUrl = "http://localhost:8888/biocache-webapp";
+	protected String bieBaseUrl = "http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp";
 	
 	/**
 	 * Custom handler for the welcome view.
@@ -86,6 +93,124 @@ public class OccurrenceController {
 		return mav;
 	}
 
+    /**
+	 * Occurrence search page uses SOLR JSON to display results
+	 * 
+     * @param query
+     * @param model
+     * @return
+     * @throws Exception
+     */
+	@RequestMapping(value = "/occurrences/searchByTaxon*", method = RequestMethod.GET)
+	public String occurrenceSearchByTaxon(
+            @RequestParam(value="q", required=false) String query,
+            @RequestParam(value="fq", required=false) String[] filterQuery,
+            @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
+			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
+			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
+			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
+            @RequestParam(value="rad", required=false, defaultValue="10") Integer radius,
+            @RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
+            @RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
+            Model model)
+            throws Exception {
+		
+		if (query == null || query.isEmpty()) {
+			return LIST;
+		}
+		
+		//lets retrieve the details of a taxon
+		//http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp/species/urn:lsid:biodiversity.org.au:apni.taxon:295882
+		
+		String jsonObject = getUrlContentAsString(bieBaseUrl+"/species/"+query+".json");
+		JSONObject j = new JSONObject(jsonObject);
+		JSONObject extendedDTO = j.getJSONObject("extendedTaxonConceptDTO");
+		JSONObject taxonConcept = extendedDTO.getJSONObject("taxonConcept");
+		
+		logger.debug("Found concept: "+taxonConcept.getString("nameString"));
+		
+		String solrQuery = "taxon_concept_lsid:"+query;
+		String rankString = taxonConcept.getString("rankString");
+		String commonName = null;
+		
+		JSONArray commonNames = extendedDTO.getJSONArray("commonNames");
+		if(!commonNames.isEmpty()){
+			commonName = commonNames.getJSONObject(0).getString("nameString");
+		}
+		
+		String scientificName = taxonConcept.getString("nameString");
+		StringBuffer entityQuerySb = new StringBuffer(rankString+ " " +scientificName);
+		if(commonName!=null){
+			entityQuerySb.append(" (");
+			entityQuerySb.append(commonName);
+			entityQuerySb.append(") ");
+		}
+		
+		if("species".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+			solrQuery = "species_lsid:"+query;
+		}
+		if("genus".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+			solrQuery = "genus_lsid:"+query;
+		}
+		if("family".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+			solrQuery = "family_lsid:"+query;
+		}
+		
+        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
+        if (filterQuery != null && filterQuery.length == 0) {
+            filterQuery = null;
+        }
+        if (startIndex == null) {
+            startIndex = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 20;
+        }
+        if (sortField.isEmpty()) {
+            sortField = "score";
+        }
+        if (sortDirection.isEmpty()) {
+            sortDirection = "asc";
+        }
+
+		SearchResultDTO searchResult = new SearchResultDTO();
+        String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+		model.addAttribute("entityQuery", entityQuerySb.toString());
+        
+		model.addAttribute("query", solrQuery);
+		model.addAttribute("queryJsEscaped", queryJsEscaped);
+		model.addAttribute("facetQuery", filterQuery);
+
+		searchResult = searchDAO.findByFulltextQuery(query, filterQuery, startIndex, pageSize, sortField, sortDirection);
+		
+		model.addAttribute("searchResult", searchResult);
+		logger.debug("query = "+query);
+        Long totalRecords = searchResult.getTotalRecords();
+        model.addAttribute("totalRecords", totalRecords);
+        Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+        model.addAttribute("lastPage", lastPage);
+
+        return LIST;
+	}
+
+	/**
+	 * Retrieve content as String.
+	 * 
+	 * @param url
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getUrlContentAsString(String url) throws Exception {
+		HttpClient httpClient = new HttpClient();
+		GetMethod gm = new GetMethod(url);
+		gm.setFollowRedirects(true);
+		httpClient.executeMethod(gm);
+		// String requestCharset = gm.getRequestCharSet();
+		String content = gm.getResponseBodyAsString();
+		// content = new String(content.getBytes(requestCharset), "UTF-8");
+		return content;
+	}
+	
     /**
 	 * Occurrence search page uses SOLR JSON to display results
 	 * 
