@@ -139,7 +139,7 @@ public class OccurrenceController {
 		}
 		
 		String scientificName = taxonConcept.getString("nameString");
-		StringBuffer entityQuerySb = new StringBuffer(rankString+ " " +scientificName);
+		StringBuffer entityQuerySb = new StringBuffer(rankString+ ": " +scientificName);
 		if(commonName!=null){
 			entityQuerySb.append(" (");
 			entityQuerySb.append(commonName);
@@ -177,11 +177,11 @@ public class OccurrenceController {
         String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
 		model.addAttribute("entityQuery", entityQuerySb.toString());
         
-		model.addAttribute("query", solrQuery);
+		model.addAttribute("query", query);
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
 
-		searchResult = searchDAO.findByFulltextQuery(query, filterQuery, startIndex, pageSize, sortField, sortDirection);
+		searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
 		
 		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);

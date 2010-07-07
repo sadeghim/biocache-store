@@ -76,8 +76,7 @@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
                     <div id="wrapper_search">
                         <form id="search-form" action="/bie-webapp/search" method="get" name="search-form">
                             <label for="search">Search</label>
-                            <c:set var="searchQuery"><c:choose><c:when test="${not empty param['q']}">${param['q']}</c:when><c:otherwise>Search the Atlas</c:otherwise></c:choose></c:set>
-                            <input type="text" class="filled" id="search" name="q" value="${searchQuery}" />
+                            <input type="text" class="filled" id="search" name="q" value="Search the Atlas" />
                         </form>
                     </div>
                 </div><!--close wrapper_search-->

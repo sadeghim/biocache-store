@@ -317,7 +317,14 @@
                         </div>
                         <div id="searchTerms">
                             <div class="queryTermBox">
-                                Search: <a href="?q=${queryJsEscaped}">${queryJsEscaped}</a><a name="searchResults">&nbsp;</a>
+                                <c:choose>
+                                    <c:when test="${not empty entityQuery}">
+                                        ${entityQuery}
+                                    </c:when>
+                                    <c:otherwise>
+                                        Search: <a href="?q=${queryJsEscaped}">${queryJsEscaped}</a><a name="searchResults">&nbsp;</a>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                             <c:forEach var="filter" items="${paramValues.fq}">
                                 <c:set var="fqField" value="${fn:substringBefore(filter, ':')}"/>
