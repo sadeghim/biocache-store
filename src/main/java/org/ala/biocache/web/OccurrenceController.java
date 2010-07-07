@@ -15,21 +15,14 @@
 
 package org.ala.biocache.web;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ala.biocache.model.SearchResultDTO;
 import org.ala.biocache.dao.SearchDao;
-import org.ala.biocache.model.OccurrenceCell;
 import org.ala.biocache.model.OccurrenceDTO;
-import org.ala.biocache.model.OccurrencePoint;
-import org.ala.biocache.model.PointType;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -146,8 +139,11 @@ public class OccurrenceController {
 		logger.debug("query = "+query);
         Long totalRecords = searchResult.getTotalRecords();
         model.addAttribute("totalRecords", totalRecords);
-        Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-        model.addAttribute("lastPage", lastPage);
+        
+        if (pageSize > 0) {
+            Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+            model.addAttribute("lastPage", lastPage);
+        }
 
         return LIST;
 	}

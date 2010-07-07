@@ -75,7 +75,7 @@
                     zoom: zoomLevel
                 };
 
-                var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Record counts:&nbsp;</td><td style="width:60px;background-color:#ffff00;">1&ndash;9</td><td style="width:60px;background-color:#ffcc00;">10&ndash;49</td><td style="width:60px;background-color:#ff9900;">50&ndash;99</td><td style="width:60px;background-color:#ff6600;">100&ndash;249</td><td style="width:60px;background-color:#ff3300;">250&ndash;499</td><td style="width:60px;background-color:#cc0000;">500+</td></tr></table>';
+                var legend = '<table id="cellCountsLegend" class="show-70"><tr><td style="background-color:#333; color:white; text-align:right;">Record counts:&nbsp;</td><td style="width:60px;background-color:#ffff00;">1&ndash;9</td><td style="width:60px;background-color:#ffcc00;">10&ndash;49</td><td style="width:60px;background-color:#ff9900;">50&ndash;99</td><td style="width:60px;background-color:#ff6600;">100&ndash;249</td><td style="width:60px;background-color:#ff3300;">250&ndash;499</td><td style="width:60px;background-color:#cc0000;">500+</td></tr></table>';
 
                 vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
                     styleMap: myStyles,
@@ -378,7 +378,7 @@
                 </div>
             </div>
             <div id="facets">
-                <div id="searchTypes">
+                <div id="searchTypes" style="display:none">
                     <ul>
                         <li><a href="#">Site Pages</a></li>
                         <li><a href="/bie-webapp/species/search?q=${param['q']}">Species</a></li>
@@ -390,8 +390,8 @@
                         <li><a href="#">Data Sets</a></li>
                     </ul>
                 </div>
-                <div id="refineMore"><a href="#">More Search Options</a></div>
-                <div id="accordion">
+                <div id="refineMore" style="display:none;"><a href="#">More Search Options</a></div>
+                <div id="accordion"  style="display:block;">
                     <c:if test="${not empty query}">
                         <c:set var="queryParam">q=<c:out value="${query}" escapeXml="true"/><c:if test="${not empty param.fq}">&fq=${fn:join(paramValues.fq, "&fq=")}</c:if></c:set>
                     </c:if>
@@ -427,7 +427,7 @@
                         </c:if>
                     </c:forEach>
                 </div>
-                <div id="refineLess"><a href="#">Fewer Search Options</a></div>
+                <div id="refineLess" style="display:none;"><a href="#">Fewer Search Options</a></div>
                 <br/>
                 <div id="pointsMap"></div>
             </div>
