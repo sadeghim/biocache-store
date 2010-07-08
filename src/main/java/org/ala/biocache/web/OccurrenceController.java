@@ -15,17 +15,20 @@
 
 package org.ala.biocache.web;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ala.biocache.model.SearchResultDTO;
 import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.SearchResultDTO;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,9 +40,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import atg.taglib.json.util.JSONArray;
 import atg.taglib.json.util.JSONObject;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Occurrences controller for the BIE biocache site
@@ -132,7 +132,7 @@ public class OccurrenceController {
 		
 		logger.debug("Found concept: "+taxonConcept.getString("nameString"));
 		
-		String solrQuery = "taxon_concept_lsid:"+query;
+		
 		String rankString = taxonConcept.getString("rankString");
 		String commonName = null;
 		
@@ -149,6 +149,8 @@ public class OccurrenceController {
 			entityQuerySb.append(") ");
 		}
 		
+		//FIXME - should be able to use left/right for non major ranks
+		String solrQuery = "taxon_concept_lsid:"+query; //default to just searching on taxon lsid
 		if("species".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
 			solrQuery = "species_lsid:"+query;
 		}
@@ -158,7 +160,19 @@ public class OccurrenceController {
 		if("family".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
 			solrQuery = "family_lsid:"+query;
 		}
-		
+		if("order".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+			solrQuery = "order_lsid:"+query;
+		}
+		if("class".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+			solrQuery = "class_lsid:"+query;
+		}
+		if("phylum".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+			solrQuery = "phylum_lsid:"+query;
+		}
+		if("kingdom".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+			solrQuery = "kingdom_lsid:"+query;
+		}
+
         // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
         if (filterQuery != null && filterQuery.length == 0) {
             filterQuery = null;
