@@ -258,26 +258,8 @@ public class OccurrenceController {
         StringBuilder solrQuery = new StringBuilder();
         StringBuilder entityQuerySb = new StringBuilder();
 
-        // Build Lucene query for collections
-        if (collectionCode!=null && collectionCode.length > 0) {
-            StringBuilder displayString = new StringBuilder("Institution: ");
-            List<String> collections = new ArrayList<String>();
-            for (String coll : collectionCode) {
-                collections.add("collection_code:" + coll);
-                displayString.append(coll).append(" ");
-            }
-            solrQuery.append("(");
-            solrQuery.append(StringUtils.join(collections, " OR "));
-            solrQuery.append(")");
-            entityQuerySb.append(displayString);
-        }
-
         // Build Lucene query for institutions
         if (institutionCode!=null && institutionCode.length > 0) {
-            if (solrQuery.length() > 0) {
-                solrQuery.append(" AND ");
-                entityQuerySb.append(" ");
-            }
             StringBuilder displayString = new StringBuilder("Collection: ");
             List<String> institutions = new ArrayList<String>();
             for (String inst : institutionCode) {
@@ -286,6 +268,24 @@ public class OccurrenceController {
             }
             solrQuery.append("(");
             solrQuery.append(StringUtils.join(institutions, " OR "));
+            solrQuery.append(")");
+            entityQuerySb.append(displayString);
+        }
+
+        // Build Lucene query for collections
+        if (collectionCode!=null && collectionCode.length > 0) {
+            if (solrQuery.length() > 0) {
+                solrQuery.append(" AND ");
+                entityQuerySb.append(" ");
+            }
+            StringBuilder displayString = new StringBuilder("Institution: ");
+            List<String> collections = new ArrayList<String>();
+            for (String coll : collectionCode) {
+                collections.add("collection_code:" + coll);
+                displayString.append(coll).append(" ");
+            }
+            solrQuery.append("(");
+            solrQuery.append(StringUtils.join(collections, " OR "));
             solrQuery.append(")");
             entityQuerySb.append(displayString);
         }
