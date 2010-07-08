@@ -14,9 +14,8 @@
   <!-- load properties file into the context -->
   <context:property-placeholder location="classpath:repository.properties"/>
 
-
   <!-- data source -->
-  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" lazy-init="true">
     <property name="driverClassName" value="${jdbc.driver}"/>
     <property name="url" value="${jdbc.url}"/>
     <property name="username" value="${jdbc.username}"/>
@@ -26,7 +25,7 @@
     <property name="maxIdle" value="10"/>
     <property name="maxWait" value="30000"/>
     <property name="poolPreparedStatements" value="true"/>
-</bean>
+  </bean>
 
 	<bean id="dataResourceDAO" class="org.ala.biocache.dao.DataResourceDAOImpl">
 		<property name="dataSource" ref="dataSource" />
@@ -35,6 +34,5 @@
 	<bean id="dataProviderDAO" class="org.ala.biocache.dao.DataProviderDAOImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
 
 </beans>
