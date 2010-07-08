@@ -37,6 +37,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import atg.taglib.json.util.JSONArray;
 import atg.taglib.json.util.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Occurrences controller for the BIE biocache site
@@ -187,11 +190,137 @@ public class OccurrenceController {
 		logger.debug("query = "+query);
         Long totalRecords = searchResult.getTotalRecords();
         model.addAttribute("totalRecords", totalRecords);
-        Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-        model.addAttribute("lastPage", lastPage);
+
+        if (pageSize > 0) {
+            Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+            model.addAttribute("lastPage", lastPage);
+        }
 
         return LIST;
 	}
+
+    /**
+     * Occurrence search for a given collection. Takes zero or more collectionCode and institutionCode
+     * parameters (but at least one must be set).
+     *
+     * @param collectionCode
+     * @param institutionCode
+     * @param query
+     * @param filterQuery
+     * @param startIndex
+     * @param pageSize
+     * @param sortField
+     * @param sortDirection
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/occurrences/searchForCollection*", method = RequestMethod.GET)
+	public String occurrenceSearchForCollection(
+            @RequestParam(value="coll", required=false) String[] collectionCode,
+            @RequestParam(value="inst", required=false) String[] institutionCode,
+            @RequestParam(value="q", required=false) String query,
+            @RequestParam(value="fq", required=false) String[] filterQuery,
+            @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
+			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
+			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
+			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
+            Model model)
+            throws Exception {
+
+		// no query so exit method
+        if (query == null || query.isEmpty()) {
+			//return LIST;
+		}
+
+        // one of collectionCode or institutionCode must be set
+        if ((query == null || query.isEmpty()) && (collectionCode==null || collectionCode.length==0) && (institutionCode==null || institutionCode.length==0)) {
+            return LIST;
+        }
+
+        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
+        if (filterQuery != null && filterQuery.length == 0) {
+            filterQuery = null;
+        }
+        if (startIndex == null) {
+            startIndex = 0;
+        }
+        if (pageSize == null) {
+            pageSize = 20;
+        }
+        if (sortField.isEmpty()) {
+            sortField = "score";
+        }
+        if (sortDirection.isEmpty()) {
+            sortDirection = "asc";
+        }
+
+        StringBuilder solrQuery = new StringBuilder();
+        StringBuilder entityQuerySb = new StringBuilder();
+
+        // Build Lucene query for collections
+        if (collectionCode!=null && collectionCode.length > 0) {
+            StringBuilder displayString = new StringBuilder("Institution: ");
+            List<String> collections = new ArrayList<String>();
+            for (String coll : collectionCode) {
+                collections.add("collection_code:" + coll);
+                displayString.append(coll).append(" ");
+            }
+            solrQuery.append("(");
+            solrQuery.append(StringUtils.join(collections, " OR "));
+            solrQuery.append(")");
+            entityQuerySb.append(displayString);
+        }
+
+        // Build Lucene query for institutions
+        if (institutionCode!=null && institutionCode.length > 0) {
+            if (solrQuery.length() > 0) {
+                solrQuery.append(" AND ");
+                entityQuerySb.append(" ");
+            }
+            StringBuilder displayString = new StringBuilder("Collection: ");
+            List<String> institutions = new ArrayList<String>();
+            for (String inst : institutionCode) {
+                institutions.add("institution_code:" + inst);
+                displayString.append(inst).append(" ");
+            }
+            solrQuery.append("(");
+            solrQuery.append(StringUtils.join(institutions, " OR "));
+            solrQuery.append(")");
+            entityQuerySb.append(displayString);
+        }
+
+        // FQ requests will have empty coll and inst params but use formated query instead
+        if (solrQuery.length() == 0 && !query.isEmpty()) {
+            solrQuery.append(query);
+        } else if (query == null || query.isEmpty()) {
+            query = solrQuery.toString();
+        }
+
+        logger.info("solr query: "+solrQuery.toString());
+
+		SearchResultDTO searchResult = new SearchResultDTO();
+        String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+		model.addAttribute("entityQuery", entityQuerySb.toString());
+
+		model.addAttribute("query", query);
+		model.addAttribute("queryJsEscaped", queryJsEscaped);
+		model.addAttribute("facetQuery", filterQuery);
+
+		searchResult = searchDAO.findByFulltextQuery(solrQuery.toString(), filterQuery, startIndex, pageSize, sortField, sortDirection);
+
+		model.addAttribute("searchResult", searchResult);
+		logger.debug("query = "+query);
+        Long totalRecords = searchResult.getTotalRecords();
+        model.addAttribute("totalRecords", totalRecords);
+        
+        if (pageSize > 0) {
+            Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+            model.addAttribute("lastPage", lastPage);
+        }
+
+        return LIST;
+    }
 
 	/**
 	 * Retrieve content as String.

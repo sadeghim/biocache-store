@@ -400,7 +400,10 @@
                 <div id="refineMore" style="display:none;"><a href="#">More Search Options</a></div>
                 <div id="accordion"  style="display:block;">
                     <c:if test="${not empty query}">
-                        <c:set var="queryParam">q=<c:out value="${query}" escapeXml="true"/><c:if test="${not empty param.fq}">&fq=${fn:join(paramValues.fq, "&fq=")}</c:if></c:set>
+                        <c:set var="queryParam">q=<c:out value="${query}" escapeXml="true"/><c:if 
+                                test="${not empty param.fq}">&fq=${fn:join(paramValues.fq, "&fq=")}</c:if><c:if
+                                test="${not empty param.coll}">&coll=${fn:join(paramValues.coll, "&coll=")}</c:if><c:if
+                                test="${not empty param.inst}">&inst=${fn:join(paramValues.inst, "&inst=")}</c:if></c:set>
                     </c:if>
                     <c:forEach var="facetResult" items="${searchResult.facetResults}">
                         <c:if test="${!fn:containsIgnoreCase(facetQuery, facetResult.fieldResult[0].label)}">
@@ -440,8 +443,7 @@
             </div>
         </c:if>
         <c:if test="${empty searchResult || searchResult.totalRecords == 0}">
-            <h1>Occurrence Search Results</h1>
-            <p>Your search - <b>${queryJsEscaped}</b> - did not match any documents.</p>
+            <br/><p>Your search - <b>${queryJsEscaped}</b> - did not match any documents.</p>
         </c:if>
     </body>
 </html>

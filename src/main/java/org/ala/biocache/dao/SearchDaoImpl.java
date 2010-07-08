@@ -557,14 +557,14 @@ public class SearchDaoImpl implements SearchDao {
     protected String formatSearchQuery(String query) {
         // set the query
         StringBuilder queryString = new StringBuilder();
-        if (query.contains(":") && !query.startsWith("urn") && !query.startsWith("*")) {
+        if (query.equals("*:*") || query.contains(" AND ") || query.contains(" OR ") || query.startsWith("(")) {
+            queryString.append(query);
+        } else if (query.contains(":") && !query.startsWith("urn")) {
             // search with a field name specified (other than an LSID guid)
             String[] bits = StringUtils.split(query, ":", 2);
             queryString.append(ClientUtils.escapeQueryChars(bits[0]));
             queryString.append(":");
             queryString.append(ClientUtils.escapeQueryChars(bits[1]));
-        } else if (query.equals("*:*")) {
-            queryString.append(query);
         } else {
             // regular search
             queryString.append(ClientUtils.escapeQueryChars(query));
