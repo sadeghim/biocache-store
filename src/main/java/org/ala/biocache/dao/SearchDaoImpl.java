@@ -168,12 +168,12 @@ public class SearchDaoImpl implements SearchDao {
 	            	}
 	            	
 	            	String[] record = new String[]{
-            			result.getId().toString(),
+            			result.getId(),
             			result.getTaxonConceptLsid(),
             			result.getRawTaxonName(),
             			result.getTaxonName(),
             			result.getRank(),
-                                result.getCommonName(),
+            			result.getCommonName(),
             			result.getFamily(),
             			latitude,
             			longitude,

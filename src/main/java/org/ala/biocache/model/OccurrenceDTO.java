@@ -34,7 +34,7 @@ public class OccurrenceDTO implements Serializable {
     /*
      * Fields corresponding to indexed fields in SOLR
      */
-    @Field private Integer id;
+    @Field private String id;
     // dataset
 	@Field("data_provider_id") private Integer dataProviderId;
 	@Field("data_provider") private String dataProvider;
@@ -295,11 +295,11 @@ public class OccurrenceDTO implements Serializable {
         this.geospatialIssue = geospatialIssue;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
