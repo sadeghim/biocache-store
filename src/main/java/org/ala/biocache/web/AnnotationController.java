@@ -84,13 +84,13 @@ public class AnnotationController {
 //    private final String XML_RDF = "annotation/annotationRdf";
 
 //    protected String annoteaServerUrl = "http://localhost/danno/annotea";
-    protected String annoteaServerUrl = "http://alatstdb1-cbr.vm.csiro.au/danno/annotea";
+    protected String annoteaServerUrl = "http://auth.ala.org.au/danno/annotea";
 	protected String annotationTemplate = "annotation.vm";
 
     //protected String jsonView; // Spring-injected view name
     //protected String jsonAnnotations; // Spring-injected view name
 
-    private String dannoServer = "alatstdb1-cbr.vm.csiro.au";
+    private String dannoServer = "auth.ala.org.au";
     private int dannoPort = 80;
     private String dannoUser = "biocache-webapp";
     private String dannoPassword = "biocache";
