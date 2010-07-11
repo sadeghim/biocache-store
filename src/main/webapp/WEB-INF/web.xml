@@ -53,7 +53,7 @@
     <context-param>
         <!-- Parameter used by CAS filters -->
         <param-name>serverName</param-name>
-        <param-value>http://localhost:8080</param-value>
+        <param-value>http://biocache.ala.org.au</param-value>
     </context-param>
 
     <context-param>
@@ -91,17 +91,17 @@
 
     <filter-mapping>
         <filter-name>CAS Authentication Filter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/occurrences/*</url-pattern>
     </filter-mapping>
     
     <filter-mapping>
         <filter-name>CAS Validation Filter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/occurrences/*</url-pattern>
     </filter-mapping>
     
     <filter-mapping>
         <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/occurrences/*</url-pattern>
     </filter-mapping>
     
     <!-- SiteMesh -->
