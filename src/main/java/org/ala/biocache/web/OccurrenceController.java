@@ -77,6 +77,7 @@ public class OccurrenceController {
 	private final String CELLS_GEOJSON = "json/cellsGeoJson";
 	protected String hostUrl = "http://localhost:8888/biocache-webapp";
 	protected String bieBaseUrl = "http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp";
+        protected String collectoryBaseUrl = "http://collections.ala.org.au";
 
 	/**
 	 * Custom handler for the welcome view.
@@ -342,9 +343,8 @@ public class OccurrenceController {
 	 * Occurrence search for a given collection. Takes zero or more collectionCode and institutionCode
 	 * parameters (but at least one must be set).
 	 *
-	 * @param collectionCode
-	 * @param institutionCode
-	 * @param query
+	 * @param query  This should be the institute's collectory database id, LSID or acronym. By making use of the query
+         * parameter we didn't need try and keep track of another variable in the URL
 	 * @param filterQuery
 	 * @param startIndex
 	 * @param pageSize
@@ -356,8 +356,8 @@ public class OccurrenceController {
 	 */
 	@RequestMapping(value = "/occurrences/searchForCollection*", method = RequestMethod.GET)
 	public String occurrenceSearchForCollection(
-			@RequestParam(value="coll", required=false) String[] collectionCode,
-			@RequestParam(value="inst", required=false) String[] institutionCode,
+			//@RequestParam(value="coll", required=false) String[] collectionCode,
+			//@RequestParam(value="inst", required=false) String[] institutionCode,
 			@RequestParam(value="q", required=false) String query,
 			@RequestParam(value="fq", required=false) String[] filterQuery,
 			@RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
@@ -369,13 +369,13 @@ public class OccurrenceController {
 
 		// no query so exit method
 		if (query == null || query.isEmpty()) {
-			//return LIST;
+			return LIST;
 		}
 
 		// one of collectionCode or institutionCode must be set
-		if ((query == null || query.isEmpty()) && (collectionCode==null || collectionCode.length==0) && (institutionCode==null || institutionCode.length==0)) {
-			return LIST;
-		}
+//		if ((query == null || query.isEmpty()) && (collectionCode==null || collectionCode.length==0) && (institutionCode==null || institutionCode.length==0)) {
+//			return LIST;
+//		}
 
 		// if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
 		if (filterQuery != null && filterQuery.length == 0) {
@@ -394,53 +394,59 @@ public class OccurrenceController {
 			sortDirection = "asc";
 		}
 
-		StringBuilder solrQuery = new StringBuilder();
-		StringBuilder entityQuerySb = new StringBuilder();
-
+		StringBuilder solrQuery = new StringBuilder();		
+                //query the collectory for the institute and collection codes needed to perform the search
+                String jsonObject = getUrlContentAsString(collectoryBaseUrl +"/collection/summary/" + query);
+                JSONObject j = new JSONObject(jsonObject);
+                String instituteName = j.getString("name");
+                JSONArray institutionCode = j.getJSONArray("derivedInstCodes");
+                JSONArray collectionCode = j.getJSONArray("derivedCollCodes");
+                StringBuilder displayString = new StringBuilder("Collection: ");
+                        displayString.append(instituteName);
 		// Build Lucene query for institutions
-		if (institutionCode!=null && institutionCode.length > 0) {
-			StringBuilder displayString = new StringBuilder("Collection: ");
+		if (institutionCode!=null && institutionCode.size() > 0) {
+			
 			List<String> institutions = new ArrayList<String>();
-			for (String inst : institutionCode) {
-				institutions.add("institution_code:" + inst);
-				displayString.append(inst).append(" ");
+			for (int i = 0; i<institutionCode.size();i++) {
+				institutions.add("institution_code:" + institutionCode.getString(i));
+				//displayString.append(inst).append(" ");
 			}
 			solrQuery.append("(");
 			solrQuery.append(StringUtils.join(institutions, " OR "));
 			solrQuery.append(")");
-			entityQuerySb.append(displayString);
+			
 		}
 
 		// Build Lucene query for collections
-		if (collectionCode!=null && collectionCode.length > 0) {
+		if (collectionCode!=null && collectionCode.size() > 0) {
 			if (solrQuery.length() > 0) {
 				solrQuery.append(" AND ");
-				entityQuerySb.append(" ");
+				
 			}
-			StringBuilder displayString = new StringBuilder("Institution: ");
+			//StringBuilder displayString = new StringBuilder("Institution: ");
 			List<String> collections = new ArrayList<String>();
-			for (String coll : collectionCode) {
-				collections.add("collection_code:" + coll);
-				displayString.append(coll).append(" ");
+			for (int i = 0; i<collectionCode.size();i++) {
+				collections.add("collection_code:" + collectionCode.getString(i));
+			//	displayString.append(coll).append(" ");
 			}
 			solrQuery.append("(");
 			solrQuery.append(StringUtils.join(collections, " OR "));
 			solrQuery.append(")");
-			entityQuerySb.append(displayString);
+			
 		}
 
 		// FQ requests will have empty coll and inst params but use formated query instead
-		if (solrQuery.length() == 0 && !query.isEmpty()) {
-			solrQuery.append(query);
-		} else if (query == null || query.isEmpty()) {
-			query = solrQuery.toString();
-		}
+//		if (solrQuery.length() == 0 && !query.isEmpty()) {
+//			solrQuery.append(query);
+//		} else if (query == null || query.isEmpty()) {
+//			query = solrQuery.toString();
+//		}
 
 		logger.info("solr query: "+solrQuery.toString());
 
 		SearchResultDTO searchResult = new SearchResultDTO();
 		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
-		model.addAttribute("entityQuery", entityQuerySb.toString());
+		model.addAttribute("entityQuery", displayString.toString());
 
 		model.addAttribute("query", query);
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
