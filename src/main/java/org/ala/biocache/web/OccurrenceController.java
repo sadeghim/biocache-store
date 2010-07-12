@@ -22,6 +22,8 @@ import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ala.biocache.dao.DataProviderDAO;
+import org.ala.biocache.dao.DataResourceDAO;
 import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.SearchResultDTO;
@@ -52,23 +54,29 @@ public class OccurrenceController {
 	/** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(OccurrenceController.class);
 
-    /** Fulltext search DAO */
-    @Inject
-    protected SearchDao searchDAO;
-    /** Name of view for site home page */
+	/** Fulltext search DAO */
+	@Inject
+	protected SearchDao searchDAO;
+	/** Data Resource DAO */
+	@Inject
+	protected DataResourceDAO dataResourceDAO;
+	/** Data Provider DAO */
+	@Inject
+	protected DataProviderDAO dataProviderDAO;
+
+	/** Name of view for site home page */
 	private String HOME = "homePage";
 	/** Name of view for list of taxa */
 	private final String LIST = "occurrences/list";
 	/** Name of view for a single taxon */
 	private final String SHOW = "occurrences/show";
-    /** Name of view for points GeoJSON service */
+	/** Name of view for points GeoJSON service */
 	private final String POINTS_GEOJSON = "json/pointsGeoJson";
-    /** Name of view for square cells GeoJSON service */
+	/** Name of view for square cells GeoJSON service */
 	private final String CELLS_GEOJSON = "json/cellsGeoJson";
-	
 	protected String hostUrl = "http://localhost:8888/biocache-webapp";
 	protected String bieBaseUrl = "http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp";
-	
+
 	/**
 	 * Custom handler for the welcome view.
 	 * <p>
@@ -96,51 +104,51 @@ public class OccurrenceController {
 		return mav;
 	}
 
-    /**
+	/**
 	 * Occurrence search page uses SOLR JSON to display results
 	 * 
-     * @param query
-     * @param model
-     * @return
-     * @throws Exception
-     */
+	 * @param query
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/occurrences/searchByTaxon*", method = RequestMethod.GET)
 	public String occurrenceSearchByTaxon(
-            @RequestParam(value="q", required=false) String query,
-            @RequestParam(value="fq", required=false) String[] filterQuery,
-            @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
+			@RequestParam(value="q", required=false) String query,
+			@RequestParam(value="fq", required=false) String[] filterQuery,
+			@RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
 			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
 			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
-            @RequestParam(value="rad", required=false, defaultValue="10") Integer radius,
-            @RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
-            @RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
-            Model model)
-            throws Exception {
-		
+			@RequestParam(value="rad", required=false, defaultValue="10") Integer radius,
+			@RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
+			@RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
+			Model model)
+	throws Exception {
+
 		if (query == null || query.isEmpty()) {
 			return LIST;
 		}
-		
+
 		//lets retrieve the details of a taxon
 		//http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp/species/urn:lsid:biodiversity.org.au:apni.taxon:295882
-		
+
 		String jsonObject = getUrlContentAsString(bieBaseUrl+"/species/"+query+".json");
 		JSONObject j = new JSONObject(jsonObject);
 		JSONObject extendedDTO = j.getJSONObject("extendedTaxonConceptDTO");
 		JSONObject taxonConcept = extendedDTO.getJSONObject("taxonConcept");
-		
+
 		logger.debug("Found concept: "+taxonConcept.getString("nameString"));
-		
-		
+
+
 		String rankString = taxonConcept.getString("rankString");
 		String commonName = null;
-		
+
 		JSONArray commonNames = extendedDTO.getJSONArray("commonNames");
 		if(!commonNames.isEmpty()){
 			commonName = commonNames.getJSONObject(0).getString("nameString");
 		}
-		
+
 		String scientificName = taxonConcept.getString("nameString");
 		StringBuffer entityQuerySb = new StringBuffer(rankString+ ": " +scientificName);
 		if(commonName!=null){
@@ -148,7 +156,7 @@ public class OccurrenceController {
 			entityQuerySb.append(commonName);
 			entityQuerySb.append(") ");
 		}
-		
+
 		//FIXME - should be able to use left/right for non major ranks
 		String solrQuery = "taxon_concept_lsid:"+query; //default to just searching on taxon lsid
 		if("species".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
@@ -173,148 +181,264 @@ public class OccurrenceController {
 			solrQuery = "kingdom_lsid:"+query;
 		}
 
-        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
-        if (filterQuery != null && filterQuery.length == 0) {
-            filterQuery = null;
-        }
-        if (startIndex == null) {
-            startIndex = 0;
-        }
-        if (pageSize == null) {
-            pageSize = 20;
-        }
-        if (sortField.isEmpty()) {
-            sortField = "score";
-        }
-        if (sortDirection.isEmpty()) {
-            sortDirection = "asc";
-        }
+		// if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
+		if (filterQuery != null && filterQuery.length == 0) {
+			filterQuery = null;
+		}
+		if (startIndex == null) {
+			startIndex = 0;
+		}
+		if (pageSize == null) {
+			pageSize = 20;
+		}
+		if (sortField.isEmpty()) {
+			sortField = "score";
+		}
+		if (sortDirection.isEmpty()) {
+			sortDirection = "asc";
+		}
 
 		SearchResultDTO searchResult = new SearchResultDTO();
-        String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
 		model.addAttribute("entityQuery", entityQuerySb.toString());
-        
+
 		model.addAttribute("query", query);
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
 
 		searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
-		
+
 		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
-        Long totalRecords = searchResult.getTotalRecords();
-        model.addAttribute("totalRecords", totalRecords);
+		Long totalRecords = searchResult.getTotalRecords();
+		model.addAttribute("totalRecords", totalRecords);
 
-        if (pageSize > 0) {
-            Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-            model.addAttribute("lastPage", lastPage);
-        }
+		if (pageSize > 0) {
+			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+			model.addAttribute("lastPage", lastPage);
+		}
 
-        return LIST;
+		return LIST;
 	}
 
-    /**
-     * Occurrence search for a given collection. Takes zero or more collectionCode and institutionCode
-     * parameters (but at least one must be set).
-     *
-     * @param collectionCode
-     * @param institutionCode
-     * @param query
-     * @param filterQuery
-     * @param startIndex
-     * @param pageSize
-     * @param sortField
-     * @param sortDirection
-     * @param model
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/occurrences/searchForCollection*", method = RequestMethod.GET)
-	public String occurrenceSearchForCollection(
-            @RequestParam(value="coll", required=false) String[] collectionCode,
-            @RequestParam(value="inst", required=false) String[] institutionCode,
-            @RequestParam(value="q", required=false) String query,
-            @RequestParam(value="fq", required=false) String[] filterQuery,
-            @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
+	/**
+	 * Occurrence search page uses SOLR JSON to display results
+	 * 
+	 * @param query
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/occurrences/searchByDataProviderId*", method = RequestMethod.GET)
+	public String occurrenceSearchByDataProviderId(
+			@RequestParam(value="q", required=false) String query,
+			@RequestParam(value="fq", required=false) String[] filterQuery,
+			@RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
 			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
 			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
-            Model model)
-            throws Exception {
+			@RequestParam(value="rad", required=false, defaultValue="10") Integer radius,
+			@RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
+			@RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
+			Model model)
+		throws Exception {
+
+		int dataProviderId;
+		String dataProviderName;
+
+		try {
+			dataProviderId = Integer.valueOf(query);
+		} catch (NumberFormatException nfe) {
+			return LIST;
+		}
+
+		if (dataProviderId != 0) {
+			dataProviderName = dataProviderDAO.getById(dataProviderId).getName();
+
+			String solrQuery = "data_provider_id:" + dataProviderId;
+			SearchResultDTO searchResult = new SearchResultDTO();
+			String queryJsEscaped = StringEscapeUtils.escapeJavaScript(dataProviderName);
+			
+			model.addAttribute("query", dataProviderName);
+			model.addAttribute("queryJsEscaped", queryJsEscaped);
+			
+			searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
+
+			model.addAttribute("searchResult", searchResult);
+			logger.debug("query = "+query);
+			Long totalRecords = searchResult.getTotalRecords();
+			model.addAttribute("totalRecords", totalRecords);
+
+			if (pageSize > 0) {
+				Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+				model.addAttribute("lastPage", lastPage);
+			}
+		}		
+
+		return LIST;
+
+	}
+	
+	/**
+	 * Occurrence search page uses SOLR JSON to display results
+	 * 
+	 * @param query
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/occurrences/searchByDataResourceId*", method = RequestMethod.GET)
+	public String occurrenceSearchByDataResourceId(
+			@RequestParam(value="q", required=false) String query,
+			@RequestParam(value="fq", required=false) String[] filterQuery,
+			@RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
+			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
+			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
+			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
+			@RequestParam(value="rad", required=false, defaultValue="10") Integer radius,
+			@RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
+			@RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
+			Model model)
+		throws Exception {
+
+		int dataResourceId;
+		String dataResourceName;
+
+		try {
+			dataResourceId = Integer.valueOf(query);
+		} catch (NumberFormatException nfe) {
+			return LIST;
+		}
+
+		if (dataResourceId != 0) {
+			dataResourceName = dataResourceDAO.getById(dataResourceId).getName();
+
+			String solrQuery = "data_resource_id:" + dataResourceId;
+			SearchResultDTO searchResult = new SearchResultDTO();
+			String queryJsEscaped = StringEscapeUtils.escapeJavaScript(dataResourceName);
+			
+			model.addAttribute("query", dataResourceName);
+			model.addAttribute("queryJsEscaped", queryJsEscaped);
+			
+			searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
+
+			model.addAttribute("searchResult", searchResult);
+			logger.debug("query = "+query);
+			Long totalRecords = searchResult.getTotalRecords();
+			model.addAttribute("totalRecords", totalRecords);
+
+			if (pageSize > 0) {
+				Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+				model.addAttribute("lastPage", lastPage);
+			}
+		}		
+
+		return LIST;
+
+	}
+
+	/**
+	 * Occurrence search for a given collection. Takes zero or more collectionCode and institutionCode
+	 * parameters (but at least one must be set).
+	 *
+	 * @param collectionCode
+	 * @param institutionCode
+	 * @param query
+	 * @param filterQuery
+	 * @param startIndex
+	 * @param pageSize
+	 * @param sortField
+	 * @param sortDirection
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/occurrences/searchForCollection*", method = RequestMethod.GET)
+	public String occurrenceSearchForCollection(
+			@RequestParam(value="coll", required=false) String[] collectionCode,
+			@RequestParam(value="inst", required=false) String[] institutionCode,
+			@RequestParam(value="q", required=false) String query,
+			@RequestParam(value="fq", required=false) String[] filterQuery,
+			@RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
+			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
+			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
+			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
+			Model model)
+	throws Exception {
 
 		// no query so exit method
-        if (query == null || query.isEmpty()) {
+		if (query == null || query.isEmpty()) {
 			//return LIST;
 		}
 
-        // one of collectionCode or institutionCode must be set
-        if ((query == null || query.isEmpty()) && (collectionCode==null || collectionCode.length==0) && (institutionCode==null || institutionCode.length==0)) {
-            return LIST;
-        }
+		// one of collectionCode or institutionCode must be set
+		if ((query == null || query.isEmpty()) && (collectionCode==null || collectionCode.length==0) && (institutionCode==null || institutionCode.length==0)) {
+			return LIST;
+		}
 
-        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
-        if (filterQuery != null && filterQuery.length == 0) {
-            filterQuery = null;
-        }
-        if (startIndex == null) {
-            startIndex = 0;
-        }
-        if (pageSize == null) {
-            pageSize = 20;
-        }
-        if (sortField.isEmpty()) {
-            sortField = "score";
-        }
-        if (sortDirection.isEmpty()) {
-            sortDirection = "asc";
-        }
+		// if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
+		if (filterQuery != null && filterQuery.length == 0) {
+			filterQuery = null;
+		}
+		if (startIndex == null) {
+			startIndex = 0;
+		}
+		if (pageSize == null) {
+			pageSize = 20;
+		}
+		if (sortField.isEmpty()) {
+			sortField = "score";
+		}
+		if (sortDirection.isEmpty()) {
+			sortDirection = "asc";
+		}
 
-        StringBuilder solrQuery = new StringBuilder();
-        StringBuilder entityQuerySb = new StringBuilder();
+		StringBuilder solrQuery = new StringBuilder();
+		StringBuilder entityQuerySb = new StringBuilder();
 
-        // Build Lucene query for institutions
-        if (institutionCode!=null && institutionCode.length > 0) {
-            StringBuilder displayString = new StringBuilder("Collection: ");
-            List<String> institutions = new ArrayList<String>();
-            for (String inst : institutionCode) {
-                institutions.add("institution_code:" + inst);
-                displayString.append(inst).append(" ");
-            }
-            solrQuery.append("(");
-            solrQuery.append(StringUtils.join(institutions, " OR "));
-            solrQuery.append(")");
-            entityQuerySb.append(displayString);
-        }
+		// Build Lucene query for institutions
+		if (institutionCode!=null && institutionCode.length > 0) {
+			StringBuilder displayString = new StringBuilder("Collection: ");
+			List<String> institutions = new ArrayList<String>();
+			for (String inst : institutionCode) {
+				institutions.add("institution_code:" + inst);
+				displayString.append(inst).append(" ");
+			}
+			solrQuery.append("(");
+			solrQuery.append(StringUtils.join(institutions, " OR "));
+			solrQuery.append(")");
+			entityQuerySb.append(displayString);
+		}
 
-        // Build Lucene query for collections
-        if (collectionCode!=null && collectionCode.length > 0) {
-            if (solrQuery.length() > 0) {
-                solrQuery.append(" AND ");
-                entityQuerySb.append(" ");
-            }
-            StringBuilder displayString = new StringBuilder("Institution: ");
-            List<String> collections = new ArrayList<String>();
-            for (String coll : collectionCode) {
-                collections.add("collection_code:" + coll);
-                displayString.append(coll).append(" ");
-            }
-            solrQuery.append("(");
-            solrQuery.append(StringUtils.join(collections, " OR "));
-            solrQuery.append(")");
-            entityQuerySb.append(displayString);
-        }
+		// Build Lucene query for collections
+		if (collectionCode!=null && collectionCode.length > 0) {
+			if (solrQuery.length() > 0) {
+				solrQuery.append(" AND ");
+				entityQuerySb.append(" ");
+			}
+			StringBuilder displayString = new StringBuilder("Institution: ");
+			List<String> collections = new ArrayList<String>();
+			for (String coll : collectionCode) {
+				collections.add("collection_code:" + coll);
+				displayString.append(coll).append(" ");
+			}
+			solrQuery.append("(");
+			solrQuery.append(StringUtils.join(collections, " OR "));
+			solrQuery.append(")");
+			entityQuerySb.append(displayString);
+		}
 
-        // FQ requests will have empty coll and inst params but use formated query instead
-        if (solrQuery.length() == 0 && !query.isEmpty()) {
-            solrQuery.append(query);
-        } else if (query == null || query.isEmpty()) {
-            query = solrQuery.toString();
-        }
+		// FQ requests will have empty coll and inst params but use formated query instead
+		if (solrQuery.length() == 0 && !query.isEmpty()) {
+			solrQuery.append(query);
+		} else if (query == null || query.isEmpty()) {
+			query = solrQuery.toString();
+		}
 
-        logger.info("solr query: "+solrQuery.toString());
+		logger.info("solr query: "+solrQuery.toString());
 
 		SearchResultDTO searchResult = new SearchResultDTO();
-        String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
 		model.addAttribute("entityQuery", entityQuerySb.toString());
 
 		model.addAttribute("query", query);
@@ -325,16 +449,16 @@ public class OccurrenceController {
 
 		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
-        Long totalRecords = searchResult.getTotalRecords();
-        model.addAttribute("totalRecords", totalRecords);
-        
-        if (pageSize > 0) {
-            Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-            model.addAttribute("lastPage", lastPage);
-        }
+		Long totalRecords = searchResult.getTotalRecords();
+		model.addAttribute("totalRecords", totalRecords);
 
-        return LIST;
-    }
+		if (pageSize > 0) {
+			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+			model.addAttribute("lastPage", lastPage);
+		}
+
+		return LIST;
+	}
 
 	/**
 	 * Retrieve content as String.
@@ -353,51 +477,51 @@ public class OccurrenceController {
 		// content = new String(content.getBytes(requestCharset), "UTF-8");
 		return content;
 	}
-	
-    /**
+
+	/**
 	 * Occurrence search page uses SOLR JSON to display results
 	 * 
-     * @param query
-     * @param model
-     * @return
-     * @throws Exception
-     */
+	 * @param query
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/occurrences/search*", method = RequestMethod.GET)
 	public String occurrenceSearch(
-            @RequestParam(value="q", required=false) String query,
-            @RequestParam(value="fq", required=false) String[] filterQuery,
-            @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
+			@RequestParam(value="q", required=false) String query,
+			@RequestParam(value="fq", required=false) String[] filterQuery,
+			@RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
 			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
 			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
-            @RequestParam(value="rad", required=false, defaultValue="10") Integer radius,
-            @RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
-            @RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
-            Model model)
-            throws Exception {
-		
+			@RequestParam(value="rad", required=false, defaultValue="10") Integer radius,
+			@RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
+			@RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
+			Model model)
+	throws Exception {
+
 		if (query == null || query.isEmpty()) {
 			return LIST;
 		}
-        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
-        if (filterQuery != null && filterQuery.length == 0) {
-            filterQuery = null;
-        }
-        if (startIndex == null) {
-            startIndex = 0;
-        }
-        if (pageSize == null) {
-            pageSize = 20;
-        }
-        if (sortField.isEmpty()) {
-            sortField = "score";
-        }
-        if (sortDirection.isEmpty()) {
-            sortDirection = "asc";
-        }
+		// if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
+		if (filterQuery != null && filterQuery.length == 0) {
+			filterQuery = null;
+		}
+		if (startIndex == null) {
+			startIndex = 0;
+		}
+		if (pageSize == null) {
+			pageSize = 20;
+		}
+		if (sortField.isEmpty()) {
+			sortField = "score";
+		}
+		if (sortDirection.isEmpty()) {
+			sortDirection = "asc";
+		}
 
 		SearchResultDTO searchResult = new SearchResultDTO();
-        String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
 		model.addAttribute("query", query);
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
@@ -405,57 +529,57 @@ public class OccurrenceController {
 		searchResult = searchDAO.findByFulltextQuery(query, filterQuery, startIndex, pageSize, sortField, sortDirection);
 		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
-        Long totalRecords = searchResult.getTotalRecords();
-        model.addAttribute("totalRecords", totalRecords);
-        
-        if (pageSize > 0) {
-            Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-            model.addAttribute("lastPage", lastPage);
-        }
+		Long totalRecords = searchResult.getTotalRecords();
+		model.addAttribute("totalRecords", totalRecords);
 
-        return LIST;
+		if (pageSize > 0) {
+			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+			model.addAttribute("lastPage", lastPage);
+		}
+
+		return LIST;
 	}
 
-    /**
+	/**
 	 * Occurrence search page uses SOLR JSON to display results
 	 * 
-     * @param query
-     * @param model
-     * @return
-     * @throws Exception
-     */
+	 * @param query
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/occurrences/download*", method = RequestMethod.GET)
 	public String occurrenceDownload(
-            @RequestParam(value="q", required=false) String query,
-            @RequestParam(value="fq", required=false) String[] filterQuery,
-            HttpServletResponse response)
-            throws Exception {
-		
+			@RequestParam(value="q", required=false) String query,
+			@RequestParam(value="fq", required=false) String[] filterQuery,
+			HttpServletResponse response)
+	throws Exception {
+
 		if (query == null || query.isEmpty()) {
 			return LIST;
 		}
-        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
-        if (filterQuery != null && filterQuery.length == 0) {
-            filterQuery = null;
-        }
-        
-        response.setHeader("Cache-Control", "must-revalidate");
-        response.setHeader("Pragma", "must-revalidate");
-        response.setHeader("Content-Disposition", "attachment;filename=data");
-        response.setContentType("application/vnd.ms-excel");
-        
-        ServletOutputStream out = response.getOutputStream();
-        
-        searchDAO.writeResultsToStream(query, filterQuery, out, 100000);
+		// if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
+		if (filterQuery != null && filterQuery.length == 0) {
+			filterQuery = null;
+		}
 
-        return null;
+		response.setHeader("Cache-Control", "must-revalidate");
+		response.setHeader("Pragma", "must-revalidate");
+		response.setHeader("Content-Disposition", "attachment;filename=data");
+		response.setContentType("application/vnd.ms-excel");
+
+		ServletOutputStream out = response.getOutputStream();
+
+		searchDAO.writeResultsToStream(query, filterQuery, out, 100000);
+
+		return null;
 	}
-	
-	
-    /**
+
+
+	/**
 	 * Occurrence record page
 	 *
-     * @param id
+	 * @param id
 	 * @param model
 	 * @return view name
 	 * @throws Exception
@@ -463,10 +587,10 @@ public class OccurrenceController {
 	@RequestMapping(value = {"/occurrences/{id}", "/occurrences/{id}.json"}, method = RequestMethod.GET)
 	public String showOccurrence(@PathVariable("id") String id, Model model) throws Exception {
 		logger.debug("Retrieving occurrence record with guid: "+id+".");
-        model.addAttribute("id", id);
+		model.addAttribute("id", id);
 		OccurrenceDTO occurrence = searchDAO.getById(id);
-        model.addAttribute("occurrence", occurrence);
-        model.addAttribute("hostUrl", hostUrl);
+		model.addAttribute("occurrence", occurrence);
+		model.addAttribute("hostUrl", hostUrl);
 		return SHOW;
 	}
 

@@ -24,7 +24,7 @@
 		<th><b>Basis of Record</b></th>
 	</tr>
 	<tr>
-		<td><a href="../occurrences/search?q=<c:out value="${dataResource['name']}" />"><c:out value="${dataResource['name']}" /></a></td>
+		<td><a href="../occurrences/searchByDataResourceId?q=<c:out value="${dataResource['id']}" />"><c:out value="${dataResource['name']}" /></a></td>
 		<td><c:out value="${dataResource['providerRecordCount']}" /></td>
 		<td><c:out value="${dataResource['basisOfRecord']}" /></td>
 

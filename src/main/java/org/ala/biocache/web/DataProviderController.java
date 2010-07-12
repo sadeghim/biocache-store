@@ -64,7 +64,7 @@ public class DataProviderController {
 	/** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(GeoJsonController.class);
 
-	@RequestMapping(value = "/dataprovider/{dataProviderId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/data_provider/{dataProviderId}", method = RequestMethod.GET)
 	public String getDataProvider(@PathVariable("dataProviderId") String dataProviderId, Model model)
 	throws Exception {
 		model.addAttribute("dataProviderId", dataProviderId);
@@ -83,7 +83,7 @@ public class DataProviderController {
 		return DATA_PROVIDER_LIST;
 	}
 	
-	@RequestMapping(value = "/dataset/{dataResourceId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/data_resource/{dataResourceId}", method = RequestMethod.GET)
 	public String getDataResource(@PathVariable("dataResourceId") String dataResourceId, Model model)
 	throws Exception {
 		model.addAttribute("dataResourceId", dataResourceId);
