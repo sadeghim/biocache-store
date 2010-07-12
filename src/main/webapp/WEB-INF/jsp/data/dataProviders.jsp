@@ -23,7 +23,13 @@
 			<tr>
 				<td><a href="../occurrences/searchByDataResourceId?q=<c:out value="${dataResource['id']}" />"><c:out value="${dataResource['name']}" /></a></td>
 				<td><c:out value="${dataResource['providerRecordCount']}" /></td>
-				<td><c:out value="${dataResource['basisOfRecord']}" /></td>
+				<td>
+					<c:forEach var="basisOfRecord" items="${basisOfRecords}">
+						<c:if test="${dataResource['basisOfRecord']==basisOfRecord['id']}">
+							<c:out value="${basisOfRecord['description']}" />
+						</c:if>							
+					</c:forEach>
+				</td>
 			</tr>
 		</c:forEach>
 	</table>

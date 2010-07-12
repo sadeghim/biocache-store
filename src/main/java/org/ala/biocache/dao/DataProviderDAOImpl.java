@@ -34,7 +34,7 @@ import org.springframework.jdbc.support.KeyHolder;
 
 /**
  * Pure JDBC implementation
- * @author trobertson
+ * @author Tommy Wang (Tommy.wang@csiro.au)
  */
 public class DataProviderDAOImpl extends JdbcDaoSupport implements
 		DataProviderDAO {	

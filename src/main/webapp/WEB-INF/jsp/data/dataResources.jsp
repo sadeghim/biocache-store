@@ -15,7 +15,7 @@
 </c:if>
 	<br />
 	<b>Data Provider Name</b>
-	<div><c:out value="${dataProvider['name']}" /></div>
+	<div><a href="../occurrences/searchByDataProviderId?q=<c:out value="${dataProvider['id']}" />"><c:out value="${dataProvider['name']}" /></a></div>
 	<br />
 <table>
 	<tr>
@@ -26,7 +26,7 @@
 	<tr>
 		<td><a href="../occurrences/searchByDataResourceId?q=<c:out value="${dataResource['id']}" />"><c:out value="${dataResource['name']}" /></a></td>
 		<td><c:out value="${dataResource['providerRecordCount']}" /></td>
-		<td><c:out value="${dataResource['basisOfRecord']}" /></td>
+		<td><c:out value="${basisOfRecord['description']}" /></td>
 
 	</tr>
 </table>

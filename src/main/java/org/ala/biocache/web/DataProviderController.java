@@ -28,8 +28,10 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ala.biocache.dao.BasisOfRecordDAO;
 import org.ala.biocache.dao.DataProviderDAO;
 import org.ala.biocache.dao.DataResourceDAO;
+import org.ala.biocache.model.BasisOfRecord;
 import org.ala.biocache.model.DataProvider;
 import org.ala.biocache.model.DataResource;
 import org.ala.biocache.model.OccurrencePoint;
@@ -60,6 +62,10 @@ public class DataProviderController {
 	/** Data Provider DAO */
 	@Inject
 	protected DataProviderDAO dataProviderDAO;
+	
+	/** Basis of Record DAO */
+	@Inject
+	protected BasisOfRecordDAO basisOfRecordDAO;
 
 	/** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(GeoJsonController.class);
@@ -73,11 +79,13 @@ public class DataProviderController {
 
 		List<DataResource> dataResources = dataResourceDAO.getByDataProviderId(dataPId);
 		DataProvider dataProvider = dataProviderDAO.getById(dataPId);
+		List<BasisOfRecord> basisOfRecords = basisOfRecordDAO.getAll();
 
 		if (dataResources != null && dataProvider != null) {
 
 			model.addAttribute("dataResources", dataResources);
 			model.addAttribute("dataProvider", dataProvider);
+			model.addAttribute("basisOfRecords", basisOfRecords);
 		} 
 
 		return DATA_PROVIDER_LIST;
@@ -92,10 +100,12 @@ public class DataProviderController {
 
 		DataResource dataResource = dataResourceDAO.getById(dataRId);
 		DataProvider dataProvider = dataProviderDAO.getById(dataResource.getDataProviderId());
+		BasisOfRecord basisOfRecord = basisOfRecordDAO.getById(dataResource.getBasisOfRecord());
 
 		if (dataResource != null) {
 			model.addAttribute("dataProvider", dataProvider);
 			model.addAttribute("dataResource", dataResource);
+			model.addAttribute("basisOfRecord", basisOfRecord);
 		} 
 
 		return DATA_RESOURCE_LIST;

@@ -21,7 +21,7 @@ import org.ala.biocache.model.DataResource;
 
 /**
  * The Data Resource DAO
- * @author trobertson
+ * @author Tommy Wang (Tommy.wang@csiro.au)
  */
 public interface DataResourceDAO {
 	/**

@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ala.biocache.dao.BasisOfRecordDAO;
 import org.ala.biocache.dao.DataProviderDAO;
 import org.ala.biocache.dao.DataResourceDAO;
 import org.ala.biocache.dao.SearchDao;
