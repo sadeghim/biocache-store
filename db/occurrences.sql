@@ -55,6 +55,7 @@ READS SQL DATA
     END $$
 
 -- Stored function to lookup taxon name for a given higher taxa concept id.
+--NC the conversions occur to ensure that the name is a valid utf-8 string
 -- Nick dos Remedios 2010-05-16
 -- Args:
 -- concept_id: the input concept id
@@ -64,7 +65,7 @@ DETERMINISTIC
 READS SQL DATA
     BEGIN
         DECLARE canonical VARCHAR(1000);
-        SELECT tn.canonical
+        SELECT convert(convert(convert(tn.canonical USING latin1) USING binary) using utf8)
         INTO canonical
         FROM taxon_concept tc
         INNER JOIN taxon_name tn ON tn.id = tc.taxon_name_id
@@ -133,7 +134,7 @@ DELIMITER ;
 SELECT 'id','data_provider_id','data_provider','data_resource_id','data_resource',
 'institution_code_id','institution_code','institution_code_name','institution_code_lsid',
 'collection_code_id','collection_code','catalogue_number_id','catalogue_number',
-'taxon_concept_lsid','taxon_name','author', 'common_name','rank_id','rank','raw_taxon_name','raw_author','country_code',
+'taxon_concept_lsid','taxon_name','author', 'common_name', 'names_and_lsid','rank_id','rank','raw_taxon_name','raw_author','country_code',
 'lft','rgt','kingdom_lsid','kingdom','phylum_lsid','phylum','class_lsid','class','order_lsid','order',
 'family_lsid','family','genus_lsid','genus','species_lsid','species',
 'state',
@@ -149,7 +150,8 @@ UNION
 SELECT IFNULL(oc.id,''),IFNULL(oc.data_provider_id,''),IFNULL(dp.`name`,''),IFNULL(oc.data_resource_id,''),
 IFNULL(dr.`name`,''),IFNULL(oc.institution_code_id,''),IFNULL(ic.code,''),IFNULL(ic.`name`,''),
 IFNULL(ic.lsid,''),IFNULL(oc.collection_code_id,''),IFNULL(cc.code,''),IFNULL(oc.catalogue_number_id,''),
-IFNULL(cn.code,''),IFNULL(tc.guid,''),IFNULL(tn.canonical,''),IFNULL(tn.author,''), IFNULL(get_first_taxa_cn(oc.taxon_concept_id),''),
+IFNULL(cn.code,''),IFNULL(tc.guid,''),IFNULL(convert(convert(convert(tn.canonical USING latin1) USING binary) using utf8),''),IFNULL(tn.author,''), IFNULL(get_first_taxa_cn(oc.taxon_concept_id),''),
+CONCAT_WS('|', IFNULL(convert(convert(convert(tn.canonical USING latin1) USING binary) using utf8),''), IFNULL(tc.guid,''), IFNULL(get_first_taxa_cn(oc.taxon_concept_id),''), IFNULL(get_taxa_canonical(oc.kingdom_concept_id),''), IFNULL(get_taxa_canonical(oc.family_concept_id),'') ),
 IFNULL(tc.rank,''), IFNULL(rnk.`name`,''),IFNULL(ror.scientific_name,''),IFNULL(ror.author,''),
 IFNULL(oc.iso_country_code,''), IFNULL(tc.lft,''), IFNULL(tc.rgt,''),
 IFNULL(get_taxa_guid(oc.kingdom_concept_id),''), IFNULL(get_taxa_canonical(oc.kingdom_concept_id),''),

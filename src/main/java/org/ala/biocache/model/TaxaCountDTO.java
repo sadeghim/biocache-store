@@ -23,7 +23,10 @@ package org.ala.biocache.model;
 public class TaxaCountDTO {
 
     protected String name;
+    protected String commonName;
     protected String guid;
+    protected String kingdom;
+    protected String family;
     protected Long count;
 
     public TaxaCountDTO() {}
@@ -60,4 +63,29 @@ public class TaxaCountDTO {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
+    public String getFamily() {
+        return family;
+    }
+
+    public void setFamily(String family) {
+        this.family = family;
+    }
+
+    public String getKingdom() {
+        return kingdom;
+    }
+
+    public void setKingdom(String kingdom) {
+        this.kingdom = kingdom;
+    }
+    
 }

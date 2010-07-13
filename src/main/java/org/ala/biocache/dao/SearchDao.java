@@ -55,6 +55,21 @@ public interface SearchDao {
     OccurrenceDTO getById(String id) throws Exception;
 
     /**
+     * Writes the species count in the specified circle to the output stream.
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @param rank
+     * @param higherTaxa
+     * @param out
+     * @return
+     * @throws Exception
+     */
+    int writeSpeciesCountByCircleToStream(Float latitude, Float longitude,
+            Integer radius, String rank, List<String> higherTaxa, ServletOutputStream out) throws Exception;
+
+
+    /**
      * Write out the results of this query to the output stream
      * 
      * @param query

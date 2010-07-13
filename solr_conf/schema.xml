@@ -484,6 +484,7 @@
    <field name="taxon_name_text" type="text_ws" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="author" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="common_name" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="names_and_lsid" type="string" indexed="true" stored="true" multiValued="false" omitNorms="true"/>
    <field name="rank" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="rank_id" type="int" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="raw_taxon_name" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />

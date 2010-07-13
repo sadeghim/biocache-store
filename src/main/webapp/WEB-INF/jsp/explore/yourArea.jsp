@@ -17,6 +17,10 @@
             /* Openlayers vars - ${param['radius']} */
             var lon = ${longitude};
             var lat = ${latitude};
+            //make the taxa and rank global variable so that they can be used in the download
+            var taxa =[]
+            taxa[0] ="*";
+            var rank ="*";
             var zoom = ${zoom};
             var map, vectorLayer, selectControl, selectFeature, markerLayer, circleLayer;
             var geocoder;
@@ -259,14 +263,15 @@
                     function(e) {
                         e.preventDefault(); // ignore the href text - used for data
                         var taxon = $(this).attr('href');
-                        var rank = $(this).attr('id');
-                        var taxa = []; // array of taxa
+                        rank = $(this).attr('id');
+                        taxa = []; // array of taxa
                         if (taxon.contains("|")) {
                             taxa = taxon.split("|");
                         } else {
                             taxa[0] = taxon;
                         }
-                        $('.taxonBrowse').parent().parent().css('background-color','inherit');
+                        //Internet Explorer for Windows versions up to and including 7 don’t support the value inherit.(http://reference.sitepoint.com/css/background-color)
+                        //$('.taxonBrowse').parent().parent().css('background-color','inherit');
                         $(this).parent().parent().css('background-color','#DDD');
                         $('#taxa-level-1 tbody tr').css('background-color','#DDD');
                         // load records layer on map
@@ -282,10 +287,22 @@
                                 //$('#taxa-level-1 tbody:last tr:last').html('<td>'+data.species[0].name+' ('+data.species[0].count+')</td>');
                                 $('#taxa-level-1 tbody:last tr:last').html('<td rowspan="12"><div id="taxaDiv"><ol></ol></div></td>');
                                 for (i=0;i<data.species.length;i++) {
-                                    //$('#taxa-level-1 tr:last').after('<tr><td>'+data.species[i].name+' ('+data.species[i].count+')</td></tr>');
+                                                                                                          //$('#taxa-level-1 tr:last').after('<tr><td>'+data.species[i].name+' ('+data.species[i].count+')</td></tr>');
+                                    if(data.species[i].guid===null){                                    
+                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><i>'+data.species[i].name+'</i> ('+
+                                        data.species[i].count+' records)</span></li>');
+                                    }
+                                    else if(data.species[i].commonName === null){
                                     $('#taxa-level-1 #taxaDiv ol').append('<li><span><a href="${speciesPageUrl}'+
                                         data.species[i].guid+'"><i>'+data.species[i].name+'</i></a> ('+
                                         data.species[i].count+' records)</span></li>');
+
+                                    }
+                                    else{
+                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><a href="${speciesPageUrl}'+
+                                        data.species[i].guid+'"><i>'+data.species[i].name+'</i></a> - '+data.species[i].commonName+' ('+
+                                        data.species[i].count+' records)</span></li>');
+                                    }
                                 }
                             } else {
                                 $('#taxa-level-1 tbody:last tr:last').html('<td>[no species found]</td>');
@@ -297,7 +314,19 @@
 
                 // By default show the all records group
                 $('#taxa-level-0 tbody td:first a.taxonBrowse').click();
-                
+
+                $("button#download").click(
+                    function(e){
+                    e.preventDefault();
+                        var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank=" + rank;
+                        //alert("URL is " + downloadUrl);
+                         if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
+                        window.location.replace(downloadUrl);
+                    }
+
+                    }
+                );
+
                 $('input#locationSearch').click(
                     function(e) {
                         e.preventDefault(); // ignore the href text - used for data
@@ -350,7 +379,9 @@
                     <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
                     <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
                     <option value="50" <c:if test="${radius eq '50'}">selected</c:if>>50</option>
-                </select> km radius <input type="submit" value="Reload"/></p>
+                </select> km radius <input type="submit" value="Reload"/>
+                <button id="download" title="Download displayed species as XLS (tab-delimited) file">Download</button>
+                </p>
         <!--        <p>Results - <fmt:formatNumber value="${allLifeCounts}" pattern="#,###,###"/> records found</p>-->
                 <div id="taxaBox">
                     <div id="rightList" style="float:right; width:290px; margin-right: 10px;">

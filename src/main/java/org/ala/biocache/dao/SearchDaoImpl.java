@@ -66,6 +66,7 @@ public class SearchDaoImpl implements SearchDao {
     protected static final String KINGDOM_LSID = "kingdom_lsid";
     protected static final String SPECIES = "species";
     protected static final String SPECIES_LSID = "species_lsid";
+    protected static final String NAMES_AND_LSID = "names_and_lsid";
     /**
      * Initialise the SOLR server instance
      */
@@ -107,6 +108,42 @@ public class SearchDaoImpl implements SearchDao {
         }
 
         return searchResults;
+    }
+    public int writeSpeciesCountByCircleToStream(Float latitude, Float longitude,
+            Integer radius, String rank, List<String> higherTaxa, ServletOutputStream out) throws Exception
+    {
+
+        //get the species counts:
+        logger.debug("Writing CSV file for species count by circle");
+        List<TaxaCountDTO> species = findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, higherTaxa, null, 0, -1, "count", "asc");
+        logger.debug("There are " + species.size() + "records being downloaded");
+        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), '\t', '"');
+        csvWriter.writeNext(new String[]{
+            		"GUID",
+                        "Kingdom",
+                        "Familiy",
+            		"Scientific Name",
+            		"CommonName",
+                        "Count",
+        });
+        int count = 0;
+        for (TaxaCountDTO item : species) {
+
+            String[] record = new String[]{
+                item.getGuid(),
+                item.getKingdom(),
+                item.getFamily(),
+                item.getName(),
+                item.getCommonName(),
+                item.getCount().toString(),
+            };
+
+
+            csvWriter.writeNext(record);
+            csvWriter.flush();
+            count++;
+        }
+        return count;
     }
 
     /**
@@ -225,7 +262,7 @@ public class SearchDaoImpl implements SearchDao {
 
         return oc;
     }
-
+   
     /**
      * @see org.ala.biocache.dao.SearchDao#getFacetPoints(java.lang.String, java.lang.String[], PointType pointType)
      */
@@ -381,8 +418,9 @@ public class SearchDaoImpl implements SearchDao {
         String queryString = buildSpatialQueryString("*:*", latitude, longitude, radius);
         List<String> filterQueries = Arrays.asList(rank + ":" + higherTaxon);
         List<String> facetFields = new ArrayList<String>();
-        facetFields.add(SPECIES);
-        facetFields.add(SPECIES_LSID);
+        //facetFields.add(SPECIES);
+        //facetFields.add(SPECIES_LSID);
+        facetFields.add(NAMES_AND_LSID);
         List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, filterQueries, facetFields, pageSize, sortField, sortDirection);
 
         return speciesWithCounts;
@@ -405,8 +443,10 @@ public class SearchDaoImpl implements SearchDao {
         
         String queryString = buildSpatialQueryString("*:*", latitude, longitude, radius);
         List<String> facetFields = new ArrayList<String>();
-        facetFields.add(SPECIES);
-        facetFields.add(SPECIES_LSID);
+        facetFields.add(NAMES_AND_LSID);
+        //facetFields.add(SPECIES);
+        //facetFields.add(SPECIES_LSID);
+        //facetFields.add(COMMON_NAME);
         List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, filterQueries, facetFields, pageSize, sortField, sortDirection);
 
         return speciesWithCounts;
@@ -649,7 +689,7 @@ public class SearchDaoImpl implements SearchDao {
         logger.info("SOLR query: " + solrQuery.getQuery() + "; total hits: " + qr.getResults().getNumFound());
         List<FacetField> facets = qr.getFacetFields();
         logger.debug("Facets: " +facets.size()+"; facet #1: "+qr.getFacetFields().get(0).getName());
-
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile("\\|");
         if (facets != null) {            
             for (FacetField facet : facets) {
                 List<FacetField.Count> facetEntries = facet.getValues();
@@ -658,6 +698,19 @@ public class SearchDaoImpl implements SearchDao {
                         FacetField.Count fcount = facetEntries.get(i);
                         //speciesCounts.add(i, new TaxaCountDTO(fcount.getName(), fcount.getCount()));
                         TaxaCountDTO tcDTO = null;
+                        if(fcount.getFacetField().getName().equals(NAMES_AND_LSID)){
+                            String[] values =p.split(fcount.getName());
+                            tcDTO = new TaxaCountDTO(values[0], fcount.getCount());
+                            if(values.length>=5){
+                                tcDTO.setGuid(values[1]);
+                                tcDTO.setCommonName(values[2]);
+                                tcDTO.setKingdom(values[3]);
+                                tcDTO.setFamily(values[4]);
+                            }
+                            speciesCounts.add(i, tcDTO);
+                        }
+                        else{
+                            //leave the original code for findAllKingdomsByCircleArea method
                         try {
                             tcDTO = speciesCounts.get(i);
                             tcDTO.setGuid(fcount.getName());
@@ -665,6 +718,7 @@ public class SearchDaoImpl implements SearchDao {
                         } catch (Exception e) {
                             tcDTO = new TaxaCountDTO(fcount.getName(), fcount.getCount());
                             speciesCounts.add(i, tcDTO);
+                        }
                         }
                     }
                 }

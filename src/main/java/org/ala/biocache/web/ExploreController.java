@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.Address;
 import org.ala.biocache.model.TaxaCountDTO;
@@ -125,6 +127,42 @@ public class ExploreController {
         model.addAttribute("speciesPageUrl", speciesPageUrl);
 
 		return YOUR_AREA;
+	}
+        /**
+	 * Occurrence search page uses SOLR JSON to display results
+	 *
+     * @param query
+     * @param model
+     * @return
+     * @throws Exception
+     */
+	@RequestMapping(value = "/explore/download*", method = RequestMethod.GET)
+	public void yourAreaDownload(
+            @RequestParam(value="radius", required=false, defaultValue="10") Integer radius,
+            @RequestParam(value="latitude", required=false, defaultValue="0f") Float latitude,
+            @RequestParam(value="longitude", required=false, defaultValue="0f") Float longitude,
+            @RequestParam(value="taxa", required=false, defaultValue="") String taxa, // comma separated list
+            @RequestParam(value="rank", required=false, defaultValue="") String rank,
+            HttpServletResponse response)
+            throws Exception {
+
+
+            logger.debug("Downloading the species in your area... ");
+        response.setHeader("Cache-Control", "must-revalidate");
+        response.setHeader("Pragma", "must-revalidate");
+        response.setHeader("Content-Disposition", "attachment;filename=data");
+        response.setContentType("application/vnd.ms-excel");
+        String[] taxaArray = StringUtils.split(taxa, ",");
+        ArrayList<String> taxaList = null;
+        if (taxaArray != null) {
+            taxaList = new ArrayList<String>(Arrays.asList(taxaArray));
+        } else {
+            taxaList = new ArrayList<String>();
+        }
+        ServletOutputStream out = response.getOutputStream();
+        int count =searchDao.writeSpeciesCountByCircleToStream(latitude, longitude, radius, rank, taxaList, out);
+        logger.debug("Exported " + count + " species records in the requested area");
+        
 	}
 
     protected Long calculateRecordCount(List<TaxaCountDTO> taxa) {
