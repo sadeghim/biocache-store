@@ -465,7 +465,7 @@
        when adding a document.
    -->
    <!-- start of BIE Biocache Fields -->
-   <field name="id" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="id" type="String" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="data_provider_id" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="data_provider" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="data_resource_id" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
