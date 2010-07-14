@@ -34,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -141,7 +140,7 @@ public class AnnotationController {
 
         if (pageUrl == null) return null;
         String url = annoteaServerUrl + "?w3c_annotates=" + pageUrl;
-        logger.info("annotea url = " + url);
+        logger.debug("annotea url = " + url);
         List<OccurrenceAnnotation> occurrenceAnnotations = getAnnotationsForUrl(url);
         // sort annotations by date so we can ensure replies are processed after their inReplyTo
         Comparator dateComparator = new Comparator() {
@@ -461,7 +460,8 @@ public class AnnotationController {
 	 * @throws Exception
 	 */
     private InputStream getDannoInputStream(String url) throws Exception {
-        HttpClient httpClient = new HttpClient();
+        logger.debug("Danno request: " + url);
+    	HttpClient httpClient = new HttpClient();
         httpClient.getParams().setSoTimeout(timeoutInMillisec);
         httpClient.getState().setCredentials(
             new AuthScope(dannoServer, dannoPort, "realm"),
@@ -472,7 +472,7 @@ public class AnnotationController {
         httpClient.getState().setAuthenticationPreemptive(true);
         httpClient.executeMethod(getMethod);
         if(logger.isDebugEnabled()){
-        	logger.debug("Checking URL: "+getMethod.getResponseBodyAsString());
+        	logger.debug("Danno response: "+getMethod.getResponseBodyAsString());
         }
         return getMethod.getResponseBodyAsStream();
     }
