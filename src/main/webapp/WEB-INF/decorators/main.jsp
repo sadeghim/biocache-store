@@ -33,6 +33,17 @@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8"/>
         <script type="text/javascript">
 
+            //add the indexOf method for IE7
+            if(!Array.indexOf){
+                Array.prototype.indexOf = function(obj){
+                    for(var i=0; i<this.length; i++){
+                        if(this[i]===obj){
+                            return i;
+                        }
+                    }
+                    return -1;
+                }
+            }
             // initialise plugins
             jQuery(function(){
                 jQuery('ul.sf').superfish( {
