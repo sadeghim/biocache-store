@@ -13,7 +13,7 @@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <head profile="http://gmpg.org/xfn/11">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-        <title><decorator:title default="ALA Biodiversity Harvester" /></title>
+        <title><decorator:title default="Atlas of Living Australia" /></title>
 <!--        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-1.4.2.min.js"></script>-->
         <link rel="stylesheet" href="http://test.ala.org.au/wp-content/themes/ala/style.css" type="text/css" media="screen" />
         <link rel="icon" type="image/x-icon" href="http://test.ala.org.au/wp-content/themes/ala/images/favicon.ico" />
@@ -62,7 +62,7 @@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <div id="wrapper">
             <div id="banner">
                 <div id="logo">
-                    <a  href="http://test.ala.org.au" title="Atlas of Living Australia home"><img src="http://test.ala.org.au/wp-content/themes/ala/images/ala_logo.png" width="176" height="165" alt="Atlas of Living Ausralia logo" /></a>
+                    <a  href="http://test.ala.org.au" title="Atlas of Living Australia home"><img src="http://test.ala.org.au/wp-content/themes/ala/images/ala_logo.png" width="218" height="88" alt="Atlas of Living Ausralia logo" /></a>
                 </div><!--close logo-->
                 <div id="nav">
                     <!-- WP Menubar 4.7: start menu nav-site, template Superfish, CSS  -->
