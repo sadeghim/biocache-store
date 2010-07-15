@@ -74,7 +74,7 @@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
                 </div><!--close nav-->
                 <div id="border_search">
                     <div id="wrapper_search">
-                        <form id="search-form" action="/bie-webapp/search" method="get" name="search-form">
+                        <form id="search-form" action="http://bie.ala.org.au/search" method="get" name="search-form">
                             <label for="search">Search</label>
                             <input type="text" class="filled" id="search" name="q" value="Search the Atlas" />
                         </form>
