@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ala.biocache.dao.BasisOfRecordDAO;
 import org.ala.biocache.dao.DataProviderDAO;
 import org.ala.biocache.dao.DataResourceDAO;
 import org.ala.biocache.dao.SearchDao;
@@ -76,8 +75,8 @@ public class OccurrenceController {
 	/** Name of view for square cells GeoJSON service */
 	private final String CELLS_GEOJSON = "json/cellsGeoJson";
 	protected String hostUrl = "http://localhost:8888/biocache-webapp";
-	protected String bieBaseUrl = "http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp";
-        protected String collectoryBaseUrl = "http://collections.ala.org.au";
+	protected String bieBaseUrl = "http://bie.ala.org.au/";
+    protected String collectoryBaseUrl = "http://collections.ala.org.au";
 
 	/**
 	 * Custom handler for the welcome view.
@@ -607,5 +606,40 @@ public class OccurrenceController {
 	 */
 	public void setHostUrl(String hostUrl) {
 		this.hostUrl = hostUrl;
+	}
+
+	/**
+	 * @param searchDAO the searchDAO to set
+	 */
+	public void setSearchDAO(SearchDao searchDAO) {
+		this.searchDAO = searchDAO;
+	}
+
+	/**
+	 * @param dataResourceDAO the dataResourceDAO to set
+	 */
+	public void setDataResourceDAO(DataResourceDAO dataResourceDAO) {
+		this.dataResourceDAO = dataResourceDAO;
+	}
+
+	/**
+	 * @param dataProviderDAO the dataProviderDAO to set
+	 */
+	public void setDataProviderDAO(DataProviderDAO dataProviderDAO) {
+		this.dataProviderDAO = dataProviderDAO;
+	}
+
+	/**
+	 * @param bieBaseUrl the bieBaseUrl to set
+	 */
+	public void setBieBaseUrl(String bieBaseUrl) {
+		this.bieBaseUrl = bieBaseUrl;
+	}
+
+	/**
+	 * @param collectoryBaseUrl the collectoryBaseUrl to set
+	 */
+	public void setCollectoryBaseUrl(String collectoryBaseUrl) {
+		this.collectoryBaseUrl = collectoryBaseUrl;
 	}
 }
