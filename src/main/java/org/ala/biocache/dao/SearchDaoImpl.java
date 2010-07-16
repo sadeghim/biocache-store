@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 
+import org.ala.biocache.model.DataProviderCountDTO;
 import org.ala.biocache.model.FacetResultDTO;
 import org.ala.biocache.model.FieldResultDTO;
 import org.ala.biocache.model.OccurrenceDTO;
@@ -50,13 +51,13 @@ import org.ala.biocache.model.TaxaCountDTO;
  * @see org.ala.biocache.dao.SearchDao
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
-@Component("searchDaoImpl")
+@Component("searchDao")
 public class SearchDaoImpl implements SearchDao {
 
     /** log4 j logger */
     private static final Logger logger = Logger.getLogger(SearchDaoImpl.class);
     /** SOLR home directory - injected by Spring from properties file */
-    protected String solrHome;
+    protected String solrHome = "/data/solr/biocache";
     /** SOLR server instance */
     protected EmbeddedSolrServer server;
     /** Limit search results - for performance reasons */
@@ -109,6 +110,10 @@ public class SearchDaoImpl implements SearchDao {
 
         return searchResults;
     }
+    
+    /**
+     * @see org.ala.biocache.dao.SearchDao#writeSpeciesCountByCircleToStream(java.lang.Float, java.lang.Float, java.lang.Integer, java.lang.String, java.util.List, javax.servlet.ServletOutputStream)
+     */
     public int writeSpeciesCountByCircleToStream(Float latitude, Float longitude,
             Integer radius, String rank, List<String> higherTaxa, ServletOutputStream out) throws Exception
     {
@@ -343,6 +348,51 @@ public class SearchDaoImpl implements SearchDao {
     */
 
     /**
+     * http://ala-biocache1.vm.csiro.au:8080/solr/select?q=*:*&rows=0&facet=true&facet.field=data_provider_id&facet.field=data_provider&facet.sort=data_provider_id
+     * 
+	 * @see org.ala.biocache.dao.SearchDao#getDataProviderCounts()
+	 */
+	@Override
+	public List<DataProviderCountDTO> getDataProviderCounts() throws Exception {
+        
+        List<DataProviderCountDTO> dpDTOs = new ArrayList<DataProviderCountDTO>(); // new OccurrencePoint(PointType.POINT);
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQueryType("standard");
+        solrQuery.setQuery("*:*");
+        solrQuery.setRows(0);
+        solrQuery.setFacet(true);
+        solrQuery.addFacetField("data_provider_id");
+        solrQuery.addFacetField("data_provider");
+        solrQuery.setFacetMinCount(1);
+        QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, "data_provider", "asc");
+        List<FacetField> facets = qr.getFacetFields();
+
+        if (facets != null && facets.size()==2) {
+        	
+        	FacetField dataProviderIdFacet = facets.get(0);
+        	FacetField dataProviderNameFacet = facets.get(1);
+        	
+        	List<FacetField.Count> dpIdEntries = dataProviderIdFacet.getValues();
+        	List<FacetField.Count> dpNameEntries = dataProviderNameFacet.getValues();
+        	
+            for (int i=0; i<dpIdEntries.size(); i++) {
+            	
+            	FacetField.Count dpIdEntry = dpIdEntries.get(i);
+            	FacetField.Count dpNameEntry = dpNameEntries.get(i);
+            	
+            	String dataProviderId = dpIdEntry.getName();
+            	String dataProviderName = dpNameEntry.getName();
+            	long count = dpIdEntry.getCount();
+            	
+            	DataProviderCountDTO dto = new DataProviderCountDTO(dataProviderId, dataProviderName, count);
+            	dpDTOs.add(dto);
+            }
+        }
+        logger.info("Find data providers = "+dpDTOs.size());
+        return dpDTOs;
+	}
+
+	/**
      * @see org.ala.biocache.dao.SearchDao#findRecordsForLocation(Float, Float, Integer)
      */
     @Override
@@ -468,7 +518,6 @@ public class SearchDaoImpl implements SearchDao {
 
         return speciesWithCounts;
     }
-
 
     /**
      * Perform SOLR query - takes a SolrQuery and search params

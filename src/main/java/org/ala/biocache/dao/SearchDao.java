@@ -1,4 +1,4 @@
-/* *************************************************************************
+/**************************************************************************
  *  Copyright (C) 2010 Atlas of Living Australia
  *  All Rights Reserved.
  * 
@@ -18,6 +18,7 @@ package org.ala.biocache.dao;
 import java.util.List;
 import javax.servlet.ServletOutputStream;
 
+import org.ala.biocache.model.DataProviderCountDTO;
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.OccurrencePoint;
 import org.ala.biocache.model.PointType;
@@ -156,4 +157,11 @@ public interface SearchDao {
      */
     List<TaxaCountDTO> findAllKingdomsByCircleArea(Float latitude, Float longitude, Integer radius, String filterQuery,
              Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception;
+
+    /**
+     * Find all the data providers with records.
+     * 
+     * @return
+     */
+    List<DataProviderCountDTO> getDataProviderCounts() throws Exception;
 }

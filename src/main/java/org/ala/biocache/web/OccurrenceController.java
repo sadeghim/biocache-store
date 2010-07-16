@@ -141,7 +141,6 @@ public class OccurrenceController {
 
 		logger.debug("Found concept: "+taxonConcept.getString("nameString"));
 
-
 		String rankString = taxonConcept.getString("rankString");
 		String commonName = null;
 
@@ -238,9 +237,6 @@ public class OccurrenceController {
 			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
 			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
-			@RequestParam(value="rad", required=false, defaultValue="10") Integer radius,
-			@RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
-			@RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
 			Model model)
 		throws Exception {
 
@@ -296,9 +292,6 @@ public class OccurrenceController {
 			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
 			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
-			@RequestParam(value="rad", required=false, defaultValue="10") Integer radius,
-			@RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
-			@RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
 			Model model)
 		throws Exception {
 

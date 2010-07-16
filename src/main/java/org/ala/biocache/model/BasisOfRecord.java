@@ -15,7 +15,6 @@
 
 package org.ala.biocache.model;
 
-import java.util.Date;
 
 /**
  * Java bean of Basis of Record

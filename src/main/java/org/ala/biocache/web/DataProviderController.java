@@ -20,40 +20,36 @@
 
 package org.ala.biocache.web;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 
 import org.ala.biocache.dao.BasisOfRecordDAO;
 import org.ala.biocache.dao.DataProviderDAO;
 import org.ala.biocache.dao.DataResourceDAO;
+import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.BasisOfRecord;
 import org.ala.biocache.model.DataProvider;
+import org.ala.biocache.model.DataProviderCountDTO;
 import org.ala.biocache.model.DataResource;
-import org.ala.biocache.model.OccurrencePoint;
-import org.ala.biocache.model.PointType;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Displays views of data providers and resources.
+ *
+ * @author Tommy Wang
+ * @author Dave Martin (David.Martin@csiro.au)
+ */
 @Controller
 public class DataProviderController {
-
-	final String DATA_PROVIDER_LIST = "data/dataProviders";
-	final String DATA_RESOURCE_LIST = "data/dataResources";
-
-	/** Data Provider DAO */
-	//    @Inject
-	//    protected DataProviderDAO dataProviderDAO;
+	
+	/** Logger initialisation */
+	private final static Logger logger = Logger.getLogger(GeoJsonController.class);
 
 	/** Data Resource DAO */
 	@Inject
@@ -66,10 +62,39 @@ public class DataProviderController {
 	/** Basis of Record DAO */
 	@Inject
 	protected BasisOfRecordDAO basisOfRecordDAO;
+	
+	/** Basis of Record DAO */
+	@Inject
+	protected SearchDao searchDao;
 
-	/** Logger initialisation */
-	private final static Logger logger = Logger.getLogger(GeoJsonController.class);
-
+	final String DATA_PROVIDER_LIST = "data/dataProviders";
+	final String DATA_RESOURCE_LIST = "data/dataResources";
+	final String DATA_PROVIDER_COUNT = "data/dataProviderCounts";
+	
+	/**
+	 * Display a view of a data provider.
+	 * 
+	 * @param dataProviderId
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/data_providers/counts.json}", method = RequestMethod.GET)
+	public String getDataProviderCounts(Model model)
+	throws Exception {
+		List<DataProviderCountDTO> counts = searchDao.getDataProviderCounts();
+		model.addAttribute("dataProviders", counts);
+		return DATA_PROVIDER_LIST;
+	}
+	
+	/**
+	 * Display a view of a data provider.
+	 * 
+	 * @param dataProviderId
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/data_provider/{dataProviderId}", method = RequestMethod.GET)
 	public String getDataProvider(@PathVariable("dataProviderId") String dataProviderId, Model model)
 	throws Exception {
@@ -91,6 +116,14 @@ public class DataProviderController {
 		return DATA_PROVIDER_LIST;
 	}
 	
+	/**
+	 * Display a view of a data resource.
+	 * 
+	 * @param dataResourceId
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/data_resource/{dataResourceId}", method = RequestMethod.GET)
 	public String getDataResource(@PathVariable("dataResourceId") String dataResourceId, Model model)
 	throws Exception {
@@ -109,6 +142,13 @@ public class DataProviderController {
 		} 
 
 		return DATA_RESOURCE_LIST;
+	}
+
+	/**
+	 * @param searchDao the searchDao to set
+	 */
+	public void setSearchDao(SearchDao searchDao) {
+		this.searchDao = searchDao;
 	}
 
 }
