@@ -277,7 +277,7 @@
                         // load records layer on map
                         loadRecordsLayer(taxa, rank);
                         // AJAX...
-                        var uri = "/biocache-webapp/explore/species.json";
+                        var uri = "${pageContext.request.contextPath}/explore/species.json";
                         var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank="+rank;
                         $('#taxa-level-1 tbody:last').html('<tr><td>[loading...]</td></tr>');
                         $.getJSON(uri + params, function(data) {

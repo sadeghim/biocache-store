@@ -1,4 +1,4 @@
-/* *************************************************************************
+/**************************************************************************
  *  Copyright (C) 2010 Atlas of Living Australia
  *  All Rights Reserved.
  * 
@@ -19,11 +19,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+
 import org.ala.biocache.dao.SearchDao;
-import org.ala.biocache.model.Address;
 import org.ala.biocache.model.TaxaCountDTO;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -48,7 +49,7 @@ public class ExploreController {
     protected SearchDao searchDao;
     /** Name of view for site home page */
 	private String YOUR_AREA = "explore/yourArea";
-    private String speciesPageUrl = "http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp/species/";
+    private String speciesPageUrl = "http://bie.ala.org.au/species/";
     private String googleKey; // set in properties override
     private HashMap<String, List<Float>> addressCache = new HashMap<String, List<Float>>();
     /** Mapping of radius in km to OpenLayers zoom level */
@@ -217,4 +218,22 @@ public class ExploreController {
     public void setGoogleKey(String googleKey) {
         this.googleKey = googleKey;
     }
+	/**
+	 * @param searchDao the searchDao to set
+	 */
+	public void setSearchDao(SearchDao searchDao) {
+		this.searchDao = searchDao;
+	}
+	/**
+	 * @param speciesPageUrl the speciesPageUrl to set
+	 */
+	public void setSpeciesPageUrl(String speciesPageUrl) {
+		this.speciesPageUrl = speciesPageUrl;
+	}
+	/**
+	 * @param addressCache the addressCache to set
+	 */
+	public void setAddressCache(HashMap<String, List<Float>> addressCache) {
+		this.addressCache = addressCache;
+	}
 }
