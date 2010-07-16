@@ -65,7 +65,7 @@
 
     <context-param>
         <param-name>casExcludedUrlPattern</param-name>
-        <param-value>/biocache-webapp/static/*, /biocache-webapp/annotation/*, /biocache-webapp/occurrences/searchForCollection, *.json</param-value>
+        <param-value>/static/*, /annotation/*, /occurrences/searchForCollection, *.json</param-value>
     </context-param>
 
     <!-- CAS Authentication Service filters -->
