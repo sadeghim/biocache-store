@@ -75,7 +75,7 @@ $(document).ready(function() {
         var section = sections[i];
         var icon = '<a href="#'+section+'" id="comment" name="modal" class="annotationIcon" title="annotate this section (general comment)">&nbsp;</a>';
         var newRow = "<tr id='comment-"+section+"' class='comments'><td class='label'>Comments</td><td class='annoText'>"+
-                     "</td><td colspan='2'>[<span id='"+section+"CommentCount'>0</span> <span id='"+section+
+                     "</td><td class='value'>[<span id='"+section+"CommentCount'>0</span> <span id='"+section+
                      "CommentCountLabel'>"+countLabel+"s</span>]</td><td class='"+section+
                      "' name='comment'>"+icon+"</td></tr>";
         $('#'+section+'Table tr:last').after(newRow);
