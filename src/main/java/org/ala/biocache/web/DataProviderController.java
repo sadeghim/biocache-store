@@ -79,7 +79,7 @@ public class DataProviderController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/data_providers/counts.json}", method = RequestMethod.GET)
+	@RequestMapping(value = "/data_providers/counts.json", method = RequestMethod.GET)
 	public String getDataProviderCounts(Model model)
 	throws Exception {
 		List<DataProviderCountDTO> counts = searchDao.getDataProviderCounts();
