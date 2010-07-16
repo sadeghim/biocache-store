@@ -387,13 +387,13 @@ public class OccurrenceController {
 		}
 
 		StringBuilder solrQuery = new StringBuilder();		
-                //query the collectory for the institute and collection codes needed to perform the search
-                String jsonObject = getUrlContentAsString(collectoryBaseUrl +"/collection/summary/" + query);
-                JSONObject j = new JSONObject(jsonObject);
-                String instituteName = j.getString("name");
-                JSONArray institutionCode = j.getJSONArray("derivedInstCodes");
-                JSONArray collectionCode = j.getJSONArray("derivedCollCodes");
-                StringBuilder displayString = new StringBuilder("Collection: ");
+        //query the collectory for the institute and collection codes needed to perform the search
+        String jsonObject = getUrlContentAsString(collectoryBaseUrl +"/collection/summary/" + query);
+        JSONObject j = new JSONObject(jsonObject);
+        String instituteName = j.getString("name");
+        JSONArray institutionCode = j.getJSONArray("derivedInstCodes");
+        JSONArray collectionCode = j.getJSONArray("derivedCollCodes");
+        StringBuilder displayString = new StringBuilder("Collection: ");
                         displayString.append(instituteName);
 		// Build Lucene query for institutions
 		if (institutionCode!=null && institutionCode.size() > 0) {
