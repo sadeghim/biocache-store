@@ -109,7 +109,7 @@
                                     <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</a>)
                             </c:when>
                             <c:otherwise>
-                                <a href="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.taxonConceptLsid}"><alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</a>
+                                <a href="${bieWebappContext}/species/${occurrence.taxonConceptLsid}"><alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</a>
                             </c:otherwise>
                         </c:choose>
                     </alatag:occurrenceTableRow>
