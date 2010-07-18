@@ -12,7 +12,6 @@
  *  implied. See the License for the specific language governing
  *  rights and limitations under the License.
  ***************************************************************************/
-
 package org.ala.biocache.web;
 
 import java.util.ArrayList;
@@ -70,10 +69,7 @@ public class OccurrenceController {
 	private final String LIST = "occurrences/list";
 	/** Name of view for a single taxon */
 	private final String SHOW = "occurrences/show";
-	/** Name of view for points GeoJSON service */
-	private final String POINTS_GEOJSON = "json/pointsGeoJson";
-	/** Name of view for square cells GeoJSON service */
-	private final String CELLS_GEOJSON = "json/cellsGeoJson";
+	
 	protected String hostUrl = "http://localhost:8888/biocache-webapp";
 	protected String bieBaseUrl = "http://bie.ala.org.au/";
     protected String collectoryBaseUrl = "http://collections.ala.org.au";
@@ -139,16 +135,24 @@ public class OccurrenceController {
 		JSONObject extendedDTO = j.getJSONObject("extendedTaxonConceptDTO");
 		JSONObject taxonConcept = extendedDTO.getJSONObject("taxonConcept");
 
-		logger.debug("Found concept: "+taxonConcept.getString("nameString"));
+		//retrieve the left and right values
+		String left = taxonConcept.getString("left");
+		String right = taxonConcept.getString("right");
+		
+		logger.debug("Querying with left and right: " + left+", "+right);
+		logger.debug("Found concept: " + taxonConcept.getString("nameString"));
 
+		//get rank string
 		String rankString = taxonConcept.getString("rankString");
 		String commonName = null;
 
+		//get a common name
 		JSONArray commonNames = extendedDTO.getJSONArray("commonNames");
 		if(!commonNames.isEmpty()){
 			commonName = commonNames.getJSONObject(0).getString("nameString");
 		}
 
+		//contruct a name for search purposes
 		String scientificName = taxonConcept.getString("nameString");
 		StringBuffer entityQuerySb = new StringBuffer(rankString+ ": " +scientificName);
 		if(commonName!=null){
@@ -156,35 +160,50 @@ public class OccurrenceController {
 			entityQuerySb.append(commonName);
 			entityQuerySb.append(") ");
 		}
+		
 
-		//FIXME - should be able to use left/right for non major ranks
-		String solrQuery = "taxon_concept_lsid:"+query; //default to just searching on taxon lsid
-		if("species".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-			solrQuery = "species_lsid:"+query;
-		}
-		if("genus".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-			solrQuery = "genus_lsid:"+query;
-		}
-		if("family".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-			solrQuery = "family_lsid:"+query;
-		}
-		if("order".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-			solrQuery = "order_lsid:"+query;
-		}
-		if("class".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-			solrQuery = "class_lsid:"+query;
-		}
-		if("phylum".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-			solrQuery = "phylum_lsid:"+query;
-		}
-		if("kingdom".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-			solrQuery = "kingdom_lsid:"+query;
-		}
+//		//FIXME - should be able to use left/right for non major ranks
+//		String solrQuery = "taxon_concept_lsid:"+query; //default to just searching on taxon lsid
+//		if("species".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+//			solrQuery = "species_lsid:"+query;
+//		}
+//		if("genus".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+//			solrQuery = "genus_lsid:"+query;
+//		}
+//		if("family".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+//			solrQuery = "family_lsid:"+query;
+//		}
+//		if("order".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+//			solrQuery = "order_lsid:"+query;
+//		}
+//		if("class".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+//			solrQuery = "class_lsid:"+query;
+//		}
+//		if("phylum".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+//			solrQuery = "phylum_lsid:"+query;
+//		}
+//		if("kingdom".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
+//			solrQuery = "kingdom_lsid:"+query;
+//		}
 
-		// if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
-		if (filterQuery != null && filterQuery.length == 0) {
-			filterQuery = null;
+        String[] leftAndRight = new String[]{"lft:["+left+" TO "+right+"]"};
+		if (filterQuery == null || filterQuery.length == 0) {
+			filterQuery = leftAndRight;
+		} else {
+			//append filter queries
+			String[] newFilterQuery = new String[filterQuery.length + leftAndRight.length];
+			newFilterQuery[0] = leftAndRight[0];
+			for(int i=0; i<filterQuery.length; i++){
+				newFilterQuery[i + leftAndRight.length] = filterQuery[i];
+			}
+			filterQuery = newFilterQuery;
 		}
+		if(logger.isDebugEnabled()){
+			for(String filter: filterQuery){
+				logger.debug("Filter: "+filter);
+			}
+		}
+		
 		if (startIndex == null) {
 			startIndex = 0;
 		}
@@ -206,13 +225,17 @@ public class OccurrenceController {
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
 
-		searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
+		searchResult = searchDAO.findByFulltextQuery("*:*", filterQuery, startIndex, pageSize, sortField, sortDirection);
 
 		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
 		Long totalRecords = searchResult.getTotalRecords();
 		model.addAttribute("totalRecords", totalRecords);
 
+		if(logger.isDebugEnabled()){
+			logger.debug("Returning results set with: "+totalRecords);
+		}
+		
 		if (pageSize > 0) {
 			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
 			model.addAttribute("lastPage", lastPage);
@@ -270,7 +293,7 @@ public class OccurrenceController {
 				Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
 				model.addAttribute("lastPage", lastPage);
 			}
-		}		
+		}
 
 		return LIST;
 
