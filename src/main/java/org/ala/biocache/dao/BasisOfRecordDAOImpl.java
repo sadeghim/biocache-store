@@ -14,24 +14,15 @@
  ***************************************************************************/
 package org.ala.biocache.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.sql.DataSource;
-
 import org.ala.biocache.model.BasisOfRecord;
-import org.ala.biocache.model.DataProvider;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Component;
 
 /**
  * Pure JDBC implementation

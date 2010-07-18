@@ -21,9 +21,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.sql.DataSource;
-
 import org.ala.biocache.model.DataProvider;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -33,7 +30,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 /**
- * Pure JDBC implementation
+ * Pure JDBC implementation taken from the GBIF portal code base.
+ * 
  * @author Tommy Wang (Tommy.wang@csiro.au)
  */
 public class DataProviderDAOImpl extends JdbcDaoSupport implements
