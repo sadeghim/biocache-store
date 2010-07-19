@@ -399,7 +399,8 @@
                             </tr>
                             <tr>
                                 <td><a href="*" id="*" class="taxonBrowse">All Records</a>
-                                <td><a href="../occurrences/search?q=location.search&lat=${latitude}&lon=${longitude}&rad=${radius}" title="See all ${allLifeCounts} records">${allLifeCounts}</a></td>
+                                <!-- <td><a href="../occurrences/search?q=location.search&lat=${latitude}&lon=${longitude}&rad=${radius}" title="See all ${allLifeCounts} records">${allLifeCounts}</a></td> -->
+                                <td>${allLifeCounts}</td>
                                 <td>${fn:length(allLife)}</td>
                             </tr>
                             <tr>

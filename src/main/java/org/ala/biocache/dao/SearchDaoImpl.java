@@ -751,7 +751,7 @@ public class SearchDaoImpl implements SearchDao {
                             String[] values =p.split(fcount.getName());
                             tcDTO = new TaxaCountDTO(values[0], fcount.getCount());
                             if(values.length>=5){
-                                tcDTO.setGuid(values[1]);
+                                tcDTO.setGuid(StringUtils.trimToNull(values[1]));
                                 tcDTO.setCommonName(values[2]);
                                 tcDTO.setKingdom(values[3]);
                                 tcDTO.setFamily(values[4]);
@@ -762,7 +762,7 @@ public class SearchDaoImpl implements SearchDao {
                             //leave the original code for findAllKingdomsByCircleArea method
                         try {
                             tcDTO = speciesCounts.get(i);
-                            tcDTO.setGuid(fcount.getName());
+                            tcDTO.setGuid(StringUtils.trimToNull(fcount.getName()));
                             speciesCounts.set(i, tcDTO);
                         } catch (Exception e) {
                             tcDTO = new TaxaCountDTO(fcount.getName(), fcount.getCount());
