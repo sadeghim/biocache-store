@@ -441,7 +441,14 @@
             </div>
         </c:if>
         <c:if test="${empty searchResult || searchResult.totalRecords == 0}">
-            <br/><p>Your search - <b>${queryJsEscaped}</b> - did not match any documents.</p>
+            <br/>
+            <p>Your search 
+               <c:if test="${not empty entityQuery}">
+                  ${entityQuery}
+               </c:if>
+            	- <b>${queryJsEscaped}</b> 
+            	- did not match any documents.            
+            </p>
         </c:if>
     </body>
 </html>
