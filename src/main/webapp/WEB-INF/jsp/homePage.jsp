@@ -12,10 +12,9 @@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
         <p>
           This is an early release of this functionality for <strong>release 4 (July 21st)</strong>.
         </p>
-        
         <h3>Free text occurrence search</h3>
         <form action="occurrences/search" method="get">
-        	<input name="q" type="text" value="Red kangaroo"/>
+        	<input name="q" type="text" value="Red kangaroo" width="300"/>
         	<input type="submit"/>        
         </form>
     </body>
