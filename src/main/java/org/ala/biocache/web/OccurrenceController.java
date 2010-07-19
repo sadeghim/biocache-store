@@ -279,7 +279,7 @@ public class OccurrenceController {
 			SearchResultDTO searchResult = new SearchResultDTO();
 			String queryJsEscaped = StringEscapeUtils.escapeJavaScript(dataProviderName);
 			
-			model.addAttribute("query", dataProviderName);
+			model.addAttribute("query", dataProviderId);
 			model.addAttribute("queryJsEscaped", queryJsEscaped);
 			
 			searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
@@ -334,7 +334,7 @@ public class OccurrenceController {
 			SearchResultDTO searchResult = new SearchResultDTO();
 			String queryJsEscaped = StringEscapeUtils.escapeJavaScript(dataResourceName);
 			
-			model.addAttribute("query", dataResourceName);
+			model.addAttribute("query", dataResourceId);
 			model.addAttribute("queryJsEscaped", queryJsEscaped);
 			
 			searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
