@@ -24,6 +24,7 @@ import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.OccurrenceCell;
 import org.ala.biocache.model.OccurrencePoint;
 import org.ala.biocache.model.PointType;
+import org.ala.biocache.util.SearchUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -49,6 +50,8 @@ public class GeoJsonController {
     /** Name of view for square cells GeoJSON service */
 	private final String CELLS_GEOJSON = "json/cellsGeoJson";
 
+        protected SearchUtils searchUtils = new SearchUtils();
+
     /**
      * GeoJSON view of records as clusters of points
      *
@@ -69,6 +72,7 @@ public class GeoJsonController {
             @RequestParam(value="callback", required=false) String callback,
             @RequestParam(value="zoom", required=false, defaultValue="0") Integer zoomLevel,
             @RequestParam(value="bbox", required=false) String bbox,
+            @RequestParam(value="type", required=false, defaultValue="normal") String type,
             Model model,
             HttpServletResponse response)
             throws Exception {
@@ -91,6 +95,7 @@ public class GeoJsonController {
         pointType = getPointTypeForZoomLevel(zoomLevel);
 
         String[] newFilterQuery = (String[]) fqList.toArray (new String[fqList.size()]); // convert back to array
+        query = searchUtils.getQueryString(query, type);
         List<OccurrencePoint> points = searchDAO.getFacetPoints(query, newFilterQuery, pointType);
         logger.debug("Points search for "+pointType.getLabel()+" - found: "+points.size());
         model.addAttribute("points", points);
@@ -157,6 +162,7 @@ public class GeoJsonController {
             @RequestParam(value="callback", required=false) String callback,
             @RequestParam(value="zoom", required=false, defaultValue="0") Integer zoomLevel,
             @RequestParam(value="bbox", required=false) String bbox,
+            @RequestParam(value="type", required=false, defaultValue="normal") String type,
             Model model,
             HttpServletResponse response)
             throws Exception {
@@ -181,6 +187,8 @@ public class GeoJsonController {
         pointType = getPointTypeForZoomLevel(zoomLevel);
 
         String[] newFilterQuery = (String[]) fqList.toArray (new String[fqList.size()]); // convert back to array
+        query = searchUtils.getQueryString(query, type);
+        logger.debug("Searching cells for query: "+ query);
         List<OccurrencePoint> points = searchDAO.getFacetPoints(query, newFilterQuery, pointType);
 
         logger.debug("Cells search for "+pointType.getLabel()+" - found: "+points.size());

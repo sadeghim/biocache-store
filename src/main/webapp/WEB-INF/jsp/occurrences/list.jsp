@@ -68,13 +68,15 @@
                 });
 
                 var geoJsonUrl = "${pageContext.request.contextPath}/geojson/cells"; //+"&zoom=4&callback=?";
-                var zoomLevel = map.getZoom();
+                var zoomLevel = map.getZoom();               
                 var params = {
                     q: "${query}",
                     <c:forEach items="${facetQuery}" var="fq">fq: "${fq}",</c:forEach>
-                    zoom: zoomLevel
-                };
+                    zoom: zoomLevel,
+                    type: "${type}"
 
+                };
+                
                 var legend = '<table id="cellCountsLegend" class="show-70"><tr><td style="background-color:#333; color:white; text-align:right;">Record counts:&nbsp;</td><td style="width:60px;background-color:#ffff00;">1&ndash;9</td><td style="width:60px;background-color:#ffcc00;">10&ndash;49</td><td style="width:60px;background-color:#ff9900;">50&ndash;99</td><td style="width:60px;background-color:#ff6600;">100&ndash;249</td><td style="width:60px;background-color:#ff3300;">250&ndash;499</td><td style="width:60px;background-color:#cc0000;">500+</td></tr></table>';
 
                 vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
@@ -171,7 +173,7 @@
 
                 $("#searchButtons > button").button();
                 $("#searchButtons > button#download").click(function() {
-                    var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?q=${query}&fq=${fn:join(facetQuery, '&fq=')}";
+                    var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?q=${query}&fq=${fn:join(facetQuery, '&fq=')}&type=${type}";
                     //alert("URL is "+downloadUrl);
                     if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
                         window.location.replace(downloadUrl);
