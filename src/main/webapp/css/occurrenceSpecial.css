@@ -48,7 +48,8 @@ div#warnings {
 	border: 2px solid #D75A20;
 	width: 57%;
 	margin-bottom: 20px;
-	padding-bottom: 6px;
+	padding-left: 16px;
+  padding-bottom: 16px;	
 	line-height: 1.2em;
 	-webkit-border-radius: 5px; 
 	-moz-border-radius: 5px;
