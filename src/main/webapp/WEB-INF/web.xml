@@ -65,7 +65,7 @@
 
     <context-param>
         <param-name>uriFilterPattern</param-name>
-        <param-value>^$, ^/occurrences/\\d+$</param-value>
+        <param-value>^$, ^/$, ^/occurrences/\d+$</param-value>
     </context-param>
 
     <!-- CAS Authentication Service filters -->
