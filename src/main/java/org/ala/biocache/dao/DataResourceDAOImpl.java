@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.ala.biocache.model.DataProvider;
 import org.ala.biocache.model.DataResource;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -28,12 +29,14 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Component;
 
 /**
  * Pure JDBC implementation taken from the GBIF portal code base.
  * 
  * @author tim
  */
+
 public class DataResourceDAOImpl extends JdbcDaoSupport implements
 		DataResourceDAO {
 	
@@ -90,6 +93,12 @@ public class DataResourceDAOImpl extends JdbcDaoSupport implements
 												"lock_basis_of_record=? " +
 												"where id=?";
 
+	/**
+	 * The query all sql
+	 */
+	protected static final String QUERY_ALL_SQL = "select id, data_provider_id, name, display_name, description, rights, citation, citable_agent, website_url, logo_url, basis_of_record, root_taxon_rank, root_taxon_name, scope_continent_code, scope_country_code, provider_record_count, taxonomic_priority, created, modified, deleted, lock_display_name, lock_citable_agent, lock_basis_of_record " +
+		"from data_resource";
+	
 	/**
 	 * The query by ID sql
 	 */
@@ -221,6 +230,21 @@ public class DataResourceDAOImpl extends JdbcDaoSupport implements
 			logger.warn("Found multiple DataResources with ID: " + id);
 		}
 		return results.get(0);
+	}
+	
+	/**
+	 * @see org.gbif.portal.dao.DataResourceDAO#getAll()
+	 */
+	@SuppressWarnings("unchecked")
+	public List<DataResource> getAll() {
+		List<DataResource> results = (List<DataResource>) getJdbcTemplate()
+		.query(DataResourceDAOImpl.QUERY_ALL_SQL,
+				new RowMapperResultSetExtractor(dataResourceRowMapper, 1));
+		if (results.size() == 0) {
+			return null;
+		} else {
+			return results;
+		}
 	}
 	
 	/**

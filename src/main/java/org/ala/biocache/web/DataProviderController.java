@@ -51,6 +51,10 @@ public class DataProviderController {
 	/** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(GeoJsonController.class);
 
+	/** Data Provider DAO */
+	//    @Inject
+	//    protected DataProviderDAO dataProviderDAO;
+
 	/** Data Resource DAO */
 	@Inject
 	protected DataResourceDAO dataResourceDAO;
@@ -70,6 +74,7 @@ public class DataProviderController {
 	final String DATA_PROVIDER_LIST = "data/dataProviders";
 	final String DATA_RESOURCE_LIST = "data/dataResources";
 	final String DATA_PROVIDER_COUNT = "data/dataProviderCounts";
+	final String ALL_DATA_PROVIDER_LIST = "data/allDataProviders";
 	
 	/**
 	 * Display a view of a data provider.
@@ -116,6 +121,20 @@ public class DataProviderController {
 		return DATA_PROVIDER_LIST;
 	}
 	
+	@RequestMapping(value = "/data_provider/data_providers", method = RequestMethod.GET)
+	public String getAllDataProviders(Model model)
+	throws Exception {
+		List<DataProvider> dataProviders = dataProviderDAO.getAll();
+		List<DataResource> dataResources = dataResourceDAO.getAll();
+
+		if (dataProviders != null && dataResources != null) {
+			model.addAttribute("dataProviders", dataProviders);
+			model.addAttribute("dataResources", dataResources);
+		} 
+
+		return ALL_DATA_PROVIDER_LIST;
+	}
+	
 	/**
 	 * Display a view of a data resource.
 	 * 
@@ -132,10 +151,12 @@ public class DataProviderController {
 		int dataRId = Integer.parseInt(dataResourceId);
 
 		DataResource dataResource = dataResourceDAO.getById(dataRId);
-		DataProvider dataProvider = dataProviderDAO.getById(dataResource.getDataProviderId());
-		BasisOfRecord basisOfRecord = basisOfRecordDAO.getById(dataResource.getBasisOfRecord());
+		
 
 		if (dataResource != null) {
+			DataProvider dataProvider = dataProviderDAO.getById(dataResource.getDataProviderId());
+			BasisOfRecord basisOfRecord = basisOfRecordDAO.getById(dataResource.getBasisOfRecord());
+			
 			model.addAttribute("dataProvider", dataProvider);
 			model.addAttribute("dataResource", dataResource);
 			model.addAttribute("basisOfRecord", basisOfRecord);

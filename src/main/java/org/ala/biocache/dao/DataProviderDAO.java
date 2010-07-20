@@ -14,6 +14,9 @@
  ***************************************************************************/
 package org.ala.biocache.dao;
 
+
+import java.util.List;
+
 import org.ala.biocache.model.DataProvider;
 
 
@@ -42,6 +45,13 @@ public interface DataProviderDAO {
 	 * @return The dataprovider identified by the id
 	 */
 	public DataProvider getById(long id);	
+	
+	/**
+	 * Gets the dataprovider
+	 * @param id That identifies the data provider
+	 * @return The dataprovider identified by the id
+	 */
+	public List<DataProvider> getAll();	
 	
 	/**
 	 * Gets the dataprovider

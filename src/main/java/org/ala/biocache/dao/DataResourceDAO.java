@@ -38,6 +38,11 @@ public interface DataResourceDAO {
 	 */
 	public DataResource getById(long id);
 	
+	/**
+	 * Gets all the dataresource
+	 * @return All dataresource 
+	 */
+	public List<DataResource> getAll();
 	
 	/**
 	 * Gets the dataresources

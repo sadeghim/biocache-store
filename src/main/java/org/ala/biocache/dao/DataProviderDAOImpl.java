@@ -88,6 +88,12 @@ public class DataProviderDAOImpl extends JdbcDaoSupport implements
 	"telephone, uuid, iso_country_code, gbif_approver, created, modified, deleted, lock_description, lock_iso_country_code from data_provider where id=?";
 	
 	/**
+	 * The query all sql
+	 */
+	protected static final String QUERY_ALL_SQL = "select id, name, description, address, website_url, logo_url, email, " +
+	"telephone, uuid, iso_country_code, gbif_approver, created, modified, deleted, lock_description, lock_iso_country_code from data_provider";
+	
+	/**
 	 * The query all dataset by ID sql
 	 */
 	protected static final String QUERY_ALL_DATASET_BY_ID_SQL = "select dp.id, dp.name, dp.description, dp.address, dp.website_url, dp.logo_url, dp.email, " +
@@ -204,6 +210,21 @@ public class DataProviderDAOImpl extends JdbcDaoSupport implements
 			logger.warn("Found multiple DataProviders with ID: " + id);
 		}
 		return results.get(0);
+	}
+	
+	/**
+	 * @see org.gbif.portal.dao.DataProviderDAO#getAll()
+	 */
+	@SuppressWarnings("unchecked")
+	public List<DataProvider> getAll() {
+		List<DataProvider> results = (List<DataProvider>) getJdbcTemplate()
+		.query(DataProviderDAOImpl.QUERY_ALL_SQL,
+				new RowMapperResultSetExtractor(dataProviderRowMapper, 1));
+		if (results.size() == 0) {
+			return null;
+		} else {
+			return results;
+		}
 	}
 	
 	/**
