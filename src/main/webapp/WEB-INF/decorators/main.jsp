@@ -83,7 +83,7 @@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
                     <!-- WP Menubar 4.7: end menu nav-site, template Superfish, CSS  -->
                 </div><!--close nav-->
                 <div id="wrapper_search">
-			<form id="search-form" action="${pageContext.request.contextPath}/search" method="get" name="search-form">
+			<form id="search-form" action="http://bie.ala.org.au/search" method="get" name="search-form">
 				<label for="search">Search</label>
 				<input type="text" class="filled" id="search" name="q" value="${not empty query ? query : 'Search the Atlas'}" />
 				<span class="search-button-wrapper"><input type="submit" class="search-button" id="search-button" alt="Search" value="Search" /></span>

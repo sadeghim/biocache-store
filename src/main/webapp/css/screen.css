@@ -576,6 +576,9 @@ div#decoratorBody {
     padding: 10px;
     color: #444;
 }
+#decoratorBody > h2, #decoratorBody > h3 {
+    margin-bottom: 10px;
+}
 div#searchResults {
     margin-top: 10px;
 
@@ -853,15 +856,25 @@ table.propertyTable td.propertyNames {
 }
 
 /* Your-Area page styles */
-#taxaBox {
+#left-col {
     width: 550px;
     font-size: 12px;
+    margin-top: 10px;
+}
+#taxaBox {
+    border: 2px solid #E8EACE;
+    border-top: none;
+    -moz-border-radius: 0 0 8px 8px; /* FF1+ */
+    -webkit-border-radius: 0 0 8px 8px; /* Saf3+, Chrome */
+    border-radius: 0 0 8px 8px; /* Opera 10.5, IE 9 */
+    padding: 2px 0;
 }
 #taxaBox #rightList {
     float: right;
     width: 290px;
-    margin-right: 10px;
+    margin-right: 5px;
 }
+#rightList #thead { padding: 1px 15px 1px 5px; }
 #taxaBox #leftList {
     width: 250px;
 }
@@ -878,8 +891,9 @@ table.propertyTable td.propertyNames {
     overflow: auto;
     overflow-y: auto;
     overflow-x: hidden;
-    height: 24.6em; /*260px;*/
-    background-color: #DDD;
+     /*height: 24.6em;260px;*/
+    max-height: 285px;
+    background-color: #E8EACE;
     padding: 2px 4px;
 }
 #taxaDiv ol, #taxaDiv ul {
@@ -887,7 +901,7 @@ table.propertyTable td.propertyNames {
     font-size: 11px;
 }
 #taxaDiv li {
-    margin: 2px 0px 3px 0px;
+    margin: 2px 0px 2px 0px;
 }
 #taxaDiv li span {
     font-size: 12px;
@@ -900,8 +914,27 @@ table.propertyTable td.propertyNames {
     margin-bottom: 5px;
 }
 #address {
-    width: 300px;
+    width: 350px;
+    padding: 2px 4px;
 }
+#locationInput, #locationInfo {
+    background-color: #E8EACE;
+    border: 2px solid #E8EACE;
+/*    width: 520px;*/
+    padding: 5px;
+    margin: 0;
+}
+#locationInput {
+    -moz-border-radius: 8px 8px 0 0; /* FF1+ */
+    -webkit-border-radius: 8px 8px 0 0; /* Saf3+, Chrome */
+    border-radius: 8px 8px 0 0; /* Opera 10.5, IE 9 */
+}
+#locationInput h5 { padding: 2px 0 4px 0; }
+#locationInfo {
+    
+}
+#locationInfo { background-color: #FAFBF5 }
+#locationInfo p { padding: 3px 0; }
 
 /* YUI modifications */
 div.yui-dt > table {
@@ -1053,5 +1086,6 @@ li.taxonBreakdown { border: 1px solid gray; padding:10px; margin-bottom: 5px;}
 
 .scientificName {font-style: italic; }
 
-.earliestReference { background-color: FFFFCC; }
+.earliestReference { background-color: #FFFFCC; }
 .earliestReferenceLabel { color: grey; }
+
