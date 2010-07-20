@@ -24,6 +24,7 @@ import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.OccurrenceCell;
 import org.ala.biocache.model.OccurrencePoint;
 import org.ala.biocache.model.PointType;
+import org.ala.biocache.model.SearchQuery;
 import org.ala.biocache.util.SearchUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -95,8 +96,10 @@ public class GeoJsonController {
         pointType = getPointTypeForZoomLevel(zoomLevel);
 
         String[] newFilterQuery = (String[]) fqList.toArray (new String[fqList.size()]); // convert back to array
-        query = searchUtils.getQueryString(query, type);
-        List<OccurrencePoint> points = searchDAO.getFacetPoints(query, newFilterQuery, pointType);
+        //get the new query details
+        SearchQuery searchQuery = new SearchQuery(query, type, newFilterQuery);
+        searchUtils.updateQueryDetails(searchQuery);
+        List<OccurrencePoint> points = searchDAO.getFacetPoints(searchQuery.getQuery(), searchQuery.getFilterQuery(), pointType);
         logger.debug("Points search for "+pointType.getLabel()+" - found: "+points.size());
         model.addAttribute("points", points);
 
@@ -187,9 +190,11 @@ public class GeoJsonController {
         pointType = getPointTypeForZoomLevel(zoomLevel);
 
         String[] newFilterQuery = (String[]) fqList.toArray (new String[fqList.size()]); // convert back to array
-        query = searchUtils.getQueryString(query, type);
-        logger.debug("Searching cells for query: "+ query);
-        List<OccurrencePoint> points = searchDAO.getFacetPoints(query, newFilterQuery, pointType);
+         //get the new query details
+        SearchQuery searchQuery = new SearchQuery(query, type, newFilterQuery);
+        searchUtils.updateQueryDetails(searchQuery);
+        logger.debug("Searching cells for query: "+ searchQuery.getQuery());
+        List<OccurrencePoint> points = searchDAO.getFacetPoints(searchQuery.getQuery(), searchQuery.getFilterQuery(), pointType);
 
         logger.debug("Cells search for "+pointType.getLabel()+" - found: "+points.size());
         List<OccurrenceCell> cells = new ArrayList<OccurrenceCell>();

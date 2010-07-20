@@ -41,6 +41,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import atg.taglib.json.util.JSONArray;
 import atg.taglib.json.util.JSONObject;
+import org.ala.biocache.model.SearchQuery;
 import org.ala.biocache.util.SearchUtils;
 
 /**
@@ -130,82 +131,8 @@ public class OccurrenceController {
 			return LIST;
 		}
 
-		//lets retrieve the details of a taxon
-		//http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp/species/urn:lsid:biodiversity.org.au:apni.taxon:295882
-
-		String jsonObject = getUrlContentAsString(bieBaseUrl+"/species/"+query+".json");
-		JSONObject j = new JSONObject(jsonObject);
-		JSONObject extendedDTO = j.getJSONObject("extendedTaxonConceptDTO");
-		JSONObject taxonConcept = extendedDTO.getJSONObject("taxonConcept");
-
-		//retrieve the left and right values
-		String left = taxonConcept.getString("left");
-		String right = taxonConcept.getString("right");
-		
-		logger.debug("Querying with left and right: " + left+", "+right);
-		logger.debug("Found concept: " + taxonConcept.getString("nameString"));
-
-		//get rank string
-		String rankString = taxonConcept.getString("rankString");
-		String commonName = null;
-
-		//get a common name
-		JSONArray commonNames = extendedDTO.getJSONArray("commonNames");
-		if(!commonNames.isEmpty()){
-			commonName = commonNames.getJSONObject(0).getString("nameString");
-		}
-
-		//contruct a name for search purposes
-		String scientificName = taxonConcept.getString("nameString");
-		StringBuffer entityQuerySb = new StringBuffer(rankString+ ": " +scientificName);
-		if(commonName!=null){
-			entityQuerySb.append(" (");
-			entityQuerySb.append(commonName);
-			entityQuerySb.append(") ");
-		}
-		
-
-//		//FIXME - should be able to use left/right for non major ranks
-//		String solrQuery = "taxon_concept_lsid:"+query; //default to just searching on taxon lsid
-//		if("species".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-//			solrQuery = "species_lsid:"+query;
-//		}
-//		if("genus".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-//			solrQuery = "genus_lsid:"+query;
-//		}
-//		if("family".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-//			solrQuery = "family_lsid:"+query;
-//		}
-//		if("order".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-//			solrQuery = "order_lsid:"+query;
-//		}
-//		if("class".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-//			solrQuery = "class_lsid:"+query;
-//		}
-//		if("phylum".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-//			solrQuery = "phylum_lsid:"+query;
-//		}
-//		if("kingdom".equalsIgnoreCase(taxonConcept.getString("rankString")) ){
-//			solrQuery = "kingdom_lsid:"+query;
-//		}
-
-        String[] leftAndRight = new String[]{"lft:["+left+" TO "+right+"]"};
-		if (filterQuery == null || filterQuery.length == 0) {
-			filterQuery = leftAndRight;
-		} else {
-			//append filter queries
-			String[] newFilterQuery = new String[filterQuery.length + leftAndRight.length];
-			newFilterQuery[0] = leftAndRight[0];
-			for(int i=0; i<filterQuery.length; i++){
-				newFilterQuery[i + leftAndRight.length] = filterQuery[i];
-			}
-			filterQuery = newFilterQuery;
-		}
-		if(logger.isDebugEnabled()){
-			for(String filter: filterQuery){
-				logger.debug("Filter: "+filter);
-			}
-		}
+		SearchQuery searchQuery = new SearchQuery(query, "taxon", filterQuery);
+                searchUtils.updateTaxonConceptSearchString(searchQuery);
 		
 		if (startIndex == null) {
 			startIndex = 0;
@@ -222,18 +149,20 @@ public class OccurrenceController {
 
 		SearchResultDTO searchResult = new SearchResultDTO();
 		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
-		model.addAttribute("entityQuery", entityQuerySb.toString());
+		model.addAttribute("entityQuery", searchQuery.getEntityQuery());
 
 		model.addAttribute("query", query);
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
 
-		searchResult = searchDAO.findByFulltextQuery("*:*", filterQuery, startIndex, pageSize, sortField, sortDirection);
+		searchResult = searchDAO.findByFulltextQuery("*:*", searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
 
 		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
 		Long totalRecords = searchResult.getTotalRecords();
 		model.addAttribute("totalRecords", totalRecords);
+                //type of search
+                model.addAttribute("type", "taxon");
 
 		if(logger.isDebugEnabled()){
 			logger.debug("Returning results set with: "+totalRecords);
@@ -293,6 +222,7 @@ public class OccurrenceController {
 			logger.debug("query = "+query);
 			Long totalRecords = searchResult.getTotalRecords();
 			model.addAttribute("totalRecords", totalRecords);
+                        model.addAttribute("facetQuery", filterQuery);
                         //type of serach
                         model.addAttribute("type", "provider");
 			if (pageSize > 0) {
@@ -351,6 +281,7 @@ public class OccurrenceController {
 			logger.debug("query = "+query);
 			Long totalRecords = searchResult.getTotalRecords();
 			model.addAttribute("totalRecords", totalRecords);
+                        model.addAttribute("facetQuery", filterQuery);
                         //type of serach
                         model.addAttribute("type", "resource");
 			if (pageSize > 0) {
@@ -419,18 +350,19 @@ public class OccurrenceController {
 		}
 
 
-                String[] queryValues = searchUtils.getCollectionSearchString(query);
-                if (queryValues != null) {
-                    logger.info("solr query: " + queryValues[0]);
+                SearchQuery searchQuery = new SearchQuery(query, "collection");
+                searchUtils.updateCollectionSearchString(searchQuery);
+                
+                    logger.info("solr query: " + searchQuery.getQuery());
                     SearchResultDTO searchResult = new SearchResultDTO();
                     String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
-                    model.addAttribute("entityQuery", queryValues[1]);
+                    model.addAttribute("entityQuery", searchQuery.getDisplayString());
 
                     model.addAttribute("query", query);
                     model.addAttribute("queryJsEscaped", queryJsEscaped);
                     model.addAttribute("facetQuery", filterQuery);
 
-                    searchResult = searchDAO.findByFulltextQuery(queryValues[0], filterQuery, startIndex, pageSize, sortField, sortDirection);
+                    searchResult = searchDAO.findByFulltextQuery(searchQuery.getQuery(), filterQuery, startIndex, pageSize, sortField, sortDirection);
 
                     model.addAttribute("searchResult", searchResult);
                     logger.debug("query = " + query);
@@ -442,7 +374,7 @@ public class OccurrenceController {
                         Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
                         model.addAttribute("lastPage", lastPage);
                     }
-                }
+                
 		return LIST;
 
 	}
@@ -558,8 +490,10 @@ public class OccurrenceController {
 		response.setContentType("application/vnd.ms-excel");
 
 		ServletOutputStream out = response.getOutputStream();
-                query = searchUtils.getQueryString(query, type);
-		searchDAO.writeResultsToStream(query, filterQuery, out, 100000);
+                 //get the new query details
+                SearchQuery searchQuery = new SearchQuery(query, type, filterQuery);
+                searchUtils.updateQueryDetails(searchQuery);
+		searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), out, 100000);
 
 		return null;
 	}
