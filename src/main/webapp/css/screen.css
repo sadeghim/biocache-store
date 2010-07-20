@@ -856,6 +856,10 @@ table.propertyTable td.propertyNames {
 }
 
 /* Your-Area page styles */
+#yourMap {
+    width: 400px; 
+    height: 420px;
+}
 #left-col {
     width: 550px;
     font-size: 12px;
@@ -874,7 +878,7 @@ table.propertyTable td.propertyNames {
     width: 290px;
     margin-right: 5px;
 }
-#rightList #thead { padding: 1px 5px 1px 15px; }
+#rightList #thead { padding: 1px 5px 1px 15px; width: 60%; }
 #taxaBox #leftList {
     width: 250px;
 }
@@ -914,6 +918,7 @@ table.propertyTable td.propertyNames {
     margin: 0;
     padding: 0;
 }
+#download { float: right; }
 #taxaBox p {
     margin-bottom: 5px;
 }

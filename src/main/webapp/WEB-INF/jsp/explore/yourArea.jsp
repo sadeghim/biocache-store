@@ -40,21 +40,21 @@
                     map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
                     //map.addControl(new OpenLayers.Control.OverviewMap());
                     var baseLayer = new OpenLayers.Layer.WMS(
-                    "OpenLayers WMS",
-                    "http://labs.metacarta.com/wms/vmap0",// "http://labs.metacarta.com/wms-c/Basic.py?"
-                    {layers: 'basic'}, // {layers: 'satellite'},
-                    {wrapDateLine: true}
-                );
+                        "OpenLayers WMS",
+                        "http://labs.metacarta.com/wms/vmap0",// "http://labs.metacarta.com/wms-c/Basic.py?"
+                        {layers: 'basic'}, // {layers: 'satellite'},
+                        {wrapDateLine: true}
+                    );
                     var blueMarbleLayer = new OpenLayers.Layer.WMS(
-                    "Satellite",
-                    "http://labs.metacarta.com/wms-c/Basic.py?",
-                    {layers: 'satellite'},
-                    {wrapDateLine: true}
-                );
+                        "Satellite",
+                        "http://labs.metacarta.com/wms-c/Basic.py?",
+                        {layers: 'satellite'},
+                        {wrapDateLine: true}
+                    );
                     var satelliteLayer = new OpenLayers.Layer.Google(
-                    "Google Hybrid Map" ,
-                    {type: G_HYBRID_MAP, 'sphericalMercator': false}
-                );
+                        "Google Hybrid Map" ,
+                        {type: G_HYBRID_MAP, 'sphericalMercator': false}
+                    );
 
                     map.addLayers([satelliteLayer,baseLayer]); //  blueMarbleLayer
                     //                var gphy = new OpenLayers.Layer.Google(
@@ -69,7 +69,6 @@
 
                     var point = new OpenLayers.LonLat(lon, lat);
                     map.setCenter(point.transform(proj4326, map.getProjectionObject()), zoom);
-
                     //map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
                     // reload vector layer on zoom event
                     map.events.register('zoomend', map, function (e) {
@@ -129,6 +128,11 @@
                         "radius": ${radius}
                     };
 
+                    var proj_options = {
+                        'internalProjection': map.baseLayer.projection,
+                        'externalProjection': proj4326
+                    };
+                    
                     //var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td><td style="width:50px;background-color:#ffff00;">1&ndash;9</td><td style="width:50px;background-color:#ffcc00;">10&ndash;49</td><td style="width:50px;background-color:#ff9900;">50&ndash;99</td><td style="width:50px;background-color:#ff6600;">100&ndash;249</td><td style="width:50px;background-color:#ff3300;">250&ndash;499</td><td style="width:50px;background-color:#cc0000;">500+</td></tr></table>';
 
                     vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
@@ -140,7 +144,7 @@
                         protocol: new OpenLayers.Protocol.HTTP({
                             url: geoJsonUrl,
                             params: params,
-                            format: new OpenLayers.Format.GeoJSON()
+                            format: new OpenLayers.Format.GeoJSON(proj_options)
                         })
                     });
 
@@ -354,7 +358,7 @@
             <div id="decoratorBody">
                 <h2>Explore Your Area</h2>
                 <div id="mapOuter" style="width: 400px; height: 450px; float:right;">
-                    <div id="yourMap" style="width: 400px; height: 400px;"></div>
+                    <div id="yourMap"></div>
                     <div style="font-size:11px;width:400px;">
                         <table id="cellCountsLegend">
                             <tr>
@@ -389,11 +393,12 @@
                                     <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
                                     <option value="50" <c:if test="${radius eq '50'}">selected</c:if>>50</option>
                                 </select> km radius <input type="submit" value="Reload"/>
-                                <button id="download" title="Download displayed species as XLS (tab-delimited) file">Download</button></p>
+                                
                         </div>
                 <!--        <p>Results - <fmt:formatNumber value="${allLifeCounts}" pattern="#,###,###"/> records found</p>-->
                         <div id="taxaBox">
                             <div id="rightList">
+                                <button id="download" title="Download displayed species as XLS (tab-delimited) file">Download</button>
                                 <div id="thead">Names</div>
                                 <div id="taxa-level-1">
                                 </div>
