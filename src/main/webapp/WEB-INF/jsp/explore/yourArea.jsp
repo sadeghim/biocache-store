@@ -52,11 +52,11 @@
                     {wrapDateLine: true}
                 );
                 var satelliteLayer = new OpenLayers.Layer.Google(
-                    "Google Satellite" ,
-                    {type: G_SATELLITE_MAP, 'sphericalMercator': false}
+                    "Google Hybrid Map" ,
+                    {type: G_HYBRID_MAP, 'sphericalMercator': false}
                 );
 
-                map.addLayers([baseLayer, satelliteLayer]); //  blueMarbleLayer
+                map.addLayers([satelliteLayer,baseLayer]); //  blueMarbleLayer
 //                var gphy = new OpenLayers.Layer.Google(
 //                    "Google Physical",
 //                    {type: G_PHYSICAL_MAP,'sphericalMercator': true}
