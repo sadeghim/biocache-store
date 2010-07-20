@@ -254,6 +254,8 @@
             }
 
             $(document).ready(function() {
+                // re-call function to tweak with search input
+                greyInitialValues();
                 // load OpenLayers map
                 loadMap();
                 geocoder = new GClientGeocoder(); //new google.maps.Geocoder();
@@ -345,6 +347,11 @@
         </script>
     </head>
     <body>
+        <div id="breadcrumb">
+                <a href="http://test.ala.org.au">Home</a>
+                <a href="http://test.ala.org.au/explore">Explore</a>
+                Your Area
+            </div>
         <div id="decoratorBody">
             <h1>Explore Your Area</h1>
             <div id="mapOuter" style="width: 400px; height: 450px; float:right;">
