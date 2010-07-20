@@ -403,7 +403,7 @@
                                 </table>-->
                             </div>
                             <div id="leftList">
-                                <table id="taxa-level-0" style="width:100%;">
+                                <table id="taxa-level-0">
                                     <tr>
                                         <th>Group</th>
                                         <th>Records</th>

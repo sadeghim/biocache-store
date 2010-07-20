@@ -874,12 +874,12 @@ table.propertyTable td.propertyNames {
     width: 290px;
     margin-right: 5px;
 }
-#rightList #thead { padding: 1px 15px 1px 5px; }
+#rightList #thead { padding: 1px 5px 1px 15px; }
 #taxaBox #leftList {
     width: 250px;
 }
-#taxaBox td {
-    padding: 1px 10px 1px 2px;
+#taxaBox td, #taxaBox th {
+    padding: 1px 10px 1px 4px;
 }
 #taxaBox td.indent {
     padding-left: 10px;
@@ -892,7 +892,7 @@ table.propertyTable td.propertyNames {
     overflow-y: auto;
     overflow-x: hidden;
      /*height: 24.6em;260px;*/
-    max-height: 285px;
+    max-height: 290px;
     background-color: #E8EACE;
     padding: 2px 4px;
 }
@@ -906,6 +906,10 @@ table.propertyTable td.propertyNames {
 #taxaDiv li span {
     font-size: 12px;
 }
+#taxa-level-0 {
+    margin-bottom: 4px;
+    width: 100%;
+}
 #taxaBox #taxa-level-1 tbody td {
     margin: 0;
     padding: 0;
@@ -916,6 +920,7 @@ table.propertyTable td.propertyNames {
 #address {
     width: 350px;
     padding: 2px 4px;
+    margin-right: 5px;
 }
 #locationInput, #locationInfo {
     background-color: #E8EACE;
