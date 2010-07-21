@@ -397,7 +397,7 @@ public class SearchDaoImpl implements SearchDao {
         logger.info("Find data providers = "+dpDTOs.size());
         return dpDTOs;
 	}
-
+	
 	/**
      * @see org.ala.biocache.dao.SearchDao#findRecordsForLocation(Float, Float, Integer)
      */
@@ -565,6 +565,33 @@ public class SearchDaoImpl implements SearchDao {
         return fDTOs;
 	}
 
+	/**
+	 * @see org.ala.biocache.dao.SearchDao#findRecordByStateFor(java.lang.String)
+	 */
+	@Override
+	public List<FieldResultDTO> findRecordByStateFor(String query)
+			throws Exception {
+        List<FieldResultDTO> fDTOs = new ArrayList<FieldResultDTO>(); // new OccurrencePoint(PointType.POINT);
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQueryType("standard");
+        solrQuery.setQuery(query);
+        solrQuery.setRows(0);
+        solrQuery.setFacet(true);
+        solrQuery.addFacetField("state");
+        solrQuery.setFacetMinCount(1);
+        QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, "data_provider", "asc");
+        List<FacetField> facets = qr.getFacetFields();
+        FacetField ff = qr.getFacetField("state");
+        if(ff!=null){
+	        for(Count count : ff.getValues()){
+	        	//only start adding counts when we hit a decade with some results.
+	        		FieldResultDTO f = new FieldResultDTO(count.getName(), count.getCount());
+	        		fDTOs.add(f);
+	        }
+        }
+        return fDTOs;
+	}
+	
     /**
      * Perform SOLR query - takes a SolrQuery and search params
      *

@@ -168,5 +168,7 @@ public interface SearchDao {
     List<DataProviderCountDTO> getDataProviderCounts() throws Exception;
     
     
-    List<FieldResultDTO> findRecordByDecadeFor(String guid) throws Exception;
+    List<FieldResultDTO> findRecordByDecadeFor(String query) throws Exception;
+    
+    List<FieldResultDTO> findRecordByStateFor(String query) throws Exception;
 }

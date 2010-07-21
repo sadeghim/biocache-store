@@ -75,6 +75,39 @@ public class BreakdownController {
     	model.addAttribute("decades", results);
     	return COLLECTIONS_JSON;
     }
+    
+    /**
+     * 
+     * @param guid
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/breakdown/species/states/{query}.json", method = RequestMethod.GET)
+	public String speciesStateBreakdown(@PathVariable("query") String query, Model model) throws Exception {
+        SearchQuery searchQuery = new SearchQuery(query, "collection");
+        searchUtils.updateTaxonConceptSearchString(searchQuery);
+    	List<FieldResultDTO> results = searchDao.findRecordByStateFor(searchQuery.getQuery());
+    	model.addAttribute("states", results);
+    	return SPECIES_JSON;
+    }
+
+    /**
+     * 
+     * @param guid
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/breakdown/collection/states/{query}.json", method = RequestMethod.GET)
+	public String collectionStateBreakdown(@PathVariable("query") String query, Model model) throws Exception {
+        SearchQuery searchQuery = new SearchQuery(query, "collection");
+        searchUtils.updateCollectionSearchString(searchQuery);
+    	List<FieldResultDTO> results = searchDao.findRecordByStateFor(searchQuery.getQuery());
+    	model.addAttribute("states", results);
+    	return COLLECTIONS_JSON;
+    }    
+    
 
 	/**
 	 * @param searchDao the searchDao to set
