@@ -276,9 +276,9 @@
                             taxa[0] = taxon;
                         }
                         //Internet Explorer for Windows versions up to and including 7 don’t support the value inherit.(http://reference.sitepoint.com/css/background-color)
-                        $('.taxonBrowse').parent().parent().css('background-color','white');
-                        $(this).parent().parent().css('background-color','#E8EACE');
-                        $('#taxa-level-1 tbody tr').css('background-color','#E8EACE');
+                        $('.taxonBrowse').parent().parent().removeClass("activeRow"); //css('background-color','white');
+                        $(this).parent().parent().addClass("activeRow"); //css('background-color','#E8EACE');
+                        $('#taxa-level-1 tbody tr').addClass("activeRow"); //.css('background-color','#E8EACE');
                         // load records layer on map
                         loadRecordsLayer(taxa, rank);
                         // AJAX...
@@ -312,7 +312,10 @@
                             } else {
                                 $('#taxa-level-1 tbody:last tr:last').html('<td>[no species found]</td>');
                             }
-                            $('#taxa-level-1 tbody td').css('background-color','#E8EACE');
+                            $('#taxa-level-1 tbody td').addClass("activeRow"); //css('background-color','#E8EACE')
+                            var tbodyHeight = $('#taxa-level-0 tbody').height() + 2;
+                            //alert("tbodyHeight = "+tbodyHeight);
+                            $('#taxaDiv').css('max-height', tbodyHeight+'px');
                         });
                     }
                 );
@@ -409,77 +412,81 @@
                             </div>
                             <div id="leftList">
                                 <table id="taxa-level-0">
-                                    <tr>
-                                        <th>Group</th>
-<!--                                        <th>Records</th>-->
-                                        <th>Count</th>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="*" id="*" class="taxonBrowse">All Species</a>
-                                        <!-- <td><a href="../occurrences/search?q=location.search&lat=${latitude}&lon=${longitude}&rad=${radius}" title="See all ${allLifeCounts} records">${allLifeCounts}</a></td> -->
-<!--                                        <td>${allLifeCounts}</td>-->
-                                        <td>${fn:length(allLife)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent"><a href="Animalia" id="kingdom" class="taxonBrowse">Animals</a>
-<!--                                        <td>${animalsCount}</td>-->
-                                        <td>${fn:length(animals)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent2"><a href="Mammalia" id="class" class="taxonBrowse">Mammals</a></td>
-<!--                                        <td>${mammalsCount}</td>-->
-                                        <td>${fn:length(mammals)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent2"><a href="Aves" id="class" class="taxonBrowse">Birds</a></td>
-<!--                                        <td>${birdsCount}</td>-->
-                                        <td>${fn:length(birds)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Reptiles</a></td>
-<!--                                        <td>${reptilesCount}</td>-->
-                                        <td>${fn:length(reptiles)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent2"><a href="Amphibia" id="class" class="taxonBrowse">Amphibians</a></td>
-<!--                                        <td>${frogsCount}</td>-->
-                                        <td>${fn:length(frogs)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes" id="class" class="taxonBrowse">Fish</a></td>
-<!--                                        <td>${fishCount}</td>-->
-                                        <td>${fn:length(fish)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent2"><a href="Insecta" id="class" class="taxonBrowse">Insects</a></td>
-<!--                                        <td>${insectsCount}</td>-->
-                                        <td>${fn:length(insects)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent"><a href="Plantae" id="kingdom" class="taxonBrowse">Plants</a></td>
-<!--                                        <td>${plantsCount}</td>-->
-                                        <td>${fn:length(plants)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent"><a href="Fungi" id="kingdom" class="taxonBrowse">Fungi</a></td>
-<!--                                        <td>${fungiCount}</td>-->
-                                        <td>${fn:length(fungi)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent"><a href="Chromista" id="kingdom" class="taxonBrowse">Chromista</a></td>
-<!--                                        <td>${chromistaCount}</td>-->
-                                        <td>${fn:length(chromista)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent"><a href="Protozoa" id="kingdom" class="taxonBrowse">Protozoa</a></td>
-<!--                                        <td>${protozoaCount}</td>-->
-                                        <td>${fn:length(protozoa)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="indent"><a href="Bacteria" id="kingdom" class="taxonBrowse">Bacteria</a></td>
-<!--                                        <td>${bacteriaCount}</td>-->
-                                        <td>${fn:length(bacteria)}</td>
-                                    </tr>
+                                    <thead>
+                                        <tr>
+                                            <th>Group</th>
+    <!--                                        <th>Records</th>-->
+                                            <th>Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><a href="*" id="*" class="taxonBrowse">All Species</a>
+                                            <!-- <td><a href="../occurrences/search?q=location.search&lat=${latitude}&lon=${longitude}&rad=${radius}" title="See all ${allLifeCounts} records">${allLifeCounts}</a></td> -->
+    <!--                                        <td>${allLifeCounts}</td>-->
+                                            <td>${fn:length(allLife)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent"><a href="Animalia" id="kingdom" class="taxonBrowse">Animals</a>
+    <!--                                        <td>${animalsCount}</td>-->
+                                            <td>${fn:length(animals)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent2"><a href="Mammalia" id="class" class="taxonBrowse">Mammals</a></td>
+    <!--                                        <td>${mammalsCount}</td>-->
+                                            <td>${fn:length(mammals)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent2"><a href="Aves" id="class" class="taxonBrowse">Birds</a></td>
+    <!--                                        <td>${birdsCount}</td>-->
+                                            <td>${fn:length(birds)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Reptiles</a></td>
+    <!--                                        <td>${reptilesCount}</td>-->
+                                            <td>${fn:length(reptiles)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent2"><a href="Amphibia" id="class" class="taxonBrowse">Amphibians</a></td>
+    <!--                                        <td>${frogsCount}</td>-->
+                                            <td>${fn:length(frogs)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes" id="class" class="taxonBrowse">Fish</a></td>
+    <!--                                        <td>${fishCount}</td>-->
+                                            <td>${fn:length(fish)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent2"><a href="Insecta" id="class" class="taxonBrowse">Insects</a></td>
+    <!--                                        <td>${insectsCount}</td>-->
+                                            <td>${fn:length(insects)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent"><a href="Plantae" id="kingdom" class="taxonBrowse">Plants</a></td>
+    <!--                                        <td>${plantsCount}</td>-->
+                                            <td>${fn:length(plants)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent"><a href="Fungi" id="kingdom" class="taxonBrowse">Fungi</a></td>
+    <!--                                        <td>${fungiCount}</td>-->
+                                            <td>${fn:length(fungi)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent"><a href="Chromista" id="kingdom" class="taxonBrowse">Chromista</a></td>
+    <!--                                        <td>${chromistaCount}</td>-->
+                                            <td>${fn:length(chromista)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent"><a href="Protozoa" id="kingdom" class="taxonBrowse">Protozoa</a></td>
+    <!--                                        <td>${protozoaCount}</td>-->
+                                            <td>${fn:length(protozoa)}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="indent"><a href="Bacteria" id="kingdom" class="taxonBrowse">Bacteria</a></td>
+    <!--                                        <td>${bacteriaCount}</td>-->
+                                            <td>${fn:length(bacteria)}</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>

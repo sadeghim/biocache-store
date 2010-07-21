@@ -872,6 +872,8 @@ table.propertyTable td.propertyNames {
     -webkit-border-radius: 0 0 8px 8px; /* Saf3+, Chrome */
     border-radius: 0 0 8px 8px; /* Opera 10.5, IE 9 */
     padding: 2px 0;
+/*    overflow: hidden;
+    max-height: 300px;*/
 }
 #taxaBox #rightList {
     float: right;
@@ -896,7 +898,7 @@ table.propertyTable td.propertyNames {
     overflow-y: auto;
     overflow-x: hidden;
      /*height: 24.6em;260px;*/
-    max-height: 290px;
+    max-height: 200px; /* 290px; */
     background-color: #E8EACE;
     padding: 2px 4px;
 }
@@ -918,6 +920,10 @@ table.propertyTable td.propertyNames {
     margin: 0;
     padding: 0;
 }
+.activeRow {
+    background-color: #E8EACE;
+}
+
 #download { float: right; }
 #taxaBox p {
     margin-bottom: 5px;
