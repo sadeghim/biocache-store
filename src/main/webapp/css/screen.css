@@ -898,7 +898,7 @@ table.propertyTable td.propertyNames {
     overflow-y: auto;
     overflow-x: hidden;
      /*height: 24.6em;260px;*/
-    max-height: 200px; /* 290px; */
+    height: 250px; /* 290px; */
     background-color: #E8EACE;
     padding: 2px 4px;
 }

@@ -284,13 +284,13 @@
                         // AJAX...
                         var uri = "${pageContext.request.contextPath}/explore/species.json";
                         var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank="+rank;
-                        $('#taxa-level-1').html('[loading...]');
+                        $('#taxaDiv').html('[loading...]');
                         $.getJSON(uri + params, function(data) {
                             //alert(data.rank + "|" + data.taxa)
                             //$('#taxa-level-1 tbody:last').html('<tr></tr>');
                             if (data.speciesCount > 0) {
                                 //$('#taxa-level-1 tbody:last tr:last').html('<td>'+data.species[0].name+' ('+data.species[0].count+')</td>');
-                                $('#taxa-level-1').html('<div id="taxaDiv"><ol></ol></div>');
+                                $('#taxaDiv').html('<ol></ol>');
                                 for (i=0;i<data.species.length;i++) {
                                     //$('#taxa-level-1 tr:last').after('<tr><td>'+data.species[i].name+' ('+data.species[i].count+')</td></tr>');
                                     if(data.species[i].guid===null){
@@ -310,45 +310,49 @@
                                     }
                                 }
                             } else {
-                                $('#taxa-level-1 tbody:last tr:last').html('<td>[no species found]</td>');
+                                $('#taxaDiv').html('[no species found]');
                             }
                             $('#taxa-level-1 tbody td').addClass("activeRow"); //css('background-color','#E8EACE')
-                            var tbodyHeight = $('#taxa-level-0 tbody').height() + 2;
+                            //var tbodyHeight = $('#taxa-level-0 tbody').height() + 2;
                             //alert("tbodyHeight = "+tbodyHeight);
-                            $('#taxaDiv').css('max-height', tbodyHeight+'px');
+                            //$('#taxaDiv').css('height', tbodyHeight+'px');
                         });
-                    }
-                );
+                    });
 
-                // By default show the all records group
-                $('#taxa-level-0 tbody td:first a.taxonBrowse').click();
+                    // By default show the all records group
+                    $('#taxa-level-0 tbody td:first a.taxonBrowse').click();
 
-                $("button#download").click(
-                    function(e){
-                        e.preventDefault();
-                        var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank=" + rank;
-                        //alert("URL is " + downloadUrl);
-                        if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
-                            window.location.replace(downloadUrl);
+                    $("button#download").click(
+                        function(e){
+                            e.preventDefault();
+                            var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank=" + rank;
+                            //alert("URL is " + downloadUrl);
+                            if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
+                                window.location.replace(downloadUrl);
+                            }
+
                         }
+                    );
 
-                    }
-                );
+                    $('input#locationSearch').click(
+                        function(e) {
+                            e.preventDefault(); // ignore the href text - used for data
+                            codeAddress();
+                        }
+                    );
 
-                $('input#locationSearch').click(
-                    function(e) {
-                        e.preventDefault(); // ignore the href text - used for data
-                        codeAddress();
-                    }
-                );
+                    $('input#coordSearch').click(
+                        function(e) {
+                            e.preventDefault(); // ignore the href text - used for data
+                            $().val("");
+                            codeAddress(true);
+                        }
+                    );
 
-                $('input#coordSearch').click(
-                    function(e) {
-                        e.preventDefault(); // ignore the href text - used for data
-                        $().val("");
-                        codeAddress(true);
-                    }
-                );
+                    // Set height of #taxaDiv
+                    var tbodyHeight = $('#taxa-level-0 tbody').height() + 2;
+                    //alert("tbodyHeight = "+tbodyHeight);
+                    $('#taxaDiv').height(tbodyHeight);// css('height', tbodyHeight+'px');
                 });
             </script>
         </head>
@@ -404,6 +408,7 @@
                                 <button id="download" title="Download displayed species as XLS (tab-delimited) file">Download</button>
                                 <div id="thead">Species</div>
                                 <div id="taxa-level-1">
+                                    <div id="taxaDiv"></div>
                                 </div>
 <!--                                <table id="taxa-level-1" style="width:100%;">
                                     <thead><tr><th style="padding-left: 15px;">Names</th></tr></thead>
