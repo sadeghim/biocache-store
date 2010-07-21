@@ -45,18 +45,18 @@
                         {layers: 'basic'}, // {layers: 'satellite'},
                         {wrapDateLine: true}
                     );
-                    var blueMarbleLayer = new OpenLayers.Layer.WMS(
-                        "Satellite",
-                        "http://labs.metacarta.com/wms-c/Basic.py?",
-                        {layers: 'satellite'},
-                        {wrapDateLine: true}
-                    );
+//                    var blueMarbleLayer = new OpenLayers.Layer.WMS(
+//                        "Satellite",
+//                        "http://labs.metacarta.com/wms-c/Basic.py?",
+//                        {layers: 'satellite'},
+//                        {wrapDateLine: true}
+//                    );
                     var satelliteLayer = new OpenLayers.Layer.Google(
                         "Google Hybrid Map" ,
                         {type: G_HYBRID_MAP, 'sphericalMercator': false}
                     );
 
-                    map.addLayers([satelliteLayer,baseLayer]); //  blueMarbleLayer
+                    map.addLayers([baseLayer,satelliteLayer]); //  blueMarbleLayer
                     //                var gphy = new OpenLayers.Layer.Google(
                     //                    "Google Physical",
                     //                    {type: G_PHYSICAL_MAP,'sphericalMercator': true}
@@ -399,7 +399,7 @@
                         <div id="taxaBox">
                             <div id="rightList">
                                 <button id="download" title="Download displayed species as XLS (tab-delimited) file">Download</button>
-                                <div id="thead">Names</div>
+                                <div id="thead">Species</div>
                                 <div id="taxa-level-1">
                                 </div>
 <!--                                <table id="taxa-level-1" style="width:100%;">
@@ -411,73 +411,73 @@
                                 <table id="taxa-level-0">
                                     <tr>
                                         <th>Group</th>
-                                        <th>Records</th>
-                                        <th>Species</th>
+<!--                                        <th>Records</th>-->
+                                        <th>Count</th>
                                     </tr>
                                     <tr>
-                                        <td><a href="*" id="*" class="taxonBrowse">All Records</a>
+                                        <td><a href="*" id="*" class="taxonBrowse">All Species</a>
                                         <!-- <td><a href="../occurrences/search?q=location.search&lat=${latitude}&lon=${longitude}&rad=${radius}" title="See all ${allLifeCounts} records">${allLifeCounts}</a></td> -->
-                                        <td>${allLifeCounts}</td>
+<!--                                        <td>${allLifeCounts}</td>-->
                                         <td>${fn:length(allLife)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent"><a href="Animalia" id="kingdom" class="taxonBrowse">Animals</a>
-                                        <td>${animalsCount}</td>
+<!--                                        <td>${animalsCount}</td>-->
                                         <td>${fn:length(animals)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent2"><a href="Mammalia" id="class" class="taxonBrowse">Mammals</a></td>
-                                        <td>${mammalsCount}</td>
+<!--                                        <td>${mammalsCount}</td>-->
                                         <td>${fn:length(mammals)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent2"><a href="Aves" id="class" class="taxonBrowse">Birds</a></td>
-                                        <td>${birdsCount}</td>
+<!--                                        <td>${birdsCount}</td>-->
                                         <td>${fn:length(birds)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Reptiles</a></td>
-                                        <td>${reptilesCount}</td>
+<!--                                        <td>${reptilesCount}</td>-->
                                         <td>${fn:length(reptiles)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent2"><a href="Amphibia" id="class" class="taxonBrowse">Amphibians</a></td>
-                                        <td>${frogsCount}</td>
+<!--                                        <td>${frogsCount}</td>-->
                                         <td>${fn:length(frogs)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes" id="class" class="taxonBrowse">Fish</a></td>
-                                        <td>${fishCount}</td>
+<!--                                        <td>${fishCount}</td>-->
                                         <td>${fn:length(fish)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent2"><a href="Insecta" id="class" class="taxonBrowse">Insects</a></td>
-                                        <td>${insectsCount}</td>
+<!--                                        <td>${insectsCount}</td>-->
                                         <td>${fn:length(insects)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent"><a href="Plantae" id="kingdom" class="taxonBrowse">Plants</a></td>
-                                        <td>${plantsCount}</td>
+<!--                                        <td>${plantsCount}</td>-->
                                         <td>${fn:length(plants)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent"><a href="Fungi" id="kingdom" class="taxonBrowse">Fungi</a></td>
-                                        <td>${fungiCount}</td>
+<!--                                        <td>${fungiCount}</td>-->
                                         <td>${fn:length(fungi)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent"><a href="Chromista" id="kingdom" class="taxonBrowse">Chromista</a></td>
-                                        <td>${chromistaCount}</td>
+<!--                                        <td>${chromistaCount}</td>-->
                                         <td>${fn:length(chromista)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent"><a href="Protozoa" id="kingdom" class="taxonBrowse">Protozoa</a></td>
-                                        <td>${protozoaCount}</td>
+<!--                                        <td>${protozoaCount}</td>-->
                                         <td>${fn:length(protozoa)}</td>
                                     </tr>
                                     <tr>
                                         <td class="indent"><a href="Bacteria" id="kingdom" class="taxonBrowse">Bacteria</a></td>
-                                        <td>${bacteriaCount}</td>
+<!--                                        <td>${bacteriaCount}</td>-->
                                         <td>${fn:length(bacteria)}</td>
                                     </tr>
                                 </table>

@@ -875,12 +875,12 @@ table.propertyTable td.propertyNames {
 }
 #taxaBox #rightList {
     float: right;
-    width: 290px;
+    width: 361px;
     margin-right: 5px;
 }
 #rightList #thead { padding: 1px 5px 1px 15px; width: 60%; }
 #taxaBox #leftList {
-    width: 250px;
+    width: 180px;
 }
 #taxaBox td, #taxaBox th {
     padding: 1px 10px 1px 4px;
