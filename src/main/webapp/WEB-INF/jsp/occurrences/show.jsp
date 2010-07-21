@@ -18,6 +18,8 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.form.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.url.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.cookie.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.simplemodal.js"></script>
+        <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/basic.css" charset="utf-8">
         <script>
             // Set some global variables to be used in imported JS files
             occurrenceHtmlUrl = "http://${pageContext.request.serverName}${pageContext.request.contextPath}/occurrences/${occurrence.id}";

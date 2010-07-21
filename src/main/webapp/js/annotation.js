@@ -28,38 +28,6 @@ $(document).ready(function() {
         cache: false
     });
 
-    // Jquery function (vCenter) to center modal div in the viewport
-    (function($){
-        $.fn.vCenter = function(options) {
-         var pos = {
-           sTop : function() {
-             return window.pageYOffset || $.boxModel &&
-                 document.documentElement.scrollTop || document.body.scrollTop;
-           },
-           wHeight : function() {
-             if ( $.browser.safari ) {
-                 return window.innerHeight;
-             } else if ( $.browser.opera || ($.browser.safari && parseInt($.browser.version) > 520) ) {
-                 return window.innerHeight - (($ (document).height() > window.innerHeight) ? getScrollbarWidth() : 0);
-             } else {
-                 return $.boxModel && document.documentElement.clientHeight || document.body.clientHeight;
-             }
-           }
-         };
-         return this.each(function(index) {
-           if (index == 0) {
-             var $this = $(this);
-             var elHeight = $this.height();
-             $this.css({
-               position: 'absolute',
-               marginTop: '0',
-               top: pos.sTop() + (pos.wHeight() / 2) - (elHeight / 2)
-             });
-           }
-         });
-        };
-    })(jQuery);
-
     // Add icons to annotatable fields
     $("td.dataset, td.taxonomy, td.geospatial").each(function(i) {
         var field = $(this).attr("name");
@@ -99,23 +67,13 @@ $(document).ready(function() {
         var formId = $(link).attr('id');
         if (formId !== 'comment' && formId !== 'reply') formId = 'new.' + formId; // fix for comment field
         var field = $(link).attr('field');
+
         if (field) {
             // add the section name to the form xpath hidden input (replies)
             $("form#replyToForm :input[name='field']").val(field);
         }
-        //Get the screen height and width
-        var maskHeight = $(document).height();
-        var maskWidth = $(window).width();
-        //Set heigth and width to mask to fill up the whole screen
-        $('#mask').css({'width':maskWidth,'height':maskHeight});
-        //transition effect
-        $('#mask').fadeIn("def");
-        //Get the window height and width
-        var winH = $(window).height();
-        var winW = $(window).width();
-        //Set the popup window to center
-        $(id).vCenter();
-        $(id).css('left', winW/2-$(id).width()/2);
+
+        $(".boxes").modal({containerId: "simplemodal-container-ala", overlayId: "mask", close: false });
         //transition effect
         $(id).fadeIn(1000);
         // reply annotation set referring annotation (key)
@@ -140,15 +98,13 @@ $(document).ready(function() {
     $('.window .close').click(function (e) {
         //Cancel the link behavior
         e.preventDefault();
-        $('#mask').hide();
-        $('.window').hide();
+        hideForm();
     });
 
     // add event to the finish button (reset form, etc)
     $('input.finish').click(function (e) {
         e.preventDefault();
-        $('#mask').hide();
-        $('.window').hide();
+        hideForm();
         $('.submitButtons').show();
         $('.message').fadeOut(200).hide();
         $('.msgText').html("&nbsp;");
@@ -187,6 +143,13 @@ $(document).ready(function() {
           $("textarea[name='old.locality']").val(data.occurrence.places.join(', '));
        }
     );
+
+    // hide the form
+    function hideForm() {
+        $('#mask').hide();
+        $('.window').hide();
+        $.modal.close();
+    }
 
     // Insert name/email from cookie if set
     function insertFromCookie() {
@@ -406,8 +369,7 @@ $(document).ready(function() {
     $('input.close').click(function (e) {
         e.preventDefault();
         resetForm();
-        $('#mask').hide();
-        $('.window').hide();
+        hideForm();
     });
     // options for ajaxSubmit for form
     var options = {
