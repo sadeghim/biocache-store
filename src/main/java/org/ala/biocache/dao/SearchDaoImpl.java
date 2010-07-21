@@ -17,6 +17,9 @@ package org.ala.biocache.dao;
 
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -26,8 +29,11 @@ import org.ala.biocache.model.FacetResultDTO;
 import org.ala.biocache.model.FieldResultDTO;
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.OccurrencePoint;
+import org.ala.biocache.model.PointType;
 import org.ala.biocache.model.SearchResultDTO;
+import org.ala.biocache.model.TaxaCountDTO;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -35,15 +41,15 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.stereotype.Component;
+
 import au.com.bytecode.opencsv.CSVWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import org.ala.biocache.model.PointType;
-import org.ala.biocache.model.TaxaCountDTO;
+
+import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
@@ -518,6 +524,46 @@ public class SearchDaoImpl implements SearchDao {
 
         return speciesWithCounts;
     }
+    
+    /**
+     * @see org.ala.biocache.dao.SearchDao#findRecordByDecadeFor(java.lang.String)
+     */
+	@Override
+	public List<FieldResultDTO> findRecordByDecadeFor(String query) throws Exception {
+        List<FieldResultDTO> fDTOs = new ArrayList<FieldResultDTO>(); // new OccurrencePoint(PointType.POINT);
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQueryType("standard");
+        solrQuery.add("facet.date","occurrence_date");
+        solrQuery.add("facet.date.start", "1850-01-01T12:00:00Z"); // facet date range starts from 1850
+        solrQuery.add("facet.date.end", "NOW/DAY"); // facet date range ends for current date (gap period)
+        solrQuery.add("facet.date.gap", "+10YEAR"); // gap interval of 10 years
+        solrQuery.setQuery(query);
+//        solrQuery.setQuery(query);
+        solrQuery.setRows(0);
+        solrQuery.setFacet(true);
+        QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, "score", "asc");
+
+        //get date fields
+        List<FacetField> facetDateFields = qr.getFacetDates();
+        FacetField ff = facetDateFields.get(0);
+        
+        System.out.println(ff.getName());
+        boolean addCounts = false;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        
+        for(Count count : ff.getValues()){
+        	//only start adding counts when we hit a decade with some results.
+        	if(addCounts || count.getCount()>0){
+        		addCounts = true;
+        		Date date = DateUtils.parseDate(count.getName(), new String[]{"yyyy-MM-dd'T'HH:mm:ss'Z'"});
+        		String year = sdf.format(date);
+        		FieldResultDTO f = new FieldResultDTO(year, count.getCount());
+        		fDTOs.add(f);
+        		System.out.println(f.getLabel()+" "+f.getCount() );
+        	}
+        }
+        return fDTOs;
+	}
 
     /**
      * Perform SOLR query - takes a SolrQuery and search params
@@ -785,5 +831,4 @@ public class SearchDaoImpl implements SearchDao {
     public void setSolrHome(String solrHome) {
         this.solrHome = solrHome;
     }
-
 }

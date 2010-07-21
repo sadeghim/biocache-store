@@ -72,6 +72,7 @@ public class SearchUtils {
         
         }
         catch(Exception e){
+        	logger.error("Problem contacting the collectory: "+e.getMessage(), e);
             //TODO work out what we want to do to the search if an exception occurs while
             //contacting the collectory etc
         }

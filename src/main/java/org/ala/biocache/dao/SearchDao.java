@@ -16,9 +16,11 @@
 package org.ala.biocache.dao;
 
 import java.util.List;
+
 import javax.servlet.ServletOutputStream;
 
 import org.ala.biocache.model.DataProviderCountDTO;
+import org.ala.biocache.model.FieldResultDTO;
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.OccurrencePoint;
 import org.ala.biocache.model.PointType;
@@ -164,4 +166,7 @@ public interface SearchDao {
      * @return
      */
     List<DataProviderCountDTO> getDataProviderCounts() throws Exception;
+    
+    
+    List<FieldResultDTO> findRecordByDecadeFor(String guid) throws Exception;
 }
