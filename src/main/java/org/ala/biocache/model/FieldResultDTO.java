@@ -6,6 +6,7 @@
 package org.ala.biocache.model;
 
 /**
+ * A generic DTO for results
  *
  * @author 
  */
@@ -27,9 +28,12 @@ public class FieldResultDTO {
         //as special characters and doesn't forward to the correct action
         this.label = fieldValue.replace('.', '_');
     }
-    public String getFieldValue()
-    {
-        return prefix+label;
+    public String getFieldValue() {
+    	if(prefix!=null){
+    		return prefix+label;
+    	}else {
+    		return label;
+    	}
     }
     public long getCount() {
         return count;
@@ -54,5 +58,12 @@ public class FieldResultDTO {
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
-
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "FieldResultDTO [count=" + count + ", label=" + label
+				+ ", prefix=" + prefix + "]";
+	}
 }
