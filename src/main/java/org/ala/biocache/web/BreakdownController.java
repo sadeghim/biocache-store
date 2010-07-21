@@ -22,6 +22,7 @@ import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.FieldResultDTO;
 import org.ala.biocache.model.SearchQuery;
 import org.ala.biocache.util.SearchUtils;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author Dave Martin (David.Martin@csiro.au)
  */
+@Controller
 public class BreakdownController {
 
     @Inject
