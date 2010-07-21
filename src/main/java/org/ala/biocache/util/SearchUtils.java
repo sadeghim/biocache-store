@@ -59,7 +59,8 @@ public class SearchUtils {
             //StringBuilder displayString = new StringBuilder("Institution: ");
             List<String> collections = new ArrayList<String>();
             for (int i = 0; i < collectionCode.size(); i++) {
-                collections.add("collection_code:" + collectionCode.getString(i));
+                //quote the collection code to solve issue with invalid characters (eg Invertebrates - Marine & Other)
+                collections.add("collection_code:\"" + collectionCode.getString(i) +"\"");
                 //	displayString.append(coll).append(" ");
             }
             solrQuery.append("(");
