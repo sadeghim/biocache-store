@@ -126,25 +126,25 @@
                     <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Common Name">
                          ${occurrence.commonName}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Kingdom" path="${bieWebappContext}/species/$" guid="${occurrence.kingdomLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Kingdom" path="${bieWebappContext}/species/" guid="${occurrence.kingdomLsid}">
                         ${occurrence.kingdom}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Phylum" path="${bieWebappContext}/species/$"  guid="${occurrence.phylumLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Phylum" path="${bieWebappContext}/species/"  guid="${occurrence.phylumLsid}">
                         ${occurrence.phylum}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Class" path="${bieWebappContext}/species/$"  guid="${occurrence.classLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Class" path="${bieWebappContext}/species/"  guid="${occurrence.classLsid}">
                         ${occurrence.clazz}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Order" path="${bieWebappContext}/species/$"  guid="${occurrence.orderLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Order" path="${bieWebappContext}/species/"  guid="${occurrence.orderLsid}">
                         ${occurrence.order}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Family" path="${bieWebappContext}/species/$"  guid="${occurrence.familyLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Family" path="${bieWebappContext}/species/"  guid="${occurrence.familyLsid}">
                         ${occurrence.family}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Genus" path="${bieWebappContext}/species/$"  guid="${occurrence.genusLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Genus" path="${bieWebappContext}/species/"  guid="${occurrence.genusLsid}">
                         ${occurrence.genus}
                     </alatag:occurrenceTableRow>
-                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Species" path="${bieWebappContext}/species/$"  guid="${occurrence.speciesLsid}">
+                    <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="" fieldName="Species" path="${bieWebappContext}/species/"  guid="${occurrence.speciesLsid}">
                         ${occurrence.species}
                     </alatag:occurrenceTableRow>
                 </table>
