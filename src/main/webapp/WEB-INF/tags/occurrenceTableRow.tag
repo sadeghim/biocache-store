@@ -4,9 +4,18 @@
     attribute name="fieldCode" required="false" type="java.lang.String" %><%@
     attribute name="section" required="true" type="java.lang.String" %><%@
     attribute name="annotate" required="true" type="java.lang.Boolean" %><%@
-    attribute name="link" required="false" type="java.lang.String" %>
+    attribute name="path" required="false" type="java.lang.String" %><%@
+    attribute name="guid" required="false" type="java.lang.String" %>
 <c:set var="bodyText"><jsp:doBody/></c:set>
 <c:set var="annoIcon"><c:if test="${annotate}">${section}</c:if></c:set>
+<c:choose>
+<c:when test="${not empty guid}">
+  <c:set var="link">${path}${guid}</c:set>  
+</c:when>
+<c:otherwise>
+  <c:set var="link"></c:set>
+</c:otherwise>
+</c:choose>
 <c:if test="${not empty bodyText}">
     <tr id="${fieldCode}">
         <td class="label">
