@@ -49,7 +49,7 @@ public class BreakdownController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/breakdown/species/decades/{query}", method = RequestMethod.GET)
+    @RequestMapping(value = "/breakdown/species/decades/{query}.json", method = RequestMethod.GET)
 	public String speciesDecadeBreakdown(@PathVariable("query") String query, Model model) throws Exception {
         SearchQuery searchQuery = new SearchQuery(query, "collection");
         searchUtils.updateTaxonConceptSearchString(searchQuery);
@@ -65,7 +65,7 @@ public class BreakdownController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/breakdown/collection/decades/{query}", method = RequestMethod.GET)
+    @RequestMapping(value = "/breakdown/collection/decades/{query}.json", method = RequestMethod.GET)
 	public String collectionDecadeBreakdown(@PathVariable("query") String query, Model model) throws Exception {
         SearchQuery searchQuery = new SearchQuery(query, "collection");
         searchUtils.updateCollectionSearchString(searchQuery);
