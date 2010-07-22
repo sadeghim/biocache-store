@@ -18,7 +18,7 @@
   <category name="org.ala">
     <priority value="DEBUG"/>
   </category> 
-  <category name="au.org.ala">
+  <category name="au.org.ala.cas">
     <priority value="DEBUG"/>
   </category> 
   <category name="org.jasig">
@@ -49,7 +49,7 @@
     <priority value="ERROR"/>
   </category>
   <root>
-    <priority value ="debug" />
+    <priority value ="DEBUG" />
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="FILE"/>
   </root>
