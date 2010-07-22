@@ -9,7 +9,8 @@
                 <div class="formIdentity"><input type="radio" name="ident" value="name" checked="checked" onClick="$('.creatorInfo').show();"/>
                     <label for="ident">Registered User</label>
                 </div>
-                <div class="creatorInfo"><ala:loginStatus returnUrlPath="/occurrences/${occurrence.id}" />
+                <c:set var="occurrenceHtmlUrl" value="http://${pageContext.request.serverName}${pageContext.request.contextPath}/occurrences/${occurrence.id}"/>
+                <div class="creatorInfo"><ala:loginStatus returnUrlPath="${occurrenceHtmlUrl}" />
                 </div>
                 <div class="formIdentity"><input type="radio" name="ident" value="anon" onClick="$('.creatorInfo').hide();"/>
                     <label for="creator">Anonymous</label>
