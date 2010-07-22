@@ -45,12 +45,10 @@ public class LoginLogoutTag extends TagSupport {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		Principal principal = request.getUserPrincipal();
 		String casServer = pageContext.getServletContext().getInitParameter("casServerName");
-		String thisServer = pageContext.getServletContext().getInitParameter("serverName");
-		String contextPath = request.getContextPath();
 
 		String html;
 		if (principal == null) {
-			html = "<a href='" + casServer + "/cas/login?service=" + thisServer + contextPath + returnUrlPath + "'>Log in</a>\n";
+			html = "<a href='" + casServer + "/cas/login?service=" + returnUrlPath + "'>Log in</a>\n";
 		} else {
 			html = "<a href='" + casServer + "/cas/logout'>Log out</a>\n";
 		}

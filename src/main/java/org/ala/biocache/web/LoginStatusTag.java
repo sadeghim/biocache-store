@@ -45,12 +45,10 @@ public class LoginStatusTag extends TagSupport {
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 		Principal principal = request.getUserPrincipal();
 		String casServer = pageContext.getServletContext().getInitParameter("casServerName");
-		String thisServer = pageContext.getServletContext().getInitParameter("serverName");
-		String contextPath = request.getContextPath();
 
 		String html;
 		if (principal == null) {
-			html = "<p>You are not logged in.  <a href='" + casServer + "/cas/login?service=" + thisServer + contextPath + returnUrlPath + "'>Log in</a></p>\n";
+			html = "<p>You are not logged in.  <a href='" + casServer + "/cas/login?service=" + returnUrlPath + "'>Log in</a></p>\n";
 		} else {
 			String userId = ((AttributePrincipalImpl) principal).getName();
 			String email = ((AttributePrincipalImpl) principal).getAttributes().get("email").toString();
