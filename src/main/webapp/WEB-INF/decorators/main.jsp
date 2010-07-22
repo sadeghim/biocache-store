@@ -8,6 +8,7 @@ taglib prefix="page" uri="http://www.opensymphony.com/sitemesh/page" %><%@
 taglib prefix="spring" uri="http://www.springframework.org/tags" %><%@
 taglib prefix="form" uri="http://www.springframework.org/tags/form" %><%@
 taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><%@
+taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %><%@
 taglib uri="/tld/ala.tld" prefix="ala" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
@@ -80,8 +81,7 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
 					<!-- WP Menubar 4.7: start menu nav-site, template Superfish, CSS  -->
 					<ul class="sf">
 						<li class="nav-home"><a href="http://test.ala.org.au/"><span>Home</span></a></li>
-						<li class="nav-explore selected"><a
-							href="http://test.ala.org.au/explore/"><span>Explore</span></a>
+						<li class="nav-explore selected"><a href="http://test.ala.org.au/explore/"><span>Explore</span></a>
 						<ul>
 							<li><a href="http://test.ala.org.au/explore/maps/"><span>Maps</span></a></li>
 							<li><a href="http://test.ala.org.au/explore/themes/"><span>Themes</span></a></li>
@@ -92,14 +92,14 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
 								target="_blank"><span>Explore Species Distribution</span></a></li>
 						</ul>
 						</li>
-						<li class="nav-tools"><a
-							href="http://test.ala.org.au/tools-services/"><span>Tools</span></a>
+						<li class="nav-tools"><a href="http://test.ala.org.au/tools-services/"><span>Tools</span></a>
 						<ul>
 							<li><a href="http://test.ala.org.au/tools-services/community-science/"><span>Citizen Science</span></a></li>
 							<li><a href="http://test.ala.org.au/tools-services/identification-tools/"><span>Identification Tools</span></a></li>
 							<li><a href="http://test.ala.org.au/tools-services/for-developers/"><span>For Developers</span></a></li>
 						</ul>
-						</li> href="http://test.ala.org.au/contact-us/"><span>Contact Us</span></a>
+						</li>
+						<li class="nav-contact"><a  href="http://test.ala.org.au/contact-us/"><span>Contact Us</span></a>
 						<ul>
 							<li><a href="http://test.ala.org.au/contact-us/contact-our-team/"><span>Contact Our Team</span></a></li>
 							<li><a href="http://test.ala.org.au/contact-us/contribute/"><span>Contribute</span></a></li>
@@ -121,8 +121,17 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
 							<li><a href="http://test.ala.org.au/about/communications/"><span>Communications</span></a></li>
 						</ul>
 						</li>
-						<c:if test="${empty pageContext.request.remoteUser}">>
-                            <li class="nav-login nav-right"><ala:loginLogoutLink returnUrlPath="/"/></li>
+						<c:if test="${empty pageContext.request.remoteUser}">
+						    <c:set var="queryString" value="${pageContext.request.queryString}"/>
+						    <c:choose>
+						        <c:when test="${empty queryString}">
+						            <c:set var="requestUrl" value="${pageContext.request.requestURL}"/>
+						        </c:when>
+						        <c:otherwise>
+                                    <c:set var="requestUrl" value="${pageContext.request.requestURL}?${fn:replace(queryString, '+', '%2B')}"/>
+						        </c:otherwise>
+						    </c:choose>
+                            <li class="nav-login nav-right"><ala:loginLogoutLink returnUrlPath="${requestUrl}"/></li>
                         </c:if>
 					</ul>
                 <!-- WP Menubar 4.7: end menu nav-site, template Superfish, CSS  -->
@@ -204,13 +213,21 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
                         <li id="menu-item-1051" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/tools-services/">Tools</a></li>
                         <li id="menu-item-1050" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/support/">Support</a></li>
                         <li id="menu-item-1048" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/contact-us/">Contact Us</a></li>
-                        <li id="menu-item-1047" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/about/">About the Atlas</a></li>
-                        <li id="menu-item-1052" class="last menu-item menu-item-type-custom"><a href="http://test.ala.org.au">Log in</a></li>
+                        <c:choose>
+                            <c:when test="${empty pageContext.request.remoteUser}">
+		                        <li id="menu-item-1047" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/about/">About the Atlas</a></li>
+		                        <li id="menu-item-1052" class="last menu-item menu-item-type-custom"><ala:loginLogoutLink returnUrlPath="${requestUrl}"/></li>
+	                        </c:when>
+	                        <c:otherwise>
+                                <li id="menu-item-1047" class="last menu-item menu-item-type-custom"><a href="http://test.ala.org.au/about/">About the Atlas</a></li>
+	                        </c:otherwise>
+                        </c:choose>
                     </ul>		<ul id="menu-footer-legal"><li id="menu-item-1042" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/terms-of-use/citing-the-atlas/">Citing the Atlas</a></li>
                         <li id="menu-item-1043" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/terms-of-use/disclaimer/">Disclaimer</a></li>
                         <li id="menu-item-1044" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/terms-of-use/privacy-policy/">Privacy Policy</a></li>
                         <li id="menu-item-1045" class="last menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/terms-of-use/">Terms of Use</a></li>
-                    </ul>		</div>
+                    </ul>
+                </div><!--close footer-nav-->
                 <div class="copyright"><p><a href="http://creativecommons.org/licenses/by/2.5/au/" title="External link to Creative Commons" class="left no-pipe"><img src="http://test.ala.org.au/wp-content/themes/ala/images/somerights20.png" width="88" height="31" alt="" /></a>This work is licensed under a <a href="http://creativecommons.org/licenses/by/2.5/au/" title="External link to Creative Commons">Creative Commons Attribution 2.5 Australia License</a></p></div>
             </div><!--close footer--> 
         </div><!--close wrapper-->
