@@ -136,7 +136,7 @@ public class SearchResultDTO {
         this.query = query;
     }
 
-    @JsonIgnore
+    //@JsonIgnore
     public Collection<FacetResultDTO> getFacetResults() {
         return facetResults;
     }
