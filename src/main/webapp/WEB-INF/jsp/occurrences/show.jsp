@@ -57,7 +57,10 @@
         </c:if>
         <c:if test="${not empty occurrence}">
             <c:set var="bieWebappContext" scope="request"><ala:propertyLoader bundle="biocache" property="bieWebappContext"/></c:set>
+            <!--
             <h1>Occurrence Details: ${occurrence.institutionCode} ${occurrence.collectionCode} ${occurrence.catalogueNumber}</h1>
+            -->
+            <h1>Occurrence Details: ${occurrence.id}</h1>
             <div id="debug"></div>
             <!-- add the occurrence issue descriptions if necessary -->
             <c:set var="noIssues" value="${occurrence.taxonomicIssue==0 && occurrence.geospatialIssue==0 && occurrence.otherIssue==0}"/>
