@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.ala.biocache.dao.DataProviderDAO;
 import org.ala.biocache.dao.DataResourceDAO;
 import org.ala.biocache.dao.SearchDao;
+import org.ala.biocache.model.DataProvider;
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.SearchResultDTO;
 import org.apache.commons.httpclient.HttpClient;
@@ -65,7 +66,7 @@ public class OccurrenceController {
 	@Inject
 	protected DataProviderDAO dataProviderDAO;
 
-        protected SearchUtils searchUtils = new SearchUtils();
+	protected SearchUtils searchUtils = new SearchUtils();
 
 	/** Name of view for site home page */
 	private String HOME = "homePage";
@@ -73,10 +74,10 @@ public class OccurrenceController {
 	private final String LIST = "occurrences/list";
 	/** Name of view for a single taxon */
 	private final String SHOW = "occurrences/show";
-	
+
 	protected String hostUrl = "http://localhost:8888/biocache-webapp";
 	protected String bieBaseUrl = "http://bie.ala.org.au/";
-    protected String collectoryBaseUrl = "http://collections.ala.org.au";
+	protected String collectoryBaseUrl = "http://collections.ala.org.au";
 
 	/**
 	 * Custom handler for the welcome view.
@@ -132,8 +133,8 @@ public class OccurrenceController {
 		}
 
 		SearchQuery searchQuery = new SearchQuery(query, "taxon", filterQuery);
-                searchUtils.updateTaxonConceptSearchString(searchQuery);
-		
+		searchUtils.updateTaxonConceptSearchString(searchQuery);
+
 		if (startIndex == null) {
 			startIndex = 0;
 		}
@@ -161,13 +162,13 @@ public class OccurrenceController {
 		logger.debug("query = "+query);
 		Long totalRecords = searchResult.getTotalRecords();
 		model.addAttribute("totalRecords", totalRecords);
-                //type of search
-                model.addAttribute("type", "taxon");
+		//type of search
+		model.addAttribute("type", "taxon");
 
 		if(logger.isDebugEnabled()){
 			logger.debug("Returning results set with: "+totalRecords);
 		}
-		
+
 		if (pageSize > 0) {
 			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
 			model.addAttribute("lastPage", lastPage);
@@ -193,7 +194,7 @@ public class OccurrenceController {
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
 			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
 			Model model)
-		throws Exception {
+	throws Exception {
 
 		int dataProviderId;
 		String dataProviderName;
@@ -205,36 +206,42 @@ public class OccurrenceController {
 		}
 
 		if (dataProviderId != 0) {
-			dataProviderName = dataProviderDAO.getById(dataProviderId).getName();
 
-			String solrQuery = "data_provider_id:" + dataProviderId;
-			SearchResultDTO searchResult = new SearchResultDTO();
-			String queryJsEscaped = StringEscapeUtils.escapeJavaScript(dataProviderName);
-			
-			model.addAttribute("entityQuery", "Data Provider: " + queryJsEscaped);
-			
-			model.addAttribute("query", dataProviderId);
-			model.addAttribute("queryJsEscaped", queryJsEscaped);
-			
-			searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
+			DataProvider dataProvider = dataProviderDAO.getById(dataProviderId);
 
-			model.addAttribute("searchResult", searchResult);
-			logger.debug("query = "+query);
-			Long totalRecords = searchResult.getTotalRecords();
-			model.addAttribute("totalRecords", totalRecords);
-                        model.addAttribute("facetQuery", filterQuery);
-                        //type of serach
-                        model.addAttribute("type", "provider");
-			if (pageSize > 0) {
-				Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-				model.addAttribute("lastPage", lastPage);
+			if (dataProvider != null) {
+
+				dataProviderName = dataProvider.getName();
+
+				String solrQuery = "data_provider_id:" + dataProviderId;
+				SearchResultDTO searchResult = new SearchResultDTO();
+				String queryJsEscaped = StringEscapeUtils.escapeJavaScript(dataProviderName);
+
+				model.addAttribute("entityQuery", "Data Provider: " + queryJsEscaped);
+
+				model.addAttribute("query", dataProviderId);
+				model.addAttribute("queryJsEscaped", queryJsEscaped);
+
+				searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
+
+				model.addAttribute("searchResult", searchResult);
+				logger.debug("query = "+query);
+				Long totalRecords = searchResult.getTotalRecords();
+				model.addAttribute("totalRecords", totalRecords);
+				model.addAttribute("facetQuery", filterQuery);
+				//type of serach
+				model.addAttribute("type", "provider");
+				if (pageSize > 0) {
+					Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+					model.addAttribute("lastPage", lastPage);
+				}
 			}
 		}
 
 		return LIST;
 
 	}
-	
+
 	/**
 	 * Occurrence search page uses SOLR JSON to display results
 	 * 
@@ -252,7 +259,7 @@ public class OccurrenceController {
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
 			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
 			Model model)
-		throws Exception {
+	throws Exception {
 
 		int dataResourceId;
 		String dataResourceName;
@@ -269,21 +276,21 @@ public class OccurrenceController {
 			String solrQuery = "data_resource_id:" + dataResourceId;
 			SearchResultDTO searchResult = new SearchResultDTO();
 			String queryJsEscaped = StringEscapeUtils.escapeJavaScript(dataResourceName);
-			
+
 			model.addAttribute("entityQuery", "Data Resource: " + queryJsEscaped);
-			
+
 			model.addAttribute("query", dataResourceId);
 			model.addAttribute("queryJsEscaped", queryJsEscaped);
-			
+
 			searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
 
 			model.addAttribute("searchResult", searchResult);
 			logger.debug("query = "+query);
 			Long totalRecords = searchResult.getTotalRecords();
 			model.addAttribute("totalRecords", totalRecords);
-                        model.addAttribute("facetQuery", filterQuery);
-                        //type of serach
-                        model.addAttribute("type", "resource");
+			model.addAttribute("facetQuery", filterQuery);
+			//type of serach
+			model.addAttribute("type", "resource");
 			if (pageSize > 0) {
 				Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
 				model.addAttribute("lastPage", lastPage);
@@ -299,7 +306,7 @@ public class OccurrenceController {
 	 * parameters (but at least one must be set).
 	 *
 	 * @param query  This should be the institute's collectory database id, LSID or acronym. By making use of the query
-         * parameter we didn't need try and keep track of another variable in the URL
+	 * parameter we didn't need try and keep track of another variable in the URL
 	 * @param filterQuery
 	 * @param startIndex
 	 * @param pageSize
@@ -328,9 +335,9 @@ public class OccurrenceController {
 		}
 
 		// one of collectionCode or institutionCode must be set
-//		if ((query == null || query.isEmpty()) && (collectionCode==null || collectionCode.length==0) && (institutionCode==null || institutionCode.length==0)) {
-//			return LIST;
-//		}
+		//		if ((query == null || query.isEmpty()) && (collectionCode==null || collectionCode.length==0) && (institutionCode==null || institutionCode.length==0)) {
+		//			return LIST;
+		//		}
 
 		// if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
 		if (filterQuery != null && filterQuery.length == 0) {
@@ -350,31 +357,31 @@ public class OccurrenceController {
 		}
 
 
-                SearchQuery searchQuery = new SearchQuery(query, "collection");
-                searchUtils.updateCollectionSearchString(searchQuery);
-                
-                    logger.info("solr query: " + searchQuery.getQuery());
-                    SearchResultDTO searchResult = new SearchResultDTO();
-                    String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
-                    model.addAttribute("entityQuery", searchQuery.getDisplayString());
+		SearchQuery searchQuery = new SearchQuery(query, "collection");
+		searchUtils.updateCollectionSearchString(searchQuery);
 
-                    model.addAttribute("query", query);
-                    model.addAttribute("queryJsEscaped", queryJsEscaped);
-                    model.addAttribute("facetQuery", filterQuery);
+		logger.info("solr query: " + searchQuery.getQuery());
+		SearchResultDTO searchResult = new SearchResultDTO();
+		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+		model.addAttribute("entityQuery", searchQuery.getDisplayString());
 
-                    searchResult = searchDAO.findByFulltextQuery(searchQuery.getQuery(), filterQuery, startIndex, pageSize, sortField, sortDirection);
+		model.addAttribute("query", query);
+		model.addAttribute("queryJsEscaped", queryJsEscaped);
+		model.addAttribute("facetQuery", filterQuery);
 
-                    model.addAttribute("searchResult", searchResult);
-                    logger.debug("query = " + query);
-                    Long totalRecords = searchResult.getTotalRecords();
-                    model.addAttribute("totalRecords", totalRecords);
-                    //type of serach
-                    model.addAttribute("type", "collection");
-                    if (pageSize > 0) {
-                        Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-                        model.addAttribute("lastPage", lastPage);
-                    }
-                
+		searchResult = searchDAO.findByFulltextQuery(searchQuery.getQuery(), filterQuery, startIndex, pageSize, sortField, sortDirection);
+
+		model.addAttribute("searchResult", searchResult);
+		logger.debug("query = " + query);
+		Long totalRecords = searchResult.getTotalRecords();
+		model.addAttribute("totalRecords", totalRecords);
+		//type of serach
+		model.addAttribute("type", "collection");
+		if (pageSize > 0) {
+			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+			model.addAttribute("lastPage", lastPage);
+		}
+
 		return LIST;
 
 	}
@@ -450,8 +457,8 @@ public class OccurrenceController {
 		logger.debug("query = "+query);
 		Long totalRecords = searchResult.getTotalRecords();
 		model.addAttribute("totalRecords", totalRecords);
-                //type of serach
-                model.addAttribute("type", "normal");
+		//type of serach
+		model.addAttribute("type", "normal");
 		if (pageSize > 0) {
 			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
 			model.addAttribute("lastPage", lastPage);
@@ -472,7 +479,7 @@ public class OccurrenceController {
 	public String occurrenceDownload(
 			@RequestParam(value="q", required=false) String query,
 			@RequestParam(value="fq", required=false) String[] filterQuery,
-                        @RequestParam(value="type", required=false, defaultValue="normal") String type,
+			@RequestParam(value="type", required=false, defaultValue="normal") String type,
 			HttpServletResponse response)
 	throws Exception {
 
@@ -490,9 +497,9 @@ public class OccurrenceController {
 		response.setContentType("application/vnd.ms-excel");
 
 		ServletOutputStream out = response.getOutputStream();
-                 //get the new query details
-                SearchQuery searchQuery = new SearchQuery(query, type, filterQuery);
-                searchUtils.updateQueryDetails(searchQuery);
+		//get the new query details
+		SearchQuery searchQuery = new SearchQuery(query, type, filterQuery);
+		searchUtils.updateQueryDetails(searchQuery);
 		searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), out, 100000);
 
 		return null;
