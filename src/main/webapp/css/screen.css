@@ -1105,3 +1105,4 @@ li.taxonBreakdown { border: 1px solid gray; padding:10px; margin-bottom: 5px;}
 .earliestReference { background-color: #FFFFCC; }
 .earliestReferenceLabel { color: grey; }
 
+.dataTable td, th { padding-right:15px; }

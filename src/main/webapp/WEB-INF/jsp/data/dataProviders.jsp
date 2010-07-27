@@ -30,7 +30,7 @@
                             all occurrence records for this provider</a></p>
                     <br />
                 </c:if>
-                <table> 
+                <table class="dataTable">
                     <tr>
                         <th><b>Resource Name</b></th>
                         <th><b>Number of Records</b></th>
@@ -39,7 +39,7 @@
                     <c:forEach var="dataResource" items="${dataResources}">
                         <tr>
                             <td><c:out value="${dataResource['name']}" /></td>
-                            <td><a href="../occurrences/searchByDataResourceId?q=<c:out value="${dataResource['id']}" />"><c:out value="${dataResource['providerRecordCount']}" /></a></td>
+                            <td><a href="../occurrences/searchByDataResourceId?q=<c:out value="${dataResource['id']}" />">${dataResource.providerRecordCount}</a></td>
                             <td>
                                 <c:forEach var="basisOfRecord" items="${basisOfRecords}">
                                     <c:if test="${dataResource['basisOfRecord']==basisOfRecord['id']}">
