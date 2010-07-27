@@ -25,6 +25,7 @@ import org.ala.biocache.dao.DataProviderDAO;
 import org.ala.biocache.dao.DataResourceDAO;
 import org.ala.biocache.dao.SearchDao;
 import org.ala.biocache.model.DataProvider;
+import org.ala.biocache.model.DataResource;
 import org.ala.biocache.model.OccurrenceDTO;
 import org.ala.biocache.model.SearchResultDTO;
 import org.apache.commons.httpclient.HttpClient;
@@ -271,29 +272,33 @@ public class OccurrenceController {
 		}
 
 		if (dataResourceId != 0) {
-			dataResourceName = dataResourceDAO.getById(dataResourceId).getName();
+			DataResource dataResource = dataResourceDAO.getById(dataResourceId);
 
-			String solrQuery = "data_resource_id:" + dataResourceId;
-			SearchResultDTO searchResult = new SearchResultDTO();
-			String queryJsEscaped = StringEscapeUtils.escapeJavaScript(dataResourceName);
+			if (dataResource != null) {
+				dataResourceName = dataResource.getName();
 
-			model.addAttribute("entityQuery", "Data Resource: " + queryJsEscaped);
+				String solrQuery = "data_resource_id:" + dataResourceId;
+				SearchResultDTO searchResult = new SearchResultDTO();
+				String queryJsEscaped = StringEscapeUtils.escapeJavaScript(dataResourceName);
 
-			model.addAttribute("query", dataResourceId);
-			model.addAttribute("queryJsEscaped", queryJsEscaped);
+				model.addAttribute("entityQuery", "Data Resource: " + queryJsEscaped);
 
-			searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
+				model.addAttribute("query", dataResourceId);
+				model.addAttribute("queryJsEscaped", queryJsEscaped);
 
-			model.addAttribute("searchResult", searchResult);
-			logger.debug("query = "+query);
-			Long totalRecords = searchResult.getTotalRecords();
-			model.addAttribute("totalRecords", totalRecords);
-			model.addAttribute("facetQuery", filterQuery);
-			//type of serach
-			model.addAttribute("type", "resource");
-			if (pageSize > 0) {
-				Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-				model.addAttribute("lastPage", lastPage);
+				searchResult = searchDAO.findByFulltextQuery(solrQuery, filterQuery, startIndex, pageSize, sortField, sortDirection);
+
+				model.addAttribute("searchResult", searchResult);
+				logger.debug("query = "+query);
+				Long totalRecords = searchResult.getTotalRecords();
+				model.addAttribute("totalRecords", totalRecords);
+				model.addAttribute("facetQuery", filterQuery);
+				//type of serach
+				model.addAttribute("type", "resource");
+				if (pageSize > 0) {
+					Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+					model.addAttribute("lastPage", lastPage);
+				}
 			}
 		}		
 
