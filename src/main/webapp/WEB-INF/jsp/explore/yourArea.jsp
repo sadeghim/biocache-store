@@ -81,10 +81,10 @@
                     markerLayer = new OpenLayers.Layer.Vector("Pin");
                     var pinPoint = new OpenLayers.Geometry.Point(lon, lat);
                     var feature = new OpenLayers.Feature.Vector(
-                    pinPoint.transform(proj4326, map.getProjectionObject()),
-                    {title:'Your location' },
-                    {externalGraphic: '${pageContext.request.contextPath}/static/css/images/marker.png', graphicHeight: 28, graphicWidth: 18, graphicYOffset: -24 , graphicZIndex: 1000, rendererOptions: {zIndexing: true}}
-                );
+                        pinPoint.transform(proj4326, map.getProjectionObject()),
+                        {title:'Your location' },
+                        {externalGraphic: '${pageContext.request.contextPath}/static/css/images/marker.png', graphicHeight: 28, graphicWidth: 18, graphicYOffset: -24 , graphicZIndex: 1000, rendererOptions: {zIndexing: true}}
+                    );
 
                     markerLayer.addFeatures(feature);
                     map.addLayer(markerLayer);
@@ -105,7 +105,7 @@
 
                     var myStyles = new OpenLayers.StyleMap({
                         "default": new OpenLayers.Style({
-                            pointRadius: 5, //"${'${count}'}", // sized according to count attribute
+                            pointRadius: 6, //"${'${count}'}", // sized according to count attribute
                             fillColor: "${'${color}'}",//"#ffcc66",
                             //fillColor: "#D75A25",
                             strokeColor: "${'${color}'}",
@@ -291,31 +291,53 @@
                             if (data.speciesCount > 0) {
                                 //$('#taxa-level-1 tbody:last tr:last').html('<td>'+data.species[0].name+' ('+data.species[0].count+')</td>');
                                 $('#taxaDiv').html('<ol></ol>');
+                                var linkTitle = "display on map";
+                                var infoTitle = "view species page";
                                 for (i=0;i<data.species.length;i++) {
                                     //$('#taxa-level-1 tr:last').after('<tr><td>'+data.species[i].name+' ('+data.species[i].count+')</td></tr>');
                                     if(data.species[i].guid===null){
-                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><i>'+data.species[i].name+'</i> ('+
-                                            data.species[i].count+' records)</span></li>');
+                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><a id="taxon_name" class="taxonBrowse2" title="'+linkTitle+'" href="'+
+                                            data.species[i].name+'"><i>'+data.species[i].name+'</i></a> '+
+                                            //'<a href="">(i)</a> '+
+                                            '('+data.species[i].count+' records)</span></li>');
                                     }
-                                    else if(data.species[i].commonName === null){
-                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><a href="${speciesPageUrl}'+
-                                            data.species[i].guid+'"><i>'+data.species[i].name+'</i></a> ('+
-                                            data.species[i].count+' records)</span></li>');
+                                    else if(!data.species[i].commonName){ //<a href="Amphibia" id="class" class="taxonBrowse">
+                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><a id="taxon_name" class="taxonBrowse2"  title="'+linkTitle+'" href="'+
+                                            data.species[i].name+'"><i>'+data.species[i].name+'</i></a> '+
+                                            '(<a title="'+infoTitle+'" href="${speciesPageUrl}'+data.species[i].guid+'">info</a>) '+
+                                            '('+data.species[i].count+' records)</span></li>');
 
                                     }
                                     else{
-                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><a href="${speciesPageUrl}'+
-                                            data.species[i].guid+'"><i>'+data.species[i].name+'</i></a> - '+data.species[i].commonName+' ('+
-                                            data.species[i].count+' records)</span></li>');
+                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><a id="taxon_name" class="taxonBrowse2"  title="'+linkTitle+'" href="'+
+                                            data.species[i].name+'"><i>'+data.species[i].name+'</i></a> - '+data.species[i].commonName+' '+
+                                            '(<a title="'+infoTitle+'" href="${speciesPageUrl}'+data.species[i].guid+'">info</a>) '+
+                                            '('+data.species[i].count+' records)</span></li>');
                                     }
                                 }
                             } else {
                                 $('#taxaDiv').html('[no species found]');
                             }
-                            $('#taxa-level-1 tbody td').addClass("activeRow"); //css('background-color','#E8EACE')
-                            //var tbodyHeight = $('#taxa-level-0 tbody').height() + 2;
-                            //alert("tbodyHeight = "+tbodyHeight);
-                            //$('#taxaDiv').css('height', tbodyHeight+'px');
+                            
+                            $('#taxa-level-1 tbody td').addClass("activeRow");
+                            // Register clicks for the list of species links so that map changes
+                            $('a.taxonBrowse2').click(function(e) {
+                                e.preventDefault(); // ignore the href text - used for data
+                                var taxon = $(this).attr('href');
+                                rank = $(this).attr('id');
+                                taxa = []; // array of taxa
+
+                                if (taxon.contains("|")) {
+                                    taxa = taxon.split("|");
+                                } else {
+                                    taxa[0] = taxon;
+                                }
+
+                                $('#taxaDiv li').removeClass("activeRow2"); // un-highlight previous current taxon
+                                $(this).parent().parent().addClass("activeRow2"); // highloght current taxon
+                                loadRecordsLayer(taxa, rank);
+                            });
+
                         });
                     });
 
@@ -348,6 +370,20 @@
                             codeAddress(true);
                         }
                     );
+
+                    // Changing the radius will re-submit form
+                    $('select#radius').change(
+                        function(e) {
+                            $('form#searchForm').submit();
+                        }
+                    );
+
+                    // first page load - geocode address
+                    var location = $('input#location').val();
+                    //alert("location = "+location);
+                    if (location == null | location == '') {
+                        codeAddress();
+                    }
 
                     // Set height of #taxaDiv
                     var tbodyHeight = $('#taxa-level-0 tbody').height() + 2;
@@ -396,10 +432,10 @@
                             </c:if>
                             <p>Display records in a
                                 <select id="radius" name="radius">
+                                    <option value="1" <c:if test="${radius eq '1'}">selected</c:if>>1</option>
                                     <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
                                     <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
-                                    <option value="50" <c:if test="${radius eq '50'}">selected</c:if>>50</option>
-                                </select> km radius <input type="submit" value="Reload"/>
+                                </select> km radius <!--<input type="submit" value="Reload"/>-->
                                 
                         </div>
                 <!--        <p>Results - <fmt:formatNumber value="${allLifeCounts}" pattern="#,###,###"/> records found</p>-->

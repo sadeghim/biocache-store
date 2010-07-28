@@ -105,7 +105,23 @@ public class GeoJsonController {
 
         return POINTS_GEOJSON;
     }
-    
+
+    /**
+     * GeoJSON view of records as clusters of points within a specified radius of a given location
+     *
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @param callback
+     * @param zoomLevel
+     * @param bbox
+     * @param taxa
+     * @param rank
+     * @param model
+     * @param response
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/geojson/radius-points", method = RequestMethod.GET)
 	public String radiusPointsGeoJson(
             @RequestParam(value="lat", required=true) Float latitude,

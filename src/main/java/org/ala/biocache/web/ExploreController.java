@@ -52,21 +52,23 @@ public class ExploreController {
     private String speciesPageUrl = "http://bie.ala.org.au/species/";
     private String googleKey; // set in properties override
     private HashMap<String, List<Float>> addressCache = new HashMap<String, List<Float>>();
+    private final String DEFAULT_LOCATION = "Clunies Ross St, Black Mountain, ACT";
     /** Mapping of radius in km to OpenLayers zoom level */
     public final static HashMap<Integer, Integer> radiusToZoomLevelMap = new HashMap<Integer, Integer>();
 	static {
-		radiusToZoomLevelMap.put(5, 12);
+		radiusToZoomLevelMap.put(1, 14);
+        radiusToZoomLevelMap.put(5, 12);
 		radiusToZoomLevelMap.put(10, 11);
 		radiusToZoomLevelMap.put(50, 9);
 	}
 
     @RequestMapping(value = "/explore/your-area*", method = RequestMethod.GET)
 	public String yourAreaView(
-            @RequestParam(value="radius", required=false, defaultValue="10") Integer radius,
+            @RequestParam(value="radius", required=false, defaultValue="5") Integer radius,
             @RequestParam(value="latitude", required=false, defaultValue="-35.27412f") Float latitude,
             @RequestParam(value="longitude", required=false, defaultValue="149.11288f") Float longitude,
-            @RequestParam(value="address", required=false, defaultValue="-35.27412,149.11288") String address,
-            @RequestParam(value="location", required=false, defaultValue="") String location,
+            @RequestParam(value="address", required=false, defaultValue=DEFAULT_LOCATION) String address,
+            @RequestParam(value="location", required=false) String location,
             Model model) throws Exception {
         
         model.addAttribute("googleKey", googleKey);

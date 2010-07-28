@@ -923,6 +923,10 @@ table.propertyTable td.propertyNames {
 .activeRow {
     background-color: #E8EACE;
 }
+.activeRow2 {
+    background-color: #FAFBF5;
+}
+
 
 #download { float: right; }
 #taxaBox p {

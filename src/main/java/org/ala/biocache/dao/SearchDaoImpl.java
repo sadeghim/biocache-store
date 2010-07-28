@@ -413,7 +413,9 @@ public class SearchDaoImpl implements SearchDao {
 
         ArrayList<String> filterQueries = new ArrayList<String>();
         for (String taxon : taxa) {
-            filterQueries.add(rank + ":" + taxon);
+            // Don't escape taxon when it is wildcard (*) value as it breaks
+            String taxonName = ("*".equals(taxon)) ? taxon : ClientUtils.escapeQueryChars(taxon);
+            filterQueries.add(rank + ":" + taxonName);
         }
         
         solrQuery.setFilterQueries("(" + StringUtils.join(filterQueries, " OR ") + ")");
@@ -426,6 +428,7 @@ public class SearchDaoImpl implements SearchDao {
         solrQuery.setFacetLimit(MAX_DOWNLOAD_SIZE);  // unlimited = -1
 
         QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, "score", "asc");
+        logger.info("qr number found: "+qr.getResults().getNumFound());
         List<FacetField> facets = qr.getFacetFields();
 
         if (facets != null) {
