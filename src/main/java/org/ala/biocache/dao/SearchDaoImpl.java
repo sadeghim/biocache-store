@@ -709,7 +709,7 @@ public class SearchDaoImpl implements SearchDao {
      */
     protected String buildSpatialQueryString(String fullTextQuery, Float latitude, Float longitude, Integer radius) {
         String queryString = "{!spatial lat=" + latitude.toString() + " long=" + longitude.toString() +
-                " radius=" + radius.toString() + " unit=km calc=plane threadCount=2}" + fullTextQuery;
+                " radius=" + radius.toString() + " unit=km calc=arc threadCount=2}" + fullTextQuery; // calc=arc|plane
         return queryString;
     }
 

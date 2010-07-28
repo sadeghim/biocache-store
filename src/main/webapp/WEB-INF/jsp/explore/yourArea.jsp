@@ -28,48 +28,34 @@
                 var proj4326 = new OpenLayers.Projection("EPSG:4326");
                 /* Openlayers map */
                 function loadMap() {
-                    map = new OpenLayers.Map('yourMap',{
-                        //projection: proj900913,
-                        numZoomLevels: 20,
-                        controls: []});
-                    //add controls
-                    map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled: false}));
-                    map.addControl(new OpenLayers.Control.PanZoomBar({zoomWorldIcon: false}));
-                    map.addControl(new OpenLayers.Control.Attribution());
-                    //map.addControl(new OpenLayers.Control.ScaleLine());
-                    map.addControl(new OpenLayers.Control.LayerSwitcher({'ascending':false}));
+                    // create OpenLayers map object
+                    map = new OpenLayers.Map('yourMap',{maxResolution: 2468,controls: []});
+                    //add controls - restrict mouse wheel chaos
+                    map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled:false}));
+                    map.addControl(new OpenLayers.Control.ZoomPanel());
+                    map.addControl(new OpenLayers.Control.PanPanel());
+                    map.addControl(new OpenLayers.Control.LayerSwitcher());
                     //map.addControl(new OpenLayers.Control.OverviewMap());
-                    var baseLayer = new OpenLayers.Layer.WMS(
-                        "OpenLayers WMS",
-                        "http://labs.metacarta.com/wms/vmap0",// "http://labs.metacarta.com/wms-c/Basic.py?"
-                        {layers: 'basic'}, // {layers: 'satellite'},
-                        {wrapDateLine: true}
+                    // create Google base layers
+                    var gmap = new OpenLayers.Layer.Google(
+                        "Google Streets",
+                        {'sphericalMercator': true,
+                        maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34)}
                     );
-//                    var blueMarbleLayer = new OpenLayers.Layer.WMS(
-//                        "Satellite",
-//                        "http://labs.metacarta.com/wms-c/Basic.py?",
-//                        {layers: 'satellite'},
-//                        {wrapDateLine: true}
-//                    );
-                    var satelliteLayer = new OpenLayers.Layer.Google(
-                        "Google Hybrid Map" ,
-                        {type: G_HYBRID_MAP, 'sphericalMercator': false}
+                    map.addLayer(gmap);
+                    var gsat = new OpenLayers.Layer.Google(
+                        "Google Satellite",
+                        {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels: 22}
                     );
-
-                    map.addLayers([satelliteLayer,baseLayer]); //  blueMarbleLayer
-                    //                var gphy = new OpenLayers.Layer.Google(
-                    //                    "Google Physical",
-                    //                    {type: G_PHYSICAL_MAP,'sphericalMercator': true}
-                    //                );
-                    //                var gmap = new OpenLayers.Layer.Google(
-                    //                    "Google Streets", // the default
-                    //                    {numZoomLevels: 20,'sphericalMercator': true}
-                    //                );
-                    //                map.addLayers([satellite, gphy, gmap]);
+                    map.addLayer(gsat);
+                    var ghyb = new OpenLayers.Layer.Google(
+                        "Google Hybrid",
+                        {type: G_HYBRID_MAP, 'sphericalMercator': true}
+                    );
+                    map.addLayer(ghyb);
 
                     var point = new OpenLayers.LonLat(lon, lat);
                     map.setCenter(point.transform(proj4326, map.getProjectionObject()), zoom);
-                    //map.setCenter(new OpenLayers.LonLat(lon, lat), zoom);
                     // reload vector layer on zoom event
                     map.events.register('zoomend', map, function (e) {
                         drawCircleRadius();
@@ -90,37 +76,41 @@
                     map.addLayer(markerLayer);
                     markerLayer.setZIndex(1000);
 
-                    // circle showing area included in search
-
+                    // load circle showing area included in search
                     drawCircleRadius();
-                    //loadVectorLayer();
-                    loadSelectControl();
+                    // load occurrences data onto map
+                    loadRecordsLayer();
+                    // register select events on occurrence opints
+                    //loadSelectControl();
                 }
 
+                /**
+                 * Load the occurrence records & display as points on map
+                 */
                 function loadRecordsLayer(taxa, rank) {
+                    // remove existing data if present
                     if (vectorLayer != null) {
                         vectorLayer.destroy();
                         vectorLayer = null;
                     }
 
+                    // configuring the styling of the vetor layer
                     var myStyles = new OpenLayers.StyleMap({
                         "default": new OpenLayers.Style({
-                            pointRadius: 6, //"${'${count}'}", // sized according to count attribute
-                            fillColor: "${'${color}'}",//"#ffcc66",
+                            pointRadius: 6,
+                            fillColor: "${'${color}'}",
                             //fillColor: "#D75A25",
                             strokeColor: "${'${color}'}",
-                            fillOpacity: 0.6,
+                            fillOpacity: 0.8,
                             graphicZIndex: "${'${count}'}",
                             strokeWidth: 0
                         })
                     });
 
+                    // URL for GeoJSON web service
                     var geoJsonUrl = "${pageContext.request.contextPath}/geojson/radius-points"; //+"&zoom=4&callback=?";
-                    //var zoomLevel = map.getZoom();
-
+                    // request params for ajax geojson call
                     var params = {
-                        //q: "${query}",
-                        //zoom: zoomLevel
                         "taxa": taxa,
                         "rank": rank,
                         "lat": ${latitude},
@@ -136,7 +126,7 @@
                     //var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td><td style="width:50px;background-color:#ffff00;">1&ndash;9</td><td style="width:50px;background-color:#ffcc00;">10&ndash;49</td><td style="width:50px;background-color:#ff9900;">50&ndash;99</td><td style="width:50px;background-color:#ff6600;">100&ndash;249</td><td style="width:50px;background-color:#ff3300;">250&ndash;499</td><td style="width:50px;background-color:#cc0000;">500+</td></tr></table>';
 
                     vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
-                        projection: proj4326,
+                        projection: map.baseLayer.projection,
                         styleMap: myStyles,
                         rendererOptions: {zIndexing: true},
                         //attribution: legend,
@@ -181,6 +171,9 @@
                     }
                 }
 
+                /**
+                 * Register select event on occurrence points
+                 */
                 function loadSelectControl() {
                     if (selectControl != null) {
                         map.removeControl(selectControl);
@@ -195,19 +188,22 @@
                     });
 
                     map.addControl(selectControl);
-                    //selectControl.activate();  // errors on map re-size/zoom change so commented-out for now
+                    selectControl.activate();  // errors on map re-size/zoom change so commented-out for now
                 }
 
+                /**
+                 * Draw a circle representing the area included in occurrence records search
+                 */
                 function drawCircleRadius() {
                     if (circleLayer != null) {
                         circleLayer.destroy();
                         circleLayer = null;
                     }
 
-                    circleLayer = new OpenLayers.Layer.Vector("Cirlce", {projection: proj4326});
+                    circleLayer = new OpenLayers.Layer.Vector("Cirlce", {projection: map.getProjectionObject()});
                     var point = new OpenLayers.Geometry.Point(lon, lat);
                     var DOTS_PER_UNIT = OpenLayers.INCHES_PER_UNIT.km * OpenLayers.DOTS_PER_INCH;
-                    var rad = ${radius} * DOTS_PER_UNIT / map.getScale();
+                    var rad = (${radius} * DOTS_PER_UNIT / map.getScale()) * 1.22; // hack (multiply by 1.2) to make circle the right size, determined empirically
                     var style_green = {
                         fillColor: "lightBlue",
                         fillOpacity: 0.5,
