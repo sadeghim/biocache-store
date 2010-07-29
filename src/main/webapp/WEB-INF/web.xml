@@ -104,7 +104,7 @@
         <filter-class>au.org.ala.cas.client.UriFilter</filter-class>
         <init-param>
             <param-name>filterClass</param-name>
-            <param-value>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</param-value>
+            <param-value>au.org.ala.cas.client.AlaHttpServletRequestWrapperFilter</param-value>
         </init-param>
     </filter>
 
