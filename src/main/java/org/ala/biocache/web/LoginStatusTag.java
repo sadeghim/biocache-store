@@ -14,15 +14,13 @@
  ***************************************************************************/
 package org.ala.biocache.web;
 
-import java.security.Principal;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.log4j.Logger;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
+import org.jasig.cas.client.authentication.AttributePrincipal;
 
 /**
  * Simple tag that writes out principal name if logged on or a login link if not.
@@ -43,15 +41,15 @@ public class LoginStatusTag extends TagSupport {
 	public int doStartTag() throws JspException {
 		
 		HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-		Principal principal = request.getUserPrincipal();
+		AttributePrincipal principal = (AttributePrincipal) request.getUserPrincipal();
 		String casServer = pageContext.getServletContext().getInitParameter("casServerName");
 
 		String html;
 		if (principal == null) {
 			html = "<p>You are not logged in.  <a href='" + casServer + "/cas/login?service=" + returnUrlPath + "'>Log in</a></p>\n";
 		} else {
-			String userId = ((AttributePrincipalImpl) principal).getName();
-			String email = ((AttributePrincipalImpl) principal).getAttributes().get("email").toString();
+			String userId = principal.getName();
+			String email = principal.getAttributes().get("email").toString();
 			html = "<p>You are logged as <b>" + userId + "</b> [" + email +"]</p>\n" +
 					"<input type='hidden' name='creator' value='" + userId + "'/>\n" +
 					"<input type='hidden' name='creator-email' value='" + email + "'/>\n";
