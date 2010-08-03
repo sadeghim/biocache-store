@@ -196,6 +196,8 @@ public class ExploreController {
             @RequestParam(value="longitude", required=false, defaultValue="0f") Float longitude,
             @RequestParam(value="taxa", required=false, defaultValue="") String taxa, // comma separated list
             @RequestParam(value="rank", required=false, defaultValue="") String rank,
+            @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
+			@RequestParam(value="pageSize", required=false, defaultValue ="50") Integer pageSize,
             Model model) throws Exception {
 
         String[] taxaArray = StringUtils.split(taxa, ",");
@@ -208,7 +210,7 @@ public class ExploreController {
 
         model.addAttribute("taxa", taxa);
         model.addAttribute("rank", rank);
-        List<TaxaCountDTO> species = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, taxaList, null, 0, -1, "count", "asc");
+        List<TaxaCountDTO> species = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, taxaList, null, startIndex, pageSize, "count", "asc");
         model.addAttribute("species", species);
         model.addAttribute("speciesCount", species.size());
     }

@@ -49,6 +49,25 @@ public interface SearchDao {
             Integer pageSize, String sortField, String sortDirection) throws Exception;
 
     /**
+     * Find all occurrences for a given (full text) query, latitude, longitude & radius (km). I.e.
+     * a full-text spatial query.
+     *
+     * @param query
+     * @param filterQuery
+     * @param lat
+     * @param lon
+     * @param radius
+     * @param startIndex
+     * @param pageSize
+     * @param sortField
+     * @param sortDirection
+     * @return
+     * @throws Exception
+     */
+    SearchResultDTO findByFulltextSpatialQuery(String query, String[] filterQuery, Float lat, Float lon,
+            Integer radius, Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception;
+
+    /**
      * Retrieve an OccurrenceDTO for a given occurrence id
      *
      * @param id

@@ -156,9 +156,9 @@ public class OccurrenceController {
 		model.addAttribute("query", query);
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
-
-		searchResult = searchDAO.findByFulltextQuery("*:*", searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
-
+        
+            searchResult = searchDAO.findByFulltextQuery("*:*", searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
+        
 		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
 		Long totalRecords = searchResult.getTotalRecords();
@@ -389,6 +389,95 @@ public class OccurrenceController {
 
 		return LIST;
 
+	}
+
+    /**
+     * Spatial search for either a taxon name or full text text search
+     *
+     * @param query
+     * @param filterQuery
+     * @param startIndex
+     * @param pageSize
+     * @param sortField
+     * @param sortDirection
+     * @param radius
+     * @param latitude
+     * @param longitude
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/occurrences/searchByArea*", method = RequestMethod.GET)
+	public String occurrenceSearchByArea(
+			@RequestParam(value="q", required=true) String query,
+			@RequestParam(value="fq", required=false) String[] filterQuery,
+			@RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
+			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
+			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
+			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
+			@RequestParam(value="rad", required=false) Integer radius,
+			@RequestParam(value="lat", required=false) Float latitude,
+			@RequestParam(value="lon", required=false) Float longitude,
+			Model model)
+	throws Exception {
+
+		if (query == null || query.isEmpty()) {
+			return LIST;
+		}
+
+		SearchQuery searchQuery = new SearchQuery(query, "spatial", filterQuery);
+		searchUtils.updateTaxonConceptSearchString(searchQuery);
+
+		if (startIndex == null) {
+			startIndex = 0;
+		}
+		if (pageSize == null) {
+			pageSize = 20;
+		}
+		if (sortField.isEmpty()) {
+			sortField = "score";
+		}
+		if (sortDirection.isEmpty()) {
+			sortDirection = "asc";
+		}
+
+        if (latitude == null && longitude ==  null && radius == null && query.contains("|")) {
+            // check for lat/long/rad encoded in q param, delimited by |
+            // order is query, latitude, longitude, radius
+            String[] queryParts = StringUtils.split(query, "|", 4);
+            query = queryParts[0];
+            latitude = Float.parseFloat(queryParts[1]);
+            longitude = Float.parseFloat(queryParts[2]);
+            radius = Integer.parseInt(queryParts[3]);
+        }
+
+		SearchResultDTO searchResult = new SearchResultDTO();
+		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+        StringBuilder displayQuery = new StringBuilder(StringUtils.substringAfter(query, ":"));
+        displayQuery.append(" - within "+radius+" km of point ("+latitude+", "+longitude+")");
+		model.addAttribute("entityQuery", displayQuery.toString());
+		model.addAttribute("query", query);
+		model.addAttribute("queryJsEscaped", queryJsEscaped);
+		model.addAttribute("facetQuery", filterQuery);
+
+        searchResult = searchDAO.findByFulltextSpatialQuery(query, searchQuery.getFilterQuery(), latitude, longitude, radius, startIndex, pageSize, sortField, sortDirection);
+        
+		model.addAttribute("searchResult", searchResult);
+		Long totalRecords = searchResult.getTotalRecords();
+		model.addAttribute("totalRecords", totalRecords);
+		//type of search
+		model.addAttribute("type", "spatial");
+
+		if(logger.isDebugEnabled()){
+			logger.debug("Returning results set with: "+totalRecords);
+		}
+
+		if (pageSize > 0) {
+			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+			model.addAttribute("lastPage", lastPage);
+		}
+
+		return LIST;
 	}
 
 	/**

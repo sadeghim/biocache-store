@@ -211,7 +211,7 @@ th, td {
 }
 
 #loginStatus {
-	float: right;
+    float: right;
     margin:0;
     margin-right: 10px;
     padding:0;
@@ -872,8 +872,6 @@ table.propertyTable td.propertyNames {
     -webkit-border-radius: 0 0 8px 8px; /* Saf3+, Chrome */
     border-radius: 0 0 8px 8px; /* Opera 10.5, IE 9 */
     padding: 2px 0;
-/*    overflow: hidden;
-    max-height: 300px;*/
 }
 #taxaBox #rightList {
     float: right;
@@ -897,7 +895,6 @@ table.propertyTable td.propertyNames {
     overflow: auto;
     overflow-y: auto;
     overflow-x: hidden;
-     /*height: 24.6em;260px;*/
     height: 250px; /* 290px; */
     background-color: #E8EACE;
     padding: 2px 4px;
@@ -916,6 +913,9 @@ table.propertyTable td.propertyNames {
     margin-bottom: 4px;
     width: 100%;
 }
+#taxa-level-0 thead {
+    border-bottom: 2px solid #E8EACE;
+}
 #taxaBox #taxa-level-1 tbody td {
     margin: 0;
     padding: 0;
@@ -927,14 +927,13 @@ table.propertyTable td.propertyNames {
     background-color: #FAFBF5;
 }
 
-
 #download { float: right; }
 #taxaBox p {
     margin-bottom: 5px;
 }
 #address {
     width: 350px;
-    padding: 2px 4px;
+    padding: 2px 2px;
     margin-right: 5px;
 }
 #locationInput, #locationInfo {
@@ -949,12 +948,13 @@ table.propertyTable td.propertyNames {
     -webkit-border-radius: 8px 8px 0 0; /* Saf3+, Chrome */
     border-radius: 8px 8px 0 0; /* Opera 10.5, IE 9 */
 }
-#locationInput h5 { padding: 2px 0 4px 0; }
-#locationInfo {
-    
+#locationInput h4 {
+    color: #FF5D00;
+    padding-bottom: 5px;
 }
+#locationInfo { }
 #locationInfo { background-color: #FAFBF5 }
-#locationInfo p { padding: 3px 0; }
+#locationInfo p { padding: 2px 0; }
 
 /* YUI modifications */
 div.yui-dt > table {

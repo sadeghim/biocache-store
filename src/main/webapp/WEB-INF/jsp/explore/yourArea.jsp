@@ -14,7 +14,7 @@
             <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensorfalse&amp;key=${googleKey}" type="text/javascript"></script>
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>
             <script type="text/javascript">
-                /* Openlayers vars - ${param['radius']} */
+                // Global variables for Openlayers
                 var lon = ${longitude};
                 var lat = ${latitude};
                 //make the taxa and rank global variable so that they can be used in the download
@@ -26,7 +26,10 @@
                 var geocoder;
                 var proj900913 = new OpenLayers.Projection("EPSG:900913");
                 var proj4326 = new OpenLayers.Projection("EPSG:4326");
-                /* Openlayers map */
+
+                /**
+                 * Openlayers map
+                 */
                 function loadMap() {
                     // create OpenLayers map object
                     map = new OpenLayers.Map('yourMap',{maxResolution: 2468,controls: []});
@@ -34,7 +37,7 @@
                     map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled:false}));
                     map.addControl(new OpenLayers.Control.ZoomPanel());
                     map.addControl(new OpenLayers.Control.PanPanel());
-                    map.addControl(new OpenLayers.Control.LayerSwitcher());
+                    map.addControl(new OpenLayers.Control.LayerSwitcher({ascending: false}));
                     //map.addControl(new OpenLayers.Control.OverviewMap());
                     // create Google base layers
                     var gmap = new OpenLayers.Layer.Google(
@@ -42,17 +45,18 @@
                         {'sphericalMercator': true,
                         maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34)}
                     );
-                    map.addLayer(gmap);
+                    //map.addLayer(gmap);
                     var gsat = new OpenLayers.Layer.Google(
                         "Google Satellite",
                         {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels: 22}
                     );
-                    map.addLayer(gsat);
+                    //map.addLayer(gsat);
                     var ghyb = new OpenLayers.Layer.Google(
                         "Google Hybrid",
-                        {type: G_HYBRID_MAP, 'sphericalMercator': true}
+                        {'sphericalMercator': true, maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34), type: G_HYBRID_MAP}
                     );
-                    map.addLayer(ghyb);
+                    //map.addLayer(ghyb);
+                    map.addLayers([ghyb, gsat, gmap ]);
 
                     var point = new OpenLayers.LonLat(lon, lat);
                     map.setCenter(point.transform(proj4326, map.getProjectionObject()), zoom);
@@ -97,11 +101,10 @@
                     // configuring the styling of the vetor layer
                     var myStyles = new OpenLayers.StyleMap({
                         "default": new OpenLayers.Style({
-                            pointRadius: 6,
+                            pointRadius: 4,
                             fillColor: "${'${color}'}",
-                            //fillColor: "#D75A25",
                             strokeColor: "${'${color}'}",
-                            fillOpacity: 0.8,
+                            fillOpacity: 0.7,
                             graphicZIndex: "${'${count}'}",
                             strokeWidth: 0
                         })
@@ -117,14 +120,13 @@
                         "long":  ${longitude},
                         "radius": ${radius}
                     };
-
+                    // projection options
                     var proj_options = {
                         'internalProjection': map.baseLayer.projection,
                         'externalProjection': proj4326
                     };
                     
-                    //var legend = '<table id="cellCountsLegend"><tr><td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td><td style="width:50px;background-color:#ffff00;">1&ndash;9</td><td style="width:50px;background-color:#ffcc00;">10&ndash;49</td><td style="width:50px;background-color:#ff9900;">50&ndash;99</td><td style="width:50px;background-color:#ff6600;">100&ndash;249</td><td style="width:50px;background-color:#ff3300;">250&ndash;499</td><td style="width:50px;background-color:#cc0000;">500+</td></tr></table>';
-
+                    // create vector layer for occurrence points
                     vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
                         projection: map.baseLayer.projection,
                         styleMap: myStyles,
@@ -142,11 +144,86 @@
                     vectorLayer.refresh();
                     markerLayer.setZIndex(1000); // so pin icon isn't covered with points
                 }
+                
+                /**
+                 * Draw a circle representing the area included in occurrence records search
+                 */
+                function drawCircleRadius() {
+                    if (circleLayer != null) {
+                        circleLayer.destroy();
+                        circleLayer = null;
+                    }
 
-                function onPopupClose(evt) {
-                    selectControl.unselect(selectedFeature);
+                    circleLayer = new OpenLayers.Layer.Vector("Cirlce", {projection: map.getProjectionObject()});
+                    var point = new OpenLayers.Geometry.Point(lon, lat);
+                    //alert('proj = '+map.getProjectionObject());
+                    var DOTS_PER_UNIT = OpenLayers.INCHES_PER_UNIT.km * OpenLayers.DOTS_PER_INCH;
+                    
+                    var rad = ${radius} * DOTS_PER_UNIT / map.getScale(); 
+                    // add fudge factor for spherical mercapter projection (Google maps)
+                    // function was determined using http://www.xuru.org/rt/NLR.asp
+                    // works well for middle latitidues but is abit out for Hobart and Darwin
+                    if (map.getProjectionObject() == "EPSG:900913") {
+                        // (Math.pow(1.005940831, Math.abs(lat))
+                        // (0.3534329364 * Math.log(Math.abs(lat))
+                        // (Math.pow(Math.abs(lat), 0.55373737645) 
+                        rad = rad * (Math.pow(1.005940831, Math.abs(lat)));
+                    }
+                    var style_green = {
+                        fillColor: "lightBlue",
+                        fillOpacity: 0.1,
+                        strokeColor: "lightBlue",
+                        strokeOpacity: 0.8,
+                        strokeWidth: 1,
+                        //graphicZIndex: 10,
+                        pointRadius: rad
+                        //pointerEvents: "visiblePainted"
+                    };
+                    var pointFeature = new OpenLayers.Feature.Vector(point.transform(proj4326, map.getProjectionObject()),{},style_green);
+                    //pointFeature.transform(proj4326, map.getProjectionObject());
+                    circleLayer.addFeatures([pointFeature]);
+                    map.addLayer(circleLayer);
+                    //circleLayer.setZIndex(10);
+                }
+                
+                /**
+                 * Geocode location via Google Maps API
+                 */
+                function addAddressToPage(response) {
+                    //map.clearOverlays();
+                    if (!response || response.Status.code != 200) {
+                        alert("Sorry, we were unable to geocode that address");
+                    } else {
+                        var location = response.Placemark[0];
+                        var lat = location.Point.coordinates[1]
+                        var lon = location.Point.coordinates[0];
+                        var locationStr = response.Placemark[0].address;
+                        $('input#location').val(locationStr);
+                        $('input#latitude').val(lat);
+                        $('input#longitude').val(lon);
+                        $('form#searchForm').submit();
+                    }
                 }
 
+                /**
+                 * Reverse geocode coordinates via Google Maps API
+                 */
+                function codeAddress(reverseGeocode) {
+                    var address = $('input#address').val();
+                    var lat = $('input#longitude').val();
+                    var lon = $('input#latitude').val();
+
+                    if (geocoder) {
+                        if (reverseGeocode && lat && lon) {
+                            var latLon = new GLatLng(lon,lat);
+                            geocoder.getLocations(latLon, addAddressToPage);
+                        }
+                        else if (address) {
+                            geocoder.getLocations(address, addAddressToPage);
+                        }
+                    }
+                }
+                
                 function onFeatureSelect(feature) {
                     selectedFeature = feature;
                     popup = new OpenLayers.Popup.FramedCloud("chicken", feature.geometry.getBounds().getCenterLonLat(),
@@ -161,6 +238,10 @@
                     map.removePopup(feature.popup);
                     feature.popup.destroy();
                     feature.popup = null;
+                }
+
+                function onPopupClose(evt) {
+                    selectControl.unselect(selectedFeature);
                 }
 
                 function destroyMap() {
@@ -192,85 +273,118 @@
                 }
 
                 /**
-                 * Draw a circle representing the area included in occurrence records search
+                 * Process the JSON data from an AJAX request (species in area)
                  */
-                function drawCircleRadius() {
-                    if (circleLayer != null) {
-                        circleLayer.destroy();
-                        circleLayer = null;
-                    }
+                function processSpeciesJsonData(data, appendResults) {
+                    if (data.speciesCount > 0) {
+                        // add an ordered list to the #taxaDiv div
+                        if (!appendResults) {
+                            $('#taxaDiv').html('<ol></ol>');
+                        }
+                        
+                        var linkTitle = "display on map";
+                        var infoTitle = "view species page";
+                        var recsTitle = "view list of records";
+                        // iterate over list of species from search
+                        for (i=0;i<data.species.length;i++) {
+                            // create a list item (li) 
+                            var li = '<li><span><a id="taxon_name" class="taxonBrowse2" title="'+linkTitle+'" href="'+
+                                    data.species[i].name+'"><i>'+data.species[i].name+'</i></a>';
+                            // add common name
+                            if (data.species[i].commonName) {
+                                li = li + ' ('+data.species[i].commonName+')';
+                            }
+                            // add link to species page (if guid is set)
+                            if (data.species[i].guid) {
+                                li = li + ' <a title="'+infoTitle+'" href="${speciesPageUrl}'+data.species[i].guid+
+                                    '"><img src="${pageContext.request.contextPath}/static/css/images/page_white_go.png" alt="species page icon" style="margin-bottom:-3px;"/></a>';
+                            }
+                            // add number of records
+                            li = li + ' - '+data.species[i].count+' records <a href="${pageContext.request.contextPath}/occurrences/searchByArea?q=taxon_name:'+data.species[i].name+
+                                '|'+$('input#latitude').val()+'|'+$('input#longitude').val()+'|'+$('select#radius').val()+'" class="" title="'+
+                                recsTitle+'"><img src="${pageContext.request.contextPath}/static/css/images/database_go.png" '+
+                                'alt="search list icon" style="margin-bottom:-3px;"/></a></span></li>';
+                            // write list item to page
+                            $('#taxa-level-1 #taxaDiv ol').append(li);
+                        }
 
-                    circleLayer = new OpenLayers.Layer.Vector("Cirlce", {projection: map.getProjectionObject()});
-                    var point = new OpenLayers.Geometry.Point(lon, lat);
-                    var DOTS_PER_UNIT = OpenLayers.INCHES_PER_UNIT.km * OpenLayers.DOTS_PER_INCH;
-                    var rad = (${radius} * DOTS_PER_UNIT / map.getScale()) * 1.22; // hack (multiply by 1.2) to make circle the right size, determined empirically
-                    var style_green = {
-                        fillColor: "lightBlue",
-                        fillOpacity: 0.5,
-                        strokeColor: "lightBlue",
-                        strokeOpacity: 1,
-                        strokeWidth: 1,
-                        //graphicZIndex: 10,
-                        pointRadius: rad
-                        //pointerEvents: "visiblePainted"
-                    };
-                    var pointFeature = new OpenLayers.Feature.Vector(point.transform(proj4326, map.getProjectionObject()),{},style_green);
-                    //pointFeature.transform(proj4326, map.getProjectionObject());
-                    circleLayer.addFeatures([pointFeature]);
-                    map.addLayer(circleLayer);
-                    //circleLayer.setZIndex(10);
-                }
-
-                function addAddressToPage(response) {
-                    //map.clearOverlays();
-                    if (!response || response.Status.code != 200) {
-                        alert("Sorry, we were unable to geocode that address");
+                        if (data.species.length == 50) {
+                            // add load more link
+                            var newStart = $('#taxaDiv ol li').length;
+                            $('#taxa-level-1 #taxaDiv ol').after('<div id="loadMoreSpecies">&nbsp;<a href="'+newStart+'">Show more species</a></div>');
+                        }
+                        // Register onClick for "load more species" link
+                        $('#loadMoreSpecies a').click(
+                            function(e) {
+                                e.preventDefault(); // ignore the href text - used for data
+                                var start = $(this).attr('href');
+                                //alert("start = "+start);
+                                //console.log("start = "+start);
+                                // AJAX...
+                                var uri = "${pageContext.request.contextPath}/explore/species.json";
+                                var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank="+rank+"&start="+start;
+                                //$('#taxaDiv').html('[loading...]');
+                                $('#loadMoreSpecies').detach(); // delete it
+                                $.getJSON(uri + params, function(data) {
+                                    // process JSON data from request
+                                    processSpeciesJsonData(data, true);
+                                });
+                            }
+                        );
+                    } else if (appendResults) {
+                        $('#taxaDiv').after('');
                     } else {
-                        var location = response.Placemark[0];
-                        var lat = location.Point.coordinates[1]
-                        var lon = location.Point.coordinates[0];
-                        var locationStr = response.Placemark[0].address;
-                        $('input#location').val(locationStr);
-                        $('input#latitude').val(lat);
-                        $('input#longitude').val(lon);
-                        $('form#searchForm').submit();
+                        $('#taxaDiv').html('[no species found]');
                     }
+
+                    // highlight the active/current taxa/group
+                    $('#taxa-level-1 tbody td').addClass("activeRow");
+                    // Register clicks for the list of species links so that map changes
+                    $('a.taxonBrowse2').click(function(e) {
+                        e.preventDefault(); // ignore the href text - used for data
+                        var taxon = $(this).attr('href');
+                        rank = $(this).attr('id');
+                        taxa = []; // array of taxa
+                        taxa = (taxon.contains("|")) ? taxon.split("|") : taxon;
+                        
+                        $('#taxaDiv li').removeClass("activeRow2"); // un-highlight previous current taxon
+                        $(this).parent().parent().addClass("activeRow2"); // highloght current taxon
+                        loadRecordsLayer(taxa, rank);
+                    });
+
+                    // temp link for recrord search. TODO delete me when implemented
+                    $('a.recordsLink').click(function(e) {
+                        e.preventDefault();
+                        alert("Not avaiable yet, sorry.");
+                    });
                 }
 
-                function codeAddress(coordinates) {
-                    var address = $('input#address').val();
-                    var lat = $('input#longitude').val();
-                    var lon =$('input#latitude').val();
-
-                    if (geocoder) {
-                        if (coordinates && lat && lon) {
-                            var latLon = new GLatLng(lon,lat);
-                            geocoder.getLocations(latLon, addAddressToPage);
-                        }
-                        else if (address) {
-                            geocoder.getLocations(address, addAddressToPage);
-                        }
-                    }
-                }
-
+                /**
+                 * Document onLoad event using JQuery
+                 */
                 $(document).ready(function() {
-                    // re-call function to tweak with search input
+                    // re-call (skin) JS function to tweak with search input
                     greyInitialValues();
-                    // load OpenLayers map
-                    loadMap();
+                    // instantiate GClientGeocoder
                     geocoder = new GClientGeocoder(); //new google.maps.Geocoder();
                     geocoder.setBaseCountryCode("AU");
+                    // initial page load without params - geocode address
+                    var location = $('input#location').val();
+                    if (location == null || location == '') {
+                        // geocode the provided address
+                        codeAddress();
+                    } else {
+                        // load OpenLayers map
+                        loadMap();
+                    }
+                    
                     // catch the link on the taxon groups table
                     $('.taxonBrowse').click(function(e) {
                         e.preventDefault(); // ignore the href text - used for data
                         var taxon = $(this).attr('href');
                         rank = $(this).attr('id');
                         taxa = []; // array of taxa
-                        if (taxon.contains("|")) {
-                            taxa = taxon.split("|");
-                        } else {
-                            taxa[0] = taxon;
-                        }
+                        taxa = (taxon.contains("|")) ? taxon.split("|") : taxon;
                         //Internet Explorer for Windows versions up to and including 7 don’t support the value inherit.(http://reference.sitepoint.com/css/background-color)
                         $('.taxonBrowse').parent().parent().removeClass("activeRow"); //css('background-color','white');
                         $(this).parent().parent().addClass("activeRow"); //css('background-color','#E8EACE');
@@ -282,64 +396,15 @@
                         var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank="+rank;
                         $('#taxaDiv').html('[loading...]');
                         $.getJSON(uri + params, function(data) {
-                            //alert(data.rank + "|" + data.taxa)
-                            //$('#taxa-level-1 tbody:last').html('<tr></tr>');
-                            if (data.speciesCount > 0) {
-                                //$('#taxa-level-1 tbody:last tr:last').html('<td>'+data.species[0].name+' ('+data.species[0].count+')</td>');
-                                $('#taxaDiv').html('<ol></ol>');
-                                var linkTitle = "display on map";
-                                var infoTitle = "view species page";
-                                for (i=0;i<data.species.length;i++) {
-                                    //$('#taxa-level-1 tr:last').after('<tr><td>'+data.species[i].name+' ('+data.species[i].count+')</td></tr>');
-                                    if(data.species[i].guid===null){
-                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><a id="taxon_name" class="taxonBrowse2" title="'+linkTitle+'" href="'+
-                                            data.species[i].name+'"><i>'+data.species[i].name+'</i></a> '+
-                                            //'<a href="">(i)</a> '+
-                                            '('+data.species[i].count+' records)</span></li>');
-                                    }
-                                    else if(!data.species[i].commonName){ //<a href="Amphibia" id="class" class="taxonBrowse">
-                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><a id="taxon_name" class="taxonBrowse2"  title="'+linkTitle+'" href="'+
-                                            data.species[i].name+'"><i>'+data.species[i].name+'</i></a> '+
-                                            '(<a title="'+infoTitle+'" href="${speciesPageUrl}'+data.species[i].guid+'">info</a>) '+
-                                            '('+data.species[i].count+' records)</span></li>');
-
-                                    }
-                                    else{
-                                        $('#taxa-level-1 #taxaDiv ol').append('<li><span><a id="taxon_name" class="taxonBrowse2"  title="'+linkTitle+'" href="'+
-                                            data.species[i].name+'"><i>'+data.species[i].name+'</i></a> - '+data.species[i].commonName+' '+
-                                            '(<a title="'+infoTitle+'" href="${speciesPageUrl}'+data.species[i].guid+'">info</a>) '+
-                                            '('+data.species[i].count+' records)</span></li>');
-                                    }
-                                }
-                            } else {
-                                $('#taxaDiv').html('[no species found]');
-                            }
-                            
-                            $('#taxa-level-1 tbody td').addClass("activeRow");
-                            // Register clicks for the list of species links so that map changes
-                            $('a.taxonBrowse2').click(function(e) {
-                                e.preventDefault(); // ignore the href text - used for data
-                                var taxon = $(this).attr('href');
-                                rank = $(this).attr('id');
-                                taxa = []; // array of taxa
-
-                                if (taxon.contains("|")) {
-                                    taxa = taxon.split("|");
-                                } else {
-                                    taxa[0] = taxon;
-                                }
-
-                                $('#taxaDiv li').removeClass("activeRow2"); // un-highlight previous current taxon
-                                $(this).parent().parent().addClass("activeRow2"); // highloght current taxon
-                                loadRecordsLayer(taxa, rank);
-                            });
-
+                            // process JSON data from request
+                            processSpeciesJsonData(data);
                         });
                     });
 
                     // By default show the all records group
                     $('#taxa-level-0 tbody td:first a.taxonBrowse').click();
 
+                    // register click event on download button
                     $("button#download").click(
                         function(e){
                             e.preventDefault();
@@ -352,6 +417,7 @@
                         }
                     );
 
+                    // register click event on "Search" button"
                     $('input#locationSearch').click(
                         function(e) {
                             e.preventDefault(); // ignore the href text - used for data
@@ -359,32 +425,17 @@
                         }
                     );
 
-                    $('input#coordSearch').click(
-                        function(e) {
-                            e.preventDefault(); // ignore the href text - used for data
-                            $().val("");
-                            codeAddress(true);
-                        }
-                    );
-
-                    // Changing the radius will re-submit form
+                    // Register onChange event on radius drop-down - will re-submit form
                     $('select#radius').change(
                         function(e) {
                             $('form#searchForm').submit();
                         }
                     );
 
-                    // first page load - geocode address
-                    var location = $('input#location').val();
-                    //alert("location = "+location);
-                    if (location == null | location == '') {
-                        codeAddress();
-                    }
 
-                    // Set height of #taxaDiv
+                    // Dynamically set height of #taxaDiv (to match containing div height)
                     var tbodyHeight = $('#taxa-level-0 tbody').height() + 2;
-                    //alert("tbodyHeight = "+tbodyHeight);
-                    $('#taxaDiv').height(tbodyHeight);// css('height', tbodyHeight+'px');
+                    $('#taxaDiv').height(tbodyHeight);
                 });
             </script>
         </head>
@@ -415,7 +466,7 @@
                 <div id="left-col">
                     <form name="searchForm" id="searchForm" action="" method="GET" autocomplete="off">
                         <div id="locationInput">
-                            <h5>Enter your location or address:</h5>
+                            <h4>Enter your location or address:</h4>
                             <input name="address" id="address" size="50" value="${address}"/>
                             <input id="locationSearch" type="submit" value="Search"/>
                             <input type="hidden" name="latitude" id="latitude" value="${latitude}"/>
@@ -434,7 +485,6 @@
                                 </select> km radius <!--<input type="submit" value="Reload"/>-->
                                 
                         </div>
-                <!--        <p>Results - <fmt:formatNumber value="${allLifeCounts}" pattern="#,###,###"/> records found</p>-->
                         <div id="taxaBox">
                             <div id="rightList">
                                 <button id="download" title="Download displayed species as XLS (tab-delimited) file">Download</button>
@@ -442,85 +492,66 @@
                                 <div id="taxa-level-1">
                                     <div id="taxaDiv"></div>
                                 </div>
-<!--                                <table id="taxa-level-1" style="width:100%;">
-                                    <thead><tr><th style="padding-left: 15px;">Names</th></tr></thead>
-                                    <tbody><tr></tr></tbody>
-                                </table>-->
                             </div>
                             <div id="leftList">
                                 <table id="taxa-level-0">
                                     <thead>
                                         <tr>
                                             <th>Group</th>
-    <!--                                        <th>Records</th>-->
                                             <th>Count</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                             <td><a href="*" id="*" class="taxonBrowse">All Species</a>
-                                            <!-- <td><a href="../occurrences/search?q=location.search&lat=${latitude}&lon=${longitude}&rad=${radius}" title="See all ${allLifeCounts} records">${allLifeCounts}</a></td> -->
-    <!--                                        <td>${allLifeCounts}</td>-->
                                             <td>${fn:length(allLife)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent"><a href="Animalia" id="kingdom" class="taxonBrowse">Animals</a>
-    <!--                                        <td>${animalsCount}</td>-->
                                             <td>${fn:length(animals)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent2"><a href="Mammalia" id="class" class="taxonBrowse">Mammals</a></td>
-    <!--                                        <td>${mammalsCount}</td>-->
                                             <td>${fn:length(mammals)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent2"><a href="Aves" id="class" class="taxonBrowse">Birds</a></td>
-    <!--                                        <td>${birdsCount}</td>-->
                                             <td>${fn:length(birds)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Reptiles</a></td>
-    <!--                                        <td>${reptilesCount}</td>-->
                                             <td>${fn:length(reptiles)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent2"><a href="Amphibia" id="class" class="taxonBrowse">Amphibians</a></td>
-    <!--                                        <td>${frogsCount}</td>-->
                                             <td>${fn:length(frogs)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes" id="class" class="taxonBrowse">Fish</a></td>
-    <!--                                        <td>${fishCount}</td>-->
                                             <td>${fn:length(fish)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent2"><a href="Insecta" id="class" class="taxonBrowse">Insects</a></td>
-    <!--                                        <td>${insectsCount}</td>-->
                                             <td>${fn:length(insects)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent"><a href="Plantae" id="kingdom" class="taxonBrowse">Plants</a></td>
-    <!--                                        <td>${plantsCount}</td>-->
                                             <td>${fn:length(plants)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent"><a href="Fungi" id="kingdom" class="taxonBrowse">Fungi</a></td>
-    <!--                                        <td>${fungiCount}</td>-->
                                             <td>${fn:length(fungi)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent"><a href="Chromista" id="kingdom" class="taxonBrowse">Chromista</a></td>
-    <!--                                        <td>${chromistaCount}</td>-->
                                             <td>${fn:length(chromista)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent"><a href="Protozoa" id="kingdom" class="taxonBrowse">Protozoa</a></td>
-    <!--                                        <td>${protozoaCount}</td>-->
                                             <td>${fn:length(protozoa)}</td>
                                         </tr>
                                         <tr>
                                             <td class="indent"><a href="Bacteria" id="kingdom" class="taxonBrowse">Bacteria</a></td>
-    <!--                                        <td>${bacteriaCount}</td>-->
                                             <td>${fn:length(bacteria)}</td>
                                         </tr>
                                     </tbody>

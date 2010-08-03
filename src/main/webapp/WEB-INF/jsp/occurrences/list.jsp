@@ -319,8 +319,10 @@
                         <div class="solrResults">
                             <div id="searchHeader">
                                 <div id="searchButtons">
-                                    <button id="download" title="Download all ${totalHits} results as XLS (tab-delimited) file">Download</button>
-                                    <button id="showMap" title="Display a small map showing points for records">View as Map</button>
+                                    <c:if test="${!fn:contains(entityQuery, 'km of point')}"><%-- Don't display buttons on searchByArea version of page --%>
+                                        <button id="download" title="Download all ${totalHits} results as XLS (tab-delimited) file">Download</button>
+                                        <button id="showMap" title="Display a small map showing points for records">View as Map</button>
+                                    </c:if>
                                 </div>
                                 <div id="searchTerms">
                                     <div class="queryTermBox">
@@ -407,7 +409,7 @@
                         <div id="refineMore" style="display:none;"><a href="#">More Search Options</a></div>
                         <div id="accordion"  style="display:block;">
                             <c:if test="${not empty query}">
-                                <c:set var="queryParam">q=<c:out value="${query}" escapeXml="true"/><c:if
+                                <c:set var="queryParam">q=<c:out value="${param['q']}" escapeXml="true"/><c:if
                                         test="${not empty param.fq}">&fq=${fn:join(paramValues.fq, "&fq=")}</c:if></c:set>
                             </c:if>
                             <c:forEach var="facetResult" items="${searchResult.facetResults}">
