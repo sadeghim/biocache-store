@@ -885,6 +885,9 @@ table.propertyTable td.propertyNames {
 #taxaBox td, #taxaBox th {
     padding: 1px 10px 1px 4px;
 }
+#taxaBox th {
+    font-weight: bold;
+}
 #taxaBox td.indent {
     padding-left: 10px;
 }
@@ -916,17 +919,30 @@ table.propertyTable td.propertyNames {
 #taxa-level-0 thead {
     border-bottom: 2px solid #E8EACE;
 }
+div#thead {
+    font-weight: bold;
+}
 #taxaBox #taxa-level-1 tbody td {
     margin: 0;
     padding: 0;
 }
 .activeRow {
     background-color: #E8EACE;
+    font-weight: bold;
 }
 .activeRow2 {
     background-color: #FAFBF5;
 }
-
+.hoverRow {
+    cursor: pointer;
+    background-color: #E8EACE;
+    background-color:rgba(232, 234, 206, 0.6); /* does background with alpha opacity */
+}
+a.taxonBrowse, a.taxonBrowse:hover, a.taxonBrowse:focus  {
+    text-decoration: none;
+    color: #444;
+    color: inherit;
+}
 #download { float: right; }
 #taxaBox p {
     margin-bottom: 5px;

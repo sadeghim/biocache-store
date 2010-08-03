@@ -377,17 +377,27 @@
                         // load OpenLayers map
                         loadMap();
                     }
+
+                    // onMouseOver event on Group items
+                    $('a.taxonBrowse').parent().parent().hover(
+                        function() {
+                            $(this).addClass('hoverRow');
+                        },
+                        function() {
+                            $(this).removeClass('hoverRow');
+                        }
+                    );
                     
                     // catch the link on the taxon groups table
-                    $('.taxonBrowse').click(function(e) {
+                    $('.taxonBrowse').parent().parent().click(function(e) {
                         e.preventDefault(); // ignore the href text - used for data
-                        var taxon = $(this).attr('href');
-                        rank = $(this).attr('id');
+                        var taxon = $(this).find('a.taxonBrowse').attr('href'); // $(this+' a.taxonBrowse').attr('href');
+                        rank = $(this).find('a.taxonBrowse').attr('id');
                         taxa = []; // array of taxa
                         taxa = (taxon.contains("|")) ? taxon.split("|") : taxon;
                         //Internet Explorer for Windows versions up to and including 7 don’t support the value inherit.(http://reference.sitepoint.com/css/background-color)
-                        $('.taxonBrowse').parent().parent().removeClass("activeRow"); //css('background-color','white');
-                        $(this).parent().parent().addClass("activeRow"); //css('background-color','#E8EACE');
+                        $('#taxa-level-0 tr').removeClass("activeRow"); //css('background-color','white');
+                        $(this).addClass("activeRow"); //css('background-color','#E8EACE');
                         $('#taxa-level-1 tbody tr').addClass("activeRow"); //.css('background-color','#E8EACE');
                         // load records layer on map
                         loadRecordsLayer(taxa, rank);
@@ -401,7 +411,7 @@
                         });
                     });
 
-                    // By default show the all records group
+                    // By default action on page load - show the all species group (simulate a click)
                     $('#taxa-level-0 tbody td:first a.taxonBrowse').click();
 
                     // register click event on download button
@@ -431,7 +441,6 @@
                             $('form#searchForm').submit();
                         }
                     );
-
 
                     // Dynamically set height of #taxaDiv (to match containing div height)
                     var tbodyHeight = $('#taxa-level-0 tbody').height() + 2;
@@ -483,11 +492,10 @@
                                     <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
                                     <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
                                 </select> km radius <!--<input type="submit" value="Reload"/>-->
-                                
+                            <button id="download" title="Download all species as XLS (tab-delimited) file">Download</button>
                         </div>
                         <div id="taxaBox">
                             <div id="rightList">
-                                <button id="download" title="Download displayed species as XLS (tab-delimited) file">Download</button>
                                 <div id="thead">Species</div>
                                 <div id="taxa-level-1">
                                     <div id="taxaDiv"></div>
