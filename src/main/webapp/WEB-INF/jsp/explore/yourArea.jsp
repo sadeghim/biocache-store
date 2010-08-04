@@ -302,15 +302,17 @@
                                 tr = tr + ' ('+data.species[i].commonName+')';
                             }
                             // add links to species page and ocurrence search (inside hidden div)
+                            var speciesInfo = '<div class="speciesInfo">';
                             if (data.species[i].guid) {
-                                tr = tr + '<div class="speciesInfo"><a title="'+infoTitle+'" href="${speciesPageUrl}'+data.species[i].guid+
+                                speciesInfo = speciesInfo + '<a title="'+infoTitle+'" href="${speciesPageUrl}'+data.species[i].guid+
                                     '"><img src="${pageContext.request.contextPath}/static/css/images/page_white_go.png" alt="species page icon" style="margin-bottom:-3px;"/>'+
-                                    ' species profile</a> | '+
-                                    '<a href="${pageContext.request.contextPath}/occurrences/searchByArea?q=taxon_name:'+data.species[i].name+
+                                    ' species profile</a> | ';
+                            }
+                            speciesInfo = speciesInfo + '<a href="${pageContext.request.contextPath}/occurrences/searchByArea?q=taxon_name:'+data.species[i].name+
                                     '|'+$('input#latitude').val()+'|'+$('input#longitude').val()+'|'+$('select#radius').val()+'" title="'+
                                     recsTitle+'"><img src="${pageContext.request.contextPath}/static/css/images/database_go.png" '+
                                     'alt="search list icon" style="margin-bottom:-3px;"/> view records</a></div>';
-                            }
+                            tr = tr + speciesInfo;
                             // add number of records
                             tr = tr + '</td><td class="right">'+data.species[i].count+' </td></tr>';
                             // write list item to page
@@ -345,7 +347,8 @@
                         $('#rightList tbody tr#info').detach(); 
                         var info = $(this).find('.speciesInfo').html();
                         // copy contents of species into a new (tmp) row
-                        $(this).after('<tr id="info"><td><td>'+info+'<td></td></tr>');
+                        if (info)
+                            $(this).after('<tr id="info"><td><td>'+info+'<td></td></tr>');
                         // hide previous selected spceies info box
                         $(this).addClass("activeRow2"); // highloght current taxon
                         // show the links for current selected species
@@ -513,13 +516,13 @@
                             <c:if test="${not empty location}">
                                 <p>Showing records for: <b>${location}</b></p>
                             </c:if>
+                            <button id="download" title="Download all species as XLS (tab-delimited) file">Download</button>
                             <p>Display records in a
                                 <select id="radius" name="radius">
                                     <option value="1" <c:if test="${radius eq '1'}">selected</c:if>>1</option>
                                     <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
                                     <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
                                 </select> km radius <!--<input type="submit" value="Reload"/>-->
-                            <button id="download" title="Download all species as XLS (tab-delimited) file">Download</button>
                         </div>
                         <div id="taxaBox">
                             <div id="rightList" class="tableContainer">
