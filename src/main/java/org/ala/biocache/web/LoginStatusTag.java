@@ -50,7 +50,7 @@ public class LoginStatusTag extends TagSupport {
 		} else {
 			String userId = principal.getName();
 			String email = principal.getAttributes().get("email").toString();
-			html = "<p>Logged in as <b>" + userId + "</b> [" + email +"]</p>\n" +
+			html = "<p>Logged in as <b>" + userId + "</b></p>\n" +
 					"<input type='hidden' name='creator' value='" + userId + "'/>\n" +
 					"<input type='hidden' name='creator-email' value='" + email + "'/>\n";
 		}
