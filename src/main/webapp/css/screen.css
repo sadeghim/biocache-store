@@ -873,14 +873,22 @@ table.propertyTable td.propertyNames {
     border-radius: 0 0 8px 8px; /* Opera 10.5, IE 9 */
     padding: 2px 0;
 }
-#taxaBox #rightList {
+#taxaBox div#rightList {
     float: right;
-    width: 361px;
-    margin-right: 5px;
+    width: 365px;
+    padding: 0;
+    margin: 0;
+    -moz-border-radius: 0 0 6px 0; /* FF1+ */
+    -webkit-border-radius: 0 0 6px 0 ; /* Saf3+, Chrome */
+    border-radius: 0 0 6px 0; /* Opera 10.5, IE 9 */
 }
-#rightList #thead { padding: 1px 5px 1px 15px; width: 60%; }
+
+#rightList table {
+    width: 365px;
+    height: 250px;
+}
 #taxaBox #leftList {
-    width: 180px;
+    width: 181px;
 }
 #taxaBox td, #taxaBox th {
     padding: 1px 10px 1px 4px;
@@ -902,6 +910,17 @@ table.propertyTable td.propertyNames {
     background-color: #E8EACE;
     padding: 2px 4px;
 }
+#rightList tbody  {
+    height: 250px;
+    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #E8EACE;
+}
+#rightList tbody td {
+    height: auto;
+    padding: 1px 2px 1px 5px;
+}
 #taxaDiv ol, #taxaDiv ul {
     margin: 0px 1em 0.5em 2.5em;
     font-size: 11px;
@@ -912,33 +931,46 @@ table.propertyTable td.propertyNames {
 #taxaDiv li span {
     font-size: 12px;
 }
-#taxa-level-0 {
+#taxa-level-0, #rightList table {
     margin-bottom: 4px;
     width: 100%;
 }
-#taxa-level-0 thead {
+#taxa-level-0 thead, #rightList th {
     border-bottom: 2px solid #E8EACE;
-}
-div#thead {
-    font-weight: bold;
 }
 #taxaBox #taxa-level-1 tbody td {
     margin: 0;
     padding: 0;
 }
+#rightList .speciesInfo {
+    display: none;
+}
+#rightList tr#info a {
+    text-decoration: none;
+}
+#rightList .right {
+    text-align: right;
+    padding-right: 5px;
+}
 .activeRow {
     background-color: #E8EACE;
     font-weight: bold;
 }
-.activeRow2 {
+.activeRow2, tr#info {
     background-color: #FAFBF5;
 }
 .hoverRow {
     cursor: pointer;
     background-color: #E8EACE;
-    background-color:rgba(232, 234, 206, 0.6); /* does background with alpha opacity */
+    background-color: rgba(232, 234, 206, 0.6); /* does background with alpha opacity */
 }
-a.taxonBrowse, a.taxonBrowse:hover, a.taxonBrowse:focus  {
+.hoverCell {
+    cursor: pointer;
+    background-color: white;
+    /*background-color: rgba(256, 256, 256, 0.6);  does background with alpha opacity */
+}
+a.taxonBrowse, a.taxonBrowse:hover, a.taxonBrowse:focus,
+a.taxonBrowse2, a.taxonBrowse2:hover, a.taxonBrowse2:focus {
     text-decoration: none;
     color: #444;
     color: inherit;
@@ -972,6 +1004,85 @@ a.taxonBrowse, a.taxonBrowse:hover, a.taxonBrowse:focus  {
 #locationInfo { background-color: #FAFBF5 }
 #locationInfo p { padding: 2px 0; }
 
+/* Your Localtion scrollable table from: http://www.imaputz.com/cssStuff/bigFourVersion.html */
+div.tableContainer {
+/*	clear: both;*/
+	height: 265px;
+	overflow: auto;
+	width: 360px;
+        background-color: #E8EACE;
+}
+
+/* Reset overflow value to hidden for all non-IE browsers. */
+html>body div.tableContainer {
+	overflow: hidden;
+	width: 360px
+}
+
+/* define width of table. IE browsers only                 */
+div.tableContainer table {
+	float: left;
+	width: 344px
+}
+/* define width of table. Add 16px to width for scrollbar.           */
+/* All other non-IE browsers.                                        */
+html>body div.tableContainer table {
+	width: 360px
+}
+/* set table header to a fixed position. WinIE 6.x only                                       */
+/* In WinIE 6.x, any element with a position property set to relative and is a child of       */
+/* an element that has an overflow property set, the relative value translates into fixed.    */
+/* Ex: parent element DIV with a class of tableContainer has an overflow property set to auto */
+thead.fixedHeader tr {
+	position: relative;
+        width: 100%;
+        background-color: white;
+}
+
+/* set THEAD element to have block level attributes. All other non-IE browsers            */
+/* this enables overflow to work on TBODY element. All other non-IE, non-Mozilla browsers */
+html>body thead.fixedHeader tr {
+	display: block
+}
+/* define the table content to be scrollable                                              */
+/* set TBODY element to have block level attributes. All other non-IE browsers            */
+/* this enables overflow to work on TBODY element. All other non-IE, non-Mozilla browsers */
+/* induced side effect is that child TDs no longer accept width: auto                     */
+html>body tbody.scrollContent {
+	display: block;
+	height: 262px;
+	overflow: auto;
+	width: 100%
+}
+/* define width of TH elements: 1st, 2nd, and 3rd respectively.          */
+/* Add 16px to last TH for scrollbar padding. All other non-IE browsers. */
+/* http://www.w3.org/TR/REC-CSS2/selector.html#adjacent-selectors        */
+html>body thead.fixedHeader th {
+	width: 20px
+}
+
+html>body thead.fixedHeader th + th {
+	width: 320px
+}
+
+html>body thead.fixedHeader th + th + th {
+	width: 30px
+}
+
+/* define width of TD elements: 1st, 2nd, and 3rd respectively.          */
+/* All other non-IE browsers.                                            */
+/* http://www.w3.org/TR/REC-CSS2/selector.html#adjacent-selectors        */
+html>body tbody.scrollContent td {
+	width: 20px
+}
+
+html>body tbody.scrollContent td + td {
+	width: 320px
+}
+
+html>body tbody.scrollContent td + td + td {
+	width: 30px
+}
 /* YUI modifications */
 div.yui-dt > table {
     width: 100%;

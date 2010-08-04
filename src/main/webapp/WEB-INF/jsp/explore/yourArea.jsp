@@ -273,90 +273,115 @@
                 }
 
                 /**
-                 * Process the JSON data from an AJAX request (species in area)
+                 * Process the JSON data from an Species list AJAX request (species in area)
                  */
                 function processSpeciesJsonData(data, appendResults) {
+                    var rank, taxa;
+                    // clear right list unless we're paging
+                    if (!appendResults) {
+                        //$('#loadMoreSpecies').detach();
+                        $('#rightList tbody').empty();
+                    }
+                    // process JSON data
                     if (data.speciesCount > 0) {
-                        // add an ordered list to the #taxaDiv div
-                        if (!appendResults) {
-                            $('#taxaDiv').html('<ol></ol>');
-                        }
-                        
+                        var lastRow = $('#rightList tbody tr').length;
                         var linkTitle = "display on map";
                         var infoTitle = "view species page";
                         var recsTitle = "view list of records";
                         // iterate over list of species from search
                         for (i=0;i<data.species.length;i++) {
-                            // create a list item (li) 
-                            var li = '<li><span><a id="taxon_name" class="taxonBrowse2" title="'+linkTitle+'" href="'+
-                                    data.species[i].name+'"><i>'+data.species[i].name+'</i></a>';
+                            // create new table row
+                            var count = i + lastRow;
+                            // add count
+                            var tr = '<tr><td>'+(count+1)+'.</td>';
+                            // add scientific name
+                            tr = tr + '<td class="sciName"><a id="taxon_name" class="taxonBrowse2" title="'+linkTitle+'" href="'+
+                                data.species[i].name+'"><i>'+data.species[i].name+'</i></a>';
                             // add common name
                             if (data.species[i].commonName) {
-                                li = li + ' ('+data.species[i].commonName+')';
+                                tr = tr + ' ('+data.species[i].commonName+')';
                             }
-                            // add link to species page (if guid is set)
+                            // add links to species page and ocurrence search (inside hidden div)
                             if (data.species[i].guid) {
-                                li = li + ' <a title="'+infoTitle+'" href="${speciesPageUrl}'+data.species[i].guid+
-                                    '"><img src="${pageContext.request.contextPath}/static/css/images/page_white_go.png" alt="species page icon" style="margin-bottom:-3px;"/></a>';
+                                tr = tr + '<div class="speciesInfo"><a title="'+infoTitle+'" href="${speciesPageUrl}'+data.species[i].guid+
+                                    '"><img src="${pageContext.request.contextPath}/static/css/images/page_white_go.png" alt="species page icon" style="margin-bottom:-3px;"/>'+
+                                    ' species profile</a> | '+
+                                    '<a href="${pageContext.request.contextPath}/occurrences/searchByArea?q=taxon_name:'+data.species[i].name+
+                                    '|'+$('input#latitude').val()+'|'+$('input#longitude').val()+'|'+$('select#radius').val()+'" title="'+
+                                    recsTitle+'"><img src="${pageContext.request.contextPath}/static/css/images/database_go.png" '+
+                                    'alt="search list icon" style="margin-bottom:-3px;"/> view records</a></div>';
                             }
                             // add number of records
-                            li = li + ' - '+data.species[i].count+' records <a href="${pageContext.request.contextPath}/occurrences/searchByArea?q=taxon_name:'+data.species[i].name+
-                                '|'+$('input#latitude').val()+'|'+$('input#longitude').val()+'|'+$('select#radius').val()+'" class="" title="'+
-                                recsTitle+'"><img src="${pageContext.request.contextPath}/static/css/images/database_go.png" '+
-                                'alt="search list icon" style="margin-bottom:-3px;"/></a></span></li>';
+                            tr = tr + '</td><td class="right">'+data.species[i].count+' </td></tr>';
                             // write list item to page
-                            $('#taxa-level-1 #taxaDiv ol').append(li);
+                            $('#rightList tbody').append(tr);
                         }
 
                         if (data.species.length == 50) {
                             // add load more link
-                            var newStart = $('#taxaDiv ol li').length;
-                            $('#taxa-level-1 #taxaDiv ol').after('<div id="loadMoreSpecies">&nbsp;<a href="'+newStart+'">Show more species</a></div>');
+                            var newStart = $('#rightList tbody tr').length;
+                            $('#rightList tbody').append('<tr id="loadMoreSpecies"><td>&nbsp;</td><td colspan="2"><a href="'+newStart+
+                                '">Show more species</a></td></tr>');
                         }
-                        // Register onClick for "load more species" link
-                        $('#loadMoreSpecies a').click(
-                            function(e) {
-                                e.preventDefault(); // ignore the href text - used for data
-                                var start = $(this).attr('href');
-                                //alert("start = "+start);
-                                //console.log("start = "+start);
-                                // AJAX...
-                                var uri = "${pageContext.request.contextPath}/explore/species.json";
-                                var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank="+rank+"&start="+start;
-                                //$('#taxaDiv').html('[loading...]');
-                                $('#loadMoreSpecies').detach(); // delete it
-                                $.getJSON(uri + params, function(data) {
-                                    // process JSON data from request
-                                    processSpeciesJsonData(data, true);
-                                });
-                            }
-                        );
+                        
                     } else if (appendResults) {
-                        $('#taxaDiv').after('');
+                        // do nothing
                     } else {
-                        $('#taxaDiv').html('[no species found]');
+                        // no spceies were found (either via paging or clicking on taxon group
+                        var text = '<tr><td></td><td colspan="2">[no species found]</td></tr>';
+                        $('#rightList tbody').append(text);
                     }
 
-                    // highlight the active/current taxa/group
-                    $('#taxa-level-1 tbody td').addClass("activeRow");
                     // Register clicks for the list of species links so that map changes
-                    $('a.taxonBrowse2').click(function(e) {
+                    $('#rightList tbody tr').click(function(e) {
                         e.preventDefault(); // ignore the href text - used for data
-                        var taxon = $(this).attr('href');
-                        rank = $(this).attr('id');
+                        var taxon = $(this).find('a.taxonBrowse2').attr('href');
+                        rank = $(this).find('a.taxonBrowse2').attr('id');
                         taxa = []; // array of taxa
                         taxa = (taxon.contains("|")) ? taxon.split("|") : taxon;
-                        
-                        $('#taxaDiv li').removeClass("activeRow2"); // un-highlight previous current taxon
-                        $(this).parent().parent().addClass("activeRow2"); // highloght current taxon
+                        //$(this).unbind('click'); // activate links inside this row
+                        $('#rightList tbody tr').removeClass("activeRow2"); // un-highlight previous current taxon
+                        // remove previous species info row
+                        $('#rightList tbody tr#info').detach(); 
+                        var info = $(this).find('.speciesInfo').html();
+                        // copy contents of species into a new (tmp) row
+                        $(this).after('<tr id="info"><td><td>'+info+'<td></td></tr>');
+                        // hide previous selected spceies info box
+                        $(this).addClass("activeRow2"); // highloght current taxon
+                        // show the links for current selected species
                         loadRecordsLayer(taxa, rank);
                     });
 
-                    // temp link for recrord search. TODO delete me when implemented
-                    $('a.recordsLink').click(function(e) {
-                        e.preventDefault();
-                        alert("Not avaiable yet, sorry.");
-                    });
+                    // Register onClick for "load more species" link
+                    $('#loadMoreSpecies a').click(
+                        function(e) {
+                            e.preventDefault(); // ignore the href text - used for data
+                            var taxon = $('#taxa-level-0 tr.activeRow').find('a.taxonBrowse').attr('href');
+                            rank = $('#taxa-level-0 tr.activeRow').find('a.taxonBrowse').attr('id');
+                            taxa = []; // array of taxa
+                            taxa = (taxon.contains("|")) ? taxon.split("|") : taxon;
+                            var start = $(this).attr('href');
+                            // AJAX...
+                            var uri = "${pageContext.request.contextPath}/explore/species.json";
+                            var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank="+rank+"&start="+start;
+                            //$('#taxaDiv').html('[loading...]');
+                            $('#loadMoreSpecies').detach(); // delete it
+                            $.getJSON(uri + params, function(data) {
+                                // process JSON data from request
+                                processSpeciesJsonData(data, true);
+                            });
+                        }
+                    );
+                    
+                    // add hover effect to table cell with scientific names
+                    $('#rightList tbody tr').hover(
+                        function() {
+                            $(this).addClass('hoverCell');
+                        },
+                        function() {
+                            $(this).removeClass('hoverCell');
+                        }
+                    );
                 }
 
                 /**
@@ -379,7 +404,7 @@
                     }
 
                     // onMouseOver event on Group items
-                    $('a.taxonBrowse').parent().parent().hover(
+                    $('#taxa-level-0 tr').hover(
                         function() {
                             $(this).addClass('hoverRow');
                         },
@@ -389,16 +414,15 @@
                     );
                     
                     // catch the link on the taxon groups table
-                    $('.taxonBrowse').parent().parent().click(function(e) {
+                    $('#taxa-level-0 tr').click(function(e) {
                         e.preventDefault(); // ignore the href text - used for data
                         var taxon = $(this).find('a.taxonBrowse').attr('href'); // $(this+' a.taxonBrowse').attr('href');
                         rank = $(this).find('a.taxonBrowse').attr('id');
                         taxa = []; // array of taxa
                         taxa = (taxon.contains("|")) ? taxon.split("|") : taxon;
-                        //Internet Explorer for Windows versions up to and including 7 don’t support the value inherit.(http://reference.sitepoint.com/css/background-color)
-                        $('#taxa-level-0 tr').removeClass("activeRow"); //css('background-color','white');
-                        $(this).addClass("activeRow"); //css('background-color','#E8EACE');
-                        $('#taxa-level-1 tbody tr').addClass("activeRow"); //.css('background-color','#E8EACE');
+                        $('#taxa-level-0 tr').removeClass("activeRow"); 
+                        $(this).addClass("activeRow"); 
+                        $('#taxa-level-1 tbody tr').addClass("activeRow"); 
                         // load records layer on map
                         loadRecordsLayer(taxa, rank);
                         // AJAX...
@@ -443,8 +467,11 @@
                     );
 
                     // Dynamically set height of #taxaDiv (to match containing div height)
-                    var tbodyHeight = $('#taxa-level-0 tbody').height() + 2;
-                    $('#taxaDiv').height(tbodyHeight);
+                    var tableHeight = $('#taxa-level-0').height();
+                    $('#rightList table').height(tableHeight+2);
+                    $('.tableContainer').height(tableHeight+8);
+                    var tbodyHeight = $('#taxa-level-0 tbody').height();
+                    $('#rightList tbody').height(tbodyHeight);
                 });
             </script>
         </head>
@@ -495,11 +522,22 @@
                             <button id="download" title="Download all species as XLS (tab-delimited) file">Download</button>
                         </div>
                         <div id="taxaBox">
-                            <div id="rightList">
-                                <div id="thead">Species</div>
+                            <div id="rightList" class="tableContainer">
+                                <table>
+                                    <thead class="fixedHeader">
+                                        <tr>
+                                            <th>&nbsp;</th>
+                                            <th>Species</th>
+                                            <th>Records</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="scrollContent">
+                                    </tbody>
+                                </table>
+<!--                                <div id="thead">Species</div>
                                 <div id="taxa-level-1">
                                     <div id="taxaDiv"></div>
-                                </div>
+                                </div>-->
                             </div>
                             <div id="leftList">
                                 <table id="taxa-level-0">
