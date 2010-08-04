@@ -580,16 +580,22 @@ public class AnnotationController {
     	}
 	}
 
+	/**
+	 * If creator's email is supplied then return it otherwise return name.  An anonymous user will have no email address.
+	 * 
+	 * @param creator
+	 * @return email or name.
+	 */
 	private String formatCreator(String creator) {
 		String pattern = " | mailto:";
 		String name = creator.substring(0, creator.indexOf(pattern));
 		String email = creator.substring(creator.indexOf(pattern) + pattern.length());
 		
-		StringBuilder sb = new StringBuilder(name);
-		if (!email.equalsIgnoreCase("null") && !email.equals("")) {
-			sb.append(" [" + email + "]");
+		if (email.equalsIgnoreCase("null") || email.equals("")) {
+			return name;
+		} else {
+			return email;
 		}
-		return sb.toString();
 	}
 
 	/**
