@@ -159,12 +159,12 @@ public class SearchDaoImpl implements SearchDao {
         logger.debug("There are " + species.size() + "records being downloaded");
         CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), '\t', '"');
         csvWriter.writeNext(new String[]{
-            		"GUID",
-                        "Kingdom",
-                        "Familiy",
+            		"Globally Unique Identifier (GUID)",
+                    "Kingdom",
+                    "Familiy",
             		"Scientific Name",
             		"CommonName",
-                        "Count",
+                    "Count",
         });
         int count = 0;
         for (TaxaCountDTO item : species) {

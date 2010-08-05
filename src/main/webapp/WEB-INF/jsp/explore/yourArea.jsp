@@ -13,6 +13,8 @@
             <title>Explore Your Area</title>
             <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensorfalse&amp;key=${googleKey}" type="text/javascript"></script>
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>
+            <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
+            <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8">
             <script type="text/javascript">
                 // Global variables for Openlayers
                 var lon = ${longitude};
@@ -310,7 +312,7 @@
                             speciesInfo = speciesInfo + '<a href="${pageContext.request.contextPath}/occurrences/searchByArea?q=taxon_name:'+data.species[i].name+
                                     '|'+$('input#latitude').val()+'|'+$('input#longitude').val()+'|'+$('select#radius').val()+'" title="'+
                                     recsTitle+'"><img src="${pageContext.request.contextPath}/static/css/images/database_go.png" '+
-                                    'alt="search list icon" style="margin-bottom:-3px;"/> view records</a></div>';
+                                    'alt="search list icon" style="margin-bottom:-3px;"/> list of records</a></div>';
                             tr = tr + speciesInfo;
                             // add number of records
                             tr = tr + '</td><td class="right">'+data.species[i].count+' </td></tr>';
@@ -446,10 +448,10 @@
                             e.preventDefault();
                             var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank=" + rank;
                             //alert("URL is " + downloadUrl);
-                            if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
-                                window.location.replace(downloadUrl);
-                            }
-
+                            //if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
+                            //    window.location.replace(downloadUrl);
+                            //}
+                            $("#dialog-confirm").dialog('open');
                         }
                     );
 
@@ -474,7 +476,26 @@
                     $('.tableContainer').height(tableHeight+8);
                     var tbodyHeight = $('#taxa-level-0 tbody').height();
                     $('#rightList tbody').height(tbodyHeight);
-                });
+                    
+                    // Configure Dialog box (JQuery UI)
+                    $("#dialog-confirm").dialog({
+                        resizable: false,
+                        //height:140,
+                        modal: true,
+                        autoOpen: false,
+                        buttons: {
+                            'Download file': function() {
+                                var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank=" + rank;
+                                window.location.replace(downloadUrl);
+                                $(this).dialog('close');
+                            },
+                            Cancel: function() {
+                                $(this).dialog('close');
+                            }
+                        }
+                    });
+                    
+                }); // End: $(document).ready() function
             </script>
         </head>
         <body>
@@ -516,6 +537,10 @@
                                 <p>Showing records for: <b>${location}</b></p>
                             </c:if>
                             <button id="download" title="Download all species as XLS (tab-delimited) file">Download</button>
+                            <div id="dialog-confirm" title="Continue with download?">
+                                <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>You are about to
+                                    download a list of species found within a ${radius} km radius of <code>${location}</code>.<br/>Format: tab-delimited text file (called data.xls)</p>
+                            </div>
                             <p>Display records in a
                                 <select id="radius" name="radius">
                                     <option value="1" <c:if test="${radius eq '1'}">selected</c:if>>1</option>
