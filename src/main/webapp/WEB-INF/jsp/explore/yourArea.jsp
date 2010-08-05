@@ -20,7 +20,7 @@
                 var lon = ${longitude};
                 var lat = ${latitude};
                 //make the taxa and rank global variable so that they can be used in the download
-                var taxa =[]
+                var taxa = [];
                 taxa[0] ="*";
                 var rank ="*";
                 var zoom = ${zoom};
@@ -446,11 +446,7 @@
                     $("button#download").click(
                         function(e){
                             e.preventDefault();
-                            var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank=" + rank;
-                            //alert("URL is " + downloadUrl);
-                            //if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
-                            //    window.location.replace(downloadUrl);
-                            //}
+                            // trigger dialog box
                             $("#dialog-confirm").dialog('open');
                         }
                     );
@@ -480,12 +476,11 @@
                     // Configure Dialog box (JQuery UI)
                     $("#dialog-confirm").dialog({
                         resizable: false,
-                        //height:140,
                         modal: true,
                         autoOpen: false,
                         buttons: {
                             'Download file': function() {
-                                var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank=" + rank;
+                                var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa=*&rank=*";
                                 window.location.replace(downloadUrl);
                                 $(this).dialog('close');
                             },
@@ -536,10 +531,11 @@
                             <c:if test="${not empty location}">
                                 <p>Showing records for: <b>${location}</b></p>
                             </c:if>
-                            <button id="download" title="Download all species as XLS (tab-delimited) file">Download</button>
+                            <button id="download" title="Download a list of all species (tab-delimited file)">Download</button>
                             <div id="dialog-confirm" title="Continue with download?">
                                 <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>You are about to
-                                    download a list of species found within a ${radius} km radius of <code>${location}</code>.<br/>Format: tab-delimited text file (called data.xls)</p>
+                                    download a list of species found within a ${radius} km radius of <code>${location}</code>.<br/>
+                                    Format: tab-delimited text file (called data.xls)</p>
                             </div>
                             <p>Display records in a
                                 <select id="radius" name="radius">
@@ -561,10 +557,6 @@
                                     <tbody class="scrollContent">
                                     </tbody>
                                 </table>
-<!--                                <div id="thead">Species</div>
-                                <div id="taxa-level-1">
-                                    <div id="taxaDiv"></div>
-                                </div>-->
                             </div>
                             <div id="leftList">
                                 <table id="taxa-level-0">
