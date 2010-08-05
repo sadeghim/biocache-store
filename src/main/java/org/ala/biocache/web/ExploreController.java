@@ -81,7 +81,7 @@ public class ExploreController {
         String clientIP = request.getLocalAddr();
         logger.info("client IP address = "+request.getRemoteAddr());
         Location loc = lookup.getLocation(clientIP);
-        if (loc != null && location.isEmpty()) {
+        if (loc != null && location == null) {
             logger.info(clientIP + " has location: " + loc.postalCode + ", " + loc.city + ", " + loc.region + ". Coords: " + loc.latitude + ", " + loc.longitude);
             latitude = loc.latitude;
             longitude = loc.longitude;
