@@ -1012,7 +1012,6 @@ div.tableContainer {
 	width: 360px;
         background-color: #E8EACE;
 }
-
 /* Reset overflow value to hidden for all non-IE browsers. */
 html>body div.tableContainer {
 	overflow: hidden;
@@ -1053,6 +1052,9 @@ html>body tbody.scrollContent {
 	height: 262px;
 	overflow: auto;
 	width: 100%
+}
+tbody.scrollContent tr, tbody.scrollContent tr td {
+    height: auto;
 }
 /* define width of TH elements: 1st, 2nd, and 3rd respectively.          */
 /* Add 16px to last TH for scrollbar padding. All other non-IE browsers. */

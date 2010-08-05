@@ -63,8 +63,8 @@
                     // reload vector layer on zoom event
                     map.events.register('zoomend', map, function (e) {
                         drawCircleRadius();
-                        loadRecordsLayer();
-                        loadSelectControl();
+                        loadRecordsLayer(taxa, rank);
+                        //loadSelectControl();
                     });
 
                     // marker pin (Google-style)
@@ -105,7 +105,7 @@
                             fillColor: "${'${color}'}",
                             strokeColor: "${'${color}'}",
                             fillOpacity: 0.7,
-                            graphicZIndex: "${'${count}'}",
+                            //graphicZIndex: "${'${count}'}",
                             strokeWidth: 0
                         })
                     });
@@ -130,7 +130,7 @@
                     vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
                         projection: map.baseLayer.projection,
                         styleMap: myStyles,
-                        rendererOptions: {zIndexing: true},
+                        //rendererOptions: {zIndexing: true},
                         //attribution: legend,
                         strategies: [new OpenLayers.Strategy.Fixed()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
                         protocol: new OpenLayers.Protocol.HTTP({
@@ -276,7 +276,6 @@
                  * Process the JSON data from an Species list AJAX request (species in area)
                  */
                 function processSpeciesJsonData(data, appendResults) {
-                    var rank, taxa;
                     // clear right list unless we're paging
                     if (!appendResults) {
                         //$('#loadMoreSpecies').detach();
@@ -471,7 +470,7 @@
 
                     // Dynamically set height of #taxaDiv (to match containing div height)
                     var tableHeight = $('#taxa-level-0').height();
-                    $('#rightList table').height(tableHeight+2);
+                    //$('#rightList table').height(tableHeight+2);
                     $('.tableContainer').height(tableHeight+8);
                     var tbodyHeight = $('#taxa-level-0 tbody').height();
                     $('#rightList tbody').height(tbodyHeight);
@@ -503,7 +502,7 @@
                     </div>
                 </div>
                 <div id="left-col">
-                    <form name="searchForm" id="searchForm" action="" method="GET" autocomplete="off">
+                    <form name="searchForm" id="searchForm" action="" method="GET">
                         <div id="locationInput">
                             <h4>Enter your location or address:</h4>
                             <input name="address" id="address" size="50" value="${address}"/>
