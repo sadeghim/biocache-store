@@ -200,6 +200,9 @@
                         var lat = location.Point.coordinates[1]
                         var lon = location.Point.coordinates[0];
                         var locationStr = response.Placemark[0].address;
+                        if ($('input#location').val() == "") {
+                            $('input#address').val(locationStr);
+                        }
                         $('input#location').val(locationStr);
                         $('input#latitude').val(lat);
                         $('input#longitude').val(lon);
@@ -408,7 +411,7 @@
                     }
 
                     // onMouseOver event on Group items
-                    $('#taxa-level-0 tr').hover(
+                    $('#taxa-level-0 tbody tr').hover(
                         function() {
                             $(this).addClass('hoverRow');
                         },
@@ -416,10 +419,12 @@
                             $(this).removeClass('hoverRow');
                         }
                     );
-                    
+                    // add title attribute for tooltip
+                    $('#taxa-level-0 tbody tr').attr('title', 'display on map');
                     // catch the link on the taxon groups table
-                    $('#taxa-level-0 tr').click(function(e) {
+                    $('#taxa-level-0 tbody tr').click(function(e) {
                         e.preventDefault(); // ignore the href text - used for data
+
                         var taxon = $(this).find('a.taxonBrowse').attr('href'); // $(this+' a.taxonBrowse').attr('href');
                         rank = $(this).find('a.taxonBrowse').attr('id');
                         taxa = []; // array of taxa
@@ -479,7 +484,7 @@
                         modal: true,
                         autoOpen: false,
                         buttons: {
-                            'Download file': function() {
+                            'Download File': function() {
                                 var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa=*&rank=*";
                                 window.location.replace(downloadUrl);
                                 $(this).dialog('close');
@@ -532,7 +537,7 @@
                                 <p>Showing records for: <b>${location}</b></p>
                             </c:if>
                             <button id="download" title="Download a list of all species (tab-delimited file)">Download</button>
-                            <div id="dialog-confirm" title="Continue with download?">
+                            <div id="dialog-confirm" title="Continue with download?" style="display: none">
                                 <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>You are about to
                                     download a list of species found within a ${radius} km radius of <code>${location}</code>.<br/>
                                     Format: tab-delimited text file (called data.xls)</p>

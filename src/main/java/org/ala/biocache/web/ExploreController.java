@@ -15,6 +15,8 @@
 
 package org.ala.biocache.web;
 
+import com.maxmind.geoip.Location;
+import com.maxmind.geoip.LookupService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ala.biocache.dao.SearchDao;
@@ -51,6 +54,7 @@ public class ExploreController {
 	private String YOUR_AREA = "explore/yourArea";
     private String speciesPageUrl = "http://bie.ala.org.au/species/";
     private String googleKey; // set in properties override
+    private String geoIpDatabase = "/data/geoip/GeoLiteCity.dat";
     private HashMap<String, List<Float>> addressCache = new HashMap<String, List<Float>>();
     private final String DEFAULT_LOCATION = "Clunies Ross St, Black Mountain, ACT";
     /** Mapping of radius in km to OpenLayers zoom level */
@@ -68,9 +72,22 @@ public class ExploreController {
             @RequestParam(value="latitude", required=false, defaultValue="-35.27412f") Float latitude,
             @RequestParam(value="longitude", required=false, defaultValue="149.11288f") Float longitude,
             @RequestParam(value="address", required=false, defaultValue=DEFAULT_LOCATION) String address,
-            @RequestParam(value="location", required=false) String location,
+            @RequestParam(value="location", required=false, defaultValue="") String location,
+            HttpServletRequest request,
             Model model) throws Exception {
         
+        // Determine lat/long for client's IP address
+        LookupService lookup = new LookupService(geoIpDatabase, LookupService.GEOIP_MEMORY_CACHE );
+        String clientIP = request.getLocalAddr();
+        logger.info("client IP address = "+request.getRemoteAddr());
+        Location loc = lookup.getLocation(clientIP);
+        if (loc != null && location.isEmpty()) {
+            logger.info(clientIP + " has location: " + loc.postalCode + ", " + loc.city + ", " + loc.region + ". Coords: " + loc.latitude + ", " + loc.longitude);
+            latitude = loc.latitude;
+            longitude = loc.longitude;
+            address = latitude+", "+longitude;
+        }
+
         model.addAttribute("googleKey", googleKey);
         model.addAttribute("latitude", latitude);
         model.addAttribute("longitude", longitude);
