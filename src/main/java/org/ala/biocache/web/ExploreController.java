@@ -85,7 +85,7 @@ public class ExploreController {
             logger.info(clientIP + " has location: " + loc.postalCode + ", " + loc.city + ", " + loc.region + ". Coords: " + loc.latitude + ", " + loc.longitude);
             latitude = loc.latitude;
             longitude = loc.longitude;
-            address = latitude+", "+longitude;
+            address = ""; // blank out address so Google Maps API can reverse geocode it 
         }
 
         model.addAttribute("googleKey", googleKey);

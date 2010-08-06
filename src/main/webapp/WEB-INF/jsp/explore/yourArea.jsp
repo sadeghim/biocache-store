@@ -11,7 +11,8 @@
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
             <title>Explore Your Area</title>
-            <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensorfalse&amp;key=${googleKey}" type="text/javascript"></script>
+<!--            <script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensorfalse&amp;key=${googleKey}"></script>-->
+            <script type="text/javascript" src="http://www.google.com/jsapi?key=${googleKey}"></script>
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
             <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8">
@@ -28,6 +29,9 @@
                 var geocoder;
                 var proj900913 = new OpenLayers.Projection("EPSG:900913");
                 var proj4326 = new OpenLayers.Projection("EPSG:4326");
+
+                // Load Google maps via AJAX API
+                google.load("maps", "2");
 
                 /**
                  * Openlayers map
@@ -187,7 +191,56 @@
                     map.addLayer(circleLayer);
                     //circleLayer.setZIndex(10);
                 }
+
+                /**
+                 * Try to get a lat/long using HTML5 geoloation API
+                 */
+                function attemptGeolocation() {
+                    //alert("trying html5 geolocation...");  
+                    // HTML5 GeoLocation
+                    if (navigator && navigator.geolocation) {
+			//alert("trying to get coords with navigator.geolocation...");  
+			function getPostion(position) {  
+                            //alert('coords: '+position.coords.latitude+','+position.coords.longitude);
+                            $('#latitude').val(position.coords.latitude);
+                            $('#longitude').val(position.coords.longitude);
+                            codeAddress(true);
+                        }
+
+                        navigator.geolocation.getCurrentPosition(getPostion);
+                        
+                    } else if (google.loader && google.loader.ClientLocation) {
+                        // Google AJAX API fallback GeoLocation
+                        //alert("getting coords using google geolocation");
+                        $('#latitude').val(google.loader.ClientLocation.latitude);
+                        $('#longitude').val(google.loader.ClientLocation.longitude);
+                        codeAddress(true);
+                    } else {
+                        //alert("Client geolocation failed");
+                        codeAddress();
+                    }
+                }
                 
+                /**
+                 * Reverse geocode coordinates via Google Maps API
+                 */
+                function codeAddress(reverseGeocode) {
+                    var address = $('input#address').val();
+                    var lat = $('input#longitude').val();
+                    var lon = $('input#latitude').val();
+
+                    if (geocoder) {
+                        if ((reverseGeocode || !address) && lat && lon) {
+                            //alert("geocoding using latLon");
+                            var latLon = new GLatLng(lon,lat);
+                            geocoder.getLocations(latLon, addAddressToPage);
+                        }
+                        else if (address) {
+                            geocoder.getLocations(address, addAddressToPage);
+                        }
+                    }
+                }
+
                 /**
                  * Geocode location via Google Maps API
                  */
@@ -207,25 +260,6 @@
                         $('input#latitude').val(lat);
                         $('input#longitude').val(lon);
                         $('form#searchForm').submit();
-                    }
-                }
-
-                /**
-                 * Reverse geocode coordinates via Google Maps API
-                 */
-                function codeAddress(reverseGeocode) {
-                    var address = $('input#address').val();
-                    var lat = $('input#longitude').val();
-                    var lon = $('input#latitude').val();
-
-                    if (geocoder) {
-                        if (reverseGeocode && lat && lon) {
-                            var latLon = new GLatLng(lon,lat);
-                            geocoder.getLocations(latLon, addAddressToPage);
-                        }
-                        else if (address) {
-                            geocoder.getLocations(address, addAddressToPage);
-                        }
                     }
                 }
                 
@@ -402,9 +436,9 @@
                     geocoder.setBaseCountryCode("AU");
                     // initial page load without params - geocode address
                     var location = $('input#location').val();
-                    if (location == null || location == '') {
+                    if (!location || location == '') {
                         // geocode the provided address
-                        codeAddress();
+                        attemptGeolocation();
                     } else {
                         // load OpenLayers map
                         loadMap();
@@ -447,15 +481,6 @@
                     // By default action on page load - show the all species group (simulate a click)
                     $('#taxa-level-0 tbody td:first a.taxonBrowse').click();
 
-                    // register click event on download button
-                    $("button#download").click(
-                        function(e){
-                            e.preventDefault();
-                            // trigger dialog box
-                            $("#dialog-confirm").dialog('open');
-                        }
-                    );
-
                     // register click event on "Search" button"
                     $('input#locationSearch').click(
                         function(e) {
@@ -478,7 +503,16 @@
                     var tbodyHeight = $('#taxa-level-0 tbody').height();
                     $('#rightList tbody').height(tbodyHeight);
                     
-                    // Configure Dialog box (JQuery UI)
+                    // register click event on download button
+                    $("button#download").click(
+                        function(e){
+                            e.preventDefault();
+                            // trigger dialog box
+                            $("#dialog-confirm").dialog('open');
+                        }
+                    );
+
+                    // Configure Dialog box for Download button (JQuery UI)
                     $("#dialog-confirm").dialog({
                         resizable: false,
                         modal: true,
