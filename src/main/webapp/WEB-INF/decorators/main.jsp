@@ -78,63 +78,55 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
                     <a  href="http://test.ala.org.au" title="Atlas of Living Australia home"><img src="http://test.ala.org.au/wp-content/themes/ala/images/ala_logo.png" width="218" height="88" alt="Atlas of Living Ausralia logo" /></a>
                 </div><!--close logo-->
                 <div id="nav">
-					<!-- WP Menubar 4.7: start menu nav-site, template Superfish, CSS  -->
-					<ul class="sf">
-						<li class="nav-home"><a href="http://test.ala.org.au/"><span>Home</span></a></li>
-						<li class="nav-explore selected"><a href="http://test.ala.org.au/explore/"><span>Explore</span></a>
-						<ul>
-							<li><a href="http://test.ala.org.au/explore/maps/"><span>Maps</span></a></li>
-							<li><a href="http://test.ala.org.au/explore/themes/"><span>Themes</span></a></li>
-							<li><a href="http://collections.ala.org.au/public/map"><span>Natural History Collections</span></a></li>
-							<li><a href="http://biocache.ala.org.au/explore/your-area"><span>Explore your Area</span></a></li>
-							<li><a href="http://bie.ala.org.au/regions/"><span>Explore States &amp; Regions</span></a></li>
-							<li><a href="http://spatial.ala.org.au/webportal/"
-								target="_blank"><span>Explore Species Distribution</span></a></li>
-						</ul>
-						</li>
-						<li class="nav-tools"><a href="http://test.ala.org.au/tools-services/"><span>Tools</span></a>
-						<ul>
-							<li><a href="http://test.ala.org.au/tools-services/community-science/"><span>Citizen Science</span></a></li>
-							<li><a href="http://test.ala.org.au/tools-services/identification-tools/"><span>Identification Tools</span></a></li>
-							<li><a href="http://test.ala.org.au/tools-services/for-developers/"><span>For Developers</span></a></li>
-						</ul>
-						</li>
-						<li class="nav-contact"><a  href="http://test.ala.org.au/contact-us/"><span>Contact Us</span></a>
-						<ul>
-							<li><a href="http://test.ala.org.au/contact-us/contact-our-team/"><span>Contact Our Team</span></a></li>
-							<li><a href="http://test.ala.org.au/contact-us/contribute/"><span>Contribute</span></a></li>
-						</ul>
-						</li>
-						<li class="nav-support"><a href="http://test.ala.org.au/support/"><span>Support</span></a>
-						<ul>
-							<li><a href="http://test.ala.org.au/support/get-started/"><span>Get Started</span></a></li>
-							<li><a href="http://test.ala.org.au/support/forum/"><span>Forum</span></a></li>
-							<li><a href="http://test.ala.org.au/support/faq/"><span>Frequently Asked Questions</span></a></li>
-							<li><a href="http://test.ala.org.au/support/how-to/"><span>How To</span></a></li>
-							<li><a href="http://test.ala.org.au/support/site-map/"><span>Site Map</span></a></li>
-						</ul>
-						</li>
-						<li class="nav-about"><a href="http://test.ala.org.au/about/"><span>About the Atlas</span></a>
-						<ul>
-							<li><a href="http://test.ala.org.au/about/the-project/"><span>The Project</span></a></li>
-							<li><a href="http://test.ala.org.au/about/partnerships/"><span>Partnerships</span></a></li>
-							<li><a href="http://test.ala.org.au/about/communications/"><span>Communications</span></a></li>
-						</ul>
-						</li>
-						<c:if test="${empty pageContext.request.remoteUser}">
-						    <c:set var="queryString" value="${pageContext.request.queryString}"/>
-						    <c:choose>
-						        <c:when test="${empty queryString}">
-						            <c:set var="requestUrl" value="${pageContext.request.requestURL}"/>
-						        </c:when>
-						        <c:otherwise>
+                    <!-- WP Menubar 4.7: start menu nav-site, template Superfish, CSS  -->
+                    <ul class="sf">
+                        <li class="nav-home"><a href="http://test.ala.org.au/" ><span>Home</span></a></li>
+                        <li class="nav-explore selected"><a href="http://test.ala.org.au/explore/" ><span>Explore</span></a>
+                            <ul><li><a href="http://biocache.ala.org.au/explore/your-area" ><span>Your Area</span></a></li>
+                                <li><a href="http://bie.ala.org.au/regions/" ><span>States & Territories</span></a></li>
+                                <li><a href="http://test.ala.org.au/explore/species-maps/" ><span>Species Maps</span></a></li>
+                                <li><a href="http://collections.ala.org.au/public/map" ><span>Natural History Collections</span></a></li>
+                                <li><a href="http://test.ala.org.au/explore/themes/" ><span>Themes & Highlights </span></a></li>
+                            </ul></li>
+                        <li class="nav-tools"><a href="http://test.ala.org.au/tools-services/" ><span>Tools</span></a>
+                            <ul><li><a href="http://test.ala.org.au/tools-services/creative-commons-licensing/" ><span>Creative Commons licensing</span></a></li>
+                                <li><a href="http://test.ala.org.au/tools-services/community-science/" ><span>Citizen Science</span></a></li>
+                                <li><a href="http://test.ala.org.au/tools-services/identification-tools/" ><span>Identification Tools</span></a></li>
+                                <li><a href="http://test.ala.org.au/tools-services/for-developers/" ><span>For Developers</span></a></li>
+                            </ul></li>
+                        <li class="nav-contribute"><a href="http://test.ala.org.au/contribute/" title="Contribute - links, images, images, literature, your time"><span>Contribute</span></a>
+                            <ul><li><a href="http://test.ala.org.au/contribute/data-management/" ><span>Data Management</span></a></li>
+                                <li><a href="http://test.ala.org.au/contribute/sighting/" ><span>Record Sighting</span></a></li>
+                                <li><a href="http://test.ala.org.au/contribute/share-links/" ><span>share links, ideas, information</span></a></li>
+                                <li><a href="http://test.ala.org.au/contribute/share-images/" ><span>Share Photos</span></a></li>
+                                <li><a href="http://test.ala.org.au/contribute/share-data/" ><span>Electronic Data Sets</span></a></li>
+                                <li><a href="http://test.ala.org.au/contribute/paper-based-information/" ><span>Paper-based Information</span></a></li></ul></li>
+                        <li class="nav-support"><a href="http://test.ala.org.au/support/" ><span>Support</span></a><ul><li><a href="http://test.ala.org.au/support/get-started/" ><span>Get Started</span></a></li>
+                                <li><a href="http://test.ala.org.au/support/forum/" ><span>Forum</span></a></li>
+                                <li><a href="http://test.ala.org.au/support/faq/" ><span>Frequently Asked Questions</span></a></li>
+                                <li><a href="http://test.ala.org.au/support/how-to/" ><span>How To</span></a></li></ul></li>
+                        <li class="nav-contact"><a href="http://test.ala.org.au/contact-us/" ><span>Contact Us</span></a></li>
+                        <li class="nav-about"><a href="http://test.ala.org.au/about/" ><span>About the Atlas</span></a>
+                            <ul><li><a href="http://test.ala.org.au/about/people/" ><span>Working Together</span></a></li>
+                                <li><a href="http://test.ala.org.au/about/portfolio-of-projects/" ><span>Projects</span></a></li>
+                                <li><a href="http://test.ala.org.au/about/governance/" ><span>Governance</span></a></li>
+                                <li><a href="http://test.ala.org.au/about/media-centre/" ><span>Media Centre</span></a></li>
+                                <li><a href="http://test.ala.org.au/about/newsevents/" ><span>News & Events</span></a></li>
+                                <li><a href="http://test.ala.org.au/about/resources/" ><span>Resources</span></a></li></ul></li>
+                        <c:if test="${empty pageContext.request.remoteUser}">
+                            <c:set var="queryString" value="${pageContext.request.queryString}"/>
+                            <c:choose>
+                                <c:when test="${empty queryString}">
+                                    <c:set var="requestUrl" value="${pageContext.request.requestURL}"/>
+                                </c:when>
+                                <c:otherwise>
                                     <c:set var="requestUrl" value="${pageContext.request.requestURL}?${fn:replace(queryString, '+', '%2B')}"/>
-						        </c:otherwise>
-						    </c:choose>
+                                </c:otherwise>
+                            </c:choose>
                             <li class="nav-login nav-right"><ala:loginLogoutLink returnUrlPath="${requestUrl}"/></li>
                         </c:if>
-					</ul>
-                <!-- WP Menubar 4.7: end menu nav-site, template Superfish, CSS  -->
+                    </ul>
+                    <!-- WP Menubar 4.7: end menu nav-site, template Superfish, CSS  -->
                 </div><!--close nav-->
                 <c:if test="${!empty pageContext.request.remoteUser}">
                     <div id="loginId" style="position:absolute; right:220px; text-align:right; color:white;">Logged in: ${pageContext.request.remoteUser}</div>
@@ -211,28 +203,25 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
             </div><!--close nav-footer-->
             <div id="footer">
                 <div id="footer-nav">
-                    <ul id="menu-footer-site"><li id="menu-item-1046" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/">Home</a></li>
+                    <ul id="menu-footer-site">
+                        <li id="menu-item-1046" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/">Home</a></li>
                         <li id="menu-item-1049" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/explore/maps/explore-stateterritory/">Explore</a></li>
                         <li id="menu-item-1051" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/tools-services/">Tools</a></li>
                         <li id="menu-item-1050" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/support/">Support</a></li>
                         <li id="menu-item-1048" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/contact-us/">Contact Us</a></li>
-                        <c:choose>
-                            <c:when test="${empty pageContext.request.remoteUser}">
-		                        <li id="menu-item-1047" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/about/">About the Atlas</a></li>
-		                        <li id="menu-item-1052" class="last menu-item menu-item-type-custom"><ala:loginLogoutLink returnUrlPath="${requestUrl}"/></li>
-	                        </c:when>
-	                        <c:otherwise>
-                                <li id="menu-item-1047" class="last menu-item menu-item-type-custom"><a href="http://test.ala.org.au/about/">About the Atlas</a></li>
-	                        </c:otherwise>
-                        </c:choose>
-                    </ul>		<ul id="menu-footer-legal"><li id="menu-item-1042" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/terms-of-use/citing-the-atlas/">Citing the Atlas</a></li>
-                        <li id="menu-item-1043" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/terms-of-use/disclaimer/">Disclaimer</a></li>
-                        <li id="menu-item-1044" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/terms-of-use/privacy-policy/">Privacy Policy</a></li>
-                        <li id="menu-item-1045" class="last menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/terms-of-use/">Terms of Use</a></li>
+                        <li id="menu-item-1047" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/about/">About the Atlas</a></li>
+                        <li id="menu-item-1052" class="last menu-item menu-item-type-custom"><a href="http://test.ala.org.au">Log in</a></li>
                     </ul>
-                </div><!--close footer-nav-->
-                <div class="copyright"><p><a href="http://creativecommons.org/licenses/by/2.5/au/" title="External link to Creative Commons" class="left no-pipe"><img src="http://test.ala.org.au/wp-content/themes/ala/images/somerights20.png" width="88" height="31" alt="" /></a>This work is licensed under a <a href="http://creativecommons.org/licenses/by/2.5/au/" title="External link to Creative Commons">Creative Commons Attribution 2.5 Australia License</a></p></div>
-            </div><!--close footer--> 
+                    <ul id="menu-footer-legal">
+                        <li id="menu-item-3090" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/site-map/">Site Map</a></li>
+                        <li id="menu-item-1042" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/about/media-centre/terms-of-use/citing-the-atlas/">Citing the Atlas</a></li>
+                        <li id="menu-item-1043" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/about/media-centre/terms-of-use/disclaimer/">Disclaimer</a></li>
+                        <li id="menu-item-1044" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/about/media-centre/terms-of-use/privacy-policy/">Privacy Policy</a></li>
+                        <li id="menu-item-1045" class="last menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/about/media-centre/terms-of-use/">Terms of Use</a></li>
+                    </ul>
+                </div>
+		<div class="copyright"><p><a href="http://creativecommons.org/licenses/by/2.5/au/" title="External link to Creative Commons" class="left no-pipe"><img src="http://test.ala.org.au/wp-content/themes/ala/images/somerights20.png" width="88" height="31" alt="" /></a>This work is licensed under a <a href="http://creativecommons.org/licenses/by/2.5/au/" title="External link to Creative Commons">Creative Commons Attribution 2.5 Australia License</a></p></div>
+	</div><!--close footer-->
         </div><!--close wrapper-->
     </body>
 </html>
