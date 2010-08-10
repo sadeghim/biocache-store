@@ -7,6 +7,7 @@
     <%@ include file="/common/taglibs.jsp" %>
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
+    <c:set var="googleKey" scope="request"><ala:propertyLoader bundle="biocache" property="googleKey"/></c:set>
     <html>
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -54,7 +55,7 @@
                     //map.addLayer(gmap);
                     var gsat = new OpenLayers.Layer.Google(
                         "Google Satellite",
-                        {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels: 22}
+                        {'sphericalMercator': true, type: G_SATELLITE_MAP, maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34), numZoomLevels: 22}
                     );
                     //map.addLayer(gsat);
                     var ghyb = new OpenLayers.Layer.Google(
@@ -226,13 +227,13 @@
                  */
                 function codeAddress(reverseGeocode) {
                     var address = $('input#address').val();
-                    var lat = $('input#longitude').val();
-                    var lon = $('input#latitude').val();
+                    var lng = $('input#longitude').val();
+                    var lat = $('input#latitude').val();
 
                     if (geocoder) {
-                        if ((reverseGeocode || !address) && lat && lon) {
+                        if ((reverseGeocode || !address) && lng && lat) {
                             //alert("geocoding using latLon");
-                            var latLon = new GLatLng(lon,lat);
+                            var latLon = new GLatLng(lat,lng);
                             geocoder.getLocations(latLon, addAddressToPage);
                         }
                         else if (address) {
@@ -539,7 +540,7 @@
                 Your Area
             </div>
             <div id="decoratorBody">
-                <h2>Explore Your Area</h2>
+                <h1>Explore Your Area</h1>
                 <div id="mapOuter" style="width: 400px; height: 450px; float:right;">
                     <div id="yourMap"></div>
                     <div style="font-size:11px;width:400px;">
