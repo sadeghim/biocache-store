@@ -53,7 +53,6 @@ public class ExploreController {
     /** Name of view for site home page */
 	private String YOUR_AREA = "explore/yourArea";
     private String speciesPageUrl = "http://bie.ala.org.au/species/";
-    private String googleKey; // set in properties override
     private String geoIpDatabase = "/data/geoip/GeoLiteCity.dat";
     private HashMap<String, List<Float>> addressCache = new HashMap<String, List<Float>>();
     private final String DEFAULT_LOCATION = "Clunies Ross St, Black Mountain, ACT";
@@ -88,7 +87,6 @@ public class ExploreController {
             address = ""; // blank out address so Google Maps API can reverse geocode it 
         }
 
-        model.addAttribute("googleKey", googleKey);
         model.addAttribute("latitude", latitude);
         model.addAttribute("longitude", longitude);
         model.addAttribute("location", location);
@@ -232,13 +230,6 @@ public class ExploreController {
         model.addAttribute("speciesCount", species.size());
     }
 
-    public String getGoogleKey() {
-        return googleKey;
-    }
-
-    public void setGoogleKey(String googleKey) {
-        this.googleKey = googleKey;
-    }
 	/**
 	 * @param searchDao the searchDao to set
 	 */
