@@ -561,7 +561,7 @@
                     <div id="left-col">
                         <form name="searchForm" id="searchForm" action="" method="GET">
                             <div id="locationInput">
-                                <h2 style="color:#FF5D00">Enter your location or address:</h2>
+                                <h2 style="color:#FF5D00; padding-bottom:4px">Enter your location or address:</h2>
                                 <input name="address" id="address" size="50" value="${address}"/>
                                 <input id="locationSearch" type="submit" value="Search"/>
                                 <input type="hidden" name="latitude" id="latitude" value="${latitude}"/>
