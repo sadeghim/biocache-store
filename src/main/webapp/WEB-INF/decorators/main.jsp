@@ -75,8 +75,8 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
         <div id="wrapper">
             <div id="banner">
                 <div id="logo">
-                    <a  href="http://test.ala.org.au" title="Atlas of Living Australia home"><img src="http://test.ala.org.au/wp-content/themes/ala/images/ala_logo.png" width="218" height="88" alt="Atlas of Living Ausralia logo" /></a>
-                </div><!--close logo-->
+                    <a href="http://test.ala.org.au" title="Atlas of Living Australia home"><img src="http://test.ala.org.au/wp-content/themes/ala/images/ala_logo.png" width="208" height="80" alt="Atlas of Living Ausralia logo" /></a>
+		</div><!--close logo-->
                 <div id="nav">
                     <!-- WP Menubar 4.7: start menu nav-site, template Superfish, CSS  -->
                     <ul class="sf">
