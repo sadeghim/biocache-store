@@ -1,0 +1,16 @@
+#tooltip {
+    position: absolute;
+    z-index: 3000;
+    border: 1px solid #555;
+    background-color: #eee;
+    padding: 5px;
+    opacity: 0.9;
+    -moz-border-radius: 0 6px 6px 6px; /* FF1+ */
+    -webkit-border-radius: 0 6px 6px 6px; /* Saf3+, Chrome */
+    border-radius: 0 6px 6px 6px; /* Opera 10.5, IE 9 */
+}
+#tooltip h3, #tooltip div { 
+    margin: 0; 
+    font-size: 13px;
+    color: #333;
+}

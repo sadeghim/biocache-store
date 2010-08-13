@@ -15,8 +15,12 @@
         <meta charset="UTF-8" >
         <title>Contribute a Sighting</title>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/date.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.timePicker.js"></script>
+        <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/static/css/timePicker.css" />
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.datePicker.js"></script>
         <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/static/css/datePicker.css" />
+        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.tooltip.min.js"></script>
+        <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/static/css/jquery.tooltip.css" />
         <script type="text/javascript" src="http://www.google.com/jsapi?key=${googleKey}"></script>
         <style type="text/css" >
             #mapCanvas {
@@ -28,7 +32,7 @@
             // Load Google maps via AJAX API
             google.load("maps", "3", {other_params:"sensor=false"});
 
-            var geocoder, zoom;
+            var geocoder, zoom, map, marker;
 
 //            google.setOnLoadCallback(function() {
 //                geocoder = new google.maps.Geocoder();
@@ -55,10 +59,13 @@
                     latLng.lat(),
                     latLng.lng()
                 ].join(', ');
-                $('#markerLatitude').html(latLng.lat());
-                $('#sightingLatitude').val(latLng.lat());
-                $('#markerLongitude').html(latLng.lng());
-                $('#sightingLongitude').val(latLng.lng());
+                var rnd = 100000000;
+                var lat = Math.round(latLng.lat() * rnd) / rnd; // round to 8 decimal places
+                var lng = Math.round(latLng.lng() * rnd) / rnd; // round to 8 decimal places
+                $('#markerLatitude').html(lat);
+                $('#sightingLatitude').val(lat);
+                $('#markerLongitude').html(lng);
+                $('#sightingLongitude').val(lng);
             }
 
             function updateMarkerAddress(str) {
@@ -67,15 +74,15 @@
             }
 
             function initialize() {
-                var lat = $('input#latitude').val();
-                var lng = $('input#longitude').val();
+                var lat = $('input#sightingLatitude').val();
+                var lng = $('input#sightingLongitude').val();
                 var latLng = new google.maps.LatLng(lat, lng);
-                var map = new google.maps.Map(document.getElementById('mapCanvas'), {
+                map = new google.maps.Map(document.getElementById('mapCanvas'), {
                     zoom: zoom,
                     center: latLng,
                     mapTypeId: google.maps.MapTypeId.HYBRID
                 });
-                var marker = new google.maps.Marker({
+                marker = new google.maps.Marker({
                     position: latLng,
                     title: 'Sighting',
                     map: map,
@@ -113,13 +120,19 @@
                     //alert("trying to get coords with navigator.geolocation...");  
                     function getPostion(position) {  
                         //alert('coords: '+position.coords.latitude+','+position.coords.longitude);
-                        $('#latitude').val(position.coords.latitude);
-                        $('#longitude').val(position.coords.longitude);
+                        $('#sightingLatitude').val(position.coords.latitude);
+                        $('#sightingLongitude').val(position.coords.longitude);
                         zoom = 15;
                         //codeAddress(true);
                         initialize();
                     }
-                    navigator.geolocation.getCurrentPosition(getPostion);
+                    function positionDeclined() {
+                        //alert('geolocation request declined or errored');
+                        zoom = 3;
+                        initialize();
+                    }
+
+                    navigator.geolocation.getCurrentPosition(getPostion, positionDeclined);
                 } else if (google.loader && google.loader.ClientLocation) {
                     // Google AJAX API fallback GeoLocation
                     //alert("getting coords using google geolocation");
@@ -137,6 +150,63 @@
             }
 
             /**
+             * Reverse geocode coordinates via Google Maps API
+             */
+            function codeAddress() {
+                var address = $('input#address').val();
+
+                if (geocoder && address) {
+                    //geocoder.getLocations(address, addAddressToPage);
+                    geocoder.geocode( { 'address': address}, function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            //map.setCenter(results[0].geometry.location);
+                            //var marker = new google.maps.Marker({
+                            //    map: map,
+                            //   position: results[0].geometry.location
+                            //});
+                            var lat = results[0].geometry.location.lat();
+                            var lon = results[0].geometry.location.lng();
+                            var locationStr = results[0].formatted_address;
+                            $('input#sightingLocation').val(locationStr); // hidden form element
+                            $('#markerAddress').val(locationStr); // visible span
+                            $('input#sightingLatitude').val(lat); // hidden form element
+                            $('#markerLatitude').val(lat); // visible span
+                            $('input#sightingLongitude').val(lon); // hidden form element
+                            $('#markerLongitude').val(lon); // visible span
+                            initialize();
+                        } else {
+                            alert("Geocode was not successful for the following reason: " + status);
+                        }
+                    });
+                }
+            }
+
+            /**
+             * Geocode location via Google Maps API
+             */
+            function addAddressToPage(response) {
+                //map.clearOverlays();
+                if (!response || response.Status.code != 200) {
+                    alert("Sorry, we were unable to geocode that address");
+                } else {
+                    var location = response.Placemark[0];
+                    var lat = location.Point.coordinates[1]
+                    var lon = location.Point.coordinates[0];
+                    var locationStr = response.Placemark[0].address;
+                    //if ($('input#location').val() == "") {
+                    //    $('input#address').val(locationStr);
+                    //}
+                    $('input#sightingLocation').val(locationStr); // hidden form element
+                    $('#markerAddress').val(locationStr); // visible span
+                    $('input#sightingLatitude').val(lat); // hidden form element
+                    $('#markerLatitude').val(lat); // visible span
+                    $('input#sightingLongitude').val(lon); // hidden form element
+                    $('#markerLongitude').val(lon); // visible span
+                    loadMap();
+                }
+            }
+
+            /**
              * Document onLoad event using JQuery
              */
             $(document).ready(function() {
@@ -145,6 +215,41 @@
                 attemptGeolocation();
 
                 $('#sightingDate').datePicker({startDate:'01/01/1996'}).val(new Date().asString()).trigger('change');
+                var date = new Date();
+                var hour = date.getHours();
+                if (hour < 10) hour = "0" + hour;
+                var minutes = date.getMinutes();
+                if (minutes < 10) minutes = "0" + minutes;
+                $('#sightingTime').val(hour+":"+minutes);
+                $("#sightingTime").timePicker({
+                    //startTime: new Date(),
+                    leftOffset: 85,
+                    step: 15
+                });
+                
+                // trigger Google geolocation search on search button
+                $('#locationSearch').click(function (e) {
+                     e.preventDefault(); // ignore the href text - used for data
+                     codeAddress();
+                });
+
+                // catch the enter key and trigger location search
+                $(window).keydown(function(e){
+                     if (e.which == 13) {
+                         //alert('Enter key pressed');
+                         e.preventDefault(); // ignore the href text - used for data
+                         codeAddress();
+                         return false;
+                     }
+                     
+                });
+
+                // set hieght of inner div
+                var h = $('#locationBlock').height();
+                $('#location').height(h-20); // $('#locationBlock').height
+
+                $('.locationInput').attr('title', 'Drag marker on map to set location');
+                $('.locationInput').tooltip();
             });
         </script>
     </head>
@@ -164,60 +269,78 @@
                         <form name="sighting" id="sighting" action="" method="GET">
                             <div id="column-one">
                                 <div class="section">
-                                    <div style="float: right; padding-right: 15px" id="images"><img src="${taxonConcept.imageThumbnailUrl}" height="85px" alt="species thumbnail"/></div>
+                                    <div style="float: left; padding-right: 15px" id="images">
+                                        <img src="${taxonConcept.imageThumbnailUrl}" height="85px" alt="species thumbnail"/>
+                                    </div>
+                                    <h2><a href="http://bie.ala.org.au/species/${param['guid']}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
+                                        (${taxonConcept.commonName})</a>
+                                        <input type="hidden" name="guid" id="sightingGuid" value="${param['guid']}"/>
+                                    </h2>
                                     <fieldset id="sightingInfo">
-                                        <p><label>Species Name</label> <alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
-                                            (${taxonConcept.commonName})
-                                            <input type="hidden" name="guid" id="sightingGuid" value="${param['guid']}"/>
-                                            </p>
-                                            <p><label for="date">Date</label>
-                                                <input type="text" id="sightingDate" name="date" size="20" value=""/>
-                                                <span>(DD-MM-YYYY)</span>
-                                            </p>
-                                            <p><label for="number">Number observed</label>
-                                            <%--<input type="text" id="sightingNumber" name="number" size="20" value="1"/>--%>
+                                        <p><label for="date">Date</label>
+                                            <input type="text" id="sightingDate" name="date" size="20" value=""/>
+                                            <span>(DD-MM-YYYY)</span>
+                                        </p>
+                                        <p><label for="time">Time</label>
+                                            <input type="text" id="sightingTime" name="time" size="20" value="12:00"/>
+                                            <span>(HH:MM)</span>
+                                        </p>
+                                        <p><label for="number">Number observed</label>
                                             <select id="sightingNumber" name="number">
-                                                <option ></option>
+                                                <c:forEach var="option" begin="1" end="100" step="1">
+                                                    <option >${option}</option>
+                                                </c:forEach>
                                             </select>
-                                            </p>
-                                            <p><label for="location">Location</label>
-                                            <span id="markerAddress"></span>
-                                            <input type="hidden" id="sightingLocation" name="location" size="20" value=""/>
-                                            </p>
+                                        </p>
+                                        <p><label for="location">Location</label>
+                                            <span id="markerAddress" class="locationInput"></span>
+                                            <input type="hidden" id="sightingLocation" class="locationInput" name="location" size="20" value=""/>
+                                        </p>
                                             <p><label for="latitude">Latitude</label>
-                                            <span id="markerLatitude"></span>
-                                            <input type="hidden" id="sightingLatitude" name="latitude" size="20" value=""/>
-                                            </p>
-                                            <p><label for="longitude">Longitude</label>
-                                            <span id="markerLongitude"></span>
-                                            <input type="hidden" id="sightingLongitude" name="longitude" size="20" value=""/>
-                                            </p>
-                                            <p><label for="notes">Notes</label>
-                                            <textarea id="sightingNotes" name="notes" cols="40" rows="5"></textarea>
-                                            </p>
-                                            <p><label for=""></label>
-                                            <input type="submit" id="sightingSubmit" value="Next"/>
-                                            </p>
+                                            <span id="markerLatitude" class="locationInput"></span>
+                                            <input type="hidden" id="sightingLatitude" class="locationInput" name="latitude" size="20" value="-27"/>
+                                        </p>
+                                        <p><label for="longitude">Longitude</label>
+                                            <span id="markerLongitude" class="locationInput"></span>
+                                            <input type="hidden" id="sightingLongitude" class="locationInput" name="longitude" size="20" value="133"/>
+                                        </p>
+                                        <p><label for="location">Coordinate Uncertainty</label>
+                                            <select id="sightingCoordinateUncertainty" name="coordinateUncertainty">
+                                                <option >1</option>
+                                                <option >5</option>
+                                                <option >10</option>
+                                                <option >20</option>
+                                                <option >50</option>
+                                                <option selected>100</option>
+                                                <option >500</option>
+                                                <option >1000</option>
+                                            </select>
+                                            <span>(in metres)</span>
+                                        </p>
+                                        <p><label for="notes">Notes</label>
+                                            <textarea id="sightingNotes" name="notes" cols="30" rows="5"></textarea>
+                                            <span id="notes">(E.g. weather conditions, observed behaviour, <i>etc.</i>)</span>
+                                        </p>
+                                        <p><label for=""></label>
+                                            <input type="submit" id="sightingSubmit" value="Submit"/>
+                                        </p>
                                     </fieldset>
-                                    
                                 </div>
                             </div>
                             <div id="column-two">
                                 <div class="section">
-
-                                        <div id="sightingAddress">
-                                            <label for="address">Enter sighting location or address:</label>
-                                            <input name="address" id="address" size="40" value="${address}"/>
-                                            <input id="locationSearch" type="button" value="Search"/>
-                                            <input type="hidden" name="latitude" id="latitude" value="${latitude}"/>
-                                            <input type="hidden" name="longitude" id="longitude" value="${longitude}"/>
-                                            <input type="hidden" name="location" id="location" value="${location}"/>
-                                        </div>
-                                        <div id="mapCanvas"></div>
+                                    <div id="sightingAddress">
+                                        <label for="address">Search for sighting location or address: </label>
+                                        <input name="address" id="address" size="40" value="${address}"/>
+                                        <input id="locationSearch" type="button" value="Search"/>
+                                        <input type="hidden" name="location" id="location" value="${location}"/>
+                                    </div>
+                                    <div id="mapCanvas"></div>
+                                    <div style="display: none">
                                         <div id="markerAddress"></div>
                                         <div id="markerStatus" style="display: none"></div>
                                         <div id="info"></div>
-
+                                    </div>
                                 </div>
                             </div>
                         </form>

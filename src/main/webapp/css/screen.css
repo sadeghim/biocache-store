@@ -1259,10 +1259,41 @@ li.taxonBreakdown { border: 1px solid gray; padding:10px; margin-bottom: 5px;}
 #sightingAddress {
     margin: 5px 0;
 }
-
+#sightingInfo {
+    background-color: #FAFBF5;
+    border: 1px solid #E8EACE;
+    -moz-border-radius: 8px; /* FF1+ */
+    -webkit-border-radius: 8px; /* Saf3+, Chrome */
+    border-radius: 8px; /* Opera 10.5, IE 9 */
+}
 #sightingInfo label {
     width: 120px;
     display: inline-block;
+    vertical-align: top;
+}
+#sightingNotes {
+    width: 200px;
+}
+#sightingInfo span#notes {
+    display: inline-block;
+    width: 180px;
+    vertical-align: top;
+    float: right;
+}
+#locationBlock {
+    overflow:hidden;
+/*    width: 400px;*/
+}
+div#location {
+/*    height: 100%;*/
+    width: 100px;
+    float: right;
+    background-color: #E8EACE;
+    padding: 10px 5px;
+    vertical-align: middle;
+}
+#sightingInfo p {
+    padding: 5px 8px;
     vertical-align: top;
 }
 
@@ -1274,7 +1305,7 @@ a.dp-choose-date {
 	width: 16px;
 	height: 16px;
 	padding: 0;
-	margin: 5px 3px 0;
+	margin: 1px 2px 0 2px;
 	display: inline-block;
 	text-indent: -2000px;
 	overflow: hidden;
@@ -1292,6 +1323,6 @@ input.dp-applied {
 	float: left;*/
 }
 
-#sightingInfo p {
-    padding: 4px 0;
+div.time-picker {
+    margin-top: 1.4em;
 }
