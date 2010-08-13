@@ -31,8 +31,6 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
         <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/ui.tabs.js"></script>
         <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/hoverintent-min.js"></script>
         <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/superfish/superfish.js"></script>
-        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
-        <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8"/>
         <script type="text/javascript">
 
             //add the indexOf method for IE7
@@ -142,9 +140,9 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
             <div id="wrapper_border"><!--main content area-->
                 <div id="border">
                     <div id="content">
-                        <div id="decoratorBody">
+<!--                        <div id="decoratorBody">-->
                             <decorator:body />
-                        </div>
+<!--                        </div>-->
                     </div><!--close content-->
                 </div><!--close border-->
             </div><!--close wrapper_border-->

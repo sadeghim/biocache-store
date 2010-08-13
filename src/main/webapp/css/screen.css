@@ -93,11 +93,11 @@ th, td {
     filter:alpha(opacity=50);
     opacity:.50;
 }
-/* header */
+/* header 
 #header {
     margin: 6px 0 7px 0;
     padding: 2px 6px;
-    width: 100%;/* 931px; */
+    width: 100%;
     background: url("images/ui-bg_highlight-soft_75_cccccc_1x100.png") repeat-x scroll 50% 50% #CCCCCC;
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
@@ -109,7 +109,7 @@ th, td {
     font-weight: bold;
     color: #262627;
     vertical-align: middle;
-}
+}*/
 #searchTab input[type="text"] {
     margin: 0;
 }
@@ -523,14 +523,14 @@ img.galleryImage {
 
 /* Facet links */
 #facets {
-    width: 200px;
-    margin-right: 10px;
+    width: 185px;
+    margin-right: 5px;
 /*    border-right: 1px solid #ddd;*/
 }
 #facetBar {
     float: right;
-    width: 200px;
-    padding: 10px;
+    width: 180px;
+    padding: 5px;
     margin-top: -16px;
 }
 #facetBar ul {
@@ -541,7 +541,8 @@ img.galleryImage {
 #facetBar ul#navlist {
     border-top: 1px solid #99B5E3;
 }
-#facetBar li {padding : 4px;
+#facetBar li {
+    padding : 4px;
     padding-left: 10px;
     border: 1px solid #99B5E3;
     border-top: none;
@@ -979,7 +980,7 @@ a.taxonBrowse2, a.taxonBrowse2:hover, a.taxonBrowse2:focus {
 #taxaBox p {
     margin-bottom: 5px;
 }
-#address {
+#locationInput #address {
     width: 350px;
     padding: 2px 2px;
     margin-right: 5px;
@@ -996,9 +997,11 @@ a.taxonBrowse2, a.taxonBrowse2:hover, a.taxonBrowse2:focus {
     -webkit-border-radius: 8px 8px 0 0; /* Saf3+, Chrome */
     border-radius: 8px 8px 0 0; /* Opera 10.5, IE 9 */
 }
-#locationInput h4 {
-    color: #FF5D00;
-    padding-bottom: 5px;
+#locationInput h2 {
+    color:#FF5D00;
+    padding-bottom:4px;
+    font-size: 1.4em;
+    font-weight: bold;
 }
 #locationInfo { }
 #locationInfo { background-color: #FAFBF5 }
@@ -1252,4 +1255,43 @@ li.taxonBreakdown { border: 1px solid gray; padding:10px; margin-bottom: 5px;}
     -moz-border-radius: 0 0 4px 4px; /* FF1+ */
     -webkit-border-radius: 0 0 4px 4px; /* Saf3+, Chrome */
     border-radius: 0 0 4px 4px; /* Opera 10.5, IE 9 */
+}
+#sightingAddress {
+    margin: 5px 0;
+}
+
+#sightingInfo label {
+    width: 120px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+/* located in demo.css and creates a little calendar icon
+ * instead of a text link for "Choose date"
+ */
+a.dp-choose-date {
+/*	float: left;*/
+	width: 16px;
+	height: 16px;
+	padding: 0;
+	margin: 5px 3px 0;
+	display: inline-block;
+	text-indent: -2000px;
+	overflow: hidden;
+	background: url(images/calendar.png) no-repeat;
+}
+a.dp-choose-date.dp-disabled {
+	background-position: 0 -20px;
+	cursor: default;
+}
+/* makes the input field shorter once the date picker code
+ * has run (to allow space for the calendar icon
+ */
+input.dp-applied {
+/*	width: 140px;
+	float: left;*/
+}
+
+#sightingInfo p {
+    padding: 4px 0;
 }

@@ -304,14 +304,16 @@
         </script>
     </head>
     <body>
-
+        <div id="header">
             <div id="breadcrumb">
                 <a href="http://test.ala.org.au">Home</a>
                 <a href="http://test.ala.org.au/explore">Explore</a>
                 Occurrence Records Search
             </div>
             <h1>Occurrence Search Results</h1>
-        
+        </div>
+        <div id="column-one" class="full-width">
+            <div class="section">
                 <c:if test="${not empty searchResult && searchResult.totalRecords > 0}">
                     <fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###" var="totalHits"/>
                     <div id="searchResults">
@@ -460,5 +462,7 @@
             	- did not match any documents.            
                     </p>
                 </c:if>
+            </div>
+        </div>
     </body>
 </html>

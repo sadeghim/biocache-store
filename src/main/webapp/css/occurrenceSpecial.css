@@ -217,7 +217,7 @@ div#occurrenceDataset, div#occurrenceTaxonomy, div#occurrenceGeospatial, div#com
 /*div.boxes > div.window { */
     width: 58%;
     padding-bottom: 10px;
-    border-bottom: 1px solid #BBB;
+/*    border-bottom: 1px solid #BBB;*/
 }
 
 a.annotationIcon {
@@ -381,4 +381,8 @@ div.reply_button {
 
 div.reply_button > input {
     font-size: 10px;
+}
+
+div#occurrenceMetadata {
+    border-top: 1px solid #BBB;
 }

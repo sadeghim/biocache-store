@@ -208,7 +208,12 @@
                             codeAddress(true);
                         }
 
-                        navigator.geolocation.getCurrentPosition(getPostion);
+                        function positionDeclined() {
+                            //alert('geolocation request declined or errored');
+                            codeAddress();
+                        }
+
+                        navigator.geolocation.getCurrentPosition(getPostion, positionDeclined);
                         
                     } else if (google.loader && google.loader.ClientLocation) {
                         // Google AJAX API fallback GeoLocation
@@ -239,6 +244,8 @@
                         else if (address) {
                             geocoder.getLocations(address, addAddressToPage);
                         }
+                    } else {
+                        loadMap();
                     }
                 }
 
@@ -534,137 +541,141 @@
             </script>
         </head>
         <body>
-            <div id="breadcrumb">
-                <a href="http://test.ala.org.au">Home</a>
-                <a href="http://test.ala.org.au/explore">Explore</a>
-                Your Area
-            </div>
-            <div id="decoratorBody">
+            <div id="header">
+                <div id="breadcrumb">
+                    <a href="http://test.ala.org.au">Home</a>
+                    <a href="http://test.ala.org.au/explore">Explore</a>
+                    Your Area
+                </div>
                 <h1>Explore Your Area</h1>
-                <div>
-                    <div id="mapOuter" style="width: 400px; height: 450px; float:right;">
-                        <div id="yourMap"></div>
-                        <div style="font-size:11px;width:400px;">
-                            <table id="cellCountsLegend">
-                                <tr>
-                                    <td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td>
-                                    <td style="width:60px;background-color:#ffff00;">1&ndash;9</td>
-                                    <td style="width:60px;background-color:#ffcc00;">10&ndash;49</td>
-                                    <td style="width:60px;background-color:#ff9900;">50&ndash;99</td>
-                                    <td style="width:60px;background-color:#ff6600;">100&ndash;249</td>
-                                    <td style="width:60px;background-color:#ff3300;">250&ndash;499</td>
-                                    <td style="width:60px;background-color:#cc0000;">500+</td>
-                                </tr>
-                            </table>
+            </div>
+            <div id="column-one" class="full-width">
+                <div class="section">
+                    <div>
+                        <div id="mapOuter" style="width: 400px; height: 450px; float:right;">
+                            <div id="yourMap"></div>
+                            <div style="font-size:11px;width:400px;">
+                                <table id="cellCountsLegend">
+                                    <tr>
+                                        <td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td>
+                                        <td style="width:60px;background-color:#ffff00;">1&ndash;9</td>
+                                        <td style="width:60px;background-color:#ffcc00;">10&ndash;49</td>
+                                        <td style="width:60px;background-color:#ff9900;">50&ndash;99</td>
+                                        <td style="width:60px;background-color:#ff6600;">100&ndash;249</td>
+                                        <td style="width:60px;background-color:#ff3300;">250&ndash;499</td>
+                                        <td style="width:60px;background-color:#cc0000;">500+</td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div id="left-col">
-                        <form name="searchForm" id="searchForm" action="" method="GET">
-                            <div id="locationInput">
-                                <h2 style="color:#FF5D00; padding-bottom:4px">Enter your location or address:</h2>
-                                <input name="address" id="address" size="50" value="${address}"/>
-                                <input id="locationSearch" type="submit" value="Search"/>
-                                <input type="hidden" name="latitude" id="latitude" value="${latitude}"/>
-                                <input type="hidden" name="longitude" id="longitude" value="${longitude}"/>
-                                <input type="hidden" name="location" id="location" value="${location}"/>
-                            </div>
-                            <div id="locationInfo">
-                                <c:if test="${not empty location}">
-                                    <p>Showing records for: <b>${location}</b></p>
-                                </c:if>
-                                <button id="download" title="Download a list of all species (tab-delimited file)">Download</button>
-                                <div id="dialog-confirm" title="Continue with download?" style="display: none">
-                                    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>You are about to
-                                        download a list of species found within a ${radius} km radius of <code>${location}</code>.<br/>
-                                        Format: tab-delimited text file (called data.xls)</p>
+                        <div id="left-col">
+                            <form name="searchForm" id="searchForm" action="" method="GET">
+                                <div id="locationInput">
+                                    <h2>Enter your location or address:</h2>
+                                    <input name="address" id="address" size="50" value="${address}"/>
+                                    <input id="locationSearch" type="submit" value="Search"/>
+                                    <input type="hidden" name="latitude" id="latitude" value="${latitude}"/>
+                                    <input type="hidden" name="longitude" id="longitude" value="${longitude}"/>
+                                    <input type="hidden" name="location" id="location" value="${location}"/>
                                 </div>
-                                <p>Display records in a
-                                    <select id="radius" name="radius">
-                                        <option value="1" <c:if test="${radius eq '1'}">selected</c:if>>1</option>
-                                        <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
-                                        <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
-                                    </select> km radius <!--<input type="submit" value="Reload"/>-->
-                            </div>
-                            <div id="taxaBox">
-                                <div id="rightList" class="tableContainer">
-                                    <table>
-                                        <thead class="fixedHeader">
-                                            <tr>
-                                                <th>&nbsp;</th>
-                                                <th>Species</th>
-                                                <th>Records</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="scrollContent">
-                                        </tbody>
-                                    </table>
+                                <div id="locationInfo">
+                                    <c:if test="${not empty location}">
+                                        <p>Showing records for: <b>${location}</b></p>
+                                    </c:if>
+                                    <button id="download" title="Download a list of all species (tab-delimited file)">Download</button>
+                                    <div id="dialog-confirm" title="Continue with download?" style="display: none">
+                                        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>You are about to
+                                            download a list of species found within a ${radius} km radius of <code>${location}</code>.<br/>
+                                            Format: tab-delimited text file (called data.xls)</p>
+                                    </div>
+                                    <p>Display records in a
+                                        <select id="radius" name="radius">
+                                            <option value="1" <c:if test="${radius eq '1'}">selected</c:if>>1</option>
+                                            <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
+                                            <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
+                                        </select> km radius <!--<input type="submit" value="Reload"/>-->
                                 </div>
-                                <div id="leftList">
-                                    <table id="taxa-level-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Group</th>
-                                                <th>Count</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><a href="*" id="*" class="taxonBrowse">All Species</a>
-                                                <td>${fn:length(allLife)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent"><a href="Animalia" id="kingdom" class="taxonBrowse">Animals</a>
-                                                <td>${fn:length(animals)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent2"><a href="Mammalia" id="class" class="taxonBrowse">Mammals</a></td>
-                                                <td>${fn:length(mammals)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent2"><a href="Aves" id="class" class="taxonBrowse">Birds</a></td>
-                                                <td>${fn:length(birds)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Reptiles</a></td>
-                                                <td>${fn:length(reptiles)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent2"><a href="Amphibia" id="class" class="taxonBrowse">Amphibians</a></td>
-                                                <td>${fn:length(frogs)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes" id="class" class="taxonBrowse">Fish</a></td>
-                                                <td>${fn:length(fish)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent2"><a href="Insecta" id="class" class="taxonBrowse">Insects</a></td>
-                                                <td>${fn:length(insects)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent"><a href="Plantae" id="kingdom" class="taxonBrowse">Plants</a></td>
-                                                <td>${fn:length(plants)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent"><a href="Fungi" id="kingdom" class="taxonBrowse">Fungi</a></td>
-                                                <td>${fn:length(fungi)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent"><a href="Chromista" id="kingdom" class="taxonBrowse">Chromista</a></td>
-                                                <td>${fn:length(chromista)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent"><a href="Protozoa" id="kingdom" class="taxonBrowse">Protozoa</a></td>
-                                                <td>${fn:length(protozoa)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="indent"><a href="Bacteria" id="kingdom" class="taxonBrowse">Bacteria</a></td>
-                                                <td>${fn:length(bacteria)}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div id="taxaBox">
+                                    <div id="rightList" class="tableContainer">
+                                        <table>
+                                            <thead class="fixedHeader">
+                                                <tr>
+                                                    <th>&nbsp;</th>
+                                                    <th>Species</th>
+                                                    <th>Records</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="scrollContent">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="leftList">
+                                        <table id="taxa-level-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Group</th>
+                                                    <th>Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><a href="*" id="*" class="taxonBrowse">All Species</a>
+                                                    <td>${fn:length(allLife)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent"><a href="Animalia" id="kingdom" class="taxonBrowse">Animals</a>
+                                                    <td>${fn:length(animals)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent2"><a href="Mammalia" id="class" class="taxonBrowse">Mammals</a></td>
+                                                    <td>${fn:length(mammals)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent2"><a href="Aves" id="class" class="taxonBrowse">Birds</a></td>
+                                                    <td>${fn:length(birds)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Reptiles</a></td>
+                                                    <td>${fn:length(reptiles)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent2"><a href="Amphibia" id="class" class="taxonBrowse">Amphibians</a></td>
+                                                    <td>${fn:length(frogs)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes" id="class" class="taxonBrowse">Fish</a></td>
+                                                    <td>${fn:length(fish)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent2"><a href="Insecta" id="class" class="taxonBrowse">Insects</a></td>
+                                                    <td>${fn:length(insects)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent"><a href="Plantae" id="kingdom" class="taxonBrowse">Plants</a></td>
+                                                    <td>${fn:length(plants)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent"><a href="Fungi" id="kingdom" class="taxonBrowse">Fungi</a></td>
+                                                    <td>${fn:length(fungi)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent"><a href="Chromista" id="kingdom" class="taxonBrowse">Chromista</a></td>
+                                                    <td>${fn:length(chromista)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent"><a href="Protozoa" id="kingdom" class="taxonBrowse">Protozoa</a></td>
+                                                    <td>${fn:length(protozoa)}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="indent"><a href="Bacteria" id="kingdom" class="taxonBrowse">Bacteria</a></td>
+                                                    <td>${fn:length(bacteria)}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
