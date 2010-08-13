@@ -65,10 +65,15 @@
 
     <context-param>
         <param-name>uriFilterPattern</param-name>
-        <param-value>/, .*/occurrences/\d+, .+/occurrences/search, .*/explore/your-area, .*/contribute/sighting</param-value>
+        <param-value>/, /biocache-webapp/, .*/occurrences/\d+, .*/occurrences/search, .*/explore/your-area, .*/contribute/sighting</param-value>
     </context-param>
 
     <!-- CAS Authentication Service filters -->
+	<filter>
+	   <filter-name>CAS Single Sign Out Filter</filter-name>
+	   <filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>
+	</filter>
+
     <filter>
         <filter-name>CAS Authentication Filter</filter-name>
         <filter-class>au.org.ala.cas.client.UriFilter</filter-class>
@@ -87,8 +92,8 @@
     </filter>
 
     <filter>
-		<filter-name>CAS Validation Filter</filter-name>
-		<filter-class>au.org.ala.cas.client.UriFilter</filter-class>
+        <filter-name>CAS Validation Filter</filter-name>
+        <filter-class>au.org.ala.cas.client.UriFilter</filter-class>
         <init-param>
             <param-name>filterClass</param-name>
             <param-value>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</param-value>
@@ -107,6 +112,11 @@
             <param-value>au.org.ala.cas.client.AlaHttpServletRequestWrapperFilter</param-value>
         </init-param>
     </filter>
+
+	<filter-mapping>
+	   <filter-name>CAS Single Sign Out Filter</filter-name>
+	   <url-pattern>/*</url-pattern>
+	</filter-mapping>
 
     <filter-mapping>
         <filter-name>CAS Authentication Filter</filter-name>
