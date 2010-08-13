@@ -81,10 +81,10 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
                         <li class="nav-home"><a href="http://test.ala.org.au/" ><span>Home</span></a></li>
                         <li class="nav-explore selected"><a href="http://test.ala.org.au/explore/" ><span>Explore</span></a>
                             <ul><li><a href="http://biocache.ala.org.au/explore/your-area" ><span>Your Area</span></a></li>
-                                <li><a href="http://bie.ala.org.au/regions/" ><span>States & Territories</span></a></li>
+                                <li><a href="http://bie.ala.org.au/regions/" ><span>States &amp; Territories</span></a></li>
                                 <li><a href="http://test.ala.org.au/explore/species-maps/" ><span>Species Maps</span></a></li>
                                 <li><a href="http://collections.ala.org.au/public/map" ><span>Natural History Collections</span></a></li>
-                                <li><a href="http://test.ala.org.au/explore/themes/" ><span>Themes & Highlights </span></a></li>
+                                <li><a href="http://test.ala.org.au/explore/themes/" ><span>Themes &amp; Highlights </span></a></li>
                             </ul></li>
                         <li class="nav-tools"><a href="http://test.ala.org.au/tools-services/" ><span>Tools</span></a>
                             <ul><li><a href="http://test.ala.org.au/tools-services/creative-commons-licensing/" ><span>Creative Commons licensing</span></a></li>
@@ -109,25 +109,30 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
                                 <li><a href="http://test.ala.org.au/about/portfolio-of-projects/" ><span>Projects</span></a></li>
                                 <li><a href="http://test.ala.org.au/about/governance/" ><span>Governance</span></a></li>
                                 <li><a href="http://test.ala.org.au/about/media-centre/" ><span>Media Centre</span></a></li>
-                                <li><a href="http://test.ala.org.au/about/newsevents/" ><span>News & Events</span></a></li>
+                                <li><a href="http://test.ala.org.au/about/newsevents/" ><span>News &amp; Events</span></a></li>
                                 <li><a href="http://test.ala.org.au/about/resources/" ><span>Resources</span></a></li></ul></li>
-                        <c:if test="${empty pageContext.request.remoteUser}">
-                            <c:set var="queryString" value="${pageContext.request.queryString}"/>
-                            <c:choose>
-                                <c:when test="${empty queryString}">
-                                    <c:set var="requestUrl" value="${pageContext.request.requestURL}"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="requestUrl" value="${pageContext.request.requestURL}?${fn:replace(queryString, '+', '%2B')}"/>
-                                </c:otherwise>
-                            </c:choose>
-                            <li class="nav-login nav-right"><ala:loginLogoutLink returnUrlPath="${requestUrl}"/></li>
-                        </c:if>
+                        <c:set var="queryString" value="${pageContext.request.queryString}"/>
+                        <c:choose>
+                            <c:when test="${empty queryString}">
+                                <c:set var="requestUrl" value="${pageContext.request.requestURL}"/>
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="requestUrl" value="${pageContext.request.requestURL}?${fn:replace(queryString, '+', '%2B')}"/>
+                            </c:otherwise>
+                        </c:choose>
+                        <c:choose>
+                            <c:when test="${empty pageContext.request.remoteUser}">
+                                <li class="nav-login nav-right"><ala:loginLogoutLink returnUrlPath="${requestUrl}"/></li>
+                            </c:when>
+                            <c:otherwise>
+                                <li class="nav-logout nav-right"><ala:loginLogoutLink returnUrlPath="${requestUrl}"/></li>
+                            </c:otherwise>
+                        </c:choose>
                     </ul>
                     <!-- WP Menubar 4.7: end menu nav-site, template Superfish, CSS  -->
                 </div><!--close nav-->
                 <c:if test="${!empty pageContext.request.remoteUser}">
-                    <div id="loginId">Logged in: ${pageContext.request.remoteUser}</div>
+                    <div id="loginId">${pageContext.request.remoteUser}</div>
                 </c:if>
                 <div id="wrapper_search">
 			<form id="search-form" action="http://bie.ala.org.au/search" method="get" name="search-form">
@@ -208,7 +213,7 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
                         <li id="menu-item-1050" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/support/">Support</a></li>
                         <li id="menu-item-1048" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/contact-us/">Contact Us</a></li>
                         <li id="menu-item-1047" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/about/">About the Atlas</a></li>
-                        <li id="menu-item-1052" class="last menu-item menu-item-type-custom"><a href="http://test.ala.org.au">Log in</a></li>
+                        <li id="menu-item-1052" class="last menu-item menu-item-type-custom"><ala:loginLogoutLink returnUrlPath="${requestUrl}"/></li>
                     </ul>
                     <ul id="menu-footer-legal">
                         <li id="menu-item-3090" class="menu-item menu-item-type-post_type"><a href="http://test.ala.org.au/site-map/">Site Map</a></li>
