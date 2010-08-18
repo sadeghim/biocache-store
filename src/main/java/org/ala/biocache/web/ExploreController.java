@@ -225,7 +225,7 @@ public class ExploreController {
 
         model.addAttribute("taxa", taxa);
         model.addAttribute("rank", rank);
-        List<TaxaCountDTO> species = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, taxaList, null, startIndex, pageSize, "count", "asc");
+        List<TaxaCountDTO> species = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, taxaList, null, startIndex, pageSize, "taxon_name", "asc");
         model.addAttribute("species", species);
         model.addAttribute("speciesCount", species.size());
     }
