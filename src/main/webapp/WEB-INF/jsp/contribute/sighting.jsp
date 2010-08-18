@@ -120,6 +120,7 @@
                     //alert("trying to get coords with navigator.geolocation...");  
                     function getPostion(position) {  
                         //alert('coords: '+position.coords.latitude+','+position.coords.longitude);
+                        $('#mapCanvas').html('');
                         $('#sightingLatitude').val(position.coords.latitude);
                         $('#sightingLongitude').val(position.coords.longitude);
                         zoom = 15;
@@ -128,10 +129,12 @@
                     }
                     function positionDeclined() {
                         //alert('geolocation request declined or errored');
+                        $('#mapCanvas').html('');
                         zoom = 3;
                         initialize();
                     }
 
+                    $('#mapCanvas').html('Waiting for confirmation to use your current location (see browser message at top of window').css('color','red').css('font-size','14px');
                     navigator.geolocation.getCurrentPosition(getPostion, positionDeclined);
                 } else if (google.loader && google.loader.ClientLocation) {
                     // Google AJAX API fallback GeoLocation
@@ -214,16 +217,26 @@
                 geocoder = new google.maps.Geocoder();
                 attemptGeolocation();
 
-                $('#sightingDate').datePicker({startDate:'01/01/1996'}).val(new Date().asString()).trigger('change');
-                var date = new Date();
-                var hour = date.getHours();
-                if (hour < 10) hour = "0" + hour;
-                var minutes = date.getMinutes();
-                if (minutes < 10) minutes = "0" + minutes;
-                $('#sightingTime').val(hour+":"+minutes);
+                // populate date if a new entry
+                var sightingDate = "${param.date}";
+                if (sightingDate.length == 0) {
+                    $('#sightingDate').datePicker({startDate:'01/01/1996'}).val(new Date().asString()).trigger('change');
+                }
+
+                // populate time if a new entry
+                var sightingTime = "${param.time}";
+                if (sightingTime.length == 0) {
+                    var date = new Date();
+                    var hour = date.getHours();
+                    if (hour < 10) hour = "0" + hour;
+                    var minutes = date.getMinutes();
+                    if (minutes < 10) minutes = "0" + minutes;
+                    $('#sightingTime').val(hour+":"+minutes);
+                }
+
                 $("#sightingTime").timePicker({
                     //startTime: new Date(),
-                    leftOffset: 85,
+                    //leftOffset: 85,
                     step: 15
                 });
                 
@@ -248,7 +261,7 @@
                 var h = $('#locationBlock').height();
                 $('#location').height(h-20); // $('#locationBlock').height
 
-                $('.locationInput').attr('title', 'Drag marker on map to set location');
+                $('.locationInput').attr('title', 'Use the map controls to set the location');
                 $('.locationInput').tooltip();
             });
         </script>
@@ -266,29 +279,29 @@
             <c:choose>
                 <c:when test="${!empty pageContext.request.remoteUser}"><%-- User is logged in --%>
                     <c:if test="${not empty taxonConcept}">
-                        <form name="sighting" id="sighting" action="" method="GET">
+                        <form name="sighting" id="sighting" action="" method="POST">
                             <div id="column-one">
-                                <div class="section">
-                                    <div style="float: left; padding-right: 15px" id="images">
-                                        <img src="${taxonConcept.imageThumbnailUrl}" height="85px" alt="species thumbnail"/>
-                                    </div>
+                                <div style="float: left; padding-right: 15px" id="images" class="section">
+                                    <img src="${taxonConcept.imageThumbnailUrl}" height="85px" alt="species thumbnail"/>
+                                </div>
+                                <div style="margin-left: 115px" class="section">
                                     <h2><a href="http://bie.ala.org.au/species/${param['guid']}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
                                         (${taxonConcept.commonName})</a>
-                                        <input type="hidden" name="guid" id="sightingGuid" value="${param['guid']}"/>
+                                        <input type="hidden" name="guid" id="sightingGuid" value="${param.guid}"/>
                                     </h2>
                                     <fieldset id="sightingInfo">
                                         <p><label for="date">Date</label>
-                                            <input type="text" id="sightingDate" name="date" size="20" value=""/>
+                                            <input type="text" id="sightingDate" name="date" size="20" value="${param.date}"/>
                                             <span>(DD-MM-YYYY)</span>
                                         </p>
                                         <p><label for="time">Time</label>
-                                            <input type="text" id="sightingTime" name="time" size="20" value="12:00"/>
+                                            <input type="text" id="sightingTime" name="time" size="20" value="${param.time}"/>
                                             <span>(HH:MM)</span>
                                         </p>
                                         <p><label for="number">Number observed</label>
                                             <select id="sightingNumber" name="number">
                                                 <c:forEach var="option" begin="1" end="100" step="1">
-                                                    <option >${option}</option>
+                                                    <option<c:if test="${option == param.number}"> selected</c:if>>${option}</option>
                                                 </c:forEach>
                                             </select>
                                         </p>
@@ -304,25 +317,25 @@
                                             <span id="markerLongitude" class="locationInput"></span>
                                             <input type="hidden" id="sightingLongitude" class="locationInput" name="longitude" size="20" value="133"/>
                                         </p>
-                                        <p><label for="location">Coordinate Uncertainty</label>
+                                        <p><label for="coordinateUncertainty">Coordinate Uncertainty</label>
                                             <select id="sightingCoordinateUncertainty" name="coordinateUncertainty">
-                                                <option >1</option>
-                                                <option >5</option>
-                                                <option >10</option>
-                                                <option >20</option>
-                                                <option >50</option>
-                                                <option selected>100</option>
-                                                <option >500</option>
-                                                <option >1000</option>
+                                                <option>1</option>
+                                                <option>5</option>
+                                                <option>10</option>
+                                                <option>20</option>
+                                                <option selected>50</option>
+                                                <option>100</option>
+                                                <option>500</option>
+                                                <option>1000</option>
                                             </select>
                                             <span>(in metres)</span>
                                         </p>
                                         <p><label for="notes">Notes</label>
-                                            <textarea id="sightingNotes" name="notes" cols="30" rows="5"></textarea>
+                                            <textarea id="sightingNotes" name="notes" cols="30" rows="5">${param.notes}</textarea>
                                             <span id="notes">(E.g. weather conditions, observed behaviour, <i>etc.</i>)</span>
                                         </p>
                                         <p><label for=""></label>
-                                            <input type="submit" id="sightingSubmit" value="Submit"/>
+                                            <input type="submit" name="action" id="sightingSubmit" value="Next >"/>
                                         </p>
                                     </fieldset>
                                 </div>
@@ -330,12 +343,13 @@
                             <div id="column-two">
                                 <div class="section">
                                     <div id="sightingAddress">
-                                        <label for="address">Search for sighting location or address: </label>
+                                        <label for="address">Enter the location or address of sighting: </label>
                                         <input name="address" id="address" size="40" value="${address}"/>
                                         <input id="locationSearch" type="button" value="Search"/>
-                                        <input type="hidden" name="location" id="location" value="${location}"/>
+<!--                                        <input type="hidden" name="location" id="location" value="${location}"/>-->
                                     </div>
                                     <div id="mapCanvas"></div>
+                                    <div style="font-size: 90%"><b>Hint:</b> click and drag the marker pin to fine-tune the location coordinates</div>
                                     <div style="display: none">
                                         <div id="markerAddress"></div>
                                         <div id="markerStatus" style="display: none"></div>
@@ -360,7 +374,7 @@
                         </c:otherwise>
                     </c:choose>
                     <div style="border-top: 1px solid #DDD; margin-top: 10px">&nbsp;</div>
-                    <div>You are not logged in. <ala:loginLogoutLink returnUrlPath="${requestUrl}"/></div>
+                    <div class="section">You are not logged in. <ala:loginLogoutLink returnUrlPath="${requestUrl}"/></div>
                 </c:otherwise>
             </c:choose>
     </body>

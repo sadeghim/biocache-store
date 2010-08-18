@@ -16,7 +16,6 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
         <title><decorator:title default="Atlas of Living Australia" /></title>
-<!--        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-1.4.2.min.js"></script>-->
         <link rel="stylesheet" href="http://test.ala.org.au/wp-content/themes/ala/style.css" type="text/css" media="screen" />
         <link rel="icon" type="image/x-icon" href="http://test.ala.org.au/wp-content/themes/ala/images/favicon.ico" />
         <link rel="shortcut icon" type="image/x-icon" href="http://test.ala.org.au/wp-content/themes/ala/images/favicon.ico" />

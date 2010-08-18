@@ -23,6 +23,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,14 +39,23 @@ public class ContributeDataController {
 	private final static Logger logger = Logger.getLogger(ContributeDataController.class);
     /** JSP page names */
 	private String SIGHTING = "contribute/sighting";
+    private String SIGHTING_CONFIRM = "contribute/sightingConfirmation";
+    private String SIGHTING_THANKYOU = "contribute/sightingThankyou";
     /** Base URL for BIE webapp */
     private String bieBaseUrl = "http://bie.ala.org.au";
     /** Google API key - injected by Spring */
     private String googleKey;
 
-    @RequestMapping(value = "/contribute/sighting*", method = RequestMethod.GET)
+    /**
+     * Initial sighting page as requested via GET
+     *
+     * @param guid
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/contribute/sighting/{guid}", method = RequestMethod.GET)
 	public String contributeSighting(
-            @RequestParam(value="guid", required=true, defaultValue="") String guid,
+            @PathVariable("guid") String guid,
             Model model)  {
         try {
             MiniTaxonConceptDTO dto = getTaxonConceptProperties(guid);
@@ -55,8 +65,62 @@ public class ContributeDataController {
             logger.error(msg, ex);
             model.addAttribute("error", msg);
         }
-
+        
         return SIGHTING;
+    }
+
+    /**
+     * POST version of sighting page, gets called after submit button has been clicked.
+     *
+     * @param guid
+     * @param sightingGuid
+     * @param sightingDate
+     * @param sightingTime
+     * @param sightingNumber
+     * @param sightingLocation
+     * @param sightinglatitude
+     * @param sightingLongitude
+     * @param sightingCoordinateUncertainty
+     * @param sightingNotes
+     * @param sightingAddress
+     * @param sightingAction
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/contribute/sighting/{guid}", method = RequestMethod.POST)
+	public String contributeSighting(
+            @PathVariable("guid") String guid,
+            @RequestParam(value="guid", required=false) String sightingGuid,
+            @RequestParam(value="date", required=false) String sightingDate,
+            @RequestParam(value="time", required=false) String sightingTime,
+            @RequestParam(value="number", required=false) String sightingNumber,
+            @RequestParam(value="location", required=false) String sightingLocation,
+            @RequestParam(value="latitude", required=false) String sightinglatitude,
+            @RequestParam(value="longitude", required=false) String sightingLongitude,
+            @RequestParam(value="coordinateUncertainty", required=false) String sightingCoordinateUncertainty,
+            @RequestParam(value="notes", required=false) String sightingNotes,
+            @RequestParam(value="address", required=false) String sightingAddress,
+            @RequestParam(value="action", required=false) String sightingAction,
+            Model model)  {
+        try {
+            MiniTaxonConceptDTO dto = getTaxonConceptProperties(guid);
+            model.addAttribute("taxonConcept", dto);
+        } catch (Exception ex) {
+            String msg = "Error: could not find species for guid (POST): "+guid+" ("+ex.getLocalizedMessage()+")";
+            logger.error(msg, ex);
+            model.addAttribute("error", msg);
+        }
+
+        String pageType = SIGHTING;
+        // If user submits form show the confirmation page with option to go back and edit values
+        if ("Next >".equalsIgnoreCase(sightingAction)) {
+            pageType = SIGHTING_CONFIRM;
+        } else if ("Finish".equals(sightingAction)) {
+            pageType = SIGHTING_THANKYOU;
+            // populate bean and pass to DAO...
+        }
+        
+        return pageType;
     }
 
     /**
@@ -68,7 +132,7 @@ public class ContributeDataController {
     protected MiniTaxonConceptDTO getTaxonConceptProperties(String guid) throws Exception {
         MiniTaxonConceptDTO dto = new MiniTaxonConceptDTO();
         String JsonString = getUrlContentAsString(bieBaseUrl + "/species/" + guid + ".json");
-        logger.info("json string: "+JsonString);
+        logger.debug("json string: "+JsonString);
         JSONObject jsonObj = new JSONObject(JsonString);
         JSONObject etc = jsonObj.getJSONObject("extendedTaxonConceptDTO");
         dto.setGuid(guid);

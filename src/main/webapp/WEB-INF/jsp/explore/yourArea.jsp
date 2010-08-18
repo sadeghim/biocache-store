@@ -202,6 +202,7 @@
                     if (navigator && navigator.geolocation) {
 			//alert("trying to get coords with navigator.geolocation...");  
 			function getPostion(position) {  
+                            $('#yourMap').html(''); // clear message
                             //alert('coords: '+position.coords.latitude+','+position.coords.longitude);
                             $('#latitude').val(position.coords.latitude);
                             $('#longitude').val(position.coords.longitude);
@@ -210,9 +211,11 @@
 
                         function positionDeclined() {
                             //alert('geolocation request declined or errored');
+                            $('#yourMap').html(''); // clear message
                             codeAddress();
                         }
 
+                        $('#yourMap').html('Waiting for confirmation to use your current location (see browser message at top of window').css('color','red').css('font-size','16px');
                         navigator.geolocation.getCurrentPosition(getPostion, positionDeclined);
                         
                     } else if (google.loader && google.loader.ClientLocation) {
