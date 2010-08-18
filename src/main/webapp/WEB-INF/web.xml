@@ -65,7 +65,7 @@
 
     <context-param>
         <param-name>uriFilterPattern</param-name>
-        <param-value>/, /biocache-webapp/, .*/occurrences/\d+, .*/occurrences/search, .*/explore/your-area, .*/contribute/sighting</param-value>
+        <param-value>/, /biocache-webapp/, .*/occurrences/\d+, .*/occurrences/search, .*/explore/your-area, .*/contribute/sighting.*</param-value>
     </context-param>
 
     <!-- CAS Authentication Service filters -->
