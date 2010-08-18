@@ -24,34 +24,23 @@
             </div>
             <h1>Contribute a Sighting - Completed</h1>
         </div>
-        
-            <c:choose>
-                <%-- User is logged in --%>
-                <c:when test="${!empty pageContext.request.remoteUser}">
-                    <c:if test="${not empty taxonConcept}">
-                        <div id="column-one" class="section">
-                              <h2>Your sighting has been successfully submitted</h2>
-                              <p></p>
-                        </div>
-                    </c:if>
-                    <c:if test="${not empty error}">
-                        <div class="section">${error}</div>
-                    </c:if>
-                </c:when>
-                <%-- User is NOT logged in --%>        
-                <c:otherwise>
-                    <c:set var="queryString" value="${pageContext.request.queryString}"/>
-                    <c:choose>
-                        <c:when test="${empty queryString}">
-                            <c:set var="requestUrl" value="${pageContext.request.requestURL}"/>
-                        </c:when>
-                        <c:otherwise>
-                            <c:set var="requestUrl" value="${pageContext.request.requestURL}?${fn:replace(queryString, '+', '%2B')}"/>
-                        </c:otherwise>
-                    </c:choose>
-                    <div style="border-top: 1px solid #DDD; margin-top: 10px">&nbsp;</div>
-                    <div>You are not logged in. <ala:loginLogoutLink returnUrlPath="${requestUrl}"/></div>
-                </c:otherwise>
-            </c:choose>
+        <c:choose>
+            <%-- User is logged in --%>
+            <c:when test="${!empty pageContext.request.remoteUser}">
+                <c:if test="${not empty taxonConcept}">
+                    <div id="column-one" class="section">
+                          <h2>Your sighting has been successfully submitted</h2>
+                          <p></p>
+                    </div>
+                </c:if>
+                <c:if test="${not empty error}">
+                    <div class="section">${error}</div>
+                </c:if>
+            </c:when>
+            <%-- User is NOT logged in --%>
+            <c:otherwise>
+                <jsp:include page="loginMsg.jsp"/>
+            </c:otherwise>
+        </c:choose>
     </body>
 </html>

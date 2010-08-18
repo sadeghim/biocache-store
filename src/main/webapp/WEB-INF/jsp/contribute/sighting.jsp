@@ -364,17 +364,7 @@
                     </c:if>
                 </c:when>
                 <c:otherwise><%-- User is NOT logged in --%>
-                    <c:set var="queryString" value="${pageContext.request.queryString}"/>
-                    <c:choose>
-                        <c:when test="${empty queryString}">
-                            <c:set var="requestUrl" value="${pageContext.request.requestURL}"/>
-                        </c:when>
-                        <c:otherwise>
-                            <c:set var="requestUrl" value="${pageContext.request.requestURL}?${fn:replace(queryString, '+', '%2B')}"/>
-                        </c:otherwise>
-                    </c:choose>
-                    <div style="border-top: 1px solid #DDD; margin-top: 10px">&nbsp;</div>
-                    <div class="section">You are not logged in. <ala:loginLogoutLink returnUrlPath="${requestUrl}"/></div>
+                    <jsp:include page="loginMsg.jsp"/>
                 </c:otherwise>
             </c:choose>
     </body>
