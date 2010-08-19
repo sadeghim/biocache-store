@@ -307,9 +307,9 @@
                                     </div>
                                     <p>Display records in a
                                         <select id="radius" name="radius">
-                                            <option value="1" <c:if test="${radius eq '1'}">selected</c:if>>1</option>
-                                            <option value="5" <c:if test="${radius eq '5'}">selected</c:if>>5</option>
-                                            <option value="10" <c:if test="${radius eq '10'}">selected</c:if>>10</option>
+                                            <option value="1" <c:if test="${radius eq '1.0'}">selected</c:if>>1</option>
+                                            <option value="5" <c:if test="${radius eq '5.0'}">selected</c:if>>5</option>
+                                            <option value="10" <c:if test="${radius eq '10.0'}">selected</c:if>>10</option>
                                         </select> km radius <!--<input type="submit" value="Reload"/>-->
                                 </div>
                                 <div id="taxaBox">

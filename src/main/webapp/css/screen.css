@@ -999,7 +999,7 @@ a.taxonBrowse2, a.taxonBrowse2:hover, a.taxonBrowse2:focus {
 }
 #locationInput h2 {
     color:#FF5D00;
-    padding-bottom:4px;
+    padding-bottom: 5px;
     font-size: 1.4em;
     font-weight: bold;
 }
