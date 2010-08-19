@@ -213,6 +213,7 @@ public class ExploreController {
             @RequestParam(value="rank", required=false, defaultValue="") String rank,
             @RequestParam(value="start", required=false, defaultValue="0") Integer startIndex,
 			@RequestParam(value="pageSize", required=false, defaultValue ="50") Integer pageSize,
+            @RequestParam(value="sort", required=false, defaultValue ="taxon_name") String sort,
             Model model) throws Exception {
 
         String[] taxaArray = StringUtils.split(taxa, ",");
@@ -225,7 +226,7 @@ public class ExploreController {
 
         model.addAttribute("taxa", taxa);
         model.addAttribute("rank", rank);
-        List<TaxaCountDTO> species = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, taxaList, null, startIndex, pageSize, "taxon_name", "asc");
+        List<TaxaCountDTO> species = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, taxaList, null, startIndex, pageSize, sort, "asc");
         model.addAttribute("species", species);
         model.addAttribute("speciesCount", species.size());
     }
