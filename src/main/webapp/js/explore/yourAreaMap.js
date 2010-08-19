@@ -223,7 +223,7 @@ function onFeatureSelect(feature) {
     var featureCentre = feature.geometry.getCentroid().transform(map.getProjectionObject(), proj4326);
     popup = new OpenLayers.Popup.FramedCloud(feature.attributes.type, feature.geometry.getBounds().getCenterLonLat(),
         null, "<div style='font-size:12px'>Number of records: " + feature.attributes.count +
-        "<br /><a href='"+ contextPath +"/occurrences/searchByArea?q="+rank+":"+taxa+"|"+featureCentre.y+"|"+featureCentre.x+"|0.01'>View list of records</a></div>",
+        "<br /><a href='"+ contextPath +"/occurrences/searchByArea?q="+rank+":"+taxa+"|"+featureCentre.y+"|"+featureCentre.x+"|0.05'>View list of records</a></div>",
         null, true, onPopupClose);
     feature.popup = popup;
     map.addPopup(popup);
