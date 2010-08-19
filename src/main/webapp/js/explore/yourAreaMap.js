@@ -38,33 +38,28 @@ function loadMap() {
     //map.addControl(new OpenLayers.Control.PanPanel());
     map.addControl(new OpenLayers.Control.LayerSwitcher({ascending: false}));
     //map.addControl(new OpenLayers.Control.OverviewMap());
+    
     // create Google base layers
     var gmap = new OpenLayers.Layer.Google(
         "Google Streets",
         {'sphericalMercator': true, maxExtent: new OpenLayers.Bounds(11548635,-5889094,18604187,-597430)}
     );
-    //map.addLayer(gmap);
+    
     var gsat = new OpenLayers.Layer.Google(
         "Google Satellite",
         {'sphericalMercator': true, type: G_SATELLITE_MAP, maxExtent: new OpenLayers.Bounds(11548635,-5889094,18604187,-597430), numZoomLevels: 22}
     );
-    //map.addLayer(gsat);
+    
     var ghyb = new OpenLayers.Layer.Google(
         "Google Hybrid",
         {'sphericalMercator': true, maxExtent: new OpenLayers.Bounds(11548635,-5889094,18604187,-597430), type: G_HYBRID_MAP}
     );
-    //map.addLayer(ghyb);
+
     map.addLayers([ghyb, gsat, gmap ]);
 
     var point = new OpenLayers.LonLat(lon, lat);
     map.setCenter(point.transform(proj4326, map.getProjectionObject()), zoom);
-    // reload vector layer on zoom event
-    map.events.register('zoomend', map, function (e) {
-        drawCircleRadius();
-        loadRecordsLayer(taxa, rank);
-        //loadSelectControl();
-    });
-
+    
     // marker pin (Google-style)
     markerLayer = new OpenLayers.Layer.Vector("Pin");
     var pinPoint = new OpenLayers.Geometry.Point(lon, lat);
@@ -83,20 +78,32 @@ function loadMap() {
     markerLayer.addFeatures(feature);
     map.addLayer(markerLayer);
     markerLayer.setZIndex(750);
+//    
+//    // Add "pin" marker
+//    var markers = new OpenLayers.Layer.Markers( "Markers" );
+//    map.addLayer(markers);
+//    var size = new OpenLayers.Size(18,28);
+//    var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+//    var icon = new OpenLayers.Icon(contextPath +'/static/css/images/marker.png',size,offset);
+//    markers.addMarker(new OpenLayers.Marker(new OpenLayers.Geometry.Point(lon, lat).transform(proj4326, map.getProjectionObject()),icon));
 
     // load circle showing area included in search
     drawCircleRadius();
+    // create the vector Layer
+    cerateVectorLayer();
     // load occurrences data onto map
-    //loadRecordsLayer();
-    // register select events on occurrence opints
-    //loadSelectControl();
-    
+    loadRecordsLayer();
+    // reload dynamic layers on zoom event
+    map.events.register('zoomend', map, function (e) {
+        drawCircleRadius();
+        loadGeoJsonData();
+    });
 }
 
 /**
- * Load the occurrence records & display as points on map
+ * Create vector Layer for GeoJSON data display
  */
-function loadRecordsLayer(taxa, rank) {
+function cerateVectorLayer() {
     // remove existing data if present
     if (vectorLayer != null) {
         // Remove any active popups (otherwise they are stuck on screen)
@@ -104,7 +111,7 @@ function loadRecordsLayer(taxa, rank) {
             map.removePopup(map.popups[pop]);
         }
         vectorLayer.destroyFeatures();
-        //vectorLayer.destroy();
+        vectorLayer.destroy();
         //vectorLayer = null;
     }
 
@@ -120,6 +127,33 @@ function loadRecordsLayer(taxa, rank) {
         })
     });
 
+    // projection options
+    var GeoJSON_options = {
+        ignoreExtraDims: true,
+        internalProjection: map.baseLayer.projection,
+        externalProjection: proj4326
+    };
+
+    // create vector layer for occurrence points
+    vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
+        projection: map.baseLayer.projection,
+        styleMap: myStyles,
+        protocol: new OpenLayers.Protocol.HTTP({
+            format: new OpenLayers.Format.GeoJSON(GeoJSON_options)
+        })
+    });
+
+    map.addLayer(vectorLayer);
+}
+/**
+ * Load (reload) geoJSON data into vector layer
+ */
+function loadRecordsLayer() {
+    // clear vector featers and popups
+    vectorLayer.destroyFeatures();
+    for (pop in map.popups) {
+        map.removePopup(map.popups[pop]);
+    }
     // URL for GeoJSON web service
     var geoJsonUrl = contextPath + "/geojson/radius-points"; //+"&zoom=4&callback=?";
     // request params for ajax geojson call
@@ -130,30 +164,34 @@ function loadRecordsLayer(taxa, rank) {
         "long":  lon,
         "radius": radius
     };
-    // projection options
-    var proj_options = {
-        'internalProjection': map.baseLayer.projection,
-        'externalProjection': proj4326
+    // JQuery AJAX call
+    $.get(geoJsonUrl, params, loadNewGeoJsonData);
+}
+
+/**
+ * Callback for geoJSON ajax call
+ */
+function loadNewGeoJsonData(data) {
+    // URL for GeoJSON web service
+    var url = contextPath + "/geojson/radius-points"; //+"&zoom=4&callback=?";
+    // request params for ajax geojson call
+    var params = {
+        "taxa": taxa,
+        "rank": rank,
+        "lat": lat,
+        "long":  lon,
+        "radius": radius
     };
+    console.log("vectorLayer.protocol "+ vectorLayer.protocol);
 
-    // create vector layer for occurrence points
-    vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
-        projection: map.baseLayer.projection,
-        styleMap: myStyles,
-        //rendererOptions: {zIndexing: true},
-        //attribution: legend,
-        strategies: [new OpenLayers.Strategy.Fixed()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
-        protocol: new OpenLayers.Protocol.HTTP({
-            url: geoJsonUrl,
-            params: params,
-            format: new OpenLayers.Format.GeoJSON(proj_options)
-        })
-    });
+    var proj_options = {
+        internalProjection: map.baseLayer.projection,
+        externalProjection: proj4326
+    }
+    var features = new OpenLayers.Format.GeoJSON(proj_options).read(data);
 
-    map.addLayer(vectorLayer);
-    vectorLayer.refresh();
-    markerLayer.setZIndex(750); // so pin icon isn't covered with points
-    
+    vectorLayer.addFeatures(features);
+
     loadSelectControl();
 }
 
