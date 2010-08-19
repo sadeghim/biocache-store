@@ -123,7 +123,7 @@ public class OccurrenceController {
 			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
 			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
-			@RequestParam(value="rad", required=false, defaultValue="10") Integer radius,
+			@RequestParam(value="rad", required=false, defaultValue="10") Float radius,
 			@RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
 			@RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
 			Model model)
@@ -415,7 +415,7 @@ public class OccurrenceController {
 			@RequestParam(value="pageSize", required=false, defaultValue ="20") Integer pageSize,
 			@RequestParam(value="sort", required=false, defaultValue="score") String sortField,
 			@RequestParam(value="dir", required=false, defaultValue ="asc") String sortDirection,
-			@RequestParam(value="rad", required=false) Integer radius,
+			@RequestParam(value="rad", required=false) Float radius,
 			@RequestParam(value="lat", required=false) Float latitude,
 			@RequestParam(value="lon", required=false) Float longitude,
 			Model model)
@@ -448,7 +448,7 @@ public class OccurrenceController {
             query = queryParts[0];
             latitude = Float.parseFloat(queryParts[1]);
             longitude = Float.parseFloat(queryParts[2]);
-            radius = Integer.parseInt(queryParts[3]);
+            radius = Float.parseFloat(queryParts[3]);
         }
 
 		SearchResultDTO searchResult = new SearchResultDTO();

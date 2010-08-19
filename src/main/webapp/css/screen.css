@@ -1326,3 +1326,9 @@ input.dp-applied {
 div.time-picker {
     margin-top: 1.4em;
 }
+
+/* OPenLayers ZoomPanel positioning */
+.olZoomPanel {
+    top: 31px !important;
+}
+

@@ -22,18 +22,15 @@
                 // Global variables for Openlayers
                 var lon = ${longitude};
                 var lat = ${latitude};
-                var radius = ${radius};
+                var radius = "${radius}";
+                var zoom = ${zoom};
                 var contextPath = "${pageContext.request.contextPath}";
+
                 //make the taxa and rank global variable so that they can be used in the download
                 var taxa = [];
                 taxa[0] ="*";
                 var rank ="*";
-                var zoom = ${zoom};
-                var map, vectorLayer, selectControl, selectFeature, markerLayer, circleLayer;
-                var geocoder;
-                var proj900913 = new OpenLayers.Projection("EPSG:900913");
-                var proj4326 = new OpenLayers.Projection("EPSG:4326");
-
+                
                 // Load Google maps via AJAX API
                 google.load("maps", "2");
 

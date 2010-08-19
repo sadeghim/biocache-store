@@ -124,7 +124,7 @@ public class SearchDaoImpl implements SearchDao {
      */
     @Override
     public SearchResultDTO findByFulltextSpatialQuery(String query, String[] filterQuery, Float lat, Float lon,
-            Integer radius, Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception {
+            Float radius, Integer startIndex, Integer pageSize, String sortField, String sortDirection) throws Exception {
         SearchResultDTO searchResults = new SearchResultDTO();
 
         try {
@@ -150,7 +150,7 @@ public class SearchDaoImpl implements SearchDao {
      * @see org.ala.biocache.dao.SearchDao#writeSpeciesCountByCircleToStream(java.lang.Float, java.lang.Float, java.lang.Integer, java.lang.String, java.util.List, javax.servlet.ServletOutputStream)
      */
     public int writeSpeciesCountByCircleToStream(Float latitude, Float longitude,
-            Integer radius, String rank, List<String> higherTaxa, ServletOutputStream out) throws Exception
+            Float radius, String rank, List<String> higherTaxa, ServletOutputStream out) throws Exception
     {
 
         //get the species counts:
@@ -431,7 +431,7 @@ public class SearchDaoImpl implements SearchDao {
      * @see org.ala.biocache.dao.SearchDao#findRecordsForLocation(Float, Float, Integer)
      */
     @Override
-    public List<OccurrencePoint> findRecordsForLocation(List<String> taxa, String rank, Float latitude, Float longitude, Integer radius, PointType pointType) throws Exception {
+    public List<OccurrencePoint> findRecordsForLocation(List<String> taxa, String rank, Float latitude, Float longitude, Float radius, PointType pointType) throws Exception {
         List<OccurrencePoint> points = new ArrayList<OccurrencePoint>(); // new OccurrencePoint(PointType.POINT);
         String queryString = buildSpatialQueryString("*:*", latitude, longitude, radius);
         //String queryString = formatSearchQuery(query);
@@ -500,7 +500,7 @@ public class SearchDaoImpl implements SearchDao {
      */
     @Override
     public List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxon(Float latitude, Float longitude,
-            Integer radius, String rank, String higherTaxon, String filterQuery, Integer startIndex,
+            Float radius, String rank, String higherTaxon, String filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception {
 
         String queryString = buildSpatialQueryString("*:*", latitude, longitude, radius);
@@ -520,7 +520,7 @@ public class SearchDaoImpl implements SearchDao {
      */
     @Override
     public List<TaxaCountDTO> findAllSpeciesByCircleAreaAndHigherTaxa(Float latitude, Float longitude,
-            Integer radius, String rank, List<String> higherTaxa, String filterQuery, Integer startIndex,
+            Float radius, String rank, List<String> higherTaxa, String filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception {
 
         ArrayList<String> filterQueries = new ArrayList<String>();
@@ -545,7 +545,7 @@ public class SearchDaoImpl implements SearchDao {
      *       Integer, Integer, String, String)
      */
     public List<TaxaCountDTO> findAllKingdomsByCircleArea(Float latitude, Float longitude,
-            Integer radius, String filterQuery, Integer startIndex,
+            Float radius, String filterQuery, Integer startIndex,
             Integer pageSize, String sortField, String sortDirection) throws Exception {
 
         String queryString =  buildSpatialQueryString("*:*", latitude, longitude, radius);
@@ -736,7 +736,7 @@ public class SearchDaoImpl implements SearchDao {
      * @param radius
      * @return
      */
-    protected String buildSpatialQueryString(String fullTextQuery, Float latitude, Float longitude, Integer radius) {
+    protected String buildSpatialQueryString(String fullTextQuery, Float latitude, Float longitude, Float radius) {
         String queryString = "{!spatial lat=" + latitude.toString() + " long=" + longitude.toString() +
                 " radius=" + radius.toString() + " unit=km calc=arc threadCount=2}" + fullTextQuery; // calc=arc|plane
         return queryString;

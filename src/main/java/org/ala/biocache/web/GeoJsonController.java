@@ -126,7 +126,7 @@ public class GeoJsonController {
 	public String radiusPointsGeoJson(
             @RequestParam(value="lat", required=true) Float latitude,
             @RequestParam(value="long", required=true) Float longitude,
-            @RequestParam(value="radius", required=true) Integer radius,
+            @RequestParam(value="radius", required=true) Float radius,
             @RequestParam(value="callback", required=false) String callback,
             @RequestParam(value="zoom", required=false, defaultValue="0") Integer zoomLevel,
             @RequestParam(value="bbox", required=false) String bbox,

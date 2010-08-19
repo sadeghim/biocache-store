@@ -21,6 +21,11 @@
 //  var radius = ${radius};
 //  var contextPath = "${pageContext.request.contextPath}";
 
+var map, selectControl, vectorLayer, selectFeature, markerLayer, circleLayer;
+var geocoder;
+var proj900913 = new OpenLayers.Projection("EPSG:900913");
+var proj4326 = new OpenLayers.Projection("EPSG:4326");
+
 /**
  * Openlayers map
  */
@@ -29,25 +34,24 @@ function loadMap() {
     map = new OpenLayers.Map('yourMap',{maxResolution: 2468,controls: []});
     //add controls - restrict mouse wheel chaos
     map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled:false}));
-    map.addControl(new OpenLayers.Control.ZoomPanel());
-    map.addControl(new OpenLayers.Control.PanPanel());
+    map.addControl(new OpenLayers.Control.ZoomPanel({displayClass: "olControlZoomPanel olZoomPanel"}));
+    //map.addControl(new OpenLayers.Control.PanPanel());
     map.addControl(new OpenLayers.Control.LayerSwitcher({ascending: false}));
     //map.addControl(new OpenLayers.Control.OverviewMap());
     // create Google base layers
     var gmap = new OpenLayers.Layer.Google(
         "Google Streets",
-        {'sphericalMercator': true,
-            maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34)}
+        {'sphericalMercator': true, maxExtent: new OpenLayers.Bounds(11548635,-5889094,18604187,-597430)}
     );
     //map.addLayer(gmap);
     var gsat = new OpenLayers.Layer.Google(
         "Google Satellite",
-        {'sphericalMercator': true, type: G_SATELLITE_MAP, maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34), numZoomLevels: 22}
+        {'sphericalMercator': true, type: G_SATELLITE_MAP, maxExtent: new OpenLayers.Bounds(11548635,-5889094,18604187,-597430), numZoomLevels: 22}
     );
     //map.addLayer(gsat);
     var ghyb = new OpenLayers.Layer.Google(
         "Google Hybrid",
-        {'sphericalMercator': true, maxExtent: new OpenLayers.Bounds(-20037508.34, -20037508.34, 20037508.34, 20037508.34), type: G_HYBRID_MAP}
+        {'sphericalMercator': true, maxExtent: new OpenLayers.Bounds(11548635,-5889094,18604187,-597430), type: G_HYBRID_MAP}
     );
     //map.addLayer(ghyb);
     map.addLayers([ghyb, gsat, gmap ]);
@@ -67,19 +71,26 @@ function loadMap() {
     var feature = new OpenLayers.Feature.Vector(
         pinPoint.transform(proj4326, map.getProjectionObject()),
         {title:'Your location' },
-        {externalGraphic: contextPath +'/static/css/images/marker.png', graphicHeight: 28, graphicWidth: 18, graphicYOffset: -24 , graphicZIndex: 1000, rendererOptions: {zIndexing: true}}
+        {   externalGraphic: contextPath +'/static/css/images/marker.png',
+            graphicHeight: 28,
+            graphicWidth: 18,
+            graphicYOffset: -24,
+            graphicZIndex: 750,
+            rendererOptions: {zIndexing: true}
+        }
     );
 
     markerLayer.addFeatures(feature);
     map.addLayer(markerLayer);
-    markerLayer.setZIndex(1000);
+    markerLayer.setZIndex(750);
 
     // load circle showing area included in search
     drawCircleRadius();
     // load occurrences data onto map
-    loadRecordsLayer();
+    //loadRecordsLayer();
     // register select events on occurrence opints
     //loadSelectControl();
+    
 }
 
 /**
@@ -88,8 +99,13 @@ function loadMap() {
 function loadRecordsLayer(taxa, rank) {
     // remove existing data if present
     if (vectorLayer != null) {
-        vectorLayer.destroy();
-        vectorLayer = null;
+        // Remove any active popups (otherwise they are stuck on screen)
+        for (pop in map.popups) {
+            map.removePopup(map.popups[pop]);
+        }
+        vectorLayer.destroyFeatures();
+        //vectorLayer.destroy();
+        //vectorLayer = null;
     }
 
     // configuring the styling of the vetor layer
@@ -136,7 +152,64 @@ function loadRecordsLayer(taxa, rank) {
 
     map.addLayer(vectorLayer);
     vectorLayer.refresh();
-    markerLayer.setZIndex(1000); // so pin icon isn't covered with points
+    markerLayer.setZIndex(750); // so pin icon isn't covered with points
+    
+    loadSelectControl();
+}
+
+/**
+ * Register select event on occurrence points
+ */
+function loadSelectControl() {
+    if (selectControl != null) {
+        map.removeControl(selectControl);
+        selectControl.destroy();
+        selectControl = null;
+    }
+
+    selectControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
+        //hover: true,
+        onSelect: onFeatureSelect,
+        onUnselect: onFeatureUnselect
+    });
+
+    map.addControl(selectControl);
+    selectControl.activate();  // errors on map re-size/zoom change so commented-out for now
+}
+
+/**
+ * vectorLayer feature onSelect function
+ */
+function onFeatureSelect(feature) {
+    selectedFeature = feature;
+    var featureCentre = feature.geometry.getCentroid().transform(map.getProjectionObject(), proj4326);
+    popup = new OpenLayers.Popup.FramedCloud(feature.attributes.type, feature.geometry.getBounds().getCenterLonLat(),
+        null, "<div style='font-size:12px'>Number of records: " + feature.attributes.count +
+        "<br /><a href='"+ contextPath +"/occurrences/searchByArea?q="+rank+":"+taxa+"|"+featureCentre.y+"|"+featureCentre.x+"|0.01'>View list of records</a></div>",
+        null, true, onPopupClose);
+    feature.popup = popup;
+    map.addPopup(popup);
+}
+
+/**
+ * vectorLayer feature onUnselect function
+ */
+function onFeatureUnselect(feature) {
+    map.removePopup(feature.popup);
+    feature.popup.destroy();
+    feature.popup = null;
+}
+
+function onPopupClose(evt) {
+    selectControl.unselect(selectedFeature);
+}
+
+function destroyMap() {
+    if (map != null) {
+        //alert("destroying map");
+        map.destroy();
+        $("#pointsMap").html('');
+    }
 }
 
 /**
@@ -261,50 +334,3 @@ function addAddressToPage(response) {
     }
 }
 
-function onFeatureSelect(feature) {
-    selectedFeature = feature;
-    popup = new OpenLayers.Popup.FramedCloud("chicken", feature.geometry.getBounds().getCenterLonLat(),
-    null, "<div style='font-size:.8em'>Records in area: " + feature.attributes.count, // +
-    //"<br /><a href=''>View records in this area</a> " + feature.geometry.getBounds() + "</div>",
-    null, true, onPopupClose);
-    feature.popup = popup;
-    map.addPopup(popup);
-}
-
-function onFeatureUnselect(feature) {
-    map.removePopup(feature.popup);
-    feature.popup.destroy();
-    feature.popup = null;
-}
-
-function onPopupClose(evt) {
-    selectControl.unselect(selectedFeature);
-}
-
-function destroyMap() {
-    if (map != null) {
-        //alert("destroying map");
-        map.destroy();
-        $("#pointsMap").html('');
-    }
-}
-
-/**
- * Register select event on occurrence points
- */
-function loadSelectControl() {
-    if (selectControl != null) {
-        map.removeControl(selectControl);
-        selectControl.destroy();
-        selectControl = null;
-    }
-
-    selectControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
-        //hover: true,
-        onSelect: onFeatureSelect,
-        onUnselect: onFeatureUnselect
-    });
-
-    map.addControl(selectControl);
-    selectControl.activate();  // errors on map re-size/zoom change so commented-out for now
-}
