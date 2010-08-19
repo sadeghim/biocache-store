@@ -182,7 +182,6 @@ function loadNewGeoJsonData(data) {
         "long":  lon,
         "radius": radius
     };
-    console.log("vectorLayer.protocol "+ vectorLayer.protocol);
 
     var proj_options = {
         internalProjection: map.baseLayer.projection,
