@@ -25,13 +25,20 @@
             var lon = 133;
             var lat = -27;
             var zoom = 4;
-            var map, vectorLayer, selectControl, selectFeature;
+            var map, vectorLayer, selectControl, selectFeature, loadingControl;
 
             /* Openlayers map */
             function loadMap() {
                 map = new OpenLayers.Map('pointsMap',{controls: []});
                 //add controls
                 map.addControl(new OpenLayers.Control.Attribution());
+                var panel = new OpenLayers.Control.Panel();
+                // control to display the "loading" graphic
+                loadingControl = new OpenLayers.Control.Button({displayClass: "loadingVector", trigger: dummyFunction});
+                panel.addControls([loadingControl]);
+                map.addControl(panel);
+                // hide the loading graphic
+                loadingControl.moveTo(new OpenLayers.Pixel(-1000, -1000));
                 baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
                 "http://labs.metacarta.com/wms/vmap0",
                 {layers: 'basic'} );
@@ -44,6 +51,10 @@
 
                 loadVectorLayer(); // load data via GeoJSON
 
+            }
+
+            function dummyFunction() {
+                alert('button');
             }
 
             /**
@@ -64,243 +75,264 @@
                         strokeWidth: 0
                     })
                 });
+                
+                var legend = '<table id="cellCountsLegend" class="show-70"><tr><td style="background-color:#333; color:white; text-align:right;">Record counts:&nbsp;</td><td style="width:60px;background-color:#ffff00;">1&ndash;9</td><td style="width:60px;background-color:#ffcc00;">10&ndash;49</td><td style="width:60px;background-color:#ff9900;">50&ndash;99</td><td style="width:60px;background-color:#ff6600;">100&ndash;249</td><td style="width:60px;background-color:#ff3300;">250&ndash;499</td><td style="width:60px;background-color:#cc0000;">500+</td></tr></table>';
 
+                vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
+                    styleMap: myStyles,
+                    attribution: legend,
+                    strategies: [new OpenLayers.Strategy.BBOX()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
+                    protocol: new OpenLayers.Protocol.HTTP({
+                        format: new OpenLayers.Format.GeoJSON()
+                    })
+                });
+
+                map.addLayer(vectorLayer);
+                
+                // trigger lading of GeoJSON
+                reloadData();
+            }
+
+            /* load features via ajax call */
+            function reloadData() {
+                // show loading graphic
+                loadingControl.moveTo(new OpenLayers.Pixel(270, 220));
+                // url vars
                 var geoJsonUrl = "${pageContext.request.contextPath}/geojson/cells"; //+"&zoom=4&callback=?";
-                var zoomLevel = map.getZoom();               
+                var zoomLevel = map.getZoom();
                 var params = {
                     q: "${query}",
-            <c:forEach items="${facetQuery}" var="fq">fq: "${fq}",</c:forEach>
-                        zoom: zoomLevel,
-                        type: "${type}"
+                <c:forEach items="${facetQuery}" var="fq">fq: "${fq}",</c:forEach>
+                    zoom: zoomLevel,
+                    type: "${type}"
+                };
+                // JQuery GET
+                $.get(geoJsonUrl, params, dataRequestHandler);
+            }
 
-                    };
+            /* handler for loading features */
+            function dataRequestHandler(data) {
+                // clear existing
+                vectorLayer.destroyFeatures();
+                // parse returned json
+                var features = new OpenLayers.Format.GeoJSON().read(data);
+                // add features to map
+                vectorLayer.addFeatures(features);
+                // hide the "loading" graphic
+                loadingControl.moveTo(new OpenLayers.Pixel(-1000, -1000));
                 
-                    var legend = '<table id="cellCountsLegend" class="show-70"><tr><td style="background-color:#333; color:white; text-align:right;">Record counts:&nbsp;</td><td style="width:60px;background-color:#ffff00;">1&ndash;9</td><td style="width:60px;background-color:#ffcc00;">10&ndash;49</td><td style="width:60px;background-color:#ff9900;">50&ndash;99</td><td style="width:60px;background-color:#ff6600;">100&ndash;249</td><td style="width:60px;background-color:#ff3300;">250&ndash;499</td><td style="width:60px;background-color:#cc0000;">500+</td></tr></table>';
+                // add select control
+                if (selectControl != null) {
+                    map.removeControl(selectControl);
+                    selectControl.destroy();
+                    selectControl = null;
+                }
 
-                    vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
-                        styleMap: myStyles,
-                        attribution: legend,
-                        strategies: [new OpenLayers.Strategy.BBOX()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
-                        protocol: new OpenLayers.Protocol.HTTP({
-                            url: geoJsonUrl,
-                            params: params,
-                            format: new OpenLayers.Format.GeoJSON()
-                        })
-                    });
+                selectControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
+                    //hover: true,
+                    onSelect: onFeatureSelect,
+                    onUnselect: onFeatureUnselect
+                });
 
-                    map.addLayer(vectorLayer);
-                    vectorLayer.refresh();
+                map.addControl(selectControl);
+                selectControl.activate();
+            }
 
-                    if (selectControl != null) {
-                        map.removeControl(selectControl);
-                        selectControl.destroy();
-                        selectControl = null;
+
+            function onPopupClose(evt) {
+                selectControl.unselect(selectedFeature);
+            }
+
+            function onFeatureSelect(feature) {
+                selectedFeature = feature;
+                popup = new OpenLayers.Popup.FramedCloud("chicken", feature.geometry.getBounds().getCenterLonLat(),
+                null, "<div style='font-size:.8em'>Records in area: " + feature.attributes.count, // +
+                //"<br /><a href=''>View records in this area</a> " + feature.geometry.getBounds().toBBOX() + "</div>",
+                null, true, onPopupClose);
+                feature.popup = popup;
+                map.addPopup(popup);
+            }
+
+            function onFeatureUnselect(feature) {
+                map.removePopup(feature.popup);
+                feature.popup.destroy();
+                feature.popup = null;
+            }
+
+            function destroyMap() {
+                if (map != null) {
+                    map.destroy();
+                    $("#pointsMap").html('');
+                }
+            }
+
+            // Jquery Document.onLoad equivalent
+            $(document).ready(function() {
+                var facetLinksSize = $("ul#subnavlist li").size();
+
+                if (facetLinksSize == 0) {
+                    // Hide an empty facet link list
+                    $("#facetBar > h4").hide();
+                    $("#facetBar #navlist").hide();
+                }
+                /* Accordion widget */
+                var icons = {
+                    header: "ui-icon-circle-arrow-e",
+                    headerSelected: "ui-icon-circle-arrow-s"
+                };
+
+                $("#accordion").accordion({
+                    icons: icons,
+                    autoHeight: false
+                });
+
+                $("#toggle").button().toggle(function() {
+                    $("#accordion").accordion("option", "icons", false);
+                }, function() {
+                    $("#accordion").accordion("option", "icons", icons);
+                });
+
+                $("select#sort").change(function() {
+                    var val = $("option:selected", this).val();
+                    reloadWithParam('sort',val);
+                });
+                $("select#dir").change(function() {
+                    var val = $("option:selected", this).val();
+                    reloadWithParam('dir',val);
+                });
+
+                $("#searchButtons > button").button();
+                $("#searchButtons > button#download").click(function() {
+                    var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?q=${query}&fq=${fn:join(facetQuery, '&fq=')}&type=${type}";
+                    //alert("URL is "+downloadUrl);
+                    if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
+                        window.location.replace(downloadUrl);
                     }
+                });
 
-                    selectControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
-                        //hover: true,
-                        onSelect: onFeatureSelect,
-                        onUnselect: onFeatureUnselect
-                    });
-
-                    map.addControl(selectControl);
-                    selectControl.activate();
-                }
-
-                function onPopupClose(evt) {
-                    selectControl.unselect(selectedFeature);
-                }
-
-                function onFeatureSelect(feature) {
-                    selectedFeature = feature;
-                    popup = new OpenLayers.Popup.FramedCloud("chicken", feature.geometry.getBounds().getCenterLonLat(),
-                    null, "<div style='font-size:.8em'>Records in area: " + feature.attributes.count, // +
-                    //"<br /><a href=''>View records in this area</a> " + feature.geometry.getBounds().toBBOX() + "</div>",
-                    null, true, onPopupClose);
-                    feature.popup = popup;
-                    map.addPopup(popup);
-                }
-
-                function onFeatureUnselect(feature) {
-                    map.removePopup(feature.popup);
-                    feature.popup.destroy();
-                    feature.popup = null;
-                }
-
-                function destroyMap() {
-                    if (map != null) {
-                        map.destroy();
-                        $("#pointsMap").html('');
-                    }
-                }
-
-                // Jquery Document.onLoad equivalent
-                $(document).ready(function() {
-                    var facetLinksSize = $("ul#subnavlist li").size();
-
-                    if (facetLinksSize == 0) {
-                        // Hide an empty facet link list
-                        $("#facetBar > h4").hide();
-                        $("#facetBar #navlist").hide();
-                    }
-                    /* Accordion widget */
-                    var icons = {
-                        header: "ui-icon-circle-arrow-e",
-                        headerSelected: "ui-icon-circle-arrow-s"
-                    };
-
-                    $("#accordion").accordion({
-                        icons: icons,
-                        autoHeight: false
-                    });
-
-                    $("#toggle").button().toggle(function() {
-                        $("#accordion").accordion("option", "icons", false);
-                    }, function() {
-                        $("#accordion").accordion("option", "icons", icons);
-                    });
-
-                    $("select#sort").change(function() {
-                        var val = $("option:selected", this).val();
-                        reloadWithParam('sort',val);
-                    });
-                    $("select#dir").change(function() {
-                        var val = $("option:selected", this).val();
-                        reloadWithParam('dir',val);
-                    });
-
-                    $("#searchButtons > button").button();
-                    $("#searchButtons > button#download").click(function() {
-                        var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?q=${query}&fq=${fn:join(facetQuery, '&fq=')}&type=${type}";
-                        //alert("URL is "+downloadUrl);
-                        if (confirm("Continue with download?\rClick 'OK' to download or 'cancel' to abort.")) {
-                            window.location.replace(downloadUrl);
-                        }
-                    });
-
-                    $('button#showMap').click(function (e) {
-                        window.location.replace("#searchResults");
-                        $("#pointsMap").show();
-                        loadMap();
-                        $('#pointsMap').modal();
-
-                    });
-
-                    // more/fewer search option links
-                    $("#refineMore a").click(function(e) {
-                        e.preventDefault();
-                        $("#accordion").slideDown();
-                        $("#refineLess").show('slow');
-                        $("#refineMore").hide('slow');
-                    });
-                    $("#refineLess a").click(function(e) {
-                        e.preventDefault();
-                        $("#accordion").slideUp();
-                        $("#refineLess").hide('slow');
-                        $("#refineMore").show('slow');
-                    });
+                $('button#showMap').click(function (e) {
+                    window.location.replace("#searchResults");
+                    $("#pointsMap").show();
+                    loadMap();
+                    $('#pointsMap').modal();
 
                 });
 
-                /**
-                 * Catch sort drop-down and build GET URL manually
-                 */
-                function reloadWithParam(paramName, paramValue) {
-                    var paramList = [];
-                    var q = $.getQueryParam('q'); //$.query.get('q')[0];
-                    var fqList = $.getQueryParam('fq'); //$.query.get('fq');
-                    var sort = $.getQueryParam('sort');
-                    var dir = $.getQueryParam('dir');
-                    // add query param
-                    if (q != null) {
-                        paramList.push("q=" + q);
-                    }
-                    // add filter query param
-                    if (fqList != null) {
-                        paramList.push("fq=" + fqList.join("&fq="));
-                    }
-                    // add sort param if already set
-                    if (paramName != 'sort' && sort != null) {
-                        paramList.push('sort' + "=" + sort);
-                    }
-                    // add the triggered param
-                    if (paramName != null && paramValue != null) {
-                        if (paramName == 'sort') {
-                            paramList.push(paramName + "=" +paramValue);
-                        } else if (paramName == 'dir' && !(sort == null || sort == 'score')) {
-                            paramList.push(paramName + "=" +paramValue);
-                        }
-                    }
+                // more/fewer search option links
+                $("#refineMore a").click(function(e) {
+                    e.preventDefault();
+                    $("#accordion").slideDown();
+                    $("#refineLess").show('slow');
+                    $("#refineMore").hide('slow');
+                });
+                $("#refineLess a").click(function(e) {
+                    e.preventDefault();
+                    $("#accordion").slideUp();
+                    $("#refineLess").hide('slow');
+                    $("#refineMore").show('slow');
+                });
 
-                    window.location.replace(window.location.pathname + '?' + paramList.join('&'));
+            });
+
+            /**
+             * Catch sort drop-down and build GET URL manually
+             */
+            function reloadWithParam(paramName, paramValue) {
+                var paramList = [];
+                var q = $.getQueryParam('q'); //$.query.get('q')[0];
+                var fqList = $.getQueryParam('fq'); //$.query.get('fq');
+                var sort = $.getQueryParam('sort');
+                var dir = $.getQueryParam('dir');
+                // add query param
+                if (q != null) {
+                    paramList.push("q=" + q);
+                }
+                // add filter query param
+                if (fqList != null) {
+                    paramList.push("fq=" + fqList.join("&fq="));
+                }
+                // add sort param if already set
+                if (paramName != 'sort' && sort != null) {
+                    paramList.push('sort' + "=" + sort);
+                }
+                // add the triggered param
+                if (paramName != null && paramValue != null) {
+                    if (paramName == 'sort') {
+                        paramList.push(paramName + "=" +paramValue);
+                    } else if (paramName == 'dir' && !(sort == null || sort == 'score')) {
+                        paramList.push(paramName + "=" +paramValue);
+                    }
                 }
 
-                function removeFacet(facet) {
-                    var q = $.getQueryParam('q'); //$.query.get('q')[0];
-                    var fqList = $.getQueryParam('fq'); //$.query.get('fq');
-                    var paramList = [];
-                    if (q != null) {
-                        paramList.push("q=" + q);
-                    }
-                    //alert("this.facet = "+facet+"; fqList = "+fqList.join('|'));
+                window.location.replace(window.location.pathname + '?' + paramList.join('&'));
+            }
 
-                    if (fqList instanceof Array) {
-                        //alert("fqList is an array");
-                        for (var i in fqList) {
-                            //alert("i == "+i+"| fq = "+fqList[i]);
-                            if (decodeURI(fqList[i]) == facet) {
-                                //alert("removing fq: "+fqList[i]);
-                                fqList.splice(fqList.indexOf(fqList[i]),1);
-                            }
+            function removeFacet(facet) {
+                var q = $.getQueryParam('q'); //$.query.get('q')[0];
+                var fqList = $.getQueryParam('fq'); //$.query.get('fq');
+                var paramList = [];
+                if (q != null) {
+                    paramList.push("q=" + q);
+                }
+                //alert("this.facet = "+facet+"; fqList = "+fqList.join('|'));
+
+                if (fqList instanceof Array) {
+                    //alert("fqList is an array");
+                    for (var i in fqList) {
+                        //alert("i == "+i+"| fq = "+fqList[i]);
+                        if (decodeURI(fqList[i]) == facet) {
+                            //alert("removing fq: "+fqList[i]);
+                            fqList.splice(fqList.indexOf(fqList[i]),1);
                         }
+                    }
+                } else {
+                    //alert("fqList is NOT an array");
+                    if (decodeURI(fqList) == facet) {
+                        fqList = null;
+                    }
+                }
+                //alert("(post) fqList = "+fqList.join('|'));
+                if (fqList != null) {
+                    paramList.push("fq=" + fqList.join("&fq="));
+                }
+
+                window.location.replace(window.location.pathname + '?' + paramList.join('&'));
+            }
+
+            // jQuery getQueryParam Plugin 1.0.0 (20100429)
+            // By John Terenzio | http://plugins.jquery.com/project/getqueryparam | MIT License
+            // Adapted by Nick dos Remedios to handle multiple params with same name - return a list
+            (function ($) {
+                // jQuery method, this will work like PHP's $_GET[]
+                $.getQueryParam = function (param) {
+                    // get the pairs of params fist
+                    var pairs = location.search.substring(1).split('&');
+                    var values = [];
+                    // now iterate each pair
+                    for (var i = 0; i < pairs.length; i++) {
+                        var params = pairs[i].split('=');
+                        if (params[0] == param) {
+                            // if the param doesn't have a value, like ?photos&videos, then return an empty srting
+                            //return params[1] || '';
+                            values.push(params[1]);
+                        }
+                    }
+
+                    if (values.length > 0) {
+                        return values;
                     } else {
-                        //alert("fqList is NOT an array");
-                        if (decodeURI(fqList) == facet) {
-                            fqList = null;
-                        }
-                    }
-                    //alert("(post) fqList = "+fqList.join('|'));
-                    if (fqList != null) {
-                        paramList.push("fq=" + fqList.join("&fq="));
+                        //otherwise return undefined to signify that the param does not exist
+                        return undefined;
                     }
 
-                    window.location.replace(window.location.pathname + '?' + paramList.join('&'));
-                }
+                };
+            })(jQuery);
 
-                // jQuery getQueryParam Plugin 1.0.0 (20100429)
-                // By John Terenzio | http://plugins.jquery.com/project/getqueryparam | MIT License
-                // Adapted by Nick dos Remedios to handle multiple params with same name - return a list
-                (function ($) {
-                    // jQuery method, this will work like PHP's $_GET[]
-                    $.getQueryParam = function (param) {
-                        // get the pairs of params fist
-                        var pairs = location.search.substring(1).split('&');
-                        var values = [];
-                        // now iterate each pair
-                        for (var i = 0; i < pairs.length; i++) {
-                            var params = pairs[i].split('=');
-                            if (params[0] == param) {
-                                // if the param doesn't have a value, like ?photos&videos, then return an empty srting
-                                //return params[1] || '';
-                                values.push(params[1]);
-                            }
-                        }
-
-                        if (values.length > 0) {
-                            return values;
-                        } else {
-                            //otherwise return undefined to signify that the param does not exist
-                            return undefined;
-                        }
-
-                    };
-                })(jQuery);
-
-                function changeSort(el) {
-                    var fqList = $.query.get('fq');
-                    $("#searchForm").submit();
-                    window.location.replace(url);
-                }
+            function changeSort(el) {
+                var fqList = $.query.get('fq');
+                $("#searchForm").submit();
+                window.location.replace(url);
+            }
         </script>
     </head>
     <body>

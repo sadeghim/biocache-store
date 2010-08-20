@@ -271,7 +271,7 @@
                     <div>
                         <div id="mapOuter" style="width: 400px; height: 450px; float:right;">
                             <div id="yourMap"></div>
-                            <div style="font-size:11px;width:400px;">
+                            <div style="font-size:11px;width:400px;color: black;" class="show-80">
                                 <table id="cellCountsLegend">
                                     <tr>
                                         <td style="background-color:#333; color:white; text-align:right;">Records:&nbsp;</td>

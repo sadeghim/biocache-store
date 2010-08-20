@@ -413,6 +413,11 @@ p > a.showHideLink {
     width: 550px;
     height: 450px;
 }
+.olControlAttribution {
+    right: 50px !important;
+    left: 50px !important;
+    bottom: 0.5em;
+}
 table#cellCountsLegend {
     margin: 0;
 /*    margin-top: 20px !important;*/
@@ -1332,3 +1337,16 @@ div.time-picker {
     top: 31px !important;
 }
 
+.loadingVector {
+    background: url("images/wait.gif") no-repeat 50% 50% white;
+    -moz-border-radius: 8px; /* FF1+ */
+    -webkit-border-radius: 8px; /* Saf3+, Chrome */
+    border-radius: 8px; /* Opera 10.5, IE 9 */
+    border: 2px solid #444;
+    width: 45px;
+    height: 45px;
+    top: 45%;
+    bottom: 45%;
+    left: 45%;
+    right: 45%;
+}
