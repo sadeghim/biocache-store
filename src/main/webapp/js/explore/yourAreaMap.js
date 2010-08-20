@@ -21,7 +21,7 @@
 //  var radius = ${radius};
 //  var contextPath = "${pageContext.request.contextPath}";
 
-var map, selectControl, vectorLayer, selectFeature, markerLayer, circleLayer;
+var map, selectControl, vectorLayer, selectFeature, markerLayer, circleLayer, pinFeature;
 var geocoder;
 var proj900913 = new OpenLayers.Projection("EPSG:900913");
 var proj4326 = new OpenLayers.Projection("EPSG:4326");
@@ -60,50 +60,26 @@ function loadMap() {
     var point = new OpenLayers.LonLat(lon, lat);
     map.setCenter(point.transform(proj4326, map.getProjectionObject()), zoom);
     
-    // marker pin (Google-style)
-    markerLayer = new OpenLayers.Layer.Vector("Pin");
-    var pinPoint = new OpenLayers.Geometry.Point(lon, lat);
-    var feature = new OpenLayers.Feature.Vector(
-        pinPoint.transform(proj4326, map.getProjectionObject()),
-        {title:'Your location' },
-        {   externalGraphic: contextPath +'/static/css/images/marker.png',
-            graphicHeight: 28,
-            graphicWidth: 18,
-            graphicYOffset: -24,
-            graphicZIndex: 750,
-            rendererOptions: {zIndexing: true}
-        }
-    );
-
-    markerLayer.addFeatures(feature);
-    map.addLayer(markerLayer);
-    markerLayer.setZIndex(750);
-//    
-//    // Add "pin" marker
-//    var markers = new OpenLayers.Layer.Markers( "Markers" );
-//    map.addLayer(markers);
-//    var size = new OpenLayers.Size(18,28);
-//    var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
-//    var icon = new OpenLayers.Icon(contextPath +'/static/css/images/marker.png',size,offset);
-//    markers.addMarker(new OpenLayers.Marker(new OpenLayers.Geometry.Point(lon, lat).transform(proj4326, map.getProjectionObject()),icon));
-
+    // draw Google style pin marker
+    drawMarkerLayer();
     // load circle showing area included in search
     drawCircleRadius();
     // create the vector Layer
-    cerateVectorLayer();
+    createVectorLayer();
     // load occurrences data onto map
     loadRecordsLayer();
     // reload dynamic layers on zoom event
     map.events.register('zoomend', map, function (e) {
         drawCircleRadius();
-        loadGeoJsonData();
+        markerLayer.setZIndex(750);
+        if (console) console.log("markerLayer unrenderedFeatures",markerLayer.unrenderedFeatures);
     });
 }
 
 /**
  * Create vector Layer for GeoJSON data display
  */
-function cerateVectorLayer() {
+function createVectorLayer() {
     // remove existing data if present
     if (vectorLayer != null) {
         // Remove any active popups (otherwise they are stuck on screen)
@@ -119,10 +95,9 @@ function cerateVectorLayer() {
     var myStyles = new OpenLayers.StyleMap({
         "default": new OpenLayers.Style({
             pointRadius: 4,
+            fillOpacity: 0.7,
             fillColor: '${color}',
             strokeColor: '${color}',
-            fillOpacity: 0.7,
-            //graphicZIndex: '${color}',
             strokeWidth: 0
         })
     });
@@ -151,6 +126,7 @@ function cerateVectorLayer() {
 function loadRecordsLayer() {
     // clear vector featers and popups
     vectorLayer.destroyFeatures();
+    // clear any open popups
     for (pop in map.popups) {
         map.removePopup(map.popups[pop]);
     }
@@ -172,22 +148,14 @@ function loadRecordsLayer() {
  * Callback for geoJSON ajax call
  */
 function loadNewGeoJsonData(data) {
-    // URL for GeoJSON web service
-    var url = contextPath + "/geojson/radius-points"; //+"&zoom=4&callback=?";
-    // request params for ajax geojson call
-    var params = {
-        "taxa": taxa,
-        "rank": rank,
-        "lat": lat,
-        "long":  lon,
-        "radius": radius
-    };
-
-    var proj_options = {
+    // clear vector featers and popups
+    vectorLayer.destroyFeatures();
+    // options for geoJson
+    var geoJSON_options = {
         internalProjection: map.baseLayer.projection,
         externalProjection: proj4326
     }
-    var features = new OpenLayers.Format.GeoJSON(proj_options).read(data);
+    var features = new OpenLayers.Format.GeoJSON(geoJSON_options).read(data);
 
     vectorLayer.addFeatures(features);
 
@@ -247,6 +215,47 @@ function destroyMap() {
         map.destroy();
         $("#pointsMap").html('');
     }
+}
+
+function drawMarkerLayer() {
+    if (markerLayer) {
+        if (console) console.log("markerLayer",markerLayer);
+        //markerLayer.destroy();
+        //markerLayer = null;
+        markerLayer.drawFeature(pinFeature);
+    }
+    // marker pin (Google-style)
+    markerLayer = new OpenLayers.Layer.Vector("Pin");
+    var pinPoint = new OpenLayers.Geometry.Point(lon, lat);
+    pinFeature = new OpenLayers.Feature.Vector(
+        pinPoint.transform(proj4326, map.getProjectionObject()),
+        {title:'Your location'},
+        {   externalGraphic: contextPath +'/static/css/images/marker.png',
+            graphicHeight: 28,
+            graphicWidth: 18,
+            graphicYOffset: -24,
+            graphicZIndex: 750,
+            rendererOptions: {zIndexing: true}
+        }
+    );
+
+    markerLayer.addFeatures(pinFeature);
+    map.addLayer(markerLayer);
+    markerLayer.setZIndex(750);
+    // make marker draggable
+    var dragOptions = {
+        onComplete: function(feature, pixel) {
+            var featureCentre = feature.geometry.transform(map.getProjectionObject(), proj4326);
+            lon = featureCentre.x;
+            lat = featureCentre.y;
+            drawCircleRadius();
+            loadRecordsLayer();
+        }
+    }
+    var dragFeaturesControl = new OpenLayers.Control.DragFeature(markerLayer, dragOptions);
+    map.addControl(dragFeaturesControl);
+    //modifyFeaturesControl.activate(); // off until we can update list of taxa counts on page as well
+
 }
 
 /**
