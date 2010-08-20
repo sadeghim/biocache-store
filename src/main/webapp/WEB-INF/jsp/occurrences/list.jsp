@@ -81,7 +81,7 @@
                 vectorLayer  = new OpenLayers.Layer.Vector("Occurrences", {
                     styleMap: myStyles,
                     attribution: legend,
-                    strategies: [new OpenLayers.Strategy.BBOX()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
+                    //strategies: [new OpenLayers.Strategy.BBOX()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
                     protocol: new OpenLayers.Protocol.HTTP({
                         format: new OpenLayers.Format.GeoJSON()
                     })
@@ -145,10 +145,10 @@
 
             function onFeatureSelect(feature) {
                 selectedFeature = feature;
-                popup = new OpenLayers.Popup.FramedCloud("chicken", feature.geometry.getBounds().getCenterLonLat(),
-                null, "<div style='font-size:.8em'>Records in area: " + feature.attributes.count, // +
-                //"<br /><a href=''>View records in this area</a> " + feature.geometry.getBounds().toBBOX() + "</div>",
-                null, true, onPopupClose);
+                popup = new OpenLayers.Popup.FramedCloud("cellPopup", feature.geometry.getBounds().getCenterLonLat(),
+                    null, "<div style='font-size:12px; color: #222;'>Number of records: " + feature.attributes.count, // +
+                    //"<br /><a href=''>View records in this area</a> " + feature.geometry.getBounds().toBBOX() + "</div>",
+                    null, true, onPopupClose);
                 feature.popup = popup;
                 map.addPopup(popup);
             }
