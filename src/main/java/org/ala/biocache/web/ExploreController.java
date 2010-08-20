@@ -67,7 +67,7 @@ public class ExploreController {
 
     @RequestMapping(value = "/explore/your-area*", method = RequestMethod.GET)
 	public String yourAreaView(
-            @RequestParam(value="radius", required=false, defaultValue="5") Float radius,
+            @RequestParam(value="radius", required=false, defaultValue="5f") Float radius,
             @RequestParam(value="latitude", required=false, defaultValue="-35.27412f") Float latitude,
             @RequestParam(value="longitude", required=false, defaultValue="149.11288f") Float longitude,
             @RequestParam(value="address", required=false, defaultValue=DEFAULT_LOCATION) String address,
@@ -156,7 +156,7 @@ public class ExploreController {
      */
 	@RequestMapping(value = "/explore/download*", method = RequestMethod.GET)
 	public void yourAreaDownload(
-            @RequestParam(value="radius", required=false, defaultValue="10") Float radius,
+            @RequestParam(value="radius", required=false, defaultValue="10f") Float radius,
             @RequestParam(value="latitude", required=false, defaultValue="0f") Float latitude,
             @RequestParam(value="longitude", required=false, defaultValue="0f") Float longitude,
             @RequestParam(value="taxa", required=false, defaultValue="") String taxa, // comma separated list
@@ -206,7 +206,7 @@ public class ExploreController {
      */
     @RequestMapping(value = "/explore/species.json", method = RequestMethod.GET)
 	public void listSpeciesForHigherTaxa(
-            @RequestParam(value="radius", required=false, defaultValue="10") Float radius,
+            @RequestParam(value="radius", required=false, defaultValue="10f") Float radius,
             @RequestParam(value="latitude", required=false, defaultValue="0f") Float latitude,
             @RequestParam(value="longitude", required=false, defaultValue="0f") Float longitude,
             @RequestParam(value="taxa", required=false, defaultValue="") String taxa, // comma separated list
