@@ -77,9 +77,10 @@
                                     'alt="search list icon" style="margin-bottom:-3px;"/> list of records</a></div>';
                             tr = tr + speciesInfo;
                             // add number of records
-                            tr = tr + '</td><td class="right">'+data.species[i].count+' </td></tr>';
+                            tr = tr + '</td><td class="rightCounts">'+data.species[i].count+' </td></tr>';
                             // write list item to page
                             $('#rightList tbody').append(tr);
+                            //if (console) console.log("tr = "+tr);
                         }
 
                         if (data.species.length == 50) {
@@ -115,7 +116,7 @@
                         // hide previous selected spceies info box
                         $(this).addClass("activeRow2"); // highloght current taxon
                         // show the links for current selected species
-                        loadRecordsLayer(taxa, rank);
+                        loadRecordsLayer();
                     });
 
                     // Register onClick for "load more species" link

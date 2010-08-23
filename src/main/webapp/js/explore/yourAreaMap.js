@@ -72,8 +72,9 @@ function loadMap() {
     map.events.register('zoomend', map, function (e) {
         drawCircleRadius();
         loadRecordsLayer();
-        markerLayer.setZIndex(750);
-        if (console) console.log("markerLayer unrenderedFeatures",markerLayer.unrenderedFeatures);
+        if (!$.browser.mozilla) markerLayer.setZIndex(750); // not for FF due to bug in FF
+        //markerLayer.setZIndex(750); //seems to break select control for points in FF
+        //if (console) console.log("markerLayer unrenderedFeatures",markerLayer.unrenderedFeatures);
     });
 }
 
@@ -126,6 +127,10 @@ function createVectorLayer() {
  * Load (reload) geoJSON data into vector layer
  */
 function loadRecordsLayer() {
+    if (!map || !vectorLayer) {
+        // in case AJAX calls this function before map has initialised
+        return;
+    }
     // clear vector featers and popups
     vectorLayer.destroyFeatures();
     // clear any open popups
@@ -142,7 +147,7 @@ function loadRecordsLayer() {
         "lat": lat,
         "long":  lon,
         "radius": radius,
-        zoom: zoom
+        "zoom": zoom
     };
     // JQuery AJAX call
     $.get(geoJsonUrl, params, loadNewGeoJsonData);
@@ -160,9 +165,9 @@ function loadNewGeoJsonData(data) {
         externalProjection: proj4326
     }
     var features = new OpenLayers.Format.GeoJSON(geoJSON_options).read(data);
-
+    
     vectorLayer.addFeatures(features);
-
+    
     loadSelectControl();
 }
 
@@ -170,7 +175,7 @@ function loadNewGeoJsonData(data) {
  * Register select event on occurrence points
  */
 function loadSelectControl() {
-    if (selectControl != null) {
+    if (selectControl) {
         map.removeControl(selectControl);
         selectControl.destroy();
         selectControl = null;
@@ -183,7 +188,8 @@ function loadSelectControl() {
     });
 
     map.addControl(selectControl);
-    selectControl.activate();  // errors on map re-size/zoom change so commented-out for now
+    selectControl.activate();
+    //if (console) console.log("selectControl was loaded & activated");
 }
 
 /**
@@ -223,7 +229,7 @@ function destroyMap() {
 
 function drawMarkerLayer() {
     if (markerLayer) {
-        if (console) console.log("markerLayer",markerLayer);
+        //if (console) console.log("markerLayer",markerLayer);
         //markerLayer.destroy();
         //markerLayer = null;
         markerLayer.drawFeature(pinFeature);
@@ -245,7 +251,7 @@ function drawMarkerLayer() {
 
     markerLayer.addFeatures(pinFeature);
     map.addLayer(markerLayer);
-    markerLayer.setZIndex(750);
+    if (!$.browser.mozilla) markerLayer.setZIndex(750); // not for FF
     // make marker draggable
     var dragOptions = {
         onComplete: function(feature, pixel) {

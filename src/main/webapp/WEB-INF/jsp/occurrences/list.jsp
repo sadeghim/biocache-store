@@ -183,6 +183,7 @@
 
                 $("#accordion").accordion({
                     icons: icons,
+                    collapsible: true,
                     autoHeight: false
                 });
 
@@ -382,22 +383,25 @@
                                     </c:forEach>
                                 </div>
                                 <div id="resultsStats">
-                                    Page ${currentPage} of <fmt:formatNumber value="${lastPage}" pattern="#,###,###"/> (<fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###"/> results)
+                                    Returned <fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###"/> results
+                                    <%--Page ${currentPage} of <fmt:formatNumber value="${lastPage}" pattern="#,###,###"/>--%>
                                 </div>
-                                sort by
-                                <select id="sort" name="sort">
-                                    <option value="score" <c:if test="${param.sort eq 'score'}">selected</c:if>>best match</option>
-                                    <option value="taxon_name" <c:if test="${param.sort eq 'taxon_name'}">selected</c:if>>scientific name</option>
-                                    <option value="common_name" <c:if test="${param.sort eq 'common_name'}">selected</c:if>>common name</option>
-                                    <!--                            <option value="rank">rank</option>-->
-                                    <option value="occurrence_date" <c:if test="${param.sort eq 'occurrence_date'}">selected</c:if>>record date</option>
-                                    <option value="record_type" <c:if test="${param.sort eq 'record_type'}">selected</c:if>>record type</option>
-                                </select>
-                                sort order
-                                <select id="dir" name="dir">
-                                    <option value="asc" <c:if test="${param.dir eq 'asc'}">selected</c:if>>normal</option>
-                                    <option value="desc" <c:if test="${param.dir eq 'desc'}">selected</c:if>>reverse</option>
-                                </select>
+                                <div id="searchControls">
+                                    sort by
+                                    <select id="sort" name="sort">
+                                        <option value="score" <c:if test="${param.sort eq 'score'}">selected</c:if>>best match</option>
+                                        <option value="taxon_name" <c:if test="${param.sort eq 'taxon_name'}">selected</c:if>>scientific name</option>
+                                        <option value="common_name" <c:if test="${param.sort eq 'common_name'}">selected</c:if>>common name</option>
+                                        <!--                            <option value="rank">rank</option>-->
+                                        <option value="occurrence_date" <c:if test="${param.sort eq 'occurrence_date'}">selected</c:if>>record date</option>
+                                        <option value="record_type" <c:if test="${param.sort eq 'record_type'}">selected</c:if>>record type</option>
+                                    </select>
+                                    sort order
+                                    <select id="dir" name="dir">
+                                        <option value="asc" <c:if test="${param.dir eq 'asc'}">selected</c:if>>normal</option>
+                                        <option value="desc" <c:if test="${param.dir eq 'desc'}">selected</c:if>>reverse</option>
+                                    </select>
+                                </div>
                             </div>
                             <table>
                                 <thead>
