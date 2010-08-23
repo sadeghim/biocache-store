@@ -17,6 +17,7 @@ package org.ala.biocache.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
@@ -50,8 +51,16 @@ public class GeoJsonController {
 	private final String POINTS_GEOJSON = "json/pointsGeoJson";
     /** Name of view for square cells GeoJSON service */
 	private final String CELLS_GEOJSON = "json/cellsGeoJson";
-
-        protected SearchUtils searchUtils = new SearchUtils();
+    /** Search Utils helper class */
+    protected SearchUtils searchUtils = new SearchUtils();
+    /** Mapping of radius in km to OpenLayers zoom level */
+    public final static HashMap<Float, PointType> radiusToCellDensityMap = new HashMap<Float, PointType>();
+	static {
+		radiusToCellDensityMap.put(1f, PointType.POINT_00001);
+        radiusToCellDensityMap.put(5f, PointType.POINT_0001);
+		radiusToCellDensityMap.put(10f, PointType.POINT_001);
+		radiusToCellDensityMap.put(50f, PointType.POINT_001);
+	}
 
     /**
      * GeoJSON view of records as clusters of points
@@ -151,11 +160,11 @@ public class GeoJsonController {
             taxaList = new ArrayList<String>();
         }
 
-        PointType pointType = PointType.POINT_00001;
-        //pointType = getPointTypeForZoomLevel(zoomLevel);
-        
+        PointType pointType = radiusToCellDensityMap.get(radius); //PointType.POINT_00001;
+        pointType = getPointTypeForZoomLevel(zoomLevel);
+        logger.info("PointType for zoomLevel ("+zoomLevel+") = "+pointType.getLabel());
         List<OccurrencePoint> points = searchDAO.findRecordsForLocation(taxaList, rank, latitude, longitude, radius, pointType);
-        logger.debug("Points search for "+pointType.getLabel()+" - found: "+points.size());
+        logger.info("Points search for "+pointType.getLabel()+" - found: "+points.size());
         model.addAttribute("points", points);
 
         return POINTS_GEOJSON;
@@ -245,10 +254,10 @@ public class GeoJsonController {
             } else if (zoomLevel > 8 && zoomLevel <= 10) {
                 // 8-9 levels
                 pointType = PointType.POINT_001;
-            } else if (zoomLevel > 10 && zoomLevel <= 12) {
+            } else if (zoomLevel > 10 && zoomLevel <= 13) {
                 // 10-12 levels
                 pointType = PointType.POINT_0001;
-            } else if (zoomLevel > 12) {
+            } else if (zoomLevel > 13) {
                 // 12-n levels
                 pointType = PointType.POINT_00001;
             }

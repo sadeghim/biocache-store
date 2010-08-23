@@ -67,10 +67,11 @@ function loadMap() {
     // create the vector Layer
     createVectorLayer();
     // load occurrences data onto map
-    loadRecordsLayer();
+    //loadRecordsLayer(); // loaded by AJAX when "all taxa" link is automatically triggered
     // reload dynamic layers on zoom event
     map.events.register('zoomend', map, function (e) {
         drawCircleRadius();
+        loadRecordsLayer();
         markerLayer.setZIndex(750);
         if (console) console.log("markerLayer unrenderedFeatures",markerLayer.unrenderedFeatures);
     });
@@ -113,6 +114,7 @@ function createVectorLayer() {
     vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
         projection: map.baseLayer.projection,
         styleMap: myStyles,
+        //strategies: [new OpenLayers.Strategy.BBOX()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
         protocol: new OpenLayers.Protocol.HTTP({
             format: new OpenLayers.Format.GeoJSON(GeoJSON_options)
         })
@@ -131,14 +133,16 @@ function loadRecordsLayer() {
         map.removePopup(map.popups[pop]);
     }
     // URL for GeoJSON web service
-    var geoJsonUrl = contextPath + "/geojson/radius-points"; //+"&zoom=4&callback=?";
+    var geoJsonUrl = contextPath + "/geojson/radius-points"; 
+    var zoom = (map && map.getZoom()) ? map.getZoom() : 12;
     // request params for ajax geojson call
     var params = {
         "taxa": taxa,
         "rank": rank,
         "lat": lat,
         "long":  lon,
-        "radius": radius
+        "radius": radius,
+        zoom: zoom
     };
     // JQuery AJAX call
     $.get(geoJsonUrl, params, loadNewGeoJsonData);
