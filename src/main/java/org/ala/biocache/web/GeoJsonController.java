@@ -53,14 +53,6 @@ public class GeoJsonController {
 	private final String CELLS_GEOJSON = "json/cellsGeoJson";
     /** Search Utils helper class */
     protected SearchUtils searchUtils = new SearchUtils();
-    /** Mapping of radius in km to OpenLayers zoom level */
-    public final static HashMap<Float, PointType> radiusToCellDensityMap = new HashMap<Float, PointType>();
-	static {
-		radiusToCellDensityMap.put(1f, PointType.POINT_00001);
-        radiusToCellDensityMap.put(5f, PointType.POINT_0001);
-		radiusToCellDensityMap.put(10f, PointType.POINT_001);
-		radiusToCellDensityMap.put(50f, PointType.POINT_001);
-	}
 
     /**
      * GeoJSON view of records as clusters of points
@@ -160,7 +152,7 @@ public class GeoJsonController {
             taxaList = new ArrayList<String>();
         }
 
-        PointType pointType = radiusToCellDensityMap.get(radius); //PointType.POINT_00001;
+        PointType pointType = PointType.POINT_00001; // default value for when zoom is null
         pointType = getPointTypeForZoomLevel(zoomLevel);
         logger.info("PointType for zoomLevel ("+zoomLevel+") = "+pointType.getLabel());
         List<OccurrencePoint> points = searchDAO.findRecordsForLocation(taxaList, rank, latitude, longitude, radius, pointType);
