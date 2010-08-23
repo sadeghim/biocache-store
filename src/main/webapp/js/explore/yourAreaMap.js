@@ -287,9 +287,9 @@ function drawCircleRadius() {
         rad = rad * (Math.pow(1.005940831, Math.abs(lat)));
     }
     var style_green = {
-        fillColor: "lightBlue",
+        fillColor: "black",
         fillOpacity: 0.1,
-        strokeColor: "lightBlue",
+        strokeColor: "white",
         strokeOpacity: 0.8,
         strokeWidth: 1,
         //graphicZIndex: 10,
