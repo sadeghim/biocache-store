@@ -453,7 +453,7 @@ public class OccurrenceController {
 
 		SearchResultDTO searchResult = new SearchResultDTO();
 		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
-        StringBuilder displayQuery = new StringBuilder(StringUtils.substringAfter(query, ":"));
+        StringBuilder displayQuery = new StringBuilder(StringUtils.substringAfter(query, ":").replace("*", "(all taxa)"));
         displayQuery.append(" - within "+radius+" km of point ("+latitude+", "+longitude+")");
 		model.addAttribute("entityQuery", displayQuery.toString());
 		model.addAttribute("query", query);
