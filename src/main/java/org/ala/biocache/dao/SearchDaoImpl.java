@@ -715,8 +715,11 @@ public class SearchDaoImpl implements SearchDao {
                         //logger.trace(fcount.getName() + ": " + fcount.getCount());
                         r.add(new FieldResultDTO(fcount.getName(), fcount.getCount()));
                     }
-                    FacetResultDTO fr = new FacetResultDTO(facet.getName(), r);
-                    facetResults.add(fr);
+                    // only add facets if there are more than one facet result
+                    if (r.size() > 1) {
+                        FacetResultDTO fr = new FacetResultDTO(facet.getName(), r);
+                        facetResults.add(fr);
+                    }
                 }
             }
         }
