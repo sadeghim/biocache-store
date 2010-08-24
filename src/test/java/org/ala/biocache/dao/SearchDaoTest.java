@@ -4,7 +4,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.ala.biocache.dao.SearchDAO;
+import org.ala.biocache.dao.OccurrenceSearchDAO;
 import org.ala.biocache.dto.DataProviderCountDTO;
 import org.ala.biocache.dto.FieldResultDTO;
 import org.ala.biocache.dto.SearchQuery;
