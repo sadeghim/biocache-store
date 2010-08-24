@@ -17,7 +17,10 @@ package org.ala.biocache.web;
 
 import atg.taglib.json.util.JSONArray;
 import atg.taglib.json.util.JSONObject;
-import java.util.logging.Level;
+import com.maxmind.geoip.Location;
+import com.maxmind.geoip.LookupService;
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
@@ -45,6 +48,8 @@ public class ContributeDataController {
     private String bieBaseUrl = "http://bie.ala.org.au";
     /** Google API key - injected by Spring */
     private String googleKey;
+    /** file ssytem location for GeoIP database */
+    private String geoIpDatabase = "/data/geoip/GeoLiteCity.dat";
 
     /**
      * Initial sighting page as requested via GET
@@ -56,7 +61,8 @@ public class ContributeDataController {
     @RequestMapping(value = "/contribute/sighting/{guid}", method = RequestMethod.GET)
 	public String contributeSighting(
             @PathVariable("guid") String guid,
-            Model model)  {
+            HttpServletRequest request,
+            Model model) throws Exception  {
         try {
             MiniTaxonConceptDTO dto = getTaxonConceptProperties(guid);
             model.addAttribute("taxonConcept", dto);
@@ -65,7 +71,24 @@ public class ContributeDataController {
             logger.error(msg, ex);
             model.addAttribute("error", msg);
         }
-        
+
+        // Determine lat/long for client's IP address
+        LookupService lookup = new LookupService(geoIpDatabase, LookupService.GEOIP_MEMORY_CACHE );
+        String clientIP = request.getLocalAddr();
+        logger.info("client IP address = "+request.getRemoteAddr());
+        Location loc = lookup.getLocation(clientIP);
+        Float latitude = null;
+        Float longitude = null;
+
+        if (loc != null) {
+            logger.info(clientIP + " has location: " + loc.postalCode + ", " + loc.city + ", " + loc.region + ". Coords: " + loc.latitude + ", " + loc.longitude);
+            latitude = loc.latitude;
+            longitude = loc.longitude;
+        }
+
+        model.addAttribute("latitude", latitude);
+        model.addAttribute("longitude", longitude);
+
         return SIGHTING;
     }
 
@@ -73,16 +96,15 @@ public class ContributeDataController {
      * POST version of sighting page, gets called after submit button has been clicked.
      *
      * @param guid
-     * @param sightingGuid
-     * @param sightingDate
+     * @param taxonConceptID
+     * @param eventTime
      * @param sightingTime
-     * @param sightingNumber
-     * @param sightingLocation
-     * @param sightinglatitude
-     * @param sightingLongitude
-     * @param sightingCoordinateUncertainty
-     * @param sightingNotes
-     * @param sightingAddress
+     * @param individualCount
+     * @param verbatimLocality
+     * @param latitude
+     * @param longitude
+     * @param coordinateUncertainty
+     * @param fieldNotes
      * @param sightingAction
      * @param model
      * @return
@@ -90,16 +112,17 @@ public class ContributeDataController {
     @RequestMapping(value = "/contribute/sighting/{guid}", method = RequestMethod.POST)
 	public String contributeSighting(
             @PathVariable("guid") String guid,
-            @RequestParam(value="guid", required=false) String sightingGuid,
-            @RequestParam(value="date", required=false) String sightingDate,
-            @RequestParam(value="time", required=false) String sightingTime,
-            @RequestParam(value="number", required=false) String sightingNumber,
-            @RequestParam(value="location", required=false) String sightingLocation,
-            @RequestParam(value="latitude", required=false) String sightinglatitude,
-            @RequestParam(value="longitude", required=false) String sightingLongitude,
-            @RequestParam(value="coordinateUncertainty", required=false) String sightingCoordinateUncertainty,
-            @RequestParam(value="notes", required=false) String sightingNotes,
-            @RequestParam(value="address", required=false) String sightingAddress,
+            @RequestParam(value="guid", required=false) String taxonConceptID,
+            @RequestParam(value="date", required=false) String eventDate,
+            @RequestParam(value="time", required=false) String eventTime,
+            @RequestParam(value="number", required=false) Integer individualCount,
+            @RequestParam(value="verbatimLocality", required=false) String verbatimLocality,
+            @RequestParam(value="latitude", required=false) Float latitude,
+            @RequestParam(value="longitude", required=false) Float longitude,
+            @RequestParam(value="coordinateUncertainty", required=false) Float coordinateUncertainty,
+            @RequestParam(value="recordedBy", required=false) String recordedBy,
+            @RequestParam(value="recordedById", required=false) String recordedById,
+            @RequestParam(value="notes", required=false) String fieldNotes,
             @RequestParam(value="action", required=false) String sightingAction,
             Model model)  {
         try {

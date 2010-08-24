@@ -51,9 +51,13 @@
                                             <span>${param.number}</span>
                                             <input type="hidden" name="number" value="${param.number}"/>
                                         </p>
-                                        <p><label for="location">Location</label>
-                                            <span>${param.location}</span>
-                                            <input type="hidden" name="location" value="${param.location}"/>
+                                        <p><label for="verbatimLocality">Location</label>
+                                            <span>${param.verbatimLocality}</span>
+                                            <input type="hidden" name="verbatimLocality" value="${param.verbatimLocality}"/>
+                                            <input type="hidden" name="locality" value="${param.locality}"/>
+                                            <input type="hidden" name="stateProvince" value="${param.stateProvince}"/>
+                                            <input type="hidden" name="country" value="${param.country}"/>
+                                            <input type="hidden" name="countryCode" value="${param.countryCode}"/>
                                         </p>
                                             <p><label for="latitude">Latitude</label>
                                             <span>${param.latitude}</span>
@@ -63,19 +67,29 @@
                                             <span>${param.longitude}</span>
                                             <input type="hidden" name="longitude" value="${param.longitude}"/>
                                         </p>
-                                        <p><label for="coordinateUncertainty">Coordinate Uncertainty</label>
-                                            <span>${param.coordinateUncertainty}</span>
+                                        <p><label for="coordinateUncertainty">Accuracy</label>
+                                            <span>${param.coordinateUncertainty} m</span>
                                             <input type="hidden" name="coordinateUncertainty" value="${param.coordinateUncertainty}"/>
+                                        </p>
+                                        <p><label for="recordedBy">Observer</label>
+                                            <span>${param.recordedBy}</span>
+                                            <input type="hidden" id="recordedBy" name="recordedBy" value="${param.recordedBy}"/>
+                                            <input type="hidden" id="recordedById" name="recordedById"  value="${param.recordedById}"/>
                                         </p>
                                         <p><label for="notes">Notes</label>
                                             <span>${param.notes}</span>
                                             <input type="hidden" name="notes" value="${param.notes}"/>
                                         </p>
-                                        <p class="red">Are these values correct? Click "back" to go back and edit or "finish" to confirm.</p>
+                                        <p id="confirmValues">Are these values correct? Click "Back" to edit or "Finish" to confirm.</p>
                                         <p><label for=""><input type="submit" name="action" id="sightingBack" value="< Back"/></label>
                                             <input type="submit" name="action" id="sightingSubmit" value="Finish"/>
                                         </p>
                                     </fieldset>
+                                </div>
+                            </div>
+                            <div id="column-two">
+                                <div id="mapConfirm">
+                                    <img src="http://maps.google.com/maps/api/staticmap?center=${param.latitude},${param.longitude}&zoom=15&size=315x315&maptype=hybrid&markers=color:red|color:red|label:|${param.latitude},${param.longitude}&sensor=false" alt="Google Map for sighting"/>
                                 </div>
                             </div>
                             

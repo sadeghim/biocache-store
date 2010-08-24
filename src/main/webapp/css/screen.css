@@ -1265,6 +1265,11 @@ li.taxonBreakdown { border: 1px solid gray; padding:10px; margin-bottom: 5px;}
     -webkit-border-radius: 0 0 4px 4px; /* Saf3+, Chrome */
     border-radius: 0 0 4px 4px; /* Opera 10.5, IE 9 */
 }
+/* Contribute Sighting Page */
+#mapCanvas {
+    width: 315px;
+    height: 315px;
+}
 #sightingAddress {
     margin: 5px 0;
 }
@@ -1304,6 +1309,15 @@ div#location {
 #sightingInfo p {
     padding: 5px 8px;
     vertical-align: top;
+}
+#confirmValues {
+    padding: 10px;
+    margin: 8px 0;
+    background-color: #E8EACE;
+    font-weight: bold;
+}
+div#mapConfirm {
+    margin: 45px 0 10px 10px;
 }
 
 /* located in demo.css and creates a little calendar icon

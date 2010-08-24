@@ -22,28 +22,23 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.tooltip.min.js"></script>
         <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/static/css/jquery.tooltip.css" />
         <script type="text/javascript" src="http://www.google.com/jsapi?key=${googleKey}"></script>
-        <style type="text/css" >
-            #mapCanvas {
-                width: 315px;
-                height: 315px;
-            }
-        </style>
         <script type="text/javascript">
+            <c:if test="${!empty pageContext.request.remoteUser}"><%-- User is logged in --%>
             // Load Google maps via AJAX API
             google.load("maps", "3", {other_params:"sensor=false"});
 
             var geocoder, zoom, map, marker;
 
-//            google.setOnLoadCallback(function() {
-//                geocoder = new google.maps.Geocoder();
-//            });
-
+            /**
+             * Google geocode function
+             */
             function geocodePosition(pos) {
                 geocoder.geocode({
                     latLng: pos
                 }, function(responses) {
                     if (responses && responses.length > 0) {
-                        updateMarkerAddress(responses[0].formatted_address);
+                        console.log("geocoded position", responses[0]);
+                        updateMarkerAddress(responses[0].formatted_address, responses[0]);
                     } else {
                         updateMarkerAddress('Cannot determine address at this location.');
                     }
@@ -55,10 +50,6 @@
             }
 
             function updateMarkerPosition(latLng) {
-                document.getElementById('info').innerHTML = [
-                    latLng.lat(),
-                    latLng.lng()
-                ].join(', ');
                 var rnd = 100000000;
                 var lat = Math.round(latLng.lat() * rnd) / rnd; // round to 8 decimal places
                 var lng = Math.round(latLng.lng() * rnd) / rnd; // round to 8 decimal places
@@ -68,9 +59,27 @@
                 $('#sightingLongitude').val(lng);
             }
 
-            function updateMarkerAddress(str) {
-                document.getElementById('markerAddress').innerHTML = str;
+            function updateMarkerAddress(str, addressObj) {
+                $('#markerAddress').html(str);
                 $('#sightingLocation').val(str);
+                // update form fields with location parts
+                if (addressObj && addressObj.address_components) {
+                    var addressComps = addressObj.address_components; // array
+                    for (var i = 0; i < addressComps.length; i++) {
+                        var name1 = addressComps[i].short_name;
+                        var name2 = addressComps[i].long_name;
+                        var type = addressComps[i].types[0];
+                        // go through each avail option
+                        if (type == 'country') {
+                            $('input#countryCode').val(name1);
+                            $('input#country').val(name2);
+                        } else if (type == 'locality') {
+                            $('input#locality').val(name1);
+                        } else if (type == 'administrative_area_level_1') {
+                             $('input#stateProvince').val(name1);
+                        }
+                    }
+                }
             }
 
             function initialize() {
@@ -130,10 +139,10 @@
                     function positionDeclined() {
                         //alert('geolocation request declined or errored');
                         $('#mapCanvas').html('');
-                        zoom = 3;
+                        zoom = 12;
                         initialize();
                     }
-
+                    // Add message to browser - FF needs this as it is not easy to see
                     $('#mapCanvas').html('Waiting for confirmation to use your current location (see browser message at top of window').css('color','red').css('font-size','14px');
                     navigator.geolocation.getCurrentPosition(getPostion, positionDeclined);
                 } else if (google.loader && google.loader.ClientLocation) {
@@ -141,13 +150,13 @@
                     //alert("getting coords using google geolocation");
                     $('#latitude').val(google.loader.ClientLocation.latitude);
                     $('#longitude').val(google.loader.ClientLocation.longitude);
-                    zoom = 11;
+                    zoom = 12;
                    // codeAddress(true);
                    initialize();
                 } else {
                     //alert("Client geolocation failed");
                     //codeAddress();
-                    zoom = 10;
+                    zoom = 12;
                     initialize();
                 }
             }
@@ -170,8 +179,10 @@
                             var lat = results[0].geometry.location.lat();
                             var lon = results[0].geometry.location.lng();
                             var locationStr = results[0].formatted_address;
-                            $('input#sightingLocation').val(locationStr); // hidden form element
-                            $('#markerAddress').val(locationStr); // visible span
+                            console.log("geocoded address", results[0]);
+                            updateMarkerAddress(locationStr, results[0]);
+                            //$('input#sightingLocation').val(locationStr); // hidden form element
+                            //$('#markerAddress').val(locationStr); // visible span
                             $('input#sightingLatitude').val(lat); // hidden form element
                             $('#markerLatitude').val(lat); // visible span
                             $('input#sightingLongitude').val(lon); // hidden form element
@@ -217,6 +228,17 @@
                 geocoder = new google.maps.Geocoder();
                 attemptGeolocation();
 
+                // insert server-side geocoded coords if present
+                var lat = "${latitude}";
+                var lng = "${longitude}";
+                var inputLatLng = "";
+
+                if (lat && lng) {
+                    $('input#sightingLatitude').val(lat); // hidden form element
+                    $('#markerLatitude').val(lat); // visible span
+                    $('input#sightingLongitude').val(lng); // hidden form element
+                    $('#markerLongitude').val(lng); // visible span
+                }
                 // populate date if a new entry
                 var sightingDate = "${param.date}";
                 if (sightingDate.length == 0) {
@@ -257,13 +279,20 @@
                      
                 });
 
+                // set observer field based on user login
+                var recordedBy = "${param.recordedBy}";
+                if (!recordedBy) {
+                    $('input#recordedBy').val("${fn:replace(fn:substringBefore(pageContext.request.remoteUser, '@'),'.',' ')}");
+                }
+
                 // set hieght of inner div
                 var h = $('#locationBlock').height();
                 $('#location').height(h-20); // $('#locationBlock').height
-
+                // tooltip for location input help
                 $('.locationInput').attr('title', 'Use the map controls to set the location');
                 $('.locationInput').tooltip();
             });
+            </c:if>
         </script>
     </head>
     <body>
@@ -305,30 +334,44 @@
                                                 </c:forEach>
                                             </select>
                                         </p>
-                                        <p><label for="location">Location</label>
+                                        <p><label for="verbatimLocality">Location</label>
                                             <span id="markerAddress" class="locationInput"></span>
-                                            <input type="hidden" id="sightingLocation" class="locationInput" name="location" size="20" value=""/>
+                                            <input type="hidden" id="sightingLocation" name="verbatimLocality" value="${param.verbatimLocality}"/>
+                                            <input type="hidden" id="locality" name="locality" value="${param.locality}"/>
+                                            <input type="hidden" id="stateProvince" name="stateProvince" value="${param.stateProvince}"/>
+                                            <input type="hidden" id="country" name="country" value="${param.country}"/>
+                                            <input type="hidden" id="countryCode" name="countryCode" value="${param.countryCode}"/>
                                         </p>
                                             <p><label for="latitude">Latitude</label>
                                             <span id="markerLatitude" class="locationInput"></span>
-                                            <input type="hidden" id="sightingLatitude" class="locationInput" name="latitude" size="20" value="-27"/>
+                                            <input type="hidden" id="sightingLatitude" name="latitude" value="${param.latitude}"/>
                                         </p>
                                         <p><label for="longitude">Longitude</label>
                                             <span id="markerLongitude" class="locationInput"></span>
-                                            <input type="hidden" id="sightingLongitude" class="locationInput" name="longitude" size="20" value="133"/>
+                                            <input type="hidden" id="sightingLongitude" name="longitude" value="${param.longitude}"/>
                                         </p>
-                                        <p><label for="coordinateUncertainty">Coordinate Uncertainty</label>
+                                        <p><label for="coordinateUncertainty">Accuracy</label>
                                             <select id="sightingCoordinateUncertainty" name="coordinateUncertainty">
-                                                <option>1</option>
-                                                <option>5</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option selected>50</option>
-                                                <option>100</option>
-                                                <option>500</option>
-                                                <option>1000</option>
+                                                <c:set var="selected">
+                                                    <c:choose>
+                                                        <c:when test="${not empty param.coordinateUncertainty}">
+                                                            ${param.coordinateUncertainty}
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            50
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </c:set>
+                                                <c:set var="values">1,5,10,20,50,100,500,1000</c:set>
+                                                <c:forEach var="option" items="${fn:split(values,',')}">
+                                                    <option<c:if test="${option == selected}"> selected</c:if>>${option}</option>
+                                                </c:forEach>
                                             </select>
-                                            <span>(in metres)</span>
+                                            <span>metres</span>
+                                        </p>
+                                        <p><label for="recordedBy">Observer</label>
+                                            <input type="text" id="recordedBy" name="recordedBy" size="30" value="${param.recordedBy}"/>
+                                            <input type="hidden" id="recordedById" name="recordedById"  value="${pageContext.request.remoteUser}"/>
                                         </p>
                                         <p><label for="notes">Notes</label>
                                             <textarea id="sightingNotes" name="notes" cols="30" rows="5">${param.notes}</textarea>
@@ -346,13 +389,12 @@
                                         <label for="address">Enter the location or address of sighting: </label>
                                         <input name="address" id="address" size="40" value="${address}"/>
                                         <input id="locationSearch" type="button" value="Search"/>
-<!--                                        <input type="hidden" name="location" id="location" value="${location}"/>-->
                                     </div>
                                     <div id="mapCanvas"></div>
                                     <div style="font-size: 90%"><b>Hint:</b> click and drag the marker pin to fine-tune the location coordinates</div>
                                     <div style="display: none">
                                         <div id="markerAddress"></div>
-                                        <div id="markerStatus" style="display: none"></div>
+                                        <div id="markerStatus"></div>
                                         <div id="info"></div>
                                     </div>
                                 </div>
