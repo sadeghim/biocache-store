@@ -36,7 +36,9 @@
                                 <div style="margin-left: 115px" class="section">
                                     <h2><a href="http://bie.ala.org.au/species/${param.guid}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
                                         (${taxonConcept.commonName})</a>
-                                        <input type="hidden" name="guid" id="sightingGuid" value="${param.guid}"/>
+                                        <input type="hidden" name="guid" id="sightingGuid" value="${taxonConcept.guid}"/>
+                                        <input type="hidden" name="scientificName" id="sightingGuid" value="${taxonConcept.scientificName}"/>
+                                        <input type="hidden" name="commonName" id="sightingGuid" value="${taxonConcept.commonName}"/>
                                     </h2>
                                     <fieldset id="sightingInfo">
                                         <p><label for="date">Date</label>
