@@ -16,10 +16,10 @@
 
   <!-- data source -->
   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" lazy-init="true">
-    <property name="driverClassName" value="${jdbc.driver}"/>
-    <property name="url" value="${jdbc.url}"/>
-    <property name="username" value="${jdbc.username}"/>
-    <property name="password" value="${jdbc.password}"/>
+    <property name="driverClassName" value="${dataSource.driver}"/>
+    <property name="url" value="${dataSource.url}"/>
+    <property name="username" value="${dataSource.username}"/>
+    <property name="password" value="${dataSource.password}"/>
     <property name="initialSize" value="1"/>
     <property name="maxActive" value="25"/>
     <property name="maxIdle" value="10"/>
@@ -27,16 +27,32 @@
     <property name="poolPreparedStatements" value="true"/>
   </bean>
 
-	<bean id="dataResourceDAO" class="org.ala.biocache.dao.DataResourceDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	
-	<bean id="dataProviderDAO" class="org.ala.biocache.dao.DataProviderDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	
-	<bean id="basisOfRecordDAO" class="org.ala.biocache.dao.BasisOfRecordDAOImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
+  <bean id="dataResourceDAO" class="org.ala.biocache.dao.DataResourceDAOImpl">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+  
+  <bean id="dataProviderDAO" class="org.ala.biocache.dao.DataProviderDAOImpl">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+  
+  <bean id="basisOfRecordDAO" class="org.ala.biocache.dao.BasisOfRecordDAOImpl">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+  
+  <bean id="rawOccurrenceRecordDAO" class="org.ala.biocache.dao.RawOccurrenceRecordDAOImpl">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+  
+  <bean id="occurrenceRecordDAO" class="org.ala.biocache.dao.OccurrenceRecordDAOImpl">
+  	<property name="dataSource" ref="dataSource" />
+    <property name="namedParameterTemplate">
+      <bean class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="dataSource"/>
+      </bean>
+    </property>
+  </bean>
+  
+  <bean id="taxonConceptDAO" class="org.ala.biocache.dao.TaxonConceptDAOImpl">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
 </beans>
