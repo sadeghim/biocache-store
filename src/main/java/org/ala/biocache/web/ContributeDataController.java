@@ -120,7 +120,7 @@ public class ContributeDataController {
             @PathVariable("guid") String guid,
             @RequestParam(value="guid", required=false) String taxonConceptGuid,
             @RequestParam(value="scientificName", required=false) String scientificName,
-            @RequestParam(value="vernacularName", required=false) String vernacularName,
+            @RequestParam(value="commonName", required=false) String vernacularName,
             @RequestParam(value="date", required=false) java.util.Date eventDate,
             @RequestParam(value="time", required=false) String eventTime,
             @RequestParam(value="number", required=false) Integer individualCount,
@@ -131,6 +131,9 @@ public class ContributeDataController {
             @RequestParam(value="recordedBy", required=false) String collectorName,
             @RequestParam(value="recordedById", required=false) String userId,
             @RequestParam(value="notes", required=false) String occurrenceRemarks,
+            @RequestParam(value="stateProvince", required=false) String stateProvince,
+            @RequestParam(value="country", required=false) String country,
+            @RequestParam(value="countryCode", required=false) String countryCode,
             @RequestParam(value="action", required=false) String sightingAction,
             Model model)  {
         try {
@@ -158,7 +161,7 @@ public class ContributeDataController {
             }
             
             s.setScientificName(scientificName);
-            s.setCollectorName(collectorName);
+            s.setVernacularName(vernacularName);
             s.setEventDate(eventDate);
             s.setUserId(userId);
             s.setCollectorName(collectorName);
@@ -166,6 +169,10 @@ public class ContributeDataController {
             s.setLatitude(latitude);
             s.setLongitude(longitude);
             s.setOccurrenceRemarks(occurrenceRemarks);
+            s.setStateProvince(stateProvince);
+            s.setCountry(country);
+            s.setCountryCode(countryCode);
+            s.setIndividualCount(individualCount);
             
             //send it off to the service
             contributeService.recordSighting(s);
