@@ -76,6 +76,7 @@ public class ContributeServiceImpl implements ContributeService {
 			ror.setUserId(s.getUserId());
 			ror.setCountry(s.getCountry());
 			ror.setOccurrenceRemarks(s.getOccurrenceRemarks());
+			
 			if(s.getCoordinateUncertaintyInMeters()!=null) ror.setLatLongPrecision(s.getCoordinateUncertaintyInMeters().toString());
 			
 			String day = null;
@@ -145,6 +146,8 @@ public class ContributeServiceImpl implements ContributeService {
 			ocdto.setCollector(s.getCollectorName());
 			ocdto.setMonth(month);
 			ocdto.setYear(year);
+			ocdto.setRank(s.getRank());
+			
 			if(s.getCoordinateUncertaintyInMeters()!=null) ocdto.setCoordinatePrecision(s.getCoordinateUncertaintyInMeters().toString());
 			//add states and provinces
 			if(s.getStateProvince()!=null){
