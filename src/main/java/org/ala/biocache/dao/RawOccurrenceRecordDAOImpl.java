@@ -76,14 +76,14 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "taxon_concept_guid,"
 		    + "user_id," 
 		    + "occurrence_remarks," 
-		    + "location_remarks"
-		    + ") "
-			+ "values " 
-			+ "(?,?,?,?,?,?,?,?,?,?,"
-			+ " ?,?,?,?,?,?,?,?,?,?,"
-			+ " ?,?,?,?,?,?,?,?,?,?," 
-			+ " ?,?,?,?,?,?,?,?,?,?," 
-			+ " ?,?,?,?,?,?)";
+		    + "location_remarks,"
+		    + "individual_count"
+			+ ") values (" 
+			+ "?,?,?,?,?,?,?,?,?,?,"
+			+ "?,?,?,?,?,?,?,?,?,?,"
+			+ "?,?,?,?,?,?,?,?,?,?," 
+			+ "?,?,?,?,?,?,?,?,?,?," 
+			+ "?,?,?,?,?,?,?)";
 
 	/**
 	 * The update SQL
@@ -133,9 +133,10 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "taxon_concept_guid=?, "
 			+ "user_id=?, "
 			+ "occurrence_remarks=?, "
-			+ "location_remarks=? "
+			+ "location_remarks=?, "
+			+ "individual_count=? "
 			+ "where id=?";
-
+	
 	/**
 	 * The query by "business logic" unique Note that further criteria are added
 	 * in the methods!
@@ -144,7 +145,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "scientific_name,author,rank,kingdom,phylum,class,order_rank,family,"
 			+ "genus,species,subspecies,latitude,longitude,lat_long_precision,min_altitude,max_altitude,altitude_precision,min_depth,max_depth,depth_precision,continent_ocean,country,state_province,county,collector_name,"
 			+ "locality,year,month,day,basis_of_record,identifier_name,identification_date,unit_qualifier,created,modified,deleted,taxon_concept_guid,user_id,vernacular_name," 
-			+ "occurrence_remarks, location_remarks  "
+			+ "occurrence_remarks,location_remarks,individual_count "
 			+ "from raw_occurrence_record ror " + "where data_resource_id=? ";
 
 	/**
@@ -154,7 +155,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "scientific_name,author,rank,kingdom,phylum,class,order_rank,family,"
 			+ "genus,species,subspecies,latitude,longitude,lat_long_precision,min_altitude,max_altitude,altitude_precision,min_depth,max_depth,depth_precision,continent_ocean,country,state_province,county,collector_name,"
 			+ "locality,year,month,day,basis_of_record,identifier_name,identification_date,unit_qualifier,created,modified,deleted,taxon_concept_guid,user_id,vernacular_name,  "
-			+ "occurrence_remarks, location_remarks  "
+			+ "occurrence_remarks, location_remarks,individual_count "
 			+ "from raw_occurrence_record ror " + "where id=? ";
 
 	/**
@@ -165,7 +166,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "ror.scientific_name,ror.author,ror.rank,ror.kingdom,ror.phylum,ror.class,ror.order_rank,ror.family,"
 			+ "ror.genus,ror.species,ror.subspecies,ror.latitude,ror.longitude,ror.lat_long_precision,ror.min_altitude,ror.max_altitude,ror.altitude_precision,ror.min_depth,ror.max_depth,ror.depth_precision,ror.continent_ocean,ror.country,ror.state_province,ror.county,ror.collector_name,"
 			+ "ror.locality,ror.year,ror.month,ror.day,ror.basis_of_record,ror.identifier_name,ror.identification_date,ror.unit_qualifier,ror.created,ror.modified,ror.deleted,ror.taxon_concept_guid,ror.user_id,ror.vernacular_name,  "
-			+ "ror.occurrence_remarks,ror.location_remarks  "
+			+ "ror.occurrence_remarks,ror.location_remarks,individual_count "
 			+ "from raw_occurrence_record ror "
 			+ "where ror.data_resource_id=? and "
 			+ "ror.modified>? and "
@@ -237,7 +238,8 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 					rs.getString("taxon_concept_guid"),
 					rs.getString("user_id"),
 					rs.getString("occurrence_remarks"),
-					rs.getString("location_remarks"));
+					rs.getString("location_remarks"),
+					(Integer) rs.getObject("individual_count"));
 		}
 	}
 
@@ -298,6 +300,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 				ps.setString(44, rawOccurrenceRecord.getUserId());
 				ps.setString(45, rawOccurrenceRecord.getOccurrenceRemarks());
 				ps.setString(46, rawOccurrenceRecord.getLocationRemarks());
+				ps.setObject(47, rawOccurrenceRecord.getIndividualCount());
 				return ps;
 			}
 		}, keyHolder);

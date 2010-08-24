@@ -116,6 +116,14 @@ public class SearchDAOImpl implements SearchDAO {
 		if(oc.getCoordinatePrecision()!=null) doc.addField("lat_long_precision", oc.getCoordinatePrecision());
 		if(oc.getState()!=null) doc.addField("state", oc.getState());
 		
+		
+//		   <field name="rank" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+//		   <field name="rank_id" type="int" indexed="false" stored="true" multiValued="false" omitNorms="false" />
+
+		if(oc.getRank()!=null) doc.addField("rank", oc.getRank());
+		
+		
+		
 		//FIXME we need to lookup the states, ibra regions
 		server.add(doc);
 		server.commit();

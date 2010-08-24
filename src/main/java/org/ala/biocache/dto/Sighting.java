@@ -142,13 +142,13 @@ public class Sighting {
 	/**
 	 * @return the individualCount
 	 */
-	public int getIndividualCount() {
+	public Integer getIndividualCount() {
 		return individualCount;
 	}
 	/**
 	 * @param individualCount the individualCount to set
 	 */
-	public void setIndividualCount(int individualCount) {
+	public void setIndividualCount(Integer individualCount) {
 		this.individualCount = individualCount;
 	}
 	/**

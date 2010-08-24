@@ -121,6 +121,7 @@ public class ContributeDataController {
             @RequestParam(value="guid", required=false) String taxonConceptGuid,
             @RequestParam(value="scientificName", required=false) String scientificName,
             @RequestParam(value="commonName", required=false) String vernacularName,
+            @RequestParam(value="rank", required=false) String rank,
             @RequestParam(value="date", required=false) java.util.Date eventDate,
             @RequestParam(value="time", required=false) String eventTime,
             @RequestParam(value="number", required=false) Integer individualCount,
@@ -162,6 +163,7 @@ public class ContributeDataController {
             
             s.setScientificName(scientificName);
             s.setVernacularName(vernacularName);
+            s.setRank(rank);
             s.setEventDate(eventDate);
             s.setUserId(userId);
             s.setCollectorName(collectorName);
@@ -199,6 +201,7 @@ public class ContributeDataController {
         if (tc != null) {
             dto.setScientificName(tc.getString("nameString"));
             dto.setRankId(tc.getString("rankID"));
+            dto.setRank(tc.getString("rankString"));
         }
         
         JSONArray cns = etc.getJSONArray("commonNames");
@@ -240,6 +243,7 @@ public class ContributeDataController {
         private String guid;
         private String scientificName;
         private String rankId;
+        private String rank;
         private String commonName;
         private String imageThumbnailUrl;
 
@@ -288,6 +292,20 @@ public class ContributeDataController {
         public void setRankId(String rankId) {
             this.rankId = rankId;
         }
+
+		/**
+		 * @return the rank
+		 */
+		public String getRank() {
+			return rank;
+		}
+
+		/**
+		 * @param rank the rank to set
+		 */
+		public void setRank(String rank) {
+			this.rank = rank;
+		}
     }
 
     public String getGoogleKey() {

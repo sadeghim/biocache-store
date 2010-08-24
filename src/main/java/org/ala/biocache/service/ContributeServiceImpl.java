@@ -74,8 +74,13 @@ public class ContributeServiceImpl implements ContributeService {
 			ror.setDataResourceId(citizenScienceDRId);
 			ror.setCollectorName(s.getCollectorName());
 			ror.setUserId(s.getUserId());
-			ror.setCountry(s.getCountry());
 			ror.setOccurrenceRemarks(s.getOccurrenceRemarks());
+			ror.setIndividualCount(s.getIndividualCount());
+			ror.setLocality(s.getLocality());
+			ror.setStateOrProvince(s.getStateProvince());
+			ror.setCountry(s.getCountry());
+			ror.setRank(s.getRank());
+			ror.setTaxonConceptGuid(s.getTaxonConceptGuid());
 			
 			if(s.getCoordinateUncertaintyInMeters()!=null) ror.setLatLongPrecision(s.getCoordinateUncertaintyInMeters().toString());
 			
