@@ -18,9 +18,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.ala.biocache.dao.SearchDao;
-import org.ala.biocache.model.FieldResultDTO;
-import org.ala.biocache.model.SearchQuery;
+import org.ala.biocache.dao.SearchDAO;
+import org.ala.biocache.dto.FieldResultDTO;
+import org.ala.biocache.dto.SearchQuery;
 import org.ala.biocache.util.SearchUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class BreakdownController {
 
     @Inject
-    protected SearchDao searchDao;
+    protected SearchDAO searchDAO;
 	
     protected SearchUtils searchUtils = new SearchUtils();
     
@@ -55,7 +55,7 @@ public class BreakdownController {
 	public String speciesDecadeBreakdown(@PathVariable("query") String query, Model model) throws Exception {
         SearchQuery searchQuery = new SearchQuery(query, "collection");
         searchUtils.updateTaxonConceptSearchString(searchQuery);
-    	List<FieldResultDTO> results = searchDao.findRecordByDecadeFor(searchQuery.getQuery());
+    	List<FieldResultDTO> results = searchDAO.findRecordByDecadeFor(searchQuery.getQuery());
     	model.addAttribute("decades", results);
     	return SPECIES_JSON;
     }
@@ -71,7 +71,7 @@ public class BreakdownController {
 	public String collectionDecadeBreakdown(@PathVariable("query") String query, Model model) throws Exception {
         SearchQuery searchQuery = new SearchQuery(query, "collection");
         searchUtils.updateCollectionSearchString(searchQuery);
-    	List<FieldResultDTO> results = searchDao.findRecordByDecadeFor(searchQuery.getQuery());
+    	List<FieldResultDTO> results = searchDAO.findRecordByDecadeFor(searchQuery.getQuery());
     	model.addAttribute("decades", results);
     	return COLLECTIONS_JSON;
     }
@@ -87,7 +87,7 @@ public class BreakdownController {
 	public String speciesStateBreakdown(@PathVariable("query") String query, Model model) throws Exception {
         SearchQuery searchQuery = new SearchQuery(query, "collection");
         searchUtils.updateTaxonConceptSearchString(searchQuery);
-    	List<FieldResultDTO> results = searchDao.findRecordByStateFor(searchQuery.getQuery());
+    	List<FieldResultDTO> results = searchDAO.findRecordByStateFor(searchQuery.getQuery());
     	model.addAttribute("states", results);
     	return SPECIES_JSON;
     }
@@ -103,16 +103,16 @@ public class BreakdownController {
 	public String collectionStateBreakdown(@PathVariable("query") String query, Model model) throws Exception {
         SearchQuery searchQuery = new SearchQuery(query, "collection");
         searchUtils.updateCollectionSearchString(searchQuery);
-    	List<FieldResultDTO> results = searchDao.findRecordByStateFor(searchQuery.getQuery());
+    	List<FieldResultDTO> results = searchDAO.findRecordByStateFor(searchQuery.getQuery());
     	model.addAttribute("states", results);
     	return COLLECTIONS_JSON;
     }    
     
 
 	/**
-	 * @param searchDao the searchDao to set
+	 * @param searchDAO the searchDAO to set
 	 */
-	public void setSearchDao(SearchDao searchDao) {
-		this.searchDao = searchDao;
+	public void setSearchDAO(SearchDAO searchDAO) {
+		this.searchDAO = searchDAO;
 	}
 }

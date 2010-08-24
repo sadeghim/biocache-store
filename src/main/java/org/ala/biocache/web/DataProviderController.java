@@ -1,4 +1,4 @@
-/* *************************************************************************
+/**************************************************************************
  *  Copyright (C) 2010 Atlas of Living Australia
  *  All Rights Reserved.
  * 
@@ -12,12 +12,6 @@
  *  implied. See the License for the specific language governing
  *  rights and limitations under the License.
  ***************************************************************************/
-
-/**
- *
- * @author "Tommy Wang <tommy.wang@csiro.au>"
- */
-
 package org.ala.biocache.web;
 
 import java.util.List;
@@ -27,10 +21,10 @@ import javax.inject.Inject;
 import org.ala.biocache.dao.BasisOfRecordDAO;
 import org.ala.biocache.dao.DataProviderDAO;
 import org.ala.biocache.dao.DataResourceDAO;
-import org.ala.biocache.dao.SearchDao;
+import org.ala.biocache.dao.SearchDAO;
+import org.ala.biocache.dto.DataProviderCountDTO;
 import org.ala.biocache.model.BasisOfRecord;
 import org.ala.biocache.model.DataProvider;
-import org.ala.biocache.model.DataProviderCountDTO;
 import org.ala.biocache.model.DataResource;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -51,10 +45,6 @@ public class DataProviderController {
 	/** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(GeoJsonController.class);
 
-	/** Data Provider DAO */
-	//    @Inject
-	//    protected DataProviderDAO dataProviderDAO;
-
 	/** Data Resource DAO */
 	@Inject
 	protected DataResourceDAO dataResourceDAO;
@@ -69,7 +59,7 @@ public class DataProviderController {
 	
 	/** Basis of Record DAO */
 	@Inject
-	protected SearchDao searchDao;
+	protected SearchDAO searchDao;
 
 	final String DATA_PROVIDER_LIST = "data/dataProviders";
 	final String DATA_RESOURCE_LIST = "data/dataResources";
@@ -168,8 +158,7 @@ public class DataProviderController {
 	/**
 	 * @param searchDao the searchDao to set
 	 */
-	public void setSearchDao(SearchDao searchDao) {
+	public void setSearchDao(SearchDAO searchDao) {
 		this.searchDao = searchDao;
 	}
-
 }

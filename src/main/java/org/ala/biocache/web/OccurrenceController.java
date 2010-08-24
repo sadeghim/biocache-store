@@ -14,20 +14,19 @@
  ***************************************************************************/
 package org.ala.biocache.web;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ala.biocache.dao.DataProviderDAO;
 import org.ala.biocache.dao.DataResourceDAO;
-import org.ala.biocache.dao.SearchDao;
+import org.ala.biocache.dao.SearchDAO;
+import org.ala.biocache.dto.OccurrenceDTO;
+import org.ala.biocache.dto.SearchQuery;
+import org.ala.biocache.dto.SearchResultDTO;
 import org.ala.biocache.model.DataProvider;
 import org.ala.biocache.model.DataResource;
-import org.ala.biocache.model.OccurrenceDTO;
-import org.ala.biocache.model.SearchResultDTO;
+import org.ala.biocache.util.SearchUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -40,11 +39,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import atg.taglib.json.util.JSONArray;
-import atg.taglib.json.util.JSONObject;
-import org.ala.biocache.model.SearchQuery;
-import org.ala.biocache.util.SearchUtils;
 
 /**
  * Occurrences controller for the BIE biocache site
@@ -59,7 +53,7 @@ public class OccurrenceController {
 
 	/** Fulltext search DAO */
 	@Inject
-	protected SearchDao searchDAO;
+	protected SearchDAO searchDAO;
 	/** Data Resource DAO */
 	@Inject
 	protected DataResourceDAO dataResourceDAO;
@@ -157,7 +151,7 @@ public class OccurrenceController {
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
         
-            searchResult = searchDAO.findByFulltextQuery("*:*", searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
+        searchResult = searchDAO.findByFulltextQuery("*:*", searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
         
 		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
@@ -629,7 +623,7 @@ public class OccurrenceController {
 	/**
 	 * @param searchDAO the searchDAO to set
 	 */
-	public void setSearchDAO(SearchDao searchDAO) {
+	public void setSearchDAO(SearchDAO searchDAO) {
 		this.searchDAO = searchDAO;
 	}
 

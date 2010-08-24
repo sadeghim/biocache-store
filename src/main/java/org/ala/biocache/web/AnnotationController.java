@@ -38,9 +38,9 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ala.biocache.model.OccurrenceAnnotation;
-import org.ala.biocache.model.OccurrenceAnnotationBody;
-import org.ala.biocache.model.OccurrenceAnnotationUpdate;
+import org.ala.biocache.dto.OccurrenceAnnotation;
+import org.ala.biocache.dto.OccurrenceAnnotationBody;
+import org.ala.biocache.dto.OccurrenceAnnotationUpdate;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;

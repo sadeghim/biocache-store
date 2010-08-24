@@ -21,11 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
-import org.ala.biocache.dao.SearchDao;
-import org.ala.biocache.model.OccurrenceCell;
-import org.ala.biocache.model.OccurrencePoint;
-import org.ala.biocache.model.PointType;
-import org.ala.biocache.model.SearchQuery;
+import org.ala.biocache.dao.SearchDAO;
+import org.ala.biocache.dto.OccurrenceCell;
+import org.ala.biocache.dto.OccurrencePoint;
+import org.ala.biocache.dto.PointType;
+import org.ala.biocache.dto.SearchQuery;
 import org.ala.biocache.util.SearchUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -46,7 +46,7 @@ public class GeoJsonController {
 
     /** Fulltext search DAO */
     @Inject
-    protected SearchDao searchDAO;
+    protected SearchDAO searchDAO;
     /** Name of view for points GeoJSON service */
 	private final String POINTS_GEOJSON = "json/pointsGeoJson";
     /** Name of view for square cells GeoJSON service */

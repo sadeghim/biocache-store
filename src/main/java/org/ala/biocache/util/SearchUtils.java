@@ -2,12 +2,16 @@ package org.ala.biocache.util;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ala.biocache.dto.OccurrenceDTO;
+import org.ala.biocache.dto.SearchQuery;
+import org.ala.biocache.web.OccurrenceController;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.math.util.MathUtils;
+import org.apache.log4j.Logger;
+
 import atg.taglib.json.util.JSONArray;
 import atg.taglib.json.util.JSONObject;
-import org.ala.biocache.model.SearchQuery;
-import org.ala.biocache.web.OccurrenceController;
-import org.apache.log4j.Logger;
 /**
  * A class to provide utility methods used to populate search details.
  * @author Natasha
@@ -16,9 +20,9 @@ public class SearchUtils {
     /** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(SearchUtils.class);
     
-        protected String collectoryBaseUrl = "http://collections.ala.org.au";
-        protected String bieBaseUrl = "http://bie.ala.org.au";
-        
+    protected String collectoryBaseUrl = "http://collections.ala.org.au";
+    protected String bieBaseUrl = "http://bie.ala.org.au";
+    
     /**
      * Returns an array that contains the search string to use for a collection
      * search and display name for the results.
@@ -176,6 +180,21 @@ public class SearchUtils {
             updateTaxonConceptSearchString(searchQuery);
         }
         //otherwise we can leave the query with its default values ("normal" type)
-        
+    }
+    /*
+CONCAT(CONCAT(ROUND(round(oc.latitude *1)/1,1), ','), ROUND(round(oc.longitude *1)/1,1)),
+CONCAT(CONCAT(ROUND(round(oc.latitude *10)/10,1), ','), ROUND(round(oc.longitude *10)/10,1)),
+CONCAT(CONCAT(ROUND(round(oc.latitude *100)/100,2), ','), ROUND(round(oc.longitude *100)/100,2)),
+CONCAT(CONCAT(ROUND(round(oc.latitude *1000)/1000,3), ','), ROUND(round(oc.longitude *1000)/1000,3)),
+CONCAT(CONCAT(ROUND(round(oc.latitude *10000)/10000,4), ','), ROUND(round(oc.longitude *10000)/10000,4)),
+     */
+    
+    public static void initialPointValues(OccurrenceDTO occurrence){
+    	Double lat = occurrence.getLatitude();
+    	Double lon = occurrence.getLongitude();
+    	occurrence.setPoint1(MathUtils.round(lat, 0)+","+MathUtils.round(lon, 0));
+    	occurrence.setPoint01(MathUtils.round(lat, 1)+","+MathUtils.round(lon, 1));
+    	occurrence.setPoint001(MathUtils.round(lat, 2)+","+MathUtils.round(lon, 2));
+    	occurrence.setPoint0001(MathUtils.round(lat, 3)+","+MathUtils.round(lon, 3));
     }
 }

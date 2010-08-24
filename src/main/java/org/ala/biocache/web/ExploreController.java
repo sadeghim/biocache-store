@@ -27,8 +27,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ala.biocache.dao.SearchDao;
-import org.ala.biocache.model.TaxaCountDTO;
+import org.ala.biocache.dao.SearchDAO;
+import org.ala.biocache.dto.TaxaCountDTO;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -49,7 +49,7 @@ public class ExploreController {
 
     /** Fulltext search DAO */
     @Inject
-    protected SearchDao searchDao;
+    protected SearchDAO searchDao;
     /** Name of view for site home page */
 	private String YOUR_AREA = "explore/yourArea";
     private String speciesPageUrl = "http://bie.ala.org.au/species/";
@@ -234,7 +234,7 @@ public class ExploreController {
 	/**
 	 * @param searchDao the searchDao to set
 	 */
-	public void setSearchDao(SearchDao searchDao) {
+	public void setSearchDao(SearchDAO searchDao) {
 		this.searchDao = searchDao;
 	}
 	/**
@@ -248,5 +248,11 @@ public class ExploreController {
 	 */
 	public void setAddressCache(HashMap<String, List<Float>> addressCache) {
 		this.addressCache = addressCache;
+	}
+	/**
+	 * @param geoIpDatabase the geoIpDatabase to set
+	 */
+	public void setGeoIpDatabase(String geoIpDatabase) {
+		this.geoIpDatabase = geoIpDatabase;
 	}
 }
