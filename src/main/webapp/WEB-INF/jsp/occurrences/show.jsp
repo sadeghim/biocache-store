@@ -176,7 +176,11 @@
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="place" fieldName="Place">${occurrence.place}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="latitude" fieldName="Latitude">${occurrence.latitude}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="longitude" fieldName="Longitude">${occurrence.longitude}</alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="coordinatePrecision" fieldName="Coordinate Precision">${occurrence.coordinatePrecision}</alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="coordinatePrecision" fieldName="Coordinate Precision (metres)">
+                            	<c:if test="${not empty occurrence.latitude || not empty occurrence.longitude}">
+                            		${not empty occurrence.coordinatePrecision ? occurrence.coordinatePrecision : 'Unknown'}
+                            	</c:if>
+                            </alatag:occurrenceTableRow>
                         </table>
                     </div>
                     <div id="occurrenceMetadata">
