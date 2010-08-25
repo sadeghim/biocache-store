@@ -40,6 +40,8 @@
                                         <input type="hidden" name="scientificName" id="sightingSciName" value="${taxonConcept.scientificName}"/>
                                         <input type="hidden" name="commonName" id="sightingCommonName" value="${taxonConcept.commonName}"/>
                                         <input type="hidden" name="rank" id="sightingRank" value="${taxonConcept.rank}"/>
+                                        <input type="hidden" name="kingdom" id="sightingKingdom" value="${taxonConcept.kingdom}"/>
+                                        <input type="hidden" name="family" id="sightingFamily" value="${taxonConcept.family}"/>
                                     </h2>
                                     <fieldset id="sightingInfo">
                                         <p><label for="date">Date</label>

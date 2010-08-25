@@ -213,7 +213,7 @@ public class ContributeDataController {
         JSONObject classification = etc.getJSONObject("classification");
         if(classification!=null){
             dto.setKingdom(classification.getString("kingdom"));
-            dto.setRank(classification.getString("family"));
+            dto.setFamily(classification.getString("family"));
         }
         
         JSONArray cns = etc.getJSONArray("commonNames");

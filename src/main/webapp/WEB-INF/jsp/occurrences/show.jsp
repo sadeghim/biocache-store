@@ -82,7 +82,7 @@
                             <h4>Warnings</h4>
                             <alatag:formatGeospatialIssues issuesBit="${occurrence.geospatialIssue}"/>
                             <c:if test="${not empty geospatialIssueText}">
-                                    Geospatial issues: ${geospatialIssueText}<br/>
+                                Geospatial issues: ${geospatialIssueText}<br/>
                             </c:if>
                             <alatag:formatOtherIssues issuesBit="${occurrence.otherIssue}" />
                             <c:if test="${not empty otherIssueText}">

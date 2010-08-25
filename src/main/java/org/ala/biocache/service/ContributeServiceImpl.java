@@ -154,6 +154,7 @@ public class ContributeServiceImpl implements ContributeService {
 			ocdto.setMonth(month);
 			ocdto.setYear(year);
 			ocdto.setRank(s.getRank());
+			ocdto.setRankId(tc.getRank());
 			ocdto.setOccurrenceDate(s.getEventDate());
 			
 			//names_and_lsid
