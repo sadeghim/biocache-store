@@ -160,6 +160,24 @@ public class ContributeServiceImpl implements ContributeService {
 			ocdto.setRankId(tc.getRank());
 			ocdto.setOccurrenceDate(s.getEventDate());
 			
+			ocdto.setKingdom(tc.getKingdom());
+			ocdto.setKingdomLsid(tc.getKingdomGuid());
+			
+			ocdto.setPhylum(tc.getPhylum());
+			ocdto.setPhylumLsid(tc.getPhylumGuid());
+			
+			ocdto.setClazz(tc.getTheClass());
+			ocdto.setClassLsid(tc.getTheClassGuid());
+			
+			ocdto.setOrder(tc.getOrder());
+			ocdto.setOrderLsid(tc.getOrderGuid());
+			
+			ocdto.setFamily(tc.getFamily());
+			ocdto.setFamilyLsid(tc.getFamilyGuid());
+			
+			ocdto.setGenus(tc.getGenus());
+			ocdto.setGenusLsid(tc.getGenusGuid());
+			
 			//names_and_lsid
 			ocdto.setNamesLsid(s.getScientificName()+"|"+s.getTaxonConceptGuid()+"|"+s.getVernacularName()+"|"+s.getKingdom()+"|"+s.getFamily());
 			SearchUtils.initialPointValues(ocdto);

@@ -37,7 +37,6 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.beans.Field;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
@@ -101,7 +100,6 @@ public class SearchDAOImpl implements SearchDAO {
 		doc.addField("taxon_concept_lsid", oc.getTaxonConceptLsid());
 		doc.addField("taxon_name", oc.getRawTaxonName());
 		doc.addField("common_name", oc.getCommonName());
-		if(oc.getFamily()!=null) doc.addField("family", oc.getFamily());
 		if(oc.getBasisOfRecord()!=null) doc.addField("basis_of_record", oc.getBasisOfRecord());
 		if(oc.getLatitude()!=null) doc.addField("latitude", oc.getLatitude());
 		if(oc.getLongitude()!=null) doc.addField("longitude", oc.getLongitude());
@@ -124,6 +122,14 @@ public class SearchDAOImpl implements SearchDAO {
 		if(oc.getNamesLsid()!=null) doc.addField("names_and_lsid", oc.getNamesLsid());
 		if(oc.getLeft()!=null) doc.addField("lft", oc.getLeft());
 		if(oc.getRight()!=null) doc.addField("rgt", oc.getRight());
+		
+		if(oc.getKingdom()!=null) doc.addField("kingdom", oc.getKingdom());
+		if(oc.getPhylum()!=null) doc.addField("phylum", oc.getPhylum());
+		if(oc.getClass()!=null) doc.addField("class", oc.getClazz());
+		if(oc.getOrder()!=null) doc.addField("order", oc.getOrder());
+		if(oc.getFamily()!=null) doc.addField("family", oc.getFamily());
+		if(oc.getGenus()!=null) doc.addField("genus", oc.getGenus());
+		
 		
 		//FIXME we need to lookup the states, ibra regions
 		server.add(doc);

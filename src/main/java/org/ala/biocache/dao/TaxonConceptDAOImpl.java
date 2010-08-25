@@ -29,14 +29,32 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 public class TaxonConceptDAOImpl extends JdbcDaoSupport implements TaxonConceptDAO {
 
     protected static final String QUERY_BY_GUID = 
-            "select tc.id,tc.guid,tc.lft,tc.rgt,tc.taxon_name_id,tc.parent_concept_id,tc.rank,tc.is_accepted,tc.partner_concept_id," +
-            "tc.data_provider_id,tc.data_resource_id,tc.is_nub_concept,tc.is_secondary,tc.priority, " +
-            "tn.canonical, cn.name, r.name " +
-            "from taxon_concept tc " +
-            "left join rank r ON r.id=tc.rank " +
-            "left join taxon_name tn ON tn.id=tc.taxon_name_id " +
-            "left join common_name cn ON tc.id=cn.taxon_concept_id " +
-            "where tc.guid=? group by tc.id";
+        "select tc.id,tc.guid,tc.lft,tc.rgt,tc.taxon_name_id,tc.parent_concept_id,tc.rank,tc.is_accepted,tc.partner_concept_id," +
+        "tc.data_provider_id,tc.data_resource_id,tc.is_nub_concept,tc.is_secondary,tc.priority, " +
+        "tn.canonical,cn.name,r.name," +
+        "kt.guid,kn.canonical," +
+        "pt.guid,pn.canonical," +
+        "ct.guid,cln.canonical," +
+        "ot.guid,orn.canonical," +
+        "ft.guid,fn.canonical," +
+        "gt.guid,gn.canonical " +
+        "from taxon_concept tc " +
+        "left join rank r ON r.id=tc.rank " +
+        "left join taxon_name tn    ON tn.id=tc.taxon_name_id " +
+        "left join common_name cn   ON tc.id=cn.taxon_concept_id " +	
+        "left join taxon_concept kt ON kt.id=tc.kingdom_concept_id " +
+        "left join taxon_name kn    ON kn.id=kt.taxon_name_id " +
+        "left join taxon_concept pt ON pt.id=tc.phylum_concept_id " +
+        "left join taxon_name pn    ON pn.id=pt.taxon_name_id " +
+        "left join taxon_concept ct ON ct.id=tc.class_concept_id " +
+        "left join taxon_name cln   ON cln.id=ct.taxon_name_id " +
+        "left join taxon_concept ot ON ot.id=tc.order_concept_id " +
+        "left join taxon_name orn   ON orn.id=ot.taxon_name_id " +
+        "left join taxon_concept ft ON ft.id=tc.family_concept_id " +
+        "left join taxon_name fn    ON fn.id=ft.taxon_name_id " +
+        "left join taxon_concept gt ON gt.id=tc.genus_concept_id " +
+        "left join taxon_name gn    ON gn.id=gt.taxon_name_id " +
+        "where tc.guid=? group by tc.id";
     
     /**
      * Reusable row mappers
@@ -75,6 +93,21 @@ public class TaxonConceptDAOImpl extends JdbcDaoSupport implements TaxonConceptD
             tc.setGuid(rs.getString("tc.guid"));
             tc.setLeft(rs.getInt("tc.lft"));
             tc.setRight(rs.getInt("tc.rgt"));
+            
+            tc.setKingdom(rs.getString("kn.canonical"));
+            tc.setPhylum(rs.getString("pn.canonical"));
+            tc.setTheClass(rs.getString("cln.canonical"));
+            tc.setOrder(rs.getString("orn.canonical"));
+            tc.setFamily(rs.getString("fn.canonical"));
+            tc.setGenus(rs.getString("gn.canonical"));
+
+            tc.setKingdomGuid(rs.getString("kt.guid"));
+            tc.setPhylumGuid(rs.getString("pt.guid"));
+            tc.setTheClassGuid(rs.getString("ct.guid"));
+            tc.setOrderGuid(rs.getString("ot.guid"));
+            tc.setFamilyGuid(rs.getString("ft.guid"));
+            tc.setGenusGuid(rs.getString("gt.guid"));
+            
             return tc;
 	    }
 	    

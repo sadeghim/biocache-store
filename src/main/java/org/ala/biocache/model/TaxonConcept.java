@@ -21,6 +21,18 @@ public class TaxonConcept implements Serializable {
     protected String commonName;
     protected Integer rank;
     protected String rankString;
+    protected String kingdom;
+    protected String kingdomGuid;
+    protected String phylum;
+    protected String phylumGuid;
+    protected String theClass;
+    protected String theClassGuid;
+    protected String order;
+    protected String orderGuid;
+    protected String family;
+    protected String familyGuid;
+    protected String genus;
+    protected String genusGuid;
     protected Integer left;
     protected Integer right;
     
@@ -152,5 +164,149 @@ public class TaxonConcept implements Serializable {
 	 */
 	public void setRankString(String rankString) {
 		this.rankString = rankString;
+	}
+	/**
+	 * @return the kingdom
+	 */
+	public String getKingdom() {
+		return kingdom;
+	}
+	/**
+	 * @param kingdom the kingdom to set
+	 */
+	public void setKingdom(String kingdom) {
+		this.kingdom = kingdom;
+	}
+	/**
+	 * @return the kingdomGuid
+	 */
+	public String getKingdomGuid() {
+		return kingdomGuid;
+	}
+	/**
+	 * @param kingdomGuid the kingdomGuid to set
+	 */
+	public void setKingdomGuid(String kingdomGuid) {
+		this.kingdomGuid = kingdomGuid;
+	}
+	/**
+	 * @return the phylum
+	 */
+	public String getPhylum() {
+		return phylum;
+	}
+	/**
+	 * @param phylum the phylum to set
+	 */
+	public void setPhylum(String phylum) {
+		this.phylum = phylum;
+	}
+	/**
+	 * @return the phylumGuid
+	 */
+	public String getPhylumGuid() {
+		return phylumGuid;
+	}
+	/**
+	 * @param phylumGuid the phylumGuid to set
+	 */
+	public void setPhylumGuid(String phylumGuid) {
+		this.phylumGuid = phylumGuid;
+	}
+	/**
+	 * @return the theClass
+	 */
+	public String getTheClass() {
+		return theClass;
+	}
+	/**
+	 * @param theClass the theClass to set
+	 */
+	public void setTheClass(String theClass) {
+		this.theClass = theClass;
+	}
+	/**
+	 * @return the theClassGuid
+	 */
+	public String getTheClassGuid() {
+		return theClassGuid;
+	}
+	/**
+	 * @param theClassGuid the theClassGuid to set
+	 */
+	public void setTheClassGuid(String theClassGuid) {
+		this.theClassGuid = theClassGuid;
+	}
+	/**
+	 * @return the order
+	 */
+	public String getOrder() {
+		return order;
+	}
+	/**
+	 * @param order the order to set
+	 */
+	public void setOrder(String order) {
+		this.order = order;
+	}
+	/**
+	 * @return the orderGuid
+	 */
+	public String getOrderGuid() {
+		return orderGuid;
+	}
+	/**
+	 * @param orderGuid the orderGuid to set
+	 */
+	public void setOrderGuid(String orderGuid) {
+		this.orderGuid = orderGuid;
+	}
+	/**
+	 * @return the family
+	 */
+	public String getFamily() {
+		return family;
+	}
+	/**
+	 * @param family the family to set
+	 */
+	public void setFamily(String family) {
+		this.family = family;
+	}
+	/**
+	 * @return the familyGuid
+	 */
+	public String getFamilyGuid() {
+		return familyGuid;
+	}
+	/**
+	 * @param familyGuid the familyGuid to set
+	 */
+	public void setFamilyGuid(String familyGuid) {
+		this.familyGuid = familyGuid;
+	}
+	/**
+	 * @return the genus
+	 */
+	public String getGenus() {
+		return genus;
+	}
+	/**
+	 * @param genus the genus to set
+	 */
+	public void setGenus(String genus) {
+		this.genus = genus;
+	}
+	/**
+	 * @return the genusGuid
+	 */
+	public String getGenusGuid() {
+		return genusGuid;
+	}
+	/**
+	 * @param genusGuid the genusGuid to set
+	 */
+	public void setGenusGuid(String genusGuid) {
+		this.genusGuid = genusGuid;
 	}
 }
