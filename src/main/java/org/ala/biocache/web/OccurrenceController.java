@@ -20,12 +20,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ala.biocache.dao.DataProviderDAO;
 import org.ala.biocache.dao.DataResourceDAO;
+import org.ala.biocache.dao.RawOccurrenceRecordDAO;
 import org.ala.biocache.dao.SearchDAO;
 import org.ala.biocache.dto.OccurrenceDTO;
 import org.ala.biocache.dto.SearchQuery;
 import org.ala.biocache.dto.SearchResultDTO;
 import org.ala.biocache.model.DataProvider;
 import org.ala.biocache.model.DataResource;
+import org.ala.biocache.model.RawOccurrenceRecord;
 import org.ala.biocache.util.SearchUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -62,7 +64,9 @@ public class OccurrenceController {
 	protected DataProviderDAO dataProviderDAO;
 	@Inject
 	protected SearchUtils searchUtils;
-
+	@Inject
+	protected RawOccurrenceRecordDAO rawOccurrenceRecordDAO;
+	
 	/** Name of view for site home page */
 	private String HOME = "homePage";
 	/** Name of view for list of taxa */
@@ -608,10 +612,13 @@ public class OccurrenceController {
 		model.addAttribute("id", id);
 		OccurrenceDTO occurrence = searchDAO.getById(id);
 		model.addAttribute("occurrence", occurrence);
+		if(id!=null){
+			RawOccurrenceRecord rawOccurrence =rawOccurrenceRecordDAO.getById(new Long(id));
+			model.addAttribute("rawOccurrence", rawOccurrence);
+		}
 		model.addAttribute("hostUrl", hostUrl);
 		return SHOW;
 	}
-
 
 	/**
 	 * @param hostUrl the hostUrl to set
@@ -660,5 +667,13 @@ public class OccurrenceController {
 	 */
 	public void setSearchUtils(SearchUtils searchUtils) {
 		this.searchUtils = searchUtils;
+	}
+
+	/**
+	 * @param rawOccurrenceRecordDAO the rawOccurrenceRecordDAO to set
+	 */
+	public void setRawOccurrenceRecordDAO(
+			RawOccurrenceRecordDAO rawOccurrenceRecordDAO) {
+		this.rawOccurrenceRecordDAO = rawOccurrenceRecordDAO;
 	}
 }

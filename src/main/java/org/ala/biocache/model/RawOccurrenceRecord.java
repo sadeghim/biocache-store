@@ -61,17 +61,19 @@ public class RawOccurrenceRecord extends ModelObject {
 	protected String occurrenceRemarks;
 	protected String locationRemarks;
 	protected Integer individualCount;
+	protected String citation;
+	protected String geodeticDatum;
+	protected Integer generalisedInMetres;
 
 	/**
 	 * Default
 	 */
-	public RawOccurrenceRecord() {      
-	}
+	public RawOccurrenceRecord() {}
 
     /**
      * Convenience
      */
-    public RawOccurrenceRecord(long dataProviderId, long dataResourceId, long resourceAccessPointId, String institutionCode, String collectionCode, String catalogueNumber, String scientificName, String author, String rank, String vernacularName, String kingdom, String phylum, String klass, String order, String family, String genus, String species, String subspecies, String latitude, String longitude, String latLongPrecision, String minAltitude, String maxAltitude, String altitudePrecision, String minDepth, String maxDepth, String depthPrecision, String continentOrOcean, String country, String stateOrProvince, String county, String collectorName, String locality, String year, String month, String day, String basisOfRecord, String identifierName, Date dateIdentified, String unitQualifier, Date created, Date modifed, Date deleted, String taxonConceptGuid, String userId, String occurrenceRemarks, String locationRemarks, Integer individualCount) {
+    public RawOccurrenceRecord(long dataProviderId, long dataResourceId, long resourceAccessPointId, String institutionCode, String collectionCode, String catalogueNumber, String scientificName, String author, String rank, String vernacularName, String kingdom, String phylum, String klass, String order, String family, String genus, String species, String subspecies, String latitude, String longitude, String latLongPrecision, String minAltitude, String maxAltitude, String altitudePrecision, String minDepth, String maxDepth, String depthPrecision, String continentOrOcean, String country, String stateOrProvince, String county, String collectorName, String locality, String year, String month, String day, String basisOfRecord, String identifierName, Date dateIdentified, String unitQualifier, Date created, Date modifed, Date deleted, String taxonConceptGuid, String userId, String occurrenceRemarks, String locationRemarks, Integer individualCount, String citation, String geodeticDatum, Integer generalisedInMetres) {
             this.dataProviderId = dataProviderId;
             this.dataResourceId = dataResourceId;
             this.resourceAccessPointId = resourceAccessPointId;
@@ -120,11 +122,14 @@ public class RawOccurrenceRecord extends ModelObject {
             this.occurrenceRemarks = occurrenceRemarks;
             this.locationRemarks = locationRemarks;
             this.individualCount = individualCount;
+        	this.citation = citation;
+        	this.geodeticDatum = geodeticDatum;
+        	this.generalisedInMetres = generalisedInMetres;
     }
     /**
      * Convenience
      */
-    public RawOccurrenceRecord(long id, long dataProviderId, long dataResourceId, long resourceAccessPointId, String institutionCode, String collectionCode, String catalogueNumber, String scientificName, String author, String rank, String vernacularName, String kingdom, String phylum, String klass, String order, String family, String genus, String species, String subspecies, String latitude, String longitude, String latLongPrecision, String minAltitude, String maxAltitude, String altitudePrecision, String minDepth, String maxDepth, String depthPrecision, String continentOrOcean, String country, String stateOrProvince, String county, String collectorName, String locality, String year, String month, String day, String basisOfRecord, String identifierName, Date dateIdentified, String unitQualifier, Date created, Date modifed, Date deleted, String taxonConceptGuid, String userId, String occurrenceRemarks, String locationRemarks, Integer individualCount) {
+    public RawOccurrenceRecord(long id, long dataProviderId, long dataResourceId, long resourceAccessPointId, String institutionCode, String collectionCode, String catalogueNumber, String scientificName, String author, String rank, String vernacularName, String kingdom, String phylum, String klass, String order, String family, String genus, String species, String subspecies, String latitude, String longitude, String latLongPrecision, String minAltitude, String maxAltitude, String altitudePrecision, String minDepth, String maxDepth, String depthPrecision, String continentOrOcean, String country, String stateOrProvince, String county, String collectorName, String locality, String year, String month, String day, String basisOfRecord, String identifierName, Date dateIdentified, String unitQualifier, Date created, Date modifed, Date deleted, String taxonConceptGuid, String userId, String occurrenceRemarks, String locationRemarks, Integer individualCount, String citation, String geodeticDatum, Integer generalisedInMetres) {
             this.id = id;
             this.dataProviderId = dataProviderId;
             this.dataResourceId = dataResourceId;
@@ -173,6 +178,10 @@ public class RawOccurrenceRecord extends ModelObject {
             this.occurrenceRemarks = occurrenceRemarks;
             this.locationRemarks = locationRemarks;
             this.individualCount = individualCount;
+        	this.citation = citation;
+        	this.geodeticDatum = geodeticDatum;
+        	this.generalisedInMetres = generalisedInMetres;
+
     }
     /**
      * @return the maxAltitude
@@ -793,5 +802,47 @@ public class RawOccurrenceRecord extends ModelObject {
 	 */
 	public void setIndividualCount(Integer individualCount) {
 		this.individualCount = individualCount;
+	}
+
+	/**
+	 * @return the citation
+	 */
+	public String getCitation() {
+		return citation;
+	}
+
+	/**
+	 * @param citation the citation to set
+	 */
+	public void setCitation(String citation) {
+		this.citation = citation;
+	}
+
+	/**
+	 * @return the geodeticDatum
+	 */
+	public String getGeodeticDatum() {
+		return geodeticDatum;
+	}
+
+	/**
+	 * @param geodeticDatum the geodeticDatum to set
+	 */
+	public void setGeodeticDatum(String geodeticDatum) {
+		this.geodeticDatum = geodeticDatum;
+	}
+
+	/**
+	 * @return the generalisedInMetres
+	 */
+	public Integer getGeneralisedInMetres() {
+		return generalisedInMetres;
+	}
+
+	/**
+	 * @param generalisedInMetres the generalisedInMetres to set
+	 */
+	public void setGeneralisedInMetres(Integer generalisedInMetres) {
+		this.generalisedInMetres = generalisedInMetres;
 	}
 }

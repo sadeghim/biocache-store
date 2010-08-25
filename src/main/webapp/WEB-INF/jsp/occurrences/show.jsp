@@ -181,6 +181,11 @@
                             		${not empty occurrence.coordinatePrecision ? occurrence.coordinatePrecision : 'Unknown'}
                             	</c:if>
                             </alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="geodeticDatum" fieldName="Geodetic datum">${rawOccurrence.geodeticDatum}</alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="occurrenceRemarks" fieldName="Notes">${rawOccurrence.occurrenceRemarks}</alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="individualCount" fieldName="Individual count">${rawOccurrence.individualCount}</alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="citation" fieldName="Individual count">${rawOccurrence.citation}</alatag:occurrenceTableRow>
+
                         </table>
                     </div>
                     <div id="occurrenceMetadata">
