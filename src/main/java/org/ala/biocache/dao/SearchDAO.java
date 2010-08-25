@@ -13,7 +13,6 @@ package org.ala.biocache.dao;
  *  implied. See the License for the specific language governing
  *  rights and limitations under the License.
  ***************************************************************************/
-
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -27,6 +26,7 @@ import org.ala.biocache.dto.SearchResultDTO;
 import org.ala.biocache.dto.TaxaCountDTO;
 
 /**
+ * DAO for searching occurrence records held in the biocache.
  *
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
