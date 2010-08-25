@@ -61,6 +61,8 @@ public class ContributeServiceImpl implements ContributeService {
 			//find the matching taxon concept
 			TaxonConcept tc = taxonConceptDAO.getByGuid(s.getTaxonConceptGuid());
 			
+			logger.debug("Using taxon concept: "+tc);
+			
 			//add record to raw occurrence table
 			RawOccurrenceRecord ror = new RawOccurrenceRecord();
 			ror.setFamily(s.getFamily());
@@ -149,6 +151,7 @@ public class ContributeServiceImpl implements ContributeService {
 			if(s.getCoordinateUncertaintyInMeters()!=null) ocdto.setCoordinatePrecision(s.getCoordinateUncertaintyInMeters().toString());
 			
 			ocdto.setLeft(tc.getLeft());
+			ocdto.setRight(tc.getRight());
 			ocdto.setUserId(s.getUserId());
 			ocdto.setCollector(s.getCollectorName());
 			ocdto.setMonth(month);
@@ -161,14 +164,14 @@ public class ContributeServiceImpl implements ContributeService {
 			ocdto.setNamesLsid(s.getScientificName()+"|"+s.getTaxonConceptGuid()+"|"+s.getVernacularName()+"|"+s.getKingdom()+"|"+s.getFamily());
 			SearchUtils.initialPointValues(ocdto);
 			
-			if(s.getCoordinateUncertaintyInMeters()!=null) ocdto.setCoordinatePrecision(s.getCoordinateUncertaintyInMeters().toString());
-
 			//add states and provinces
 			if(s.getStateProvince()!=null){
 				List<String> states = new ArrayList<String>();
 				states.add(s.getStateProvince());
 				ocdto.setStates(states);
 			}
+			
+			logger.debug("Added to index: "+ocdto);
 			searchDAO.addOccurrence(ocdto);
 			logger.debug("Added record with ID: "+occurrenceId+" to search indexes.");
 			

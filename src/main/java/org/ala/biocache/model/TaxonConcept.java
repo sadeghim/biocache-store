@@ -17,7 +17,10 @@ public class TaxonConcept implements Serializable {
     protected Long id;
     protected Long parentId;
     protected Long taxonNameId;
+    protected String scientificName;
+    protected String commonName;
     protected Integer rank;
+    protected String rankString;
     protected Integer left;
     protected Integer right;
     
@@ -105,5 +108,49 @@ public class TaxonConcept implements Serializable {
 	public void setTaxonNameId(Long taxonNameId) {
 		this.taxonNameId = taxonNameId;
 	}
-
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "TaxonConcept [guid=" + guid + ", id=" + id + ", parentId="
+				+ parentId + ", taxonNameId=" + taxonNameId + ", rank=" + rank
+				+ ", left=" + left + ", right=" + right + "]";
+	}
+	/**
+	 * @return the scientificName
+	 */
+	public String getScientificName() {
+		return scientificName;
+	}
+	/**
+	 * @param scientificName the scientificName to set
+	 */
+	public void setScientificName(String scientificName) {
+		this.scientificName = scientificName;
+	}
+	/**
+	 * @return the commonName
+	 */
+	public String getCommonName() {
+		return commonName;
+	}
+	/**
+	 * @param commonName the commonName to set
+	 */
+	public void setCommonName(String commonName) {
+		this.commonName = commonName;
+	}
+	/**
+	 * @return the rankString
+	 */
+	public String getRankString() {
+		return rankString;
+	}
+	/**
+	 * @param rankString the rankString to set
+	 */
+	public void setRankString(String rankString) {
+		this.rankString = rankString;
+	}
 }

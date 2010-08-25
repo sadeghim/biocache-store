@@ -3,8 +3,12 @@ package org.ala.biocache.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.ala.biocache.dao.TaxonConceptDAO;
 import org.ala.biocache.dto.OccurrenceDTO;
 import org.ala.biocache.dto.SearchQuery;
+import org.ala.biocache.model.TaxonConcept;
 import org.ala.biocache.web.OccurrenceController;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math.util.MathUtils;
@@ -17,9 +21,13 @@ import atg.taglib.json.util.JSONObject;
  * @author Natasha
  */
 public class SearchUtils {
+	
     /** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(SearchUtils.class);
     
+	@Inject
+	TaxonConceptDAO taxonConceptDAO;
+	
     protected String collectoryBaseUrl = "http://collections.ala.org.au";
     protected String bieBaseUrl = "http://bie.ala.org.au";
     
@@ -32,49 +40,49 @@ public class SearchUtils {
     public void updateCollectionSearchString(SearchQuery searchQuery) {
         try{
             String query = searchQuery.getQuery();
-        StringBuilder solrQuery = new StringBuilder();
-        //query the collectory for the institute and collection codes needed to perform the search
-        String jsonObject = OccurrenceController.getUrlContentAsString(collectoryBaseUrl + "/collection/summary/" + query);
-        JSONObject j = new JSONObject(jsonObject);
-        String instituteName = j.getString("name");
-        JSONArray institutionCode = j.getJSONArray("derivedInstCodes");
-        JSONArray collectionCode = j.getJSONArray("derivedCollCodes");
-        StringBuilder displayString = new StringBuilder("Collection: ");
-        displayString.append(instituteName);
-        // Build Lucene query for institutions
-        if (institutionCode != null && institutionCode.size() > 0) {
-
-            List<String> institutions = new ArrayList<String>();
-            for (int i = 0; i < institutionCode.size(); i++) {
-                institutions.add("institution_code:" + institutionCode.getString(i));
-            }
-            solrQuery.append("(");
-            solrQuery.append(StringUtils.join(institutions, " OR "));
-            solrQuery.append(")");
-
-        }
-
-        // Build Lucene query for collections
-        if (collectionCode != null && collectionCode.size() > 0) {
-            if (solrQuery.length() > 0) {
-                solrQuery.append(" AND ");
-
-            }
-            //StringBuilder displayString = new StringBuilder("Institution: ");
-            List<String> collections = new ArrayList<String>();
-            for (int i = 0; i < collectionCode.size(); i++) {
-                //quote the collection code to solve issue with invalid characters (eg Invertebrates - Marine & Other)
-                collections.add("collection_code:\"" + collectionCode.getString(i) +"\"");
-                //	displayString.append(coll).append(" ");
-            }
-            solrQuery.append("(");
-            solrQuery.append(StringUtils.join(collections, " OR "));
-            solrQuery.append(")");
-
-        }
-        searchQuery.setQuery(solrQuery.toString());
-        searchQuery.setDisplayString(displayString.toString());
-        
+	        StringBuilder solrQuery = new StringBuilder();
+	        //query the collectory for the institute and collection codes needed to perform the search
+	        String jsonObject = OccurrenceController.getUrlContentAsString(collectoryBaseUrl + "/collection/summary/" + query);
+	        JSONObject j = new JSONObject(jsonObject);
+	        String instituteName = j.getString("name");
+	        JSONArray institutionCode = j.getJSONArray("derivedInstCodes");
+	        JSONArray collectionCode = j.getJSONArray("derivedCollCodes");
+	        StringBuilder displayString = new StringBuilder("Collection: ");
+	        displayString.append(instituteName);
+	        // Build Lucene query for institutions
+	        if (institutionCode != null && institutionCode.size() > 0) {
+	
+	            List<String> institutions = new ArrayList<String>();
+	            for (int i = 0; i < institutionCode.size(); i++) {
+	                institutions.add("institution_code:" + institutionCode.getString(i));
+	            }
+	            solrQuery.append("(");
+	            solrQuery.append(StringUtils.join(institutions, " OR "));
+	            solrQuery.append(")");
+	
+	        }
+	
+	        // Build Lucene query for collections
+	        if (collectionCode != null && collectionCode.size() > 0) {
+	            if (solrQuery.length() > 0) {
+	                solrQuery.append(" AND ");
+	
+	            }
+	            //StringBuilder displayString = new StringBuilder("Institution: ");
+	            List<String> collections = new ArrayList<String>();
+	            for (int i = 0; i < collectionCode.size(); i++) {
+	                //quote the collection code to solve issue with invalid characters (eg Invertebrates - Marine & Other)
+	                collections.add("collection_code:\"" + collectionCode.getString(i) +"\"");
+	                //	displayString.append(coll).append(" ");
+	            }
+	            solrQuery.append("(");
+	            solrQuery.append(StringUtils.join(collections, " OR "));
+	            solrQuery.append(")");
+	
+	        }
+	        searchQuery.setQuery(solrQuery.toString());
+	        searchQuery.setDisplayString(displayString.toString());
+	        
         }
         catch(Exception e){
         	logger.error("Problem contacting the collectory: "+e.getMessage(), e);
@@ -84,48 +92,52 @@ public class SearchUtils {
         
     }
     /**
-     * Returns the filter query string required to perform a taxon concept serach
+     * Returns the filter query string required to perform a taxon concept search
      * @param query
      * @return
      */
     public void updateTaxonConceptSearchString(SearchQuery searchQuery){
         try {
+        	
+        	String guid = searchQuery.getQuery();
+        	TaxonConcept tc = taxonConceptDAO.getByGuid(guid);
+        	
             //lets retrieve the details of a taxon
 		//http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp/species/urn:lsid:biodiversity.org.au:apni.taxon:295882
-
-            String query = searchQuery.getQuery();
-            String jsonObject = OccurrenceController.getUrlContentAsString(bieBaseUrl + "/species/" + query + ".json");
-            
-            JSONObject j = new JSONObject(jsonObject);
-            JSONObject extendedDTO = j.getJSONObject("extendedTaxonConceptDTO");
-            JSONObject taxonConcept = extendedDTO.getJSONObject("taxonConcept");
-
-            //retrieve the left and right values
-            String left = taxonConcept.getString("left");
-            String right = taxonConcept.getString("right");
-
-            logger.debug("Querying with left and right: " + left + ", " + right);
-            logger.debug("Found concept: " + taxonConcept.getString("nameString"));
-
-            //get rank string
-            String rankString = taxonConcept.getString("rankString");
-            String commonName = null;
-
-            //get a common name
-            JSONArray commonNames = extendedDTO.getJSONArray("commonNames");
-            if (!commonNames.isEmpty()) {
-                commonName = commonNames.getJSONObject(0).getString("nameString");
-            }
-
-            //contruct a name for search purposes
-            String scientificName = taxonConcept.getString("nameString");
-            StringBuffer entityQuerySb = new StringBuffer(rankString + ": " + scientificName);
-            if (commonName != null) {
+//
+//            String query = searchQuery.getQuery();
+//            String jsonObject = OccurrenceController.getUrlContentAsString(bieBaseUrl + "/species/" + query + ".json");
+//            
+//            JSONObject j = new JSONObject(jsonObject);
+//            JSONObject extendedDTO = j.getJSONObject("extendedTaxonConceptDTO");
+//            JSONObject taxonConcept = extendedDTO.getJSONObject("taxonConcept");
+//
+//            //retrieve the left and right values
+//            String left = taxonConcept.getString("left");
+//            String right = taxonConcept.getString("right");
+//
+//            logger.debug("Querying with left and right: " + left + ", " + right);
+//            logger.debug("Found concept: " + taxonConcept.getString("nameString"));
+//
+//            //get rank string
+//            String rankString = taxonConcept.getString("rankString");
+//            String commonName = null;
+//
+//            //get a common name
+//            JSONArray commonNames = extendedDTO.getJSONArray("commonNames");
+//            if (!commonNames.isEmpty()) {
+//                commonName = commonNames.getJSONObject(0).getString("nameString");
+//            }
+//
+//            //contruct a name for search purposes
+//            String scientificName = taxonConcept.getString("nameString");
+            StringBuffer entityQuerySb = new StringBuffer(tc.getRankString() + ": " + tc.getScientificName());
+            if (tc.getCommonName() != null) {
                 entityQuerySb.append(" (");
-                entityQuerySb.append(commonName);
+                entityQuerySb.append(tc.getCommonName());
                 entityQuerySb.append(") ");
             }
-            searchQuery.addToFilterQuery("lft:[" + left + " TO " + right + "]");
+            searchQuery.addToFilterQuery("lft:[" + tc.getLeft() + " TO " + tc.getRight() + "]");
             
             if (logger.isDebugEnabled()) {
                 for (String filter : searchQuery.getFilterQuery()) {
@@ -137,8 +149,8 @@ public class SearchUtils {
         } catch (Exception e) {
             //TODO work out what we want to do to the search if an exception occurs while
             //contacting the bie etc
+        	logger.error(e.getMessage(), e);
         }
-        
     }
 
     /**
@@ -195,4 +207,22 @@ public class SearchUtils {
 	    	occurrence.setPoint0001(MathUtils.round(lat, 3)+","+MathUtils.round(lon, 3));
     	}
     }
+	/**
+	 * @param taxonConceptDAO the taxonConceptDAO to set
+	 */
+	public void setTaxonConceptDAO(TaxonConceptDAO taxonConceptDAO) {
+		this.taxonConceptDAO = taxonConceptDAO;
+	}
+	/**
+	 * @param collectoryBaseUrl the collectoryBaseUrl to set
+	 */
+	public void setCollectoryBaseUrl(String collectoryBaseUrl) {
+		this.collectoryBaseUrl = collectoryBaseUrl;
+	}
+	/**
+	 * @param bieBaseUrl the bieBaseUrl to set
+	 */
+	public void setBieBaseUrl(String bieBaseUrl) {
+		this.bieBaseUrl = bieBaseUrl;
+	}
 }
