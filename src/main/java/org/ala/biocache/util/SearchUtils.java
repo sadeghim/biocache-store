@@ -181,20 +181,18 @@ public class SearchUtils {
         }
         //otherwise we can leave the query with its default values ("normal" type)
     }
-    /*
-CONCAT(CONCAT(ROUND(round(oc.latitude *1)/1,1), ','), ROUND(round(oc.longitude *1)/1,1)),
-CONCAT(CONCAT(ROUND(round(oc.latitude *10)/10,1), ','), ROUND(round(oc.longitude *10)/10,1)),
-CONCAT(CONCAT(ROUND(round(oc.latitude *100)/100,2), ','), ROUND(round(oc.longitude *100)/100,2)),
-CONCAT(CONCAT(ROUND(round(oc.latitude *1000)/1000,3), ','), ROUND(round(oc.longitude *1000)/1000,3)),
-CONCAT(CONCAT(ROUND(round(oc.latitude *10000)/10000,4), ','), ROUND(round(oc.longitude *10000)/10000,4)),
-     */
     
+    /**
+     * Set the initial point values in the index. 
+     */
     public static void initialPointValues(OccurrenceDTO occurrence){
     	Double lat = occurrence.getLatitude();
     	Double lon = occurrence.getLongitude();
-    	occurrence.setPoint1(MathUtils.round(lat, 0)+","+MathUtils.round(lon, 0));
-    	occurrence.setPoint01(MathUtils.round(lat, 1)+","+MathUtils.round(lon, 1));
-    	occurrence.setPoint001(MathUtils.round(lat, 2)+","+MathUtils.round(lon, 2));
-    	occurrence.setPoint0001(MathUtils.round(lat, 3)+","+MathUtils.round(lon, 3));
+    	if(lat!=null && lon!=null){
+	    	occurrence.setPoint1(MathUtils.round(lat, 0)+","+MathUtils.round(lon, 0));
+	    	occurrence.setPoint01(MathUtils.round(lat, 1)+","+MathUtils.round(lon, 1));
+	    	occurrence.setPoint001(MathUtils.round(lat, 2)+","+MathUtils.round(lon, 2));
+	    	occurrence.setPoint0001(MathUtils.round(lat, 3)+","+MathUtils.round(lon, 3));
+    	}
     }
 }

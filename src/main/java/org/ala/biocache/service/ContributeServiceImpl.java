@@ -28,6 +28,7 @@ import org.ala.biocache.dto.Sighting;
 import org.ala.biocache.model.OccurrenceRecord;
 import org.ala.biocache.model.RawOccurrenceRecord;
 import org.ala.biocache.model.TaxonConcept;
+import org.ala.biocache.util.SearchUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -153,8 +154,14 @@ public class ContributeServiceImpl implements ContributeService {
 			ocdto.setMonth(month);
 			ocdto.setYear(year);
 			ocdto.setRank(s.getRank());
+			ocdto.setOccurrenceDate(s.getEventDate());
+			
+			//names_and_lsid
+			ocdto.setNamesLsid(s.getScientificName()+"|"+s.getTaxonConceptGuid()+"|"+s.getVernacularName()+"|"+s.getKingdom()+"|"+s.getFamily());
+			SearchUtils.initialPointValues(ocdto);
 			
 			if(s.getCoordinateUncertaintyInMeters()!=null) ocdto.setCoordinatePrecision(s.getCoordinateUncertaintyInMeters().toString());
+
 			//add states and provinces
 			if(s.getStateProvince()!=null){
 				List<String> states = new ArrayList<String>();

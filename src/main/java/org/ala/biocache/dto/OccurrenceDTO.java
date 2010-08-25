@@ -111,6 +111,7 @@ public class OccurrenceDTO implements Serializable {
 	@Field("point-0.01") private String point001;
 	@Field("point-0.001") private String point0001;
 	@Field("point-0.0001") private String point00001;
+	@Field("names_lsid") private String namesLsid;
 	
     /*
      * Getters & Setters
@@ -740,5 +741,19 @@ public class OccurrenceDTO implements Serializable {
 	 */
 	public void setPoint00001(String point00001) {
 		this.point00001 = point00001;
+	}
+
+	/**
+	 * @return the namesLsid
+	 */
+	public String getNamesLsid() {
+		return namesLsid;
+	}
+
+	/**
+	 * @param namesLsid the namesLsid to set
+	 */
+	public void setNamesLsid(String namesLsid) {
+		this.namesLsid = namesLsid;
 	}
 }
