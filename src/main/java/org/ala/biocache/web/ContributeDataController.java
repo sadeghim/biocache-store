@@ -121,6 +121,8 @@ public class ContributeDataController {
             @RequestParam(value="guid", required=false) String taxonConceptGuid,
             @RequestParam(value="scientificName", required=false) String scientificName,
             @RequestParam(value="commonName", required=false) String vernacularName,
+            @RequestParam(value="kingdom", required=false) String kingdom,
+            @RequestParam(value="family", required=false) String family,
             @RequestParam(value="rank", required=false) String rank,
             @RequestParam(value="date", required=false) java.util.Date eventDate,
             @RequestParam(value="time", required=false) String eventTime,
@@ -163,6 +165,8 @@ public class ContributeDataController {
             
             s.setScientificName(scientificName);
             s.setVernacularName(vernacularName);
+            s.setFamily(family);
+            s.setKingdom(kingdom);
             s.setRank(rank);
             s.setEventDate(eventDate);
             s.setUserId(userId);
@@ -204,6 +208,12 @@ public class ContributeDataController {
             dto.setScientificName(tc.getString("nameString"));
             dto.setRankId(tc.getString("rankID"));
             dto.setRank(tc.getString("rankString"));
+        }
+        
+        JSONObject classification = etc.getJSONObject("classification");
+        if(classification!=null){
+            dto.setKingdom(classification.getString("kingdom"));
+            dto.setRank(classification.getString("family"));
         }
         
         JSONArray cns = etc.getJSONArray("commonNames");
@@ -248,6 +258,8 @@ public class ContributeDataController {
         private String rank;
         private String commonName;
         private String imageThumbnailUrl;
+        private String kingdom;
+        private String family;
 
         @Override
         public String toString() {
@@ -307,6 +319,34 @@ public class ContributeDataController {
 		 */
 		public void setRank(String rank) {
 			this.rank = rank;
+		}
+
+		/**
+		 * @return the kingdom
+		 */
+		public String getKingdom() {
+			return kingdom;
+		}
+
+		/**
+		 * @param kingdom the kingdom to set
+		 */
+		public void setKingdom(String kingdom) {
+			this.kingdom = kingdom;
+		}
+
+		/**
+		 * @return the family
+		 */
+		public String getFamily() {
+			return family;
+		}
+
+		/**
+		 * @param family the family to set
+		 */
+		public void setFamily(String family) {
+			this.family = family;
 		}
     }
 

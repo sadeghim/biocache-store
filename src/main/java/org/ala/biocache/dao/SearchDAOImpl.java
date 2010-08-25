@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.beans.Field;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
@@ -104,21 +105,22 @@ public class SearchDAOImpl implements SearchDAO {
 		if(oc.getBasisOfRecord()!=null) doc.addField("basis_of_record", oc.getBasisOfRecord());
 		if(oc.getLatitude()!=null) doc.addField("latitude", oc.getLatitude());
 		if(oc.getLongitude()!=null) doc.addField("longitude", oc.getLongitude());
+		if(oc.getPoint1()!=null) doc.addField("point-1", oc.getPoint1());
+		if(oc.getPoint01()!=null) doc.addField("point-0.1", oc.getPoint01());
+		if(oc.getPoint01()!=null) doc.addField("point-0.01", oc.getPoint001());
+		if(oc.getPoint01()!=null) doc.addField("point-0.001", oc.getPoint0001());
+		if(oc.getPoint01()!=null) doc.addField("point-0.001", oc.getPoint00001());
 		if(oc.getDataProviderId()!=null) doc.addField("data_provider_id", oc.getDataProviderId());
 		if(oc.getDataProviderId()!=null) doc.addField("data_resource_id", oc.getDataResourceId());
 		if(oc.getDataProviderId()!=null) doc.addField("data_provider", oc.getDataProvider());
 		if(oc.getDataProviderId()!=null) doc.addField("data_resource", oc.getDataResource());
-		
-		//more fields
 		if(oc.getOccurrenceDate()!=null) doc.addField("occurrence_date", oc.getOccurrenceDate());
 		if(oc.getYear()!=null) doc.addField("year", oc.getYear());
 		if(oc.getMonth()!=null) doc.addField("month", oc.getMonth());
 		if(oc.getCoordinatePrecision()!=null) doc.addField("lat_long_precision", oc.getCoordinatePrecision());
 		if(oc.getState()!=null) doc.addField("state", oc.getState());
-		
 		if(oc.getRank()!=null) doc.addField("rank", oc.getRank());
 		if(oc.getRankId()!=null) doc.addField("rank_id", oc.getRankId());
-		
 		if(oc.getNamesLsid()!=null) doc.addField("names_and_lsid", oc.getNamesLsid());
 		
 		//FIXME we need to lookup the states, ibra regions
