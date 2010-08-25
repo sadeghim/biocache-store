@@ -76,24 +76,24 @@
 <!--                    <h1>Occurrence Details: ${occurrence.id}</h1>-->
                     <div id="debug"></div>
                     <!-- add the occurrence issue descriptions if necessary -->
-                    <c:set var="noIssues" value="${occurrence.taxonomicIssue==0 && occurrence.geospatialIssue==0 && occurrence.otherIssue==0}"/>
-                        <c:if test="${!noIssues}">
-                            <div id="warnings" class="topContainer">
-                                <h4>Warnings</h4>
-                                <alatag:formatGeospatialIssues issuesBit="${occurrence.geospatialIssue}"/>
-                                <c:if test="${not empty geospatialIssueText}">
-                                        Geospatial issues: ${geospatialIssueText}<br/>
-                                </c:if>
-                                <alatag:formatOtherIssues issuesBit="${occurrence.otherIssue}" />
-                                <c:if test="${not empty otherIssueText}">
-                                    Miscellaneous issues: ${otherIssueText}<br/>
-                                </c:if>
-                                <alatag:formatTaxonomicIssues issuesBit="${occurrence.taxonomicIssue}"/>
-                                <c:if test="${not empty taxonomicIssueText}">
-                                    Taxonomic issues: ${taxonomicIssueText}<br/>
-                                </c:if>
-                            </div>
-                        </c:if>
+                    <c:set var="noIssues" value="${!((empty occurrence.taxonomicIssue || occurrence.taxonomicIssue==0)  && (empty occurrence.geospatialIssue || occurrence.geospatialIssue==0) && (empty occurrence.otherIssue || occurrence.otherIssue==0))}"/>
+                    <c:if test="${noIssues}">
+                        <div id="warnings" class="topContainer">
+                            <h4>Warnings</h4>
+                            <alatag:formatGeospatialIssues issuesBit="${occurrence.geospatialIssue}"/>
+                            <c:if test="${not empty geospatialIssueText}">
+                                    Geospatial issues: ${geospatialIssueText}<br/>
+                            </c:if>
+                            <alatag:formatOtherIssues issuesBit="${occurrence.otherIssue}" />
+                            <c:if test="${not empty otherIssueText}">
+                                Miscellaneous issues: ${otherIssueText}<br/>
+                            </c:if>
+                            <alatag:formatTaxonomicIssues issuesBit="${occurrence.taxonomicIssue}"/>
+                            <c:if test="${not empty taxonomicIssueText}">
+                                Taxonomic issues: ${taxonomicIssueText}<br/>
+                            </c:if>
+                        </div>
+                    </c:if>
                     <div id="occurrenceDataset" class="occurrenceSection">
                         <h2>Dataset</h2>
                         <table class="occurrenceTable" id="datasetTable">
