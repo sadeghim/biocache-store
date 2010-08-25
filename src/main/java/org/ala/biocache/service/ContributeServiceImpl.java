@@ -139,8 +139,9 @@ public class ContributeServiceImpl implements ContributeService {
 			ocdto.setBasisOfRecord(BASIS_OF_RECORD_OBSERVATION_TEXT);
 			ocdto.setDataProviderId(citizenScienceDPId.intValue());
 			ocdto.setDataResourceId(citizenScienceDRId.intValue());
-			ocdto.setDataProvider("Contributed sightings");
-			ocdto.setDataResource("Contributed sightings");
+			
+			ocdto.setDataProvider("Citizen Science - ALA Website");
+			ocdto.setDataResource("Individual sightings");
 			
 			if(s.getLatitude()!=null)  ocdto.setLatitude(s.getLatitude().doubleValue());
 			if(s.getLongitude()!=null) ocdto.setLongitude(s.getLongitude().doubleValue());
