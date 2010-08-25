@@ -756,4 +756,53 @@ public class OccurrenceDTO implements Serializable {
 	public void setNamesLsid(String namesLsid) {
 		this.namesLsid = namesLsid;
 	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "OccurrenceDTO [id=" + id + ", userId=" + userId
+				+ ", dataProviderId=" + dataProviderId + ", dataProvider="
+				+ dataProvider + ", dataResourceId=" + dataResourceId
+				+ ", dataResource=" + dataResource + ", institutionCodeId="
+				+ institutionCodeId + ", institutionCode=" + institutionCode
+				+ ", institutionCodeName=" + institutionCodeName
+				+ ", institutionCodeLsid=" + institutionCodeLsid
+				+ ", collectionCodeId=" + collectionCodeId
+				+ ", collectionCode=" + collectionCode + ", catalogueNumberId="
+				+ catalogueNumberId + ", catalogueNumber=" + catalogueNumber
+				+ ", citation=" + citation + ", taxonConceptLsid="
+				+ taxonConceptLsid + ", year=" + year + ", month=" + month
+				+ ", occurrenceDate=" + occurrenceDate + ", basisOfRecordId="
+				+ basisOfRecordId + ", basisOfRecord=" + basisOfRecord
+				+ ", rawBasisOfRecord=" + rawBasisOfRecord + ", collector="
+				+ collector + ", typeStatus=" + typeStatus
+				+ ", identifierType=" + identifierType + ", identifierValue="
+				+ identifierValue + ", identifierName=" + identifierName
+				+ ", identifierDate=" + identifierDate + ", taxonName="
+				+ taxonName + ", commonName=" + commonName + ", author="
+				+ author + ", rankId=" + rankId + ", rank=" + rank
+				+ ", rawTaxonName=" + rawTaxonName + ", rawAuthor=" + rawAuthor
+				+ ", left=" + left + ", right=" + right + ", kingdomLsid="
+				+ kingdomLsid + ", kingdom=" + kingdom + ", phylumLsid="
+				+ phylumLsid + ", phylum=" + phylum + ", classLsid="
+				+ classLsid + ", clazz=" + clazz + ", orderLsid=" + orderLsid
+				+ ", order=" + order + ", familyLsid=" + familyLsid
+				+ ", family=" + family + ", genusLsid=" + genusLsid
+				+ ", genus=" + genus + ", speciesLsid=" + speciesLsid
+				+ ", species=" + species + ", countryCode=" + countryCode
+				+ ", states=" + states + ", biogeographicRegions="
+				+ biogeographicRegions + ", places=" + places + ", latitude="
+				+ latitude + ", longitude=" + longitude
+				+ ", coordinatePrecision=" + coordinatePrecision + ", cellId="
+				+ cellId + ", centiCellId=" + centiCellId + ", tenmilliCellId="
+				+ tenmilliCellId + ", taxonomicIssue=" + taxonomicIssue
+				+ ", geospatialIssue=" + geospatialIssue + ", otherIssue="
+				+ otherIssue + ", createdDate=" + createdDate
+				+ ", modifiedDate=" + modifiedDate + ", point1=" + point1
+				+ ", point01=" + point01 + ", point001=" + point001
+				+ ", point0001=" + point0001 + ", point00001=" + point00001
+				+ ", namesLsid=" + namesLsid + "]";
+	}
 }
