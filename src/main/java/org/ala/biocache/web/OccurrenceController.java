@@ -60,8 +60,8 @@ public class OccurrenceController {
 	/** Data Provider DAO */
 	@Inject
 	protected DataProviderDAO dataProviderDAO;
-
-	protected SearchUtils searchUtils = new SearchUtils();
+	@Inject
+	protected SearchUtils searchUtils;
 
 	/** Name of view for site home page */
 	private String HOME = "homePage";
@@ -653,5 +653,12 @@ public class OccurrenceController {
 	 */
 	public void setCollectoryBaseUrl(String collectoryBaseUrl) {
 		this.collectoryBaseUrl = collectoryBaseUrl;
+	}
+
+	/**
+	 * @param searchUtils the searchUtils to set
+	 */
+	public void setSearchUtils(SearchUtils searchUtils) {
+		this.searchUtils = searchUtils;
 	}
 }

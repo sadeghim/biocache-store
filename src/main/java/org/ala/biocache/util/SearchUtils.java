@@ -13,6 +13,7 @@ import org.ala.biocache.web.OccurrenceController;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math.util.MathUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import atg.taglib.json.util.JSONArray;
 import atg.taglib.json.util.JSONObject;
@@ -20,15 +21,17 @@ import atg.taglib.json.util.JSONObject;
  * A class to provide utility methods used to populate search details.
  * @author Natasha
  */
+@Component("searchUtils")
 public class SearchUtils {
 	
     /** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(SearchUtils.class);
     
 	@Inject
-	TaxonConceptDAO taxonConceptDAO;
+	protected TaxonConceptDAO taxonConceptDAO;
 	
     protected String collectoryBaseUrl = "http://collections.ala.org.au";
+    
     protected String bieBaseUrl = "http://bie.ala.org.au";
     
     /**

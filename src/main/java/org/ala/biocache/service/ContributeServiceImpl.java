@@ -136,7 +136,7 @@ public class ContributeServiceImpl implements ContributeService {
 			ocdto.setId(Long.toString(oc.getId()));
 			ocdto.setFamily(s.getFamily());
 			ocdto.setCommonName(s.getVernacularName());
-			ocdto.setRawTaxonName(s.getScientificName());
+			ocdto.setRawTaxonName(tc.getScientificName());
 			ocdto.setTaxonConceptLsid(s.getTaxonConceptGuid());
 			ocdto.setBasisOfRecordId(BASIS_OF_RECORD_OBSERVATION);
 			ocdto.setBasisOfRecord(BASIS_OF_RECORD_OBSERVATION_TEXT);
