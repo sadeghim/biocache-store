@@ -136,7 +136,7 @@ public class ContributeDataController {
             @RequestParam(value="country", required=false) String country,
             @RequestParam(value="countryCode", required=false) String countryCode,
             @RequestParam(value="action", required=false) String sightingAction,
-            Model model)  {
+            Model model) throws Exception {
         try {
             MiniTaxonConceptDTO dto = getTaxonConceptProperties(guid);
             model.addAttribute("taxonConcept", dto);
@@ -177,7 +177,9 @@ public class ContributeDataController {
             s.setIndividualCount(individualCount);
             
             //send it off to the service
-            contributeService.recordSighting(s);
+            if (!contributeService.recordSighting(s)) {
+                model.addAttribute("error", "Error: the sighting was saved. Please try again.");
+            }
         }
         
         return pageType;

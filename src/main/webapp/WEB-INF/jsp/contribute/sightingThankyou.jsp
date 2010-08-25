@@ -27,7 +27,7 @@
         <c:choose>
             <%-- User is logged in --%>
             <c:when test="${!empty pageContext.request.remoteUser}">
-                <c:if test="${not empty taxonConcept}">
+                <c:if test="${not empty taxonConcept && empty error}">
                     <div id="column-one" class="section">
                           <h2>Your sighting has been successfully submitted</h2>
                           <p></p>

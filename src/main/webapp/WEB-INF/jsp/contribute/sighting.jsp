@@ -37,7 +37,7 @@
                     latLng: pos
                 }, function(responses) {
                     if (responses && responses.length > 0) {
-                        console.log("geocoded position", responses[0]);
+                        //console.log("geocoded position", responses[0]);
                         updateMarkerAddress(responses[0].formatted_address, responses[0]);
                     } else {
                         updateMarkerAddress('Cannot determine address at this location.');
@@ -74,9 +74,9 @@
                             $('input#countryCode').val(name1);
                             $('input#country').val(name2);
                         } else if (type == 'locality') {
-                            $('input#locality').val(name1);
+                            $('input#locality').val(name2);
                         } else if (type == 'administrative_area_level_1') {
-                             $('input#stateProvince').val(name1);
+                             $('input#stateProvince').val(name2);
                         }
                     }
                 }
@@ -179,7 +179,7 @@
                             var lat = results[0].geometry.location.lat();
                             var lon = results[0].geometry.location.lng();
                             var locationStr = results[0].formatted_address;
-                            console.log("geocoded address", results[0]);
+                            //console.log("geocoded address", results[0]);
                             updateMarkerAddress(locationStr, results[0]);
                             //$('input#sightingLocation').val(locationStr); // hidden form element
                             //$('#markerAddress').val(locationStr); // visible span
