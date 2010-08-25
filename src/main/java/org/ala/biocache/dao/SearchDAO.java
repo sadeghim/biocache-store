@@ -28,7 +28,7 @@ import org.ala.biocache.dto.TaxaCountDTO;
 /**
  * DAO for searching occurrence records held in the biocache.
  *
- * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
+ * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>" .
  */
 public interface SearchDAO {
 

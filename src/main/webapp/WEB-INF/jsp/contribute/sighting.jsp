@@ -118,8 +118,6 @@
                 });
             }
 
-            // Onload handler to fire off the app.
-            //google.maps.event.addDomListener(window, 'load', initialize);
             /**
              * Try to get a lat/long using HTML5 geoloation API
              */
