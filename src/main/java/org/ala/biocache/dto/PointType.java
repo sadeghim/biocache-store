@@ -14,7 +14,7 @@ public enum PointType {
     POINT_001   ("point-0.01", 0.01f),
     POINT_0001  ("point-0.001", 0.001f),
     POINT_00001 ("point-0.0001", 0.0001f),
-    POINT_RAW ("lat_long", 0f);
+    POINT_RAW   ("lat_long", 0f);
     
     private String label;
     private Float value;

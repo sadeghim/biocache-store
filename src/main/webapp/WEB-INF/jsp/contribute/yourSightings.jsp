@@ -24,7 +24,40 @@
         <script type="text/javascript" src="http://www.google.com/jsapi?key=${googleKey}"></script>
         <script type="text/javascript">
             <c:if test="${!empty pageContext.request.remoteUser}"><%-- User is logged in --%>
-            
+                google.load("maps", "3", {other_params:"sensor=false"});
+
+                $(document).ready(function() {
+                    var latlng = new google.maps.LatLng(${points[0].coordinates[1]}, ${points[1].coordinates[0]});
+                    var myOptions = {
+                        zoom: 15,
+                        center: latlng,
+                        scaleControl: true,
+                        mapTypeControlOptions: {
+                            mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN ]
+                        },
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+
+                    var map = new google.maps.Map(document.getElementById("mapCanvas"), myOptions);
+                    
+                    <c:forEach var="point" items="${points}" varStatus="status">
+                        var latlng_${status.count} = new google.maps.LatLng(${point.coordinates[1]}, ${point.coordinates[0]});
+                        var marker_${status.count} = new google.maps.Marker({
+                            position: latlng_${status.count},
+                            map: map,
+                            title:"Occurrence ${point.occurrenceUid}"
+                        });
+                        var contentString_${status.count} = "<div>Record Id: ${point.occurrenceUid}</div>" +
+                            "<div>Species LSID: ${point.taxonConceptGuid}</div>";
+                        var infowindow_${status.count} = new google.maps.InfoWindow({
+                            content: contentString_${status.count}
+                        });
+                        google.maps.event.addListener(marker_${status.count}, 'click', function() {
+                            infowindow_${status.count}.open(map, marker_${status.count});
+                        });
+                    </c:forEach>
+                    
+                });
             </c:if>
         </script>
     </head>
@@ -41,20 +74,22 @@
         <c:choose>
             <c:when test="${!empty pageContext.request.remoteUser}"><%-- User is logged in --%>
                 <c:if test="${not empty taxonConceptMap}">
-                    <div id="column-one" class="section">
-                        <c:forEach var="tc" items="${taxonConceptMap}">
-                            <img src="${tc.imageThumbnailUrl}" alt="species image thumbnail" style="display: block; float: left; margin-right: 10px;"/>
-                            <div style="padding: 5px;">
-                                <a href="http://bie.ala.org.au/species/${tc.guid}"><alatag:formatSciName name="${tc.scientificName}" rankId="${tc.rankId}"/> (${tc.commonName})</a>
-                                <br/>
-                                Records: ${tc.count}
-                            </div>
-                            <div style="clear: both; height:5px;"></div>
-                        </c:forEach>
+                    <div id="column-one">
+                        <div class="section">
+                            <c:forEach var="tc" items="${taxonConceptMap}">
+                                <img src="${tc.imageThumbnailUrl}" alt="species image thumbnail" style="display: block; float: left; margin-right: 10px;"/>
+                                <div style="padding: 5px;">
+                                    <a href="http://bie.ala.org.au/species/${tc.guid}"><alatag:formatSciName name="${tc.scientificName}" rankId="${tc.rankId}"/> (${tc.commonName})</a>
+                                    <br/>
+                                    Records: ${tc.count}
+                                </div>
+                                <div style="clear: both; height:5px;"></div>
+                            </c:forEach>
+                        </div>
                     </div>
                     <div id="column-two">
                         <div class="section">
-                            <div id="mapCanvas"></div>
+                            <div id="mapCanvas" style="height: 315px; width: 315px;"></div>
                         </div>
                     </div>
                 </c:if>

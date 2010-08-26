@@ -41,6 +41,7 @@ import atg.taglib.json.util.JSONArray;
 import atg.taglib.json.util.JSONObject;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
+import org.ala.biocache.dto.OccurrencePoint;
 
 /**
  * Controller for the "contribute data" page
@@ -222,21 +223,27 @@ public class ContributeDataController {
 
         if (remoteuser != null) {
             // user is authenticated
-            List<TaxaCountDTO> speciesWithCounts = searchDAO.findRecordsByUserId(remoteuser);
+            List<TaxaCountDTO> speciesWithCounts = searchDAO.findTaxaByUserId(remoteuser);
             model.addAttribute("speciesWithCounts", speciesWithCounts);
-            logger.info("Finding all records contributed by "+remoteuser+": "+speciesWithCounts.size());
+            logger.info("Finding all taxa contributed by "+remoteuser+": "+speciesWithCounts.size());
             List<MiniTaxonConceptDTO> taxonConceptMap = new ArrayList< MiniTaxonConceptDTO>();
             
             for (TaxaCountDTO tc : speciesWithCounts) {
-                logger.info("tc: "+tc);
+                logger.debug("tc: "+tc);
                 String guid = tc.getGuid();
                 MiniTaxonConceptDTO mtc = getTaxonConceptProperties(guid);
                 mtc.setCount(tc.getCount()); // add counts 
                 taxonConceptMap.add(mtc);
-                logger.info("mtc = "+mtc);
+                logger.debug("mtc = "+mtc);
             }
 
             model.addAttribute("taxonConceptMap", taxonConceptMap);
+
+            // get points
+            List<OccurrencePoint> points = searchDAO.findPointsForUserId(remoteuser);
+            logger.info("Finding all occurrences contributed by "+remoteuser+": "+points.size());
+            model.addAttribute("points", points);
+            model.addAttribute("bounds", getBoundsForPoints(points));
         } 
 
         return YOUR_SIGHTINGS;
@@ -315,4 +322,8 @@ public class ContributeDataController {
 	public void setContributeService(ContributeService contributeService) {
 		this.contributeService = contributeService;
 	}
+
+    private Object getBoundsForPoints(List<OccurrencePoint> points) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
 }

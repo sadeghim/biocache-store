@@ -27,6 +27,8 @@ public class OccurrencePoint {
     protected Long count = -1L;
     protected PointType type;
     protected List<Float> coordinates = new ArrayList<Float>(); // long, lat order
+    protected String occurrenceUid;
+    protected String taxonConceptGuid;
 
     public OccurrencePoint() {}
 
@@ -36,7 +38,8 @@ public class OccurrencePoint {
 
     @Override
     public String toString() {
-        return "Points{" + "count=" + count + "type=" + type + '}';
+        return "OccurrencePoint{" + "count=" + count + "; type=" + type + "; coordinates=" + coordinates +
+                "; occurrenceUid=" + occurrenceUid + "; taxonConceptGuid=" + taxonConceptGuid + '}';
     }
 
     public Long getCount() {
@@ -61,5 +64,21 @@ public class OccurrencePoint {
 
     public void setType(PointType type) {
         this.type = type;
+    }
+
+    public String getOccurrenceUid() {
+        return occurrenceUid;
+    }
+
+    public void setOccurrenceUid(String occurrenceUid) {
+        this.occurrenceUid = occurrenceUid;
+    }
+
+    public String getTaxonConceptGuid() {
+        return taxonConceptGuid;
+    }
+
+    public void setTaxonConceptGuid(String taxonConceptGuid) {
+        this.taxonConceptGuid = taxonConceptGuid;
     }
 }

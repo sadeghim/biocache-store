@@ -570,7 +570,7 @@ public class SearchDAOImpl implements SearchDAO {
     }
 
     @Override
-    public List<TaxaCountDTO> findRecordsByUserId(String userId) throws Exception {
+    public List<TaxaCountDTO> findTaxaByUserId(String userId) throws Exception {
         
         String queryString = "user_id:"+ClientUtils.escapeQueryChars(userId);
         List<String> facetFields = new ArrayList<String>();
@@ -578,6 +578,29 @@ public class SearchDAOImpl implements SearchDAO {
         List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, null, facetFields, 1000, 0, "taxon_name", "asc");
 
         return speciesWithCounts;
+    }
+    
+    @Override
+    public List<OccurrencePoint> findPointsForUserId(String userId) throws Exception {
+        List<OccurrencePoint> points = new ArrayList<OccurrencePoint>();
+        String query = "user_id:"+ClientUtils.escapeQueryChars(userId);
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQueryType("standard");
+        solrQuery.setQuery(query);
+        QueryResponse qr = runSolrQuery(solrQuery, null, 1000000, 0, "score", "asc");
+        SearchResultDTO searchResults = processSolrResponse(qr, solrQuery);
+        logger.debug("solr result (size): "+searchResults.getOccurrences().size());
+
+        for (OccurrenceDTO rec : searchResults.getOccurrences()) {
+            OccurrencePoint point = new OccurrencePoint(PointType.POINT_RAW);
+            point.setOccurrenceUid(rec.getId());
+            point.setTaxonConceptGuid(rec.getTaxonConceptLsid());
+            point.setCount(1l);
+            point.setCoordinates(Arrays.asList(rec.getLongitude().floatValue(), rec.getLatitude().floatValue()));
+            points.add(point);
+        }
+
+        return points;
     }
 
     /**

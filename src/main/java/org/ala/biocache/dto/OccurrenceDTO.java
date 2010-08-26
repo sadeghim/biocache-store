@@ -861,6 +861,7 @@ public class OccurrenceDTO implements Serializable {
 				+ ", modifiedDate=" + modifiedDate + ", point1=" + point1
 				+ ", point01=" + point01 + ", point001=" + point001
 				+ ", point0001=" + point0001 + ", point00001=" + point00001
+                + ", latLong=" + latLong
 				+ ", namesLsid=" + namesLsid + "]";
 	}
 
