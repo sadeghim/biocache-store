@@ -119,6 +119,7 @@ public class OccurrenceDTO implements Serializable {
 	@Field("point-0.001") private String point0001;
 	@Field("point-0.0001") private String point00001;
 	@Field("names_lsid") private String namesLsid;
+	@Field("confidence") private int confidence = 1;
 	
     /*
      * Getters & Setters
@@ -860,5 +861,19 @@ public class OccurrenceDTO implements Serializable {
 				+ ", point01=" + point01 + ", point001=" + point001
 				+ ", point0001=" + point0001 + ", point00001=" + point00001
 				+ ", namesLsid=" + namesLsid + "]";
+	}
+
+	/**
+	 * @return the confidence
+	 */
+	public int getConfidence() {
+		return confidence;
+	}
+
+	/**
+	 * @param confidence the confidence to set
+	 */
+	public void setConfidence(int confidence) {
+		this.confidence = confidence;
 	}
 }

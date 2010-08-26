@@ -48,8 +48,11 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.stereotype.Component;
+
 import au.com.bytecode.opencsv.CSVWriter;
+
 import com.ibm.icu.text.SimpleDateFormat;
+import java.util.Map;
 
 /**
  * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
@@ -106,11 +109,11 @@ public class SearchDAOImpl implements SearchDAO {
 		if(oc.getLongitude()!=null) doc.addField("longitude", oc.getLongitude());
 		if(oc.getPoint1()!=null) doc.addField("point-1", oc.getPoint1());
 		if(oc.getPoint01()!=null) doc.addField("point-0.1", oc.getPoint01());
-		if(oc.getPoint01()!=null) doc.addField("point-0.01", oc.getPoint001());
-		if(oc.getPoint01()!=null) doc.addField("point-0.001", oc.getPoint0001());
-		if(oc.getPoint01()!=null) doc.addField("point-0.001", oc.getPoint00001());
-		if(oc.getDataProviderUid()!=null) doc.addField("data_provider_id", oc.getDataProviderUid());
-		if(oc.getDataProviderUid()!=null) doc.addField("data_resource_id", oc.getDataResourceUid());
+		if(oc.getPoint001()!=null) doc.addField("point-0.01", oc.getPoint001());
+		if(oc.getPoint0001()!=null) doc.addField("point-0.001", oc.getPoint0001());
+		if(oc.getPoint00001()!=null) doc.addField("point-0.0001", oc.getPoint00001());
+		if(oc.getDataProviderUid()!=null) doc.addField("data_provider_uid", oc.getDataProviderUid());
+		if(oc.getDataProviderUid()!=null) doc.addField("data_resource_uid", oc.getDataResourceUid());
 		if(oc.getDataProviderUid()!=null) doc.addField("data_provider", oc.getDataProvider());
 		if(oc.getDataProviderUid()!=null) doc.addField("data_resource", oc.getDataResource());
 		if(oc.getOccurrenceDate()!=null) doc.addField("occurrence_date", oc.getOccurrenceDate());
@@ -133,6 +136,7 @@ public class SearchDAOImpl implements SearchDAO {
 		
 		if(oc.getUserId()!=null) doc.addField("user_id", oc.getUserId());
 		if(oc.getCollector()!=null) doc.addField("collector", oc.getCollector());
+		doc.addField("confidence", oc.getConfidence());
 		
 		//FIXME we need to lookup the states, ibra regions
 		server.add(doc);

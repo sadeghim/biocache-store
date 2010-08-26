@@ -19,12 +19,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ala.biocache.dao.DataProviderDAO;
+import org.ala.biocache.dao.DataResourceDAO;
 import org.ala.biocache.dao.OccurrenceRecordDAO;
 import org.ala.biocache.dao.RawOccurrenceRecordDAO;
 import org.ala.biocache.dao.SearchDAO;
 import org.ala.biocache.dao.TaxonConceptDAO;
 import org.ala.biocache.dto.OccurrenceDTO;
 import org.ala.biocache.dto.Sighting;
+import org.ala.biocache.model.DataProvider;
+import org.ala.biocache.model.DataResource;
 import org.ala.biocache.model.OccurrenceRecord;
 import org.ala.biocache.model.RawOccurrenceRecord;
 import org.ala.biocache.model.TaxonConcept;
@@ -38,8 +42,8 @@ public class ContributeServiceImpl implements ContributeService {
 	/** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(ContributeServiceImpl.class);
 	
-	protected Long citizenScienceDPId = 999l;
-	protected Long citizenScienceDRId = 9999l;
+	protected String citizenScienceDPUID = "dp31";
+	protected String citizenScienceDRUID = "dr364";
 	
 	public final int BASIS_OF_RECORD_OBSERVATION = 1;
 	public final String BASIS_OF_RECORD_OBSERVATION_TEXT = "Observation";
@@ -51,7 +55,12 @@ public class ContributeServiceImpl implements ContributeService {
 	@Inject
 	OccurrenceRecordDAO occurrenceRecordDAO;
 	@Inject
-	SearchDAO searchDAO;	
+	SearchDAO searchDAO;
+	@Inject
+	DataProviderDAO dataProviderDAO;
+	@Inject
+	DataResourceDAO dataResourceDAO;
+
 	
 	@Override
 	public boolean recordSighting(Sighting s){
@@ -61,7 +70,12 @@ public class ContributeServiceImpl implements ContributeService {
 			//find the matching taxon concept
 			TaxonConcept tc = taxonConceptDAO.getByGuid(s.getTaxonConceptGuid());
 			
+			DataProvider dp = dataProviderDAO.getByUID(citizenScienceDPUID);
+			DataResource dr = dataResourceDAO.getByUID(citizenScienceDRUID);
+
 			logger.debug("Using taxon concept: "+tc);
+			logger.debug("Using data provider: "+dp);
+			logger.debug("Using data resource: "+dr);
 			
 			//add record to raw occurrence table
 			RawOccurrenceRecord ror = new RawOccurrenceRecord();
@@ -73,8 +87,8 @@ public class ContributeServiceImpl implements ContributeService {
 			if(s.getLongitude()!=null) ror.setLongitude(s.getLongitude().toString());
 			//hardcoded properties
 			ror.setBasisOfRecord(BASIS_OF_RECORD_OBSERVATION_TEXT);
-			ror.setDataProviderId(citizenScienceDPId);
-			ror.setDataResourceId(citizenScienceDRId);
+			ror.setDataProviderId(dp.getId());
+			ror.setDataResourceId(dr.getId());
 			ror.setCollectorName(s.getCollectorName());
 			ror.setUserId(s.getUserId());
 			ror.setOccurrenceRemarks(s.getOccurrenceRemarks());
@@ -113,8 +127,8 @@ public class ContributeServiceImpl implements ContributeService {
 			OccurrenceRecord oc = new OccurrenceRecord();
 			oc.setId(occurrenceId);
 			oc.setBasisOfRecord(BASIS_OF_RECORD_OBSERVATION);
-			oc.setDataProviderId(citizenScienceDPId);
-			oc.setDataResourceId(citizenScienceDRId);
+			oc.setDataProviderId(dp.getId());
+			oc.setDataResourceId(dr.getId());
 			oc.setLatitude(s.getLatitude());
 			oc.setLongitude(s.getLongitude());
 			oc.setNubConceptId(tc.getId());
@@ -140,11 +154,11 @@ public class ContributeServiceImpl implements ContributeService {
 			ocdto.setTaxonConceptLsid(s.getTaxonConceptGuid());
 			ocdto.setBasisOfRecordId(BASIS_OF_RECORD_OBSERVATION);
 			ocdto.setBasisOfRecord(BASIS_OF_RECORD_OBSERVATION_TEXT);
-			ocdto.setDataProviderId(citizenScienceDPId.intValue());
-			ocdto.setDataResourceId(citizenScienceDRId.intValue());
+			ocdto.setDataProviderUid(citizenScienceDPUID);
+			ocdto.setDataResourceUid(citizenScienceDRUID);
 			
-			ocdto.setDataProvider("Citizen Science - ALA Website");
-			ocdto.setDataResource("Individual sightings");
+			ocdto.setDataProvider(dp.getName());
+			ocdto.setDataResource(dr.getName());
 			
 			if(s.getLatitude()!=null)  ocdto.setLatitude(s.getLatitude().doubleValue());
 			if(s.getLongitude()!=null) ocdto.setLongitude(s.getLongitude().doubleValue());
@@ -180,6 +194,9 @@ public class ContributeServiceImpl implements ContributeService {
 			
 			//names_and_lsid
 			ocdto.setNamesLsid(s.getScientificName()+"|"+s.getTaxonConceptGuid()+"|"+s.getVernacularName()+"|"+s.getKingdom()+"|"+s.getFamily());
+			
+			ocdto.setConfidence(dr.getConfidence());
+			
 			SearchUtils.initialPointValues(ocdto);
 			
 			//add states and provinces
@@ -240,5 +257,19 @@ public class ContributeServiceImpl implements ContributeService {
 	 */
 	public void setTaxonConceptDAO(TaxonConceptDAO taxonConceptDAO) {
 		this.taxonConceptDAO = taxonConceptDAO;
+	}
+
+	/**
+	 * @param dataProviderDAO the dataProviderDAO to set
+	 */
+	public void setDataProviderDAO(DataProviderDAO dataProviderDAO) {
+		this.dataProviderDAO = dataProviderDAO;
+	}
+
+	/**
+	 * @param dataResourceDAO the dataResourceDAO to set
+	 */
+	public void setDataResourceDAO(DataResourceDAO dataResourceDAO) {
+		this.dataResourceDAO = dataResourceDAO;
 	}
 }

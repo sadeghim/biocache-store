@@ -64,8 +64,9 @@ public class DataResourceDAOImpl extends JdbcDaoSupport implements
 												"modified," +
 												"lock_display_name, " +
 												"lock_citable_agent, " +
-												"lock_basis_of_record) " +
-												"values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+												"lock_basis_of_record, " +
+												"confidence) " +
+												"values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	/**
 	 * The update sql
@@ -90,27 +91,35 @@ public class DataResourceDAOImpl extends JdbcDaoSupport implements
 												"modified=?, " +
 												"lock_display_name=?, " +
 												"lock_citable_agent=?, " +
-												"lock_basis_of_record=? " +
+												"lock_basis_of_record=?, " +
+												"confidence=? " +
 												"where id=?";
 
 	/**
 	 * The query all sql
 	 */
-	protected static final String QUERY_ALL_SQL = "select id, data_provider_id, name, display_name, description, rights, citation, citable_agent, website_url, logo_url, basis_of_record, root_taxon_rank, root_taxon_name, scope_continent_code, scope_country_code, provider_record_count, taxonomic_priority, created, modified, deleted, lock_display_name, lock_citable_agent, lock_basis_of_record " +
+	protected static final String QUERY_ALL_SQL = "select id, data_provider_id, name, display_name, description, rights, citation, citable_agent, website_url, logo_url, basis_of_record, root_taxon_rank, root_taxon_name, scope_continent_code, scope_country_code, provider_record_count, taxonomic_priority, created, modified, deleted, lock_display_name, lock_citable_agent, lock_basis_of_record, confidence " +
 		"from data_resource";
 	
 	/**
 	 * The query by ID sql
 	 */
 	protected static final String QUERY_BY_ID = 
-		"select id, data_provider_id, name, display_name, description, rights, citation, citable_agent, website_url, logo_url, basis_of_record, root_taxon_rank, root_taxon_name, scope_continent_code, scope_country_code, provider_record_count, taxonomic_priority, created, modified, deleted, lock_display_name, lock_citable_agent, lock_basis_of_record " +
+		"select id, data_provider_id, name, display_name, description, rights, citation, citable_agent, website_url, logo_url, basis_of_record, root_taxon_rank, root_taxon_name, scope_continent_code, scope_country_code, provider_record_count, taxonomic_priority, created, modified, deleted, lock_display_name, lock_citable_agent, lock_basis_of_record, confidence " +
 		"from data_resource where id=?";
+	
+	/**
+	 * The query by ID sql
+	 */
+	protected static final String QUERY_BY_UID = 
+		"select id, data_provider_id, name, display_name, description, rights, citation, citable_agent, website_url, logo_url, basis_of_record, root_taxon_rank, root_taxon_name, scope_continent_code, scope_country_code, provider_record_count, taxonomic_priority, created, modified, deleted, lock_display_name, lock_citable_agent, lock_basis_of_record, confidence " +
+		"from data_resource where uid=?";
 
 	/**
 	 * The get by data provider id 
 	 */
 	protected static final String QUERY_BY_ID_PROVIDER = 
-		"select id, data_provider_id, name, display_name, description, rights, citation, citable_agent, website_url, logo_url, basis_of_record, root_taxon_rank, root_taxon_name, scope_continent_code, scope_country_code, provider_record_count, taxonomic_priority, created, modified, deleted, lock_display_name, lock_citable_agent, lock_basis_of_record " +
+		"select id, data_provider_id, name, display_name, description, rights, citation, citable_agent, website_url, logo_url, basis_of_record, root_taxon_rank, root_taxon_name, scope_continent_code, scope_country_code, provider_record_count, taxonomic_priority, created, modified, deleted, lock_display_name, lock_citable_agent, lock_basis_of_record, confidence " +
 		"from data_resource where data_provider_id=?";
 	
 
@@ -171,7 +180,8 @@ public class DataResourceDAOImpl extends JdbcDaoSupport implements
 					rs.getDate("deleted"),
 					rs.getBoolean("lock_display_name"),
 					rs.getBoolean("lock_citable_agent"),
-					rs.getBoolean("lock_basis_of_record"));			
+					rs.getBoolean("lock_basis_of_record"),
+					rs.getInt("confidence"));			
 		}
 	}
 
@@ -228,6 +238,23 @@ public class DataResourceDAOImpl extends JdbcDaoSupport implements
 			return null;
 		} else if (results.size()>1) {
 			logger.warn("Found multiple DataResources with ID: " + id);
+		}
+		return results.get(0);
+	}
+
+	/**
+	 * @see org.gbif.portal.dao.DataProviderDAO#getById(long)
+	 */
+	@SuppressWarnings("unchecked")
+	public DataResource getByUID(String uid) {
+		List<DataResource> results = (List<DataResource>) getJdbcTemplate()
+		.query(DataResourceDAOImpl.QUERY_BY_UID,
+				new Object[] {uid},
+				new RowMapperResultSetExtractor(dataResourceRowMapper, 1));
+		if (results.size() == 0) {
+			return null;
+		} else if (results.size()>1) {
+			logger.warn("Found multiple DataResources with ID: " + uid);
 		}
 		return results.get(0);
 	}

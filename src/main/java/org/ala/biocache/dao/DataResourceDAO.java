@@ -16,6 +16,7 @@ package org.ala.biocache.dao;
 
 import java.util.List;
 
+import org.ala.biocache.model.DataProvider;
 import org.ala.biocache.model.DataResource;
 
 
@@ -37,6 +38,13 @@ public interface DataResourceDAO {
 	 * @return The dataresource identified by the id
 	 */
 	public DataResource getById(long id);
+	
+	/**
+	 * Gets the unique dataprovider
+	 * @param uuid That identifies the data provider
+	 * @return The dataprovider identified byt the uuid
+	 */
+	public DataResource getByUID(String uid);
 	
 	/**
 	 * Gets all the dataresource

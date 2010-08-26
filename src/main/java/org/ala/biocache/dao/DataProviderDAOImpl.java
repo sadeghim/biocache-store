@@ -103,8 +103,8 @@ public class DataProviderDAOImpl extends JdbcDaoSupport implements
 	/**
 	 * The query by UUID sql
 	 */
-	protected static final String QUERY_BY_UUID_SQL = "select id, name, description, address, website_url, logo_url, email, " +
-	"telephone, uuid, iso_country_code, gbif_approver, created, modified, deleted, lock_description, lock_iso_country_code from data_provider where uuid=?";
+	protected static final String QUERY_BY_UID_SQL = "select id, name, description, address, website_url, logo_url, email, " +
+	"telephone, uuid, iso_country_code, gbif_approver, created, modified, deleted, lock_description, lock_iso_country_code from data_provider where uid=?";
 	
 	/**
 	 * The query by NAME sql
@@ -182,15 +182,15 @@ public class DataProviderDAOImpl extends JdbcDaoSupport implements
 	 * @see org.gbif.portal.dao.DataProviderDAO#getByUuid(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
-	public DataProvider getByUuid(String uuid) {
+	public DataProvider getByUID(String uid) {
 		List<DataProvider> results = (List<DataProvider>) getJdbcTemplate()
-		.query(DataProviderDAOImpl.QUERY_BY_UUID_SQL,
-				new Object[] {uuid},
+		.query(DataProviderDAOImpl.QUERY_BY_UID_SQL,
+				new Object[] {uid},
 				new RowMapperResultSetExtractor(dataProviderRowMapper, 1));
 		if (results.size() == 0) {
 			return null;
 		} else if (results.size()>1) {
-			logger.warn("Found multiple DataProviders with UUID: " + uuid);
+			logger.warn("Found multiple DataProviders with UID: " + uid);
 		}
 		return results.get(0);
 	}

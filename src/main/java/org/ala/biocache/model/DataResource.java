@@ -43,11 +43,12 @@ public class DataResource extends ModelObject {
 	protected boolean lockDisplayName;
 	protected boolean lockCitableAgent;
 	protected boolean lockBasisOfRecord;
+	protected int confidence = 1;
 	
 	/**
 	 * Convienience
 	 */
-	public DataResource(long id, long dataProviderId, String name, String displayName, String description, String rights, String citation, String citableAgent, String websiteUrl, String logoUrl, int basisOfRecord, int rootTaxonRank, String rootTaxonName, String scopeContinentCode, String scopeCountryCode, Integer providerRecordCount, int taxonomicPriority, Date created, Date modified, Date deleted, boolean lockDisplayName, boolean lockCitableAgent, boolean lockBasisOfRecord) {
+	public DataResource(long id, long dataProviderId, String name, String displayName, String description, String rights, String citation, String citableAgent, String websiteUrl, String logoUrl, int basisOfRecord, int rootTaxonRank, String rootTaxonName, String scopeContinentCode, String scopeCountryCode, Integer providerRecordCount, int taxonomicPriority, Date created, Date modified, Date deleted, boolean lockDisplayName, boolean lockCitableAgent, boolean lockBasisOfRecord, int confidence) {
 		this.id = id;
 		this.dataProviderId = dataProviderId;
 		this.name = name;
@@ -71,6 +72,7 @@ public class DataResource extends ModelObject {
 		this.lockDisplayName = lockDisplayName;
 		this.lockCitableAgent = lockCitableAgent;
 		this.lockBasisOfRecord = lockBasisOfRecord;
+		this.confidence = confidence;
 	}
 	
 	/**
@@ -379,5 +381,39 @@ public class DataResource extends ModelObject {
 	public void setLockDisplayName(boolean lockDisplayName) {
 		this.lockDisplayName = lockDisplayName;
 	}
-		
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DataResource [dataProviderId=" + dataProviderId + ", name=" + name + ", id=" + id +", description=" + description
+				+ name + ", displayName=" + displayName + ", description="
+				+ description + ", rights=" + rights + ", citation=" + citation
+				+ ", citableAgent=" + citableAgent + ", websiteUrl="
+				+ websiteUrl + ", logoUrl=" + logoUrl + ", basisOfRecord="
+				+ basisOfRecord + ", rootTaxonRank=" + rootTaxonRank
+				+ ", rootTaxonName=" + rootTaxonName + ", scopeContinentCode="
+				+ scopeContinentCode + ", scopeCountryCode=" + scopeCountryCode
+				+ ", providerRecordCount=" + providerRecordCount
+				+ ", taxonomicPriority=" + taxonomicPriority + ", created="
+				+ created + ", modified=" + modified + ", deleted=" + deleted
+				+ ", lockDisplayName=" + lockDisplayName
+				+ ", lockCitableAgent=" + lockCitableAgent
+				+ ", lockBasisOfRecord=" + lockBasisOfRecord + "]";
+	}
+
+	/**
+	 * @return the confidence
+	 */
+	public int getConfidence() {
+		return confidence;
+	}
+
+	/**
+	 * @param confidence the confidence to set
+	 */
+	public void setConfidence(int confidence) {
+		this.confidence = confidence;
+	}
 }

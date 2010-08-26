@@ -255,4 +255,20 @@ public class DataProvider extends ModelObject {
 	public void setLockIsoCountryCode(boolean lockIsoCountryCode) {
 		this.lockIsoCountryCode = lockIsoCountryCode;
 	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DataProvider [name=" + name + ", id=" + id +", description=" + description
+				+ ", address=" + address + ", websiteUrl=" + websiteUrl
+				+ ", logoUrl=" + logoUrl + ", email=" + email + ", telephone="
+				+ telephone + ", uuid=" + uuid + ", isoCountryCode="
+				+ isoCountryCode + ", gbifApprover=" + gbifApprover
+				+ ", created=" + created + ", modified=" + modified
+				+ ", deleted=" + deleted + ", lockDescription="
+				+ lockDescription + ", lockIsoCountryCode="
+				+ lockIsoCountryCode + "]";
+	}
 }

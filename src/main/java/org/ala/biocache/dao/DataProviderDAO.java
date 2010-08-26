@@ -37,7 +37,7 @@ public interface DataProviderDAO {
 	 * @param uuid That identifies the data provider
 	 * @return The dataprovider identified byt the uuid
 	 */
-	public DataProvider getByUuid(String uuid);
+	public DataProvider getByUID(String uid);
 	
 	/**
 	 * Gets the dataprovider
