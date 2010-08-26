@@ -14,6 +14,8 @@
  ***************************************************************************/
 package org.ala.biocache.web;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,6 +23,8 @@ import org.ala.biocache.dto.Sighting;
 import org.ala.biocache.service.ContributeService;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -124,7 +128,7 @@ public class ContributeDataController {
             @RequestParam(value="kingdom", required=false) String kingdom,
             @RequestParam(value="family", required=false) String family,
             @RequestParam(value="rank", required=false) String rank,
-            @RequestParam(value="date", required=false) java.util.Date eventDate,
+            @RequestParam(value="date", required=false) String eventDateAsString,
             @RequestParam(value="time", required=false) String eventTime,
             @RequestParam(value="number", required=false) Integer individualCount,
             @RequestParam(value="verbatimLocality", required=false) String locality,
@@ -168,7 +172,12 @@ public class ContributeDataController {
             s.setFamily(family);
             s.setKingdom(kingdom);
             s.setRank(rank);
-            s.setEventDate(eventDate);
+            
+            if(StringUtils.isNotEmpty(eventDateAsString)){
+            	Date eventDate = DateUtils.parseDate(eventDateAsString, new String[]{"dd/MM/yyyy", "yyyy-MM-dd"});
+            	s.setEventDate(eventDate);
+            }
+            
             s.setUserId(userId);
             s.setCollectorName(collectorName);
             s.setLocality(locality);
