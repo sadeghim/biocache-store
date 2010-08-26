@@ -42,6 +42,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Map;
+import org.ala.biocache.util.SearchUtils;
+import org.ala.client.appender.RestLevel;
+import org.ala.client.model.LogEventVO;
+
 /**
  * Occurrences controller for the BIE biocache site
  *
@@ -545,7 +550,7 @@ public class OccurrenceController {
 		model.addAttribute("facetQuery", filterQuery);
 
 		searchResult = searchDAO.findByFulltextQuery(query, filterQuery, startIndex, pageSize, sortField, sortDirection);
-		model.addAttribute("searchResult", searchResult);
+                model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
 		Long totalRecords = searchResult.getTotalRecords();
 		model.addAttribute("totalRecords", totalRecords);
@@ -574,7 +579,10 @@ public class OccurrenceController {
 			@RequestParam(value="type", required=false, defaultValue="normal") String type,
 			HttpServletResponse response)
 	throws Exception {
-
+                //The variables below need to be added as
+                String email = null;
+                String reason = null;
+                String ip = null;
 		if (query == null || query.isEmpty()) {
 			return LIST;
 		}
@@ -592,8 +600,12 @@ public class OccurrenceController {
 		//get the new query details
 		SearchQuery searchQuery = new SearchQuery(query, type, filterQuery);
 		searchUtils.updateQueryDetails(searchQuery);
-		searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), out, 100000);
-
+		Map<String, Integer> uidStats =searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), out, 100);
+                logger.debug("UID stats : " + uidStats);
+                //log the stats to ala logger
+                
+                LogEventVO vo = new LogEventVO(1, email, reason, ip,uidStats);
+	    	logger.log(RestLevel.REMOTE, vo);
 		return null;
 	}
 

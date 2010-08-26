@@ -39,15 +39,15 @@ public class OccurrenceDTO implements Serializable {
     @Field private String id;
 	@Field("user_id") private String userId;
     // dataset
-	@Field("data_provider_id") private Integer dataProviderId;
+	@Field("data_provider_uid") private String dataProviderUid;
 	@Field("data_provider") private String dataProvider;
-	@Field("data_resource_id") private Integer dataResourceId;
+	@Field("data_resource_uid") private String dataResourceUid;
 	@Field("data_resource") private String dataResource;
-	@Field("institution_code_id") private Integer institutionCodeId;
+	@Field("institution_code_uid") private String institutionCodeUid;
 	@Field("institution_code") private String institutionCode;
 	@Field("institution_code_name") private String institutionCodeName;
 	@Field("institution_code_lsid") private String institutionCodeLsid;
-	@Field("collection_code_id") private Integer collectionCodeId;
+	@Field("collection_code_uid") private String collectionCodeUid;
 	@Field("collection_code") private String collectionCode;
 	@Field("catalogue_number_id") private Integer catalogueNumberId;
 	@Field("catalogue_number") private String catalogueNumber;
@@ -65,6 +65,9 @@ public class OccurrenceDTO implements Serializable {
 	@Field("identifier_value") private String identifierValue;
 	@Field("identifier_name") private String identifierName;
 	@Field("identifier_date") private Date identifierDate;
+        @Field("individual_count") private Integer individualCount;
+        @Field("location_remarks") private String locationRemarks;
+        @Field("occurrence_remarks") private String occurrenceRemarks;
     // taxonomy
 	@Field("taxon_name") private String taxonName;
     @Field("common_name") private String commonName;
@@ -73,6 +76,7 @@ public class OccurrenceDTO implements Serializable {
     @Field private String rank;
 	@Field("raw_taxon_name") private String rawTaxonName;
 	@Field("raw_author") private String rawAuthor;
+        @Field("raw_common_name") private String rawCommonName;
     @Field("lft") private Integer left;
     @Field("rgt") private Integer right;
 	@Field("kingdom_lsid") private String kingdomLsid;
@@ -88,7 +92,7 @@ public class OccurrenceDTO implements Serializable {
     @Field("genus_lsid") private String genusLsid;
 	@Field private String genus;
     @Field("species_lsid") private String speciesLsid;
-	@Field private String species;
+	@Field private String species;    
     // geospatial
 	@Field("country_code") private String countryCode;
 	@Field("state") private List<String> states = new ArrayList<String>();
@@ -100,6 +104,9 @@ public class OccurrenceDTO implements Serializable {
 	@Field("cell_id") private Integer cellId;
 	@Field("centi_cell_id") private Integer centiCellId;
 	@Field("tenmilli_cell_id") private Integer tenmilliCellId;
+        @Field("generalised_metres") private Integer generalisedMetres;
+        @Field("geodetic_datum") private String geodeticDatum;
+        
     // other
 	@Field("taxonomic_issue") private String taxonomicIssue;
 	@Field("geospatial_issue") private String geospatialIssue;
@@ -209,12 +216,12 @@ public class OccurrenceDTO implements Serializable {
         this.collectionCode = collectionCode;
     }
 
-    public Integer getCollectionCodeId() {
-        return collectionCodeId;
+    public String getCollectionCodeUid() {
+        return collectionCodeUid;
     }
 
-    public void setCollectionCodeId(Integer collectionCodeId) {
-        this.collectionCodeId = collectionCodeId;
+    public void setCollectionCodeUid(String collectionCodeUid) {
+        this.collectionCodeUid = collectionCodeUid;
     }
 
     public String getCollector() {
@@ -241,12 +248,12 @@ public class OccurrenceDTO implements Serializable {
         this.dataProvider = dataProvider;
     }
 
-    public Integer getDataProviderId() {
-        return dataProviderId;
+    public String getDataProviderUid() {
+        return dataProviderUid;
     }
 
-    public void setDataProviderId(Integer dataProviderId) {
-        this.dataProviderId = dataProviderId;
+    public void setDataProviderUid(String dataProviderUid) {
+        this.dataProviderUid = dataProviderUid;
     }
 
     public String getDataResource() {
@@ -257,12 +264,12 @@ public class OccurrenceDTO implements Serializable {
         this.dataResource = dataResource;
     }
 
-    public Integer getDataResourceId() {
-        return dataResourceId;
+    public String getDataResourceUid() {
+        return dataResourceUid;
     }
 
-    public void setDataResourceId(Integer dataResourceId) {
-        this.dataResourceId = dataResourceId;
+    public void setDataResourceUid(String dataResourceUid) {
+        this.dataResourceUid = dataResourceUid;
     }
 
     public String getFamily() {
@@ -354,12 +361,12 @@ public class OccurrenceDTO implements Serializable {
         this.institutionCode = institutionCode;
     }
 
-    public Integer getInstitutionCodeId() {
-        return institutionCodeId;
+    public String getInstitutionCodeUid() {
+        return institutionCodeUid;
     }
 
-    public void setInstitutionCodeId(Integer institutionCodeId) {
-        this.institutionCodeId = institutionCodeId;
+    public void setInstitutionCodeUid(String institutionCodeUid) {
+        this.institutionCodeUid = institutionCodeUid;
     }
 
     public String getInstitutionCodeLsid() {
@@ -510,6 +517,14 @@ public class OccurrenceDTO implements Serializable {
 
     public void setRawTaxonName(String rawTaxonName) {
         this.rawTaxonName = rawTaxonName;
+    }
+
+    public String getRawCommonName() {
+        return rawCommonName;
+    }
+
+    public void setRawCommonName(String rawCommonName) {
+        this.rawCommonName = rawCommonName;
     }
 
     public String getSpecies() {
@@ -757,19 +772,60 @@ public class OccurrenceDTO implements Serializable {
 		this.namesLsid = namesLsid;
 	}
 
+
+    public Integer getGeneralisedMetres() {
+        return generalisedMetres;
+    }
+
+    public void setGeneralisedMetres(Integer generalisedMetres) {
+        this.generalisedMetres = generalisedMetres;
+    }
+
+    public String getGeodeticDatum() {
+        return geodeticDatum;
+    }
+
+    public void setGeodeticDatum(String geodeticDatum) {
+        this.geodeticDatum = geodeticDatum;
+    }
+
+    public Integer getIndividualCount() {
+        return individualCount;
+    }
+
+    public void setIndividualCount(Integer individualCount) {
+        this.individualCount = individualCount;
+    }
+
+    public String getLocationRemarks() {
+        return locationRemarks;
+    }
+
+    public void setLocationRemarks(String locationRemarks) {
+        this.locationRemarks = locationRemarks;
+    }
+
+    public String getOccurrenceRemarks() {
+        return occurrenceRemarks;
+    }
+
+    public void setOccurrenceRemarks(String occurrenceRemarks) {
+        this.occurrenceRemarks = occurrenceRemarks;
+    }
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "OccurrenceDTO [id=" + id + ", userId=" + userId
-				+ ", dataProviderId=" + dataProviderId + ", dataProvider="
-				+ dataProvider + ", dataResourceId=" + dataResourceId
-				+ ", dataResource=" + dataResource + ", institutionCodeId="
-				+ institutionCodeId + ", institutionCode=" + institutionCode
+				+ ", dataProviderUid=" + dataProviderUid + ", dataProvider="
+				+ dataProvider + ", dataResourceId=" + dataResourceUid
+				+ ", dataResource=" + dataResource + ", institutionCodeUid="
+				+ institutionCodeUid + ", institutionCode=" + institutionCode
 				+ ", institutionCodeName=" + institutionCodeName
 				+ ", institutionCodeLsid=" + institutionCodeLsid
-				+ ", collectionCodeId=" + collectionCodeId
+				+ ", collectionCodeUid=" + collectionCodeUid
 				+ ", collectionCode=" + collectionCode + ", catalogueNumberId="
 				+ catalogueNumberId + ", catalogueNumber=" + catalogueNumber
 				+ ", citation=" + citation + ", taxonConceptLsid="

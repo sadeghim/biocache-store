@@ -50,6 +50,7 @@ import org.springframework.stereotype.Component;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.ibm.icu.text.SimpleDateFormat;
+import java.util.Map;
 
 /**
  * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
@@ -108,10 +109,10 @@ public class SearchDAOImpl implements SearchDAO {
 		if(oc.getPoint01()!=null) doc.addField("point-0.01", oc.getPoint001());
 		if(oc.getPoint01()!=null) doc.addField("point-0.001", oc.getPoint0001());
 		if(oc.getPoint01()!=null) doc.addField("point-0.001", oc.getPoint00001());
-		if(oc.getDataProviderId()!=null) doc.addField("data_provider_id", oc.getDataProviderId());
-		if(oc.getDataProviderId()!=null) doc.addField("data_resource_id", oc.getDataResourceId());
-		if(oc.getDataProviderId()!=null) doc.addField("data_provider", oc.getDataProvider());
-		if(oc.getDataProviderId()!=null) doc.addField("data_resource", oc.getDataResource());
+		if(oc.getDataProviderUid()!=null) doc.addField("data_provider_id", oc.getDataProviderUid());
+		if(oc.getDataProviderUid()!=null) doc.addField("data_resource_id", oc.getDataResourceUid());
+		if(oc.getDataProviderUid()!=null) doc.addField("data_provider", oc.getDataProvider());
+		if(oc.getDataProviderUid()!=null) doc.addField("data_resource", oc.getDataResource());
 		if(oc.getOccurrenceDate()!=null) doc.addField("occurrence_date", oc.getOccurrenceDate());
 		if(oc.getYear()!=null) doc.addField("year", oc.getYear());
 		if(oc.getMonth()!=null) doc.addField("month", oc.getMonth());
@@ -236,9 +237,10 @@ public class SearchDAOImpl implements SearchDAO {
     /**
      * @see org.ala.biocache.dao.SearchDAO#writeResultsToStream(java.lang.String, java.lang.String[], javax.servlet.ServletOutputStream, int)
      */
-    public int writeResultsToStream(String query, String[] filterQuery, ServletOutputStream out, int i) throws Exception {
+    public Map<String,Integer> writeResultsToStream(String query, String[] filterQuery, ServletOutputStream out, int i) throws Exception {
 
         int resultsCount = 0;
+        Map<String,Integer> uidStats = new java.util.HashMap<String, Integer>();
         try {
             String queryString = formatSearchQuery(query);
             logger.info("search query: "+queryString);
@@ -257,6 +259,7 @@ public class SearchDAOImpl implements SearchDAO {
             		"Record id",
             		"Concept lsid",
             		"Original taxon name",
+                        "Supplied Common Name",
             		"Recognised taxon name",
             		"Taxon rank",
                     "Common name",
@@ -297,6 +300,7 @@ public class SearchDAOImpl implements SearchDAO {
             			result.getId(),
             			result.getTaxonConceptLsid(),
             			result.getRawTaxonName(),
+                                result.getRawCommonName(),
             			result.getTaxonName(),
             			result.getRank(),
             			result.getCommonName(),
@@ -317,6 +321,12 @@ public class SearchDAOImpl implements SearchDAO {
             			result.getIdentifierName(),
             			result.getCitation(),
 	            	};
+                         //increment the counters....
+                        incrementCount(uidStats, result.getInstitutionCodeUid());
+                        incrementCount(uidStats, result.getCollectionCodeUid());
+                        incrementCount(uidStats, result.getDataProviderUid());
+                        incrementCount(uidStats, result.getDataResourceUid());
+                        
 	            	csvWriter.writeNext(record);
 	            	csvWriter.flush();
 	            }
@@ -330,7 +340,15 @@ public class SearchDAOImpl implements SearchDAO {
             logger.error("Problem communicating with SOLR server. " + ex.getMessage(), ex);
             //searchResults.setStatus("ERROR"); // TODO also set a message field on this bean with the error message(?)
         }
-        return resultsCount;
+        return uidStats;
+    }
+    
+    private void incrementCount(Map<String,Integer> values, String uid){
+        if(uid != null){
+            Integer count = values.containsKey(uid)?values.get(uid):0;
+            count++;
+            values.put(uid, count);
+        }
     }
     
     /**

@@ -14,6 +14,19 @@
       <param name="ConversionPattern" value="%d %-5p: [%c{5}] %m%n"/>
     </layout>
   </appender>
+  	<appender name="ALA_LOGGER" class="org.ala.client.appender.RestfulAppender">
+		<param name="username" value="" />
+		<param name="password" value="" />
+		<param name="timeout" value="5000" /> <!-- millisecond -->
+		<!--param name="urlTemplate" value="http://152.83.198.112:8080/ala-logger/service/logger/" /-->
+		<param name="urlTemplate" value="http://localhost:8080/ala-logger-service-1.0-SNAPSHOT/service/logger/" />
+		<param name="Threshold" value="REMOTE#org.ala.client.appender.RestLevel" />
+	</appender>
+        <appender name="ASYNC" class="org.apache.log4j.AsyncAppender">
+	    <param name="BufferSize" value="512" /> <!-- default value is 128 messages -->
+	    <param name="Blocking" value="false" /> 
+	    <appender-ref ref="ALA_LOGGER"/>
+	</appender>
   <!-- Alter the logging of known libs -->
   <category name="org.ala">
     <priority value="DEBUG"/>
@@ -52,5 +65,6 @@
     <priority value ="DEBUG" />
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="FILE"/>
+    <appender-ref ref="ASYNC" />
   </root>
  </log4j:configuration>
