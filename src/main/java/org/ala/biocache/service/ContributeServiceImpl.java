@@ -160,8 +160,13 @@ public class ContributeServiceImpl implements ContributeService {
 			ocdto.setDataProvider(dp.getName());
 			ocdto.setDataResource(dr.getName());
 			
-			if(s.getLatitude()!=null)  ocdto.setLatitude(s.getLatitude().doubleValue());
-			if(s.getLongitude()!=null) ocdto.setLongitude(s.getLongitude().doubleValue());
+            if (s.getLatitude()!=null && s.getLongitude()!=null) {
+                ocdto.setLatitude(s.getLatitude().doubleValue());
+                ocdto.setLongitude(s.getLongitude().doubleValue());
+                ocdto.setLatLong(s.getLatitude().toString()+","+s.getLongitude().toString());
+                logger.info("latLong = "+ocdto.getLatLong());
+            }
+            
 			if(s.getCoordinateUncertaintyInMeters()!=null) ocdto.setCoordinatePrecision(s.getCoordinateUncertaintyInMeters().toString());
 			
 			ocdto.setLeft(tc.getLeft());

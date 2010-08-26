@@ -65,9 +65,9 @@ public class OccurrenceDTO implements Serializable {
 	@Field("identifier_value") private String identifierValue;
 	@Field("identifier_name") private String identifierName;
 	@Field("identifier_date") private Date identifierDate;
-        @Field("individual_count") private Integer individualCount;
-        @Field("location_remarks") private String locationRemarks;
-        @Field("occurrence_remarks") private String occurrenceRemarks;
+    @Field("individual_count") private Integer individualCount;
+    @Field("location_remarks") private String locationRemarks;
+    @Field("occurrence_remarks") private String occurrenceRemarks;
     // taxonomy
 	@Field("taxon_name") private String taxonName;
     @Field("common_name") private String commonName;
@@ -76,7 +76,7 @@ public class OccurrenceDTO implements Serializable {
     @Field private String rank;
 	@Field("raw_taxon_name") private String rawTaxonName;
 	@Field("raw_author") private String rawAuthor;
-        @Field("raw_common_name") private String rawCommonName;
+    @Field("raw_common_name") private String rawCommonName;
     @Field("lft") private Integer left;
     @Field("rgt") private Integer right;
 	@Field("kingdom_lsid") private String kingdomLsid;
@@ -101,11 +101,12 @@ public class OccurrenceDTO implements Serializable {
 	@Field private Double latitude;
 	@Field private Double longitude;
     @Field("lat_long_precision") private String coordinatePrecision;
+    @Field("lat_long") private String latLong;
 	@Field("cell_id") private Integer cellId;
 	@Field("centi_cell_id") private Integer centiCellId;
 	@Field("tenmilli_cell_id") private Integer tenmilliCellId;
-        @Field("generalised_metres") private Integer generalisedMetres;
-        @Field("geodetic_datum") private String geodeticDatum;
+    @Field("generalised_metres") private Integer generalisedMetres;
+    @Field("geodetic_datum") private String geodeticDatum;
         
     // other
 	@Field("taxonomic_issue") private String taxonomicIssue;
@@ -876,4 +877,12 @@ public class OccurrenceDTO implements Serializable {
 	public void setConfidence(int confidence) {
 		this.confidence = confidence;
 	}
+
+    public String getLatLong() {
+        return latLong;
+    }
+
+    public void setLatLong(String latLong) {
+        this.latLong = latLong;
+    }
 }

@@ -429,7 +429,7 @@ public class OccurrenceController {
 		}
 
 		SearchQuery searchQuery = new SearchQuery(query, "spatial", filterQuery);
-		searchUtils.updateTaxonConceptSearchString(searchQuery);
+		//searchUtils.updateTaxonConceptSearchString(searchQuery);
 
 		if (startIndex == null) {
 			startIndex = 0;

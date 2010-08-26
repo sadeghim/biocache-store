@@ -249,9 +249,12 @@ public class GeoJsonController {
             } else if (zoomLevel > 10 && zoomLevel <= 13) {
                 // 10-12 levels
                 pointType = PointType.POINT_0001;
-            } else if (zoomLevel > 13) {
+            } else if (zoomLevel > 13 && zoomLevel <= 15) {
                 // 12-n levels
                 pointType = PointType.POINT_00001;
+            } else {
+                // raw levels
+                pointType = PointType.POINT_RAW;
             }
         }
         return pointType;
