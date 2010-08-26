@@ -65,7 +65,7 @@
         <div id="header">
             <div id="breadcrumb">
                 <a href="http://test.ala.org.au">Home</a>
-                <a href="http://test.ala.org.au/explore">Contribute</a>
+                <a href="http://test.ala.org.au/contribute">Contribute</a>
                 Your Sightings
             </div>
             <h1>Your Sightings</h1>
