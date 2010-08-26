@@ -130,6 +130,8 @@ public class SearchDAOImpl implements SearchDAO {
 		if(oc.getFamily()!=null) doc.addField("family", oc.getFamily());
 		if(oc.getGenus()!=null) doc.addField("genus", oc.getGenus());
 		
+		if(oc.getUserId()!=null) doc.addField("user_id", oc.getUserId());
+		if(oc.getCollector()!=null) doc.addField("collector", oc.getCollector());
 		
 		//FIXME we need to lookup the states, ibra regions
 		server.add(doc);
