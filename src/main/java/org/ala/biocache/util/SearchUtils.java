@@ -208,6 +208,7 @@ public class SearchUtils {
 	    	occurrence.setPoint01(MathUtils.round(lat, 1)+","+MathUtils.round(lon, 1));
 	    	occurrence.setPoint001(MathUtils.round(lat, 2)+","+MathUtils.round(lon, 2));
 	    	occurrence.setPoint0001(MathUtils.round(lat, 3)+","+MathUtils.round(lon, 3));
+	    	occurrence.setPoint00001(MathUtils.round(lat, 4)+","+MathUtils.round(lon, 4));
     	}
     }
 	/**
