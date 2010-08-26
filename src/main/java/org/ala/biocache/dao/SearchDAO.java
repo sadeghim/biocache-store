@@ -194,5 +194,7 @@ public interface SearchDAO {
     List<FieldResultDTO> findRecordByDecadeFor(String query) throws Exception;
     
     List<FieldResultDTO> findRecordByStateFor(String query) throws Exception;
+
+    List<TaxaCountDTO> findRecordsByUserId(String userId) throws Exception;
 }
 

@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 
@@ -46,11 +48,8 @@ import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.stereotype.Component;
-
 import au.com.bytecode.opencsv.CSVWriter;
-
 import com.ibm.icu.text.SimpleDateFormat;
-import java.util.Map;
 
 /**
  * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
@@ -75,6 +74,7 @@ public class SearchDAOImpl implements SearchDAO {
     protected static final String SPECIES = "species";
     protected static final String SPECIES_LSID = "species_lsid";
     protected static final String NAMES_AND_LSID = "names_and_lsid";
+    protected static final String TAXON_CONCEPT_LSID = "taxon_concept_lsid";
     /**
      * Initialise the SOLR server instance
      */
@@ -240,7 +240,7 @@ public class SearchDAOImpl implements SearchDAO {
     public Map<String,Integer> writeResultsToStream(String query, String[] filterQuery, ServletOutputStream out, int i) throws Exception {
 
         int resultsCount = 0;
-        Map<String,Integer> uidStats = new java.util.HashMap<String, Integer>();
+        Map<String,Integer> uidStats = new HashMap<String, Integer>();
         try {
             String queryString = formatSearchQuery(query);
             logger.info("search query: "+queryString);
@@ -563,6 +563,17 @@ public class SearchDAOImpl implements SearchDAO {
         logger.info("findRecordsForLocation: number of points = "+points.size());
 
         return points;
+    }
+
+    @Override
+    public List<TaxaCountDTO> findRecordsByUserId(String userId) throws Exception {
+        
+        String queryString = "user_id:"+ClientUtils.escapeQueryChars(userId);
+        List<String> facetFields = new ArrayList<String>();
+        facetFields.add(TAXON_CONCEPT_LSID);
+        List<TaxaCountDTO> speciesWithCounts = getSpeciesCounts(queryString, null, facetFields, 1000, 0, "taxon_name", "asc");
+
+        return speciesWithCounts;
     }
 
     /**
@@ -896,21 +907,23 @@ public class SearchDAOImpl implements SearchDAO {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQueryType("standard");
         solrQuery.setQuery(queryString);
-        solrQuery.addFilterQuery("(" + StringUtils.join(filterQueries, " OR ") + ")");
+        if (filterQueries != null) solrQuery.addFilterQuery("(" + StringUtils.join(filterQueries, " OR ") + ")");
         solrQuery.setRows(0);
         solrQuery.setFacet(true);
         solrQuery.setFacetSort(sortField);
         for (String facet : facetFields) {
             solrQuery.addFacetField(facet);
+            logger.debug("adding facetField: "+facet);
         }
         solrQuery.setFacetMinCount(1);
         solrQuery.setFacetLimit(-1); // unlimited = -1 | pageSize
         QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, "score", sortDirection);
         logger.info("SOLR query: " + solrQuery.getQuery() + "; total hits: " + qr.getResults().getNumFound());
         List<FacetField> facets = qr.getFacetFields();
-        logger.debug("Facets: " +facets.size()+"; facet #1: "+qr.getFacetFields().get(0).getName());
         java.util.regex.Pattern p = java.util.regex.Pattern.compile("\\|");
-        if (facets != null) {            
+        
+        if (facets != null && facets.size() > 0) {
+            logger.debug("Facets: " +facets.size()+"; facet #1: "+facets.get(0).getName());
             for (FacetField facet : facets) {
                 List<FacetField.Count> facetEntries = facet.getValues();
                 if ((facetEntries != null) && (facetEntries.size() > 0)) {
@@ -932,6 +945,12 @@ public class SearchDAOImpl implements SearchDAO {
                                 tcDTO.setFamily(values[4]);
                             }
                             //speciesCounts.add(i, tcDTO);
+                            speciesCounts.add(tcDTO);
+                        }
+                        else if (fcount.getFacetField().getName().equals(TAXON_CONCEPT_LSID)) {
+                            tcDTO = new TaxaCountDTO();
+                            tcDTO.setGuid(StringUtils.trimToNull(fcount.getName()));
+                            tcDTO.setCount(fcount.getCount());
                             speciesCounts.add(tcDTO);
                         }
                         else{

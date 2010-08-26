@@ -53,7 +53,7 @@ public class ExploreController {
     /** Name of view for site home page */
 	private String YOUR_AREA = "explore/yourArea";
     private String speciesPageUrl = "http://bie.ala.org.au/species/";
-    private String geoIpDatabase = "/data/geoip/GeoLiteCity.dat";
+    private String geoIpDatabase = "/data/geoip/GeoLiteCity.dat"; // get from http://www.maxmind.com/app/geolitecity
     private HashMap<String, List<Float>> addressCache = new HashMap<String, List<Float>>();
     private final String DEFAULT_LOCATION = "Clunies Ross St, Black Mountain, ACT";
     /** Mapping of radius in km to OpenLayers zoom level */

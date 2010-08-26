@@ -14,13 +14,18 @@
  ***************************************************************************/
 package org.ala.biocache.web;
 
+import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.ala.biocache.dao.SearchDAO;
+import org.ala.biocache.dto.MiniTaxonConceptDTO;
 import org.ala.biocache.dto.Sighting;
+import org.ala.biocache.dto.TaxaCountDTO;
 import org.ala.biocache.service.ContributeService;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringUtils;
@@ -32,10 +37,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import atg.taglib.json.util.JSONArray;
 import atg.taglib.json.util.JSONObject;
-
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 
@@ -52,15 +55,19 @@ public class ContributeDataController {
 	private String SIGHTING = "contribute/sighting";
     private String SIGHTING_CONFIRM = "contribute/sightingConfirmation";
     private String SIGHTING_THANKYOU = "contribute/sightingThankyou";
+    private String YOUR_SIGHTINGS = "contribute/yourSightings";
     /** Base URL for BIE webapp */
     private String bieBaseUrl = "http://bie.ala.org.au";
     /** Google API key - injected by Spring */
     private String googleKey;
-    /** file ssytem location for GeoIP database */
+    /** file system location for GeoIP database - get from http://www.maxmind.com/app/geolitecity */
     private String geoIpDatabase = "/data/geoip/GeoLiteCity.dat";
+    /** ContributeService service class injected by Spring */
     @Inject
     protected ContributeService contributeService;
-    
+    /** Fulltext search DAO */
+    @Inject
+    protected SearchDAO searchDAO;
     /**
      * Initial sighting page as requested via GET
      *
@@ -199,6 +206,43 @@ public class ContributeDataController {
     }
 
     /**
+     * Your Sightings page - requires authenticated user_id
+     *
+     * @param request
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/contribute/your-sightings*", method = RequestMethod.GET)
+	public String yourSighting(
+            HttpServletRequest request,
+            Model model) throws Exception {
+
+        String remoteuser = request.getRemoteUser();
+
+        if (remoteuser != null) {
+            // user is authenticated
+            List<TaxaCountDTO> speciesWithCounts = searchDAO.findRecordsByUserId(remoteuser);
+            model.addAttribute("speciesWithCounts", speciesWithCounts);
+            logger.info("Finding all records contributed by "+remoteuser+": "+speciesWithCounts.size());
+            List<MiniTaxonConceptDTO> taxonConceptMap = new ArrayList< MiniTaxonConceptDTO>();
+            
+            for (TaxaCountDTO tc : speciesWithCounts) {
+                logger.info("tc: "+tc);
+                String guid = tc.getGuid();
+                MiniTaxonConceptDTO mtc = getTaxonConceptProperties(guid);
+                mtc.setCount(tc.getCount()); // add counts 
+                taxonConceptMap.add(mtc);
+                logger.info("mtc = "+mtc);
+            }
+
+            model.addAttribute("taxonConceptMap", taxonConceptMap);
+        } 
+
+        return YOUR_SIGHTINGS;
+    }
+
+    /**
      * Call BIE JSON service and populate a MiniTaxonConceptDTO
      *
      * @param guid
@@ -207,7 +251,7 @@ public class ContributeDataController {
     protected MiniTaxonConceptDTO getTaxonConceptProperties(String guid) throws Exception {
         MiniTaxonConceptDTO dto = new MiniTaxonConceptDTO();
         String JsonString = getUrlContentAsString(bieBaseUrl + "/species/" + guid + ".json");
-        logger.debug("json string: "+JsonString);
+        logger.debug("json string for "+guid+": "+JsonString);
         JSONObject jsonObj = new JSONObject(JsonString);
         JSONObject etc = jsonObj.getJSONObject("extendedTaxonConceptDTO");
         dto.setGuid(guid);
@@ -256,108 +300,6 @@ public class ContributeDataController {
 
 		return content;
 	}
-
-    /**
-     * Inner class/bean for transferring a few taxon concept properties into web page
-     */
-    public class MiniTaxonConceptDTO {
-        private String guid;
-        private String scientificName;
-        private String rankId;
-        private String rank;
-        private String commonName;
-        private String imageThumbnailUrl;
-        private String kingdom;
-        private String family;
-
-        @Override
-        public String toString() {
-            return "MiniTaxonConceptDTO{" + "guid=" + guid + "scientificName=" + scientificName + "rankId=" +
-                    rankId + "commonName=" + commonName + "imageThumbnailUrl=" + imageThumbnailUrl + '}';
-        }
-        
-        public String getCommonName() {
-            return commonName;
-        }
-
-        public void setCommonName(String commonName) {
-            this.commonName = commonName;
-        }
-
-        public String getGuid() {
-            return guid;
-        }
-
-        public void setGuid(String guid) {
-            this.guid = guid;
-        }
-
-        public String getImageThumbnailUrl() {
-            return imageThumbnailUrl;
-        }
-
-        public void setImageThumbnailUrl(String imageThumbnailUrl) {
-            this.imageThumbnailUrl = imageThumbnailUrl;
-        }
-
-        public String getScientificName() {
-            return scientificName;
-        }
-
-        public void setScientificName(String scientificName) {
-            this.scientificName = scientificName;
-        }
-
-        public String getRankId() {
-            return rankId;
-        }
-
-        public void setRankId(String rankId) {
-            this.rankId = rankId;
-        }
-
-		/**
-		 * @return the rank
-		 */
-		public String getRank() {
-			return rank;
-		}
-
-		/**
-		 * @param rank the rank to set
-		 */
-		public void setRank(String rank) {
-			this.rank = rank;
-		}
-
-		/**
-		 * @return the kingdom
-		 */
-		public String getKingdom() {
-			return kingdom;
-		}
-
-		/**
-		 * @param kingdom the kingdom to set
-		 */
-		public void setKingdom(String kingdom) {
-			this.kingdom = kingdom;
-		}
-
-		/**
-		 * @return the family
-		 */
-		public String getFamily() {
-			return family;
-		}
-
-		/**
-		 * @param family the family to set
-		 */
-		public void setFamily(String family) {
-			this.family = family;
-		}
-    }
 
     public String getGoogleKey() {
         return googleKey;

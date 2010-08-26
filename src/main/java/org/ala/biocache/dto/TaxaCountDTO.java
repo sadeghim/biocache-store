@@ -39,6 +39,13 @@ public class TaxaCountDTO {
         this.count = count;
     }
 
+    @Override
+    public String toString() {
+        return "TaxaCountDTO{" + "name=" + name + "; commonName=" + commonName + "; guid=" + guid + "; kingdom=" + kingdom + "; family=" + family + "; count=" + count + '}';
+    }
+
+
+
     public Long getCount() {
         return count;
     }
