@@ -581,8 +581,7 @@ public class SearchDAOImpl implements SearchDAO {
     }
     
     @Override
-    public List<OccurrencePoint> findPointsForUserId(String userId) throws Exception {
-        List<OccurrencePoint> points = new ArrayList<OccurrencePoint>();
+    public List<OccurrenceDTO> findPointsForUserId(String userId) throws Exception {
         String query = "user_id:"+ClientUtils.escapeQueryChars(userId);
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQueryType("standard");
@@ -591,16 +590,7 @@ public class SearchDAOImpl implements SearchDAO {
         SearchResultDTO searchResults = processSolrResponse(qr, solrQuery);
         logger.debug("solr result (size): "+searchResults.getOccurrences().size());
 
-        for (OccurrenceDTO rec : searchResults.getOccurrences()) {
-            OccurrencePoint point = new OccurrencePoint(PointType.POINT_RAW);
-            point.setOccurrenceUid(rec.getId());
-            point.setTaxonConceptGuid(rec.getTaxonConceptLsid());
-            point.setCount(1l);
-            point.setCoordinates(Arrays.asList(rec.getLongitude().floatValue(), rec.getLatitude().floatValue()));
-            points.add(point);
-        }
-
-        return points;
+        return searchResults.getOccurrences();
     }
 
     /**

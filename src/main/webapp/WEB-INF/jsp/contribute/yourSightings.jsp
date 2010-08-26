@@ -27,10 +27,7 @@
                 google.load("maps", "3", {other_params:"sensor=false"});
 
                 $(document).ready(function() {
-                    var latlng = new google.maps.LatLng(${points[0].coordinates[1]}, ${points[1].coordinates[0]});
                     var myOptions = {
-                        zoom: 15,
-                        center: latlng,
                         scaleControl: true,
                         mapTypeControlOptions: {
                             mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN ]
@@ -39,24 +36,27 @@
                     };
 
                     var map = new google.maps.Map(document.getElementById("mapCanvas"), myOptions);
+                    var latlngbounds = new google.maps.LatLngBounds();
                     
-                    <c:forEach var="point" items="${points}" varStatus="status">
-                        var latlng_${status.count} = new google.maps.LatLng(${point.coordinates[1]}, ${point.coordinates[0]});
+                    <c:forEach var="rec" items="${occurrences}" varStatus="status">
+                        var latlng_${status.count} = new google.maps.LatLng(${rec.latitude}, ${rec.longitude});
                         var marker_${status.count} = new google.maps.Marker({
                             position: latlng_${status.count},
                             map: map,
-                            title:"Occurrence ${point.occurrenceUid}"
+                            title:"Occurrence ${rec.id}"
                         });
-                        var contentString_${status.count} = "<div>Record Id: ${point.occurrenceUid}</div>" +
-                            "<div>Species LSID: ${point.taxonConceptGuid}</div>";
+                        var contentString_${status.count} = "<div>Record Id: <a href='${pageContext.request.contextPath}/occurrences/${rec.id}'>${rec.id}</a></div>" +
+                            "<div><a href='http://bie.ala.org.au/species/${rec.taxonConceptLsid}'><alatag:formatSciName name="${rec.taxonName}" rankId="${rec.rankId}"/> (${rec.commonName})</div>";
                         var infowindow_${status.count} = new google.maps.InfoWindow({
                             content: contentString_${status.count}
                         });
                         google.maps.event.addListener(marker_${status.count}, 'click', function() {
                             infowindow_${status.count}.open(map, marker_${status.count});
                         });
+                        latlngbounds.extend(latlng_${status.count});
                     </c:forEach>
-                    
+                    //map.setCenter(latlngbounds.getCenter(), map.getBoundsZoomLevel(latlngbounds));
+                    map.fitBounds(latlngbounds);
                 });
             </c:if>
         </script>
@@ -76,12 +76,13 @@
                 <c:if test="${not empty taxonConceptMap}">
                     <div id="column-one">
                         <div class="section">
+                            <h3 style="margin-bottom: 8px;">Total sightings: <a href="${pageContext.request.contextPath}/occurrences/search?q=user_id:${pageContext.request.remoteUser}">${fn:length(occurrences)}</a></h3>
                             <c:forEach var="tc" items="${taxonConceptMap}">
                                 <img src="${tc.imageThumbnailUrl}" alt="species image thumbnail" style="display: block; float: left; margin-right: 10px;"/>
                                 <div style="padding: 5px;">
                                     <a href="http://bie.ala.org.au/species/${tc.guid}"><alatag:formatSciName name="${tc.scientificName}" rankId="${tc.rankId}"/> (${tc.commonName})</a>
                                     <br/>
-                                    Records: ${tc.count}
+                                    Records: <a href="${pageContext.request.contextPath}/occurrences/search?q=user_id:${pageContext.request.remoteUser}&fq=taxon_name:${tc.scientificName}">${tc.count}</a>
                                 </div>
                                 <div style="clear: both; height:5px;"></div>
                             </c:forEach>

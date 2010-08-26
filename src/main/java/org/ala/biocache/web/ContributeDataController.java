@@ -41,6 +41,7 @@ import atg.taglib.json.util.JSONArray;
 import atg.taglib.json.util.JSONObject;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
+import org.ala.biocache.dto.OccurrenceDTO;
 import org.ala.biocache.dto.OccurrencePoint;
 
 /**
@@ -240,10 +241,9 @@ public class ContributeDataController {
             model.addAttribute("taxonConceptMap", taxonConceptMap);
 
             // get points
-            List<OccurrencePoint> points = searchDAO.findPointsForUserId(remoteuser);
-            logger.info("Finding all occurrences contributed by "+remoteuser+": "+points.size());
-            model.addAttribute("points", points);
-            model.addAttribute("bounds", getBoundsForPoints(points));
+            List<OccurrenceDTO> occurrences = searchDAO.findPointsForUserId(remoteuser);
+            logger.info("Finding all occurrences contributed by "+remoteuser+": "+occurrences.size());
+            model.addAttribute("occurrences", occurrences);
         } 
 
         return YOUR_SIGHTINGS;
@@ -322,8 +322,4 @@ public class ContributeDataController {
 	public void setContributeService(ContributeService contributeService) {
 		this.contributeService = contributeService;
 	}
-
-    private Object getBoundsForPoints(List<OccurrencePoint> points) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
 }
