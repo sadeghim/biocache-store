@@ -78,11 +78,25 @@
                         <div class="section">
                             <h3 style="margin-bottom: 8px;">Total sightings: <a href="${pageContext.request.contextPath}/occurrences/search?q=user_id:${pageContext.request.remoteUser}">${fn:length(occurrences)}</a></h3>
                             <c:forEach var="tc" items="${taxonConceptMap}">
+                            	<a href="http://bie.ala.org.au/species/${tc.guid}">
                                 <img src="${tc.imageThumbnailUrl}" alt="species image thumbnail" style="display: block; float: left; margin-right: 10px;"/>
+                                </a>
+                                <!-- 
+                                <div style="float: left; padding-right: 15px" id="images" class="section">
+                                    <img src="${tc.imageThumbnailUrl}" height="85px" alt="species thumbnail"/>
+                                </div>
+                                 -->
                                 <div style="padding: 5px;">
-                                    <a href="http://bie.ala.org.au/species/${tc.guid}"><alatag:formatSciName name="${tc.scientificName}" rankId="${tc.rankId}"/> (${tc.commonName})</a>
-                                    <br/>
+                                	<c:set var="speciesName">
+                                		<alatag:formatSciName name="${tc.scientificName}" rankId="${tc.rankId}"/>
+                                		<c:if test="${not empty tc.commonName}">(${tc.commonName})</c:if>
+                                	</c:set>
+                                    <h4>${speciesName}</h4>
                                     Records: <a href="${pageContext.request.contextPath}/occurrences/search?q=user_id:${pageContext.request.remoteUser}&fq=taxon_name:${tc.scientificName}">${tc.count}</a>
+                                    <br/>
+                                    <a href="${pageContext.request.contextPath}/contribute/sighting/${tc.guid}">Record another sighting</a>
+                                    <br/>
+                                    <a href="http://bie.ala.org.au/species/${tc.guid}">View species page</a>
                                 </div>
                                 <div style="clear: both; height:5px;"></div>
                             </c:forEach>

@@ -33,6 +33,7 @@ import org.ala.biocache.model.OccurrenceRecord;
 import org.ala.biocache.model.RawOccurrenceRecord;
 import org.ala.biocache.model.TaxonConcept;
 import org.ala.biocache.util.SearchUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -204,10 +205,13 @@ public class ContributeServiceImpl implements ContributeService {
 			
 			SearchUtils.initialPointValues(ocdto);
 			
+			List<String> states = new ArrayList<String>();
 			//add states and provinces
-			if(s.getStateProvince()!=null){
-				List<String> states = new ArrayList<String>();
+			if(StringUtils.isNotEmpty(s.getStateProvince())){
 				states.add(s.getStateProvince());
+				ocdto.setStates(states);
+			} else {
+				states.add("Unknown");
 				ocdto.setStates(states);
 			}
 			

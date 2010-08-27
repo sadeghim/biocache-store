@@ -201,6 +201,8 @@ public class ContributeDataController {
             //send it off to the service
             if (!contributeService.recordSighting(s)) {
                 model.addAttribute("error", "Error: your sighting was not saved. Please try again later.");
+            } else {
+            	return "redirect:/contribute/your-sightings";
             }
         }
         

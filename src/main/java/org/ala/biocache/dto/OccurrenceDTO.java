@@ -815,6 +815,22 @@ public class OccurrenceDTO implements Serializable {
         this.occurrenceRemarks = occurrenceRemarks;
     }
 
+	public int getConfidence() {
+		return confidence;
+	}
+
+	public void setConfidence(int confidence) {
+		this.confidence = confidence;
+	}
+
+    public String getLatLong() {
+        return latLong;
+    }
+
+    public void setLatLong(String latLong) {
+        this.latLong = latLong;
+    }
+    
 	/**
 	 * @see java.lang.Object#toString()
 	 */
@@ -864,26 +880,4 @@ public class OccurrenceDTO implements Serializable {
                 + ", latLong=" + latLong
 				+ ", namesLsid=" + namesLsid + "]";
 	}
-
-	/**
-	 * @return the confidence
-	 */
-	public int getConfidence() {
-		return confidence;
-	}
-
-	/**
-	 * @param confidence the confidence to set
-	 */
-	public void setConfidence(int confidence) {
-		this.confidence = confidence;
-	}
-
-    public String getLatLong() {
-        return latLong;
-    }
-
-    public void setLatLong(String latLong) {
-        this.latLong = latLong;
-    }
 }

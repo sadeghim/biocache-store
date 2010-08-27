@@ -14,6 +14,8 @@
  ***************************************************************************/
 package org.ala.biocache.web;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +31,8 @@ import org.ala.biocache.model.DataProvider;
 import org.ala.biocache.model.DataResource;
 import org.ala.biocache.model.RawOccurrenceRecord;
 import org.ala.biocache.util.SearchUtils;
+import org.ala.client.appender.RestLevel;
+import org.ala.client.model.LogEventVO;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -41,11 +45,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.Map;
-import org.ala.biocache.util.SearchUtils;
-import org.ala.client.appender.RestLevel;
-import org.ala.client.model.LogEventVO;
 
 /**
  * Occurrences controller for the BIE biocache site

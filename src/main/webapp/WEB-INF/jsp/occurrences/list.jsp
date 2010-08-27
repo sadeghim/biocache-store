@@ -464,7 +464,7 @@
                                             </c:if>
                                             <c:forEach var="fieldResult" items="${facetResult.fieldResult}" varStatus="vs">
                                                 <c:if test="${fieldResult.count > 0}">
-                                                    <c:set var="dateRangeTo"><c:choose><c:when test="${vs.last}">*</c:when><c:otherwise>${facetResult.fieldResult[vs.count].label}</c:otherwise></c:choose></c:set>
+                                                     <c:set var="dateRangeTo"><c:choose><c:when test="${vs.last || facetResult.fieldResult[vs.count].label=='before'}">*</c:when><c:otherwise>${facetResult.fieldResult[vs.count].label}</c:otherwise></c:choose></c:set>
                                                     <c:choose>
                                                         <c:when test="${fn:containsIgnoreCase(facetResult.fieldName, 'occurrence_date') && fn:endsWith(fieldResult.label, 'Z')}">
                                                             <li><c:set var="startYear" value="${fn:substring(fieldResult.label, 0, 4)}"/>
@@ -473,7 +473,7 @@
                                                         </c:when>
                                                         <c:when test="${fn:endsWith(fieldResult.label, 'before')}"><%-- skip, otherwise gets inserted at bottom, not top of list --%></c:when>
                                                         <c:otherwise>
-                                                            <li><a href="?${queryParam}&fq=${facetResult.fieldName}:${fieldResult.label}"><fmt:message key="${fieldResult.label}"/></a>
+                                                            <li><a href="?${queryParam}&fq=${facetResult.fieldName}:${fieldResult.label}"><fmt:message key="${not empty fieldResult.label ? fieldResult.label : 'unknown'}"/></a>
                                                                 (<fmt:formatNumber value="${fieldResult.count}" pattern="#,###,###"/>)</li>
                                                         </c:otherwise>
                                                     </c:choose>
