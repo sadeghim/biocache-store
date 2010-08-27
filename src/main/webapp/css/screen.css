@@ -1256,14 +1256,15 @@ li.taxonBreakdown { border: 1px solid gray; padding:10px; margin-bottom: 5px;}
 #loginId {
     position: absolute;
     right: 0;
-    margin-right: 4px;
+    margin-right: 12px;
+    margin-top: 2px;
     padding: 0 4px;
     text-align:right;
     color:white;
     background-color:rgba(0, 0, 0, 0.4);
-    -moz-border-radius: 0 0 4px 4px; /* FF1+ */
-    -webkit-border-radius: 0 0 4px 4px; /* Saf3+, Chrome */
-    border-radius: 0 0 4px 4px; /* Opera 10.5, IE 9 */
+    -moz-border-radius: 4px 4px 4px 4px; /* FF1+ */
+    -webkit-border-radius: 4px 4px 4px 4px; /* Saf3+, Chrome */
+    border-radius: 4px 4px 4px 4px; /* Opera 10.5, IE 9 */
 }
 /* Contribute Sighting Page */
 #mapCanvas {

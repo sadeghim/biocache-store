@@ -131,9 +131,7 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
                     </ul>
                     <!-- WP Menubar 4.7: end menu nav-site, template Superfish, CSS  -->
                 </div><!--close nav-->
-                <c:if test="${!empty pageContext.request.remoteUser}">
-                    <div id="loginId">${pageContext.request.remoteUser}</div>
-                </c:if>
+
                 <div id="wrapper_search">
 			<form id="search-form" action="http://bie.ala.org.au/search" method="get" name="search-form">
 				<label for="search">Search</label>
@@ -145,6 +143,9 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
             <div id="wrapper_border"><!--main content area-->
                 <div id="border">
                     <div id="content">
+		                <c:if test="${!empty pageContext.request.remoteUser}">
+		                    <div id="loginId"> You are logged in as: ${pageContext.request.remoteUser}</div>
+		                </c:if>
 <!--                        <div id="decoratorBody">-->
                             <decorator:body />
 <!--                        </div>-->
