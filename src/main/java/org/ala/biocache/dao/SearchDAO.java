@@ -14,6 +14,7 @@ package org.ala.biocache.dao;
  *  rights and limitations under the License.
  ***************************************************************************/
 
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -105,7 +106,7 @@ public interface SearchDAO {
      * @return A map of uids and counts that needs to be logged to the ala-logger
      * @throws Exception
      */
-	Map<String,Integer> writeResultsToStream(String query, String[] filterQuery, ServletOutputStream out, int maxNoOfRecords) throws Exception;
+	Map<String,Integer> writeResultsToStream(String query, String[] filterQuery, OutputStream out, int maxNoOfRecords) throws Exception;
 
     /**
      * Retrieve an OccurrencePoint (distinct list of points - lat-long to 4 decimal places) for a given search

@@ -45,6 +45,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import java.util.Map;
+import java.util.zip.ZipOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import org.ala.biocache.util.CitationUtils;
+import org.ala.biocache.util.SearchUtils;
+import org.ala.client.appender.RestLevel;
+import org.ala.client.model.LogEventVO;
 
 /**
  * Occurrences controller for the BIE biocache site
@@ -68,6 +75,8 @@ public class OccurrenceController {
 	protected DataProviderDAO dataProviderDAO;
 	@Inject
 	protected SearchUtils searchUtils;
+        @Inject
+	protected CitationUtils citationUtils;
 	@Inject
 	protected RawOccurrenceRecordDAO rawOccurrenceRecordDAO;
 	
@@ -576,12 +585,14 @@ public class OccurrenceController {
 			@RequestParam(value="q", required=false) String query,
 			@RequestParam(value="fq", required=false) String[] filterQuery,
 			@RequestParam(value="type", required=false, defaultValue="normal") String type,
-			HttpServletResponse response)
+			HttpServletResponse response,
+                        HttpServletRequest request)
 	throws Exception {
-                //The variables below need to be added as
+                //The variables below need to be added as input
                 String email = null;
                 String reason = null;
-                String ip = null;
+
+                String ip = request.getLocalAddr();
 		if (query == null || query.isEmpty()) {
 			return LIST;
 		}
@@ -592,15 +603,30 @@ public class OccurrenceController {
 
 		response.setHeader("Cache-Control", "must-revalidate");
 		response.setHeader("Pragma", "must-revalidate");
-		response.setHeader("Content-Disposition", "attachment;filename=data");
-		response.setContentType("application/vnd.ms-excel");
+		response.setHeader("Content-Disposition", "attachment;filename=data.zip");
+		response.setContentType("application/zip");
 
 		ServletOutputStream out = response.getOutputStream();
 		//get the new query details
 		SearchQuery searchQuery = new SearchQuery(query, type, filterQuery);
 		searchUtils.updateQueryDetails(searchQuery);
-		Map<String, Integer> uidStats =searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), out, 100);
-                logger.debug("UID stats : " + uidStats);
+
+                //Use a zip output stream to include the data and citation together in the download
+                ZipOutputStream zop = new ZipOutputStream(out);
+                zop.putNextEntry(new java.util.zip.ZipEntry("data.csv"));
+                Map<String, Integer> uidStats =searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100);
+                zop.closeEntry();
+
+                if(!uidStats.isEmpty()){
+                    //add the citations for the supplied uids
+                    zop.putNextEntry(new java.util.zip.ZipEntry("citation.txt"));
+                    citationUtils.addCitation(uidStats.keySet(), zop);
+                    zop.closeEntry();
+                }
+                zop.flush();
+                zop.close();
+                
+                //logger.debug("UID stats : " + uidStats);
                 //log the stats to ala logger
                 
                 LogEventVO vo = new LogEventVO(1, email, reason, ip,uidStats);

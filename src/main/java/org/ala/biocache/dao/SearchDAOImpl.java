@@ -52,6 +52,7 @@ import org.springframework.stereotype.Component;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.ibm.icu.text.SimpleDateFormat;
+import java.io.OutputStream;
 import java.util.Map;
 
 /**
@@ -239,9 +240,9 @@ public class SearchDAOImpl implements SearchDAO {
     }
 
     /**
-     * @see org.ala.biocache.dao.SearchDAO#writeResultsToStream(java.lang.String, java.lang.String[], javax.servlet.ServletOutputStream, int)
+     * @see org.ala.biocache.dao.SearchDAO#writeResultsToStream(java.lang.String, java.lang.String[], java.io.OutputStream, int)
      */
-    public Map<String,Integer> writeResultsToStream(String query, String[] filterQuery, ServletOutputStream out, int i) throws Exception {
+    public Map<String,Integer> writeResultsToStream(String query, String[] filterQuery, OutputStream out, int i) throws Exception {
 
         int resultsCount = 0;
         Map<String,Integer> uidStats = new HashMap<String, Integer>();
@@ -339,7 +340,7 @@ public class SearchDAOImpl implements SearchDAO {
 	            	qr = runSolrQuery(solrQuery, filterQuery, pageSize, startIndex, "score", "asc");
 	            }
             }
-            
+               
         } catch (SolrServerException ex) {
             logger.error("Problem communicating with SOLR server. " + ex.getMessage(), ex);
             //searchResults.setStatus("ERROR"); // TODO also set a message field on this bean with the error message(?)
