@@ -172,7 +172,7 @@ CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT)
 		,'IFNULL(oc.other_issue,\'\'),IFNULL(DATE_FORMAT(ror.created,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),IFNULL(DATE_FORMAT(ror.modified,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
 		,'IFNULL(ror.citation,\'\'), IFNULL(ror.occurrence_remarks,\'\'), IFNULL(ror.location_remarks,\'\'),'
 		,'IFNULL(ror.vernacular_name,\'\'), IFNULL(ror.record_number,\'\'), IFNULL(ror.identification_qualifier,\'\'), IFNULL(ror.individual_count,\'\'),'
-		,'IFNULL(ror.geodetic_datum,\'\'), IFNULL(ror.generalised_metres, \'\'), IFNULL(ror.user_id, \'\'), IFNULL(dr.confidence,'')'
+		,'IFNULL(ror.geodetic_datum,\'\'), IFNULL(ror.generalised_metres, \'\'), IFNULL(ror.user_id, \'\'), IFNULL(dr.confidence,\'\')'
 		,' FROM occurrence_record oc'
 		,' INNER JOIN raw_occurrence_record ror ON ror.id = oc.id'
 		,' INNER JOIN taxon_name tn ON tn.id = oc.taxon_name_id'
