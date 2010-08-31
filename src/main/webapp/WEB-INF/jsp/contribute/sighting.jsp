@@ -167,13 +167,9 @@
 
                 if (geocoder && address) {
                     //geocoder.getLocations(address, addAddressToPage);
-                    geocoder.geocode( { 'address': address}, function(results, status) {
+                    geocoder.geocode( { 'address': address, region: 'AU'}, function(results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {
-                            //map.setCenter(results[0].geometry.location);
-                            //var marker = new google.maps.Marker({
-                            //    map: map,
-                            //   position: results[0].geometry.location
-                            //});
+                            // geocode was successful
                             var lat = results[0].geometry.location.lat();
                             var lon = results[0].geometry.location.lng();
                             var locationStr = results[0].formatted_address;
@@ -224,6 +220,7 @@
             $(document).ready(function() {
                 // geocoding
                 geocoder = new google.maps.Geocoder();
+                //geocoder.setBaseCountryCode("AU"); // v2 API only
                 attemptGeolocation();
 
                 // insert server-side geocoded coords if present
@@ -312,7 +309,7 @@
                                     <img src="${taxonConcept.imageThumbnailUrl}" height="85px" alt="species thumbnail"/>
                                 </div>
                                 <div style="margin-left: 115px" class="section">
-                                    <h2><a href="http://bie.ala.org.au/species/${param['guid']}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
+                                    <h2><a href="http://bie.ala.org.au/species/${taxonConcept.guid}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
                                         (${taxonConcept.commonName})</a>
                                         <input type="hidden" name="guid" id="sightingGuid" value="${param.guid}"/>
                                     </h2>
