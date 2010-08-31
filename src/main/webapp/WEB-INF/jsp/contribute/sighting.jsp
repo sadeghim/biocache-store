@@ -27,7 +27,7 @@
             // Load Google maps via AJAX API
             google.load("maps", "3", {other_params:"sensor=false"});
 
-            var geocoder, zoom, map, marker;
+            var geocoder, zoom, map, marker, circle;
 
             /**
              * Google geocode function
@@ -89,14 +89,36 @@
                 map = new google.maps.Map(document.getElementById('mapCanvas'), {
                     zoom: zoom,
                     center: latLng,
+                    mapTypeControl: true,
+                    mapTypeControlOptions: {
+                        style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+                    },
+                    navigationControl: true,
+                    navigationControlOptions: {
+                        style: google.maps.NavigationControlStyle.DEFAULT
+                    },
                     mapTypeId: google.maps.MapTypeId.HYBRID
                 });
                 marker = new google.maps.Marker({
                     position: latLng,
-                    title: 'Sighting',
+                    title: 'Sighting Location',
                     map: map,
                     draggable: true
                 });
+
+                // Add a Circle overlay to the map.
+                var radius = parseInt($('#sightingCoordinateUncertainty').val());
+                circle = new google.maps.Circle({
+                  map: map,
+                  radius: radius, // 3000 km
+                  strokeWeight: 1,
+                  strokeColor: 'white',
+                  strokeOpacity: 0.5,
+                  fillColor: '#2C48A6',
+                  fillOpacity: 0.2
+                });
+                // bind circle to marker
+                circle.bindTo('center', marker, 'position');
 
                 // Update current position info.
                 updateMarkerPosition(latLng);
@@ -214,6 +236,11 @@
                 }
             }
 
+            function updateTitleAttr(rad) {
+                $('#sightingCoordinateUncertainty').attr('title', 'A measure of the accuracy of the location coordinates. E.g. +/- '+rad+'m');
+                $('#sightingCoordinateUncertainty').tooltip({track: true, extraClass: "toolTip" })
+            }
+
             /**
              * Document onLoad event using JQuery
              */
@@ -274,18 +301,27 @@
                      
                 });
 
+               $('#sightingCoordinateUncertainty').change(function(e){
+                   var rad = parseInt($(this).val());
+                   circle.setRadius(rad);
+                   updateTitleAttr(rad);
+               })
+
                 // set observer field based on user login
                 var recordedBy = "${param.recordedBy}";
                 if (!recordedBy) {
                     $('input#recordedBy').val("${fn:replace(fn:substringBefore(pageContext.request.remoteUser, '@'),'.',' ')}");
                 }
 
-                // set hieght of inner div
+                // set height of inner div
                 var h = $('#locationBlock').height();
                 $('#location').height(h-20); // $('#locationBlock').height
                 // tooltip for location input help
-                $('.locationInput').attr('title', 'Use the map controls to set the location');
-                $('.locationInput').tooltip();
+                $('.locationInput').attr('title', 'Use the map controls (right) to set the location');
+                //$('#sightingCoordinateUncertainty').attr('title', 'A measure of the accuracy of the location coordinates. E.g. +/- '+$('#sightingCoordinateUncertainty').val()+'m');
+                updateTitleAttr($('#sightingCoordinateUncertainty').val());
+                $('#sightingAddress label').attr('title', 'You can search for a street address, place of interest, postcode or GPS coordinates (lat, lon)');
+                $('.locationInput, #sightingAddress label').tooltip({track: true, extraClass: "toolTip" });
             });
             </c:if>
         </script>
@@ -299,110 +335,109 @@
             </div>
             <h1>Contribute a Sighting</h1>
         </div>
-        
-            <c:choose>
-                <c:when test="${!empty pageContext.request.remoteUser}"><%-- User is logged in --%>
-                    <c:if test="${not empty taxonConcept}">
-                        <form name="sighting" id="sighting" action="" method="POST">
-                            <div id="column-one">
-                                <div style="float: left; padding-right: 15px" id="images" class="section">
-                                    <img src="${taxonConcept.imageThumbnailUrl}" height="85px" alt="species thumbnail"/>
+        <c:choose>
+            <c:when test="${!empty pageContext.request.remoteUser}"><%-- User is logged in --%>
+                <c:if test="${not empty taxonConcept}">
+                    <form name="sighting" id="sighting" action="" method="POST">
+                        <div id="column-one">
+                            <div style="float: left; padding-right: 15px" id="images" class="section">
+                                <img src="${taxonConcept.imageThumbnailUrl}" height="85px" alt="species thumbnail"/>
+                            </div>
+                            <div style="margin-left: 115px" class="section">
+                                <h2><a href="http://bie.ala.org.au/species/${taxonConcept.guid}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
+                                    (${taxonConcept.commonName})</a>
+                                    <input type="hidden" name="guid" id="sightingGuid" value="${param.guid}"/>
+                                </h2>
+                                <fieldset id="sightingInfo">
+                                    <p><label for="date">Date</label>
+                                        <input type="text" id="sightingDate" name="date" size="20" value="${param.date}"/>
+                                        <span class="hint">(DD-MM-YYYY)</span>
+                                    </p>
+                                    <p><label for="time">Time</label>
+                                        <input type="text" id="sightingTime" name="time" size="20" value="${param.time}"/>
+                                        <span class="hint">(HH:MM)</span>
+                                    </p>
+                                    <p><label for="number">Number observed</label>
+                                        <select id="sightingNumber" name="number">
+                                            <c:forEach var="option" begin="1" end="100" step="1">
+                                                <option<c:if test="${option == param.number}"> selected</c:if>>${option}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </p>
+                                    <p><label for="verbatimLocality">Location</label>
+                                        <span id="markerAddress" class="locationInput"></span>
+                                        <input type="hidden" id="sightingLocation" name="verbatimLocality" value="${param.verbatimLocality}"/>
+                                        <input type="hidden" id="locality" name="locality" value="${param.locality}"/>
+                                        <input type="hidden" id="stateProvince" name="stateProvince" value="${param.stateProvince}"/>
+                                        <input type="hidden" id="country" name="country" value="${param.country}"/>
+                                        <input type="hidden" id="countryCode" name="countryCode" value="${param.countryCode}"/>
+                                    </p>
+                                        <p><label for="latitude">Latitude</label>
+                                        <span id="markerLatitude" class="locationInput"></span>
+                                        <input type="hidden" id="sightingLatitude" name="latitude" value="${param.latitude}"/>
+                                    </p>
+                                    <p><label for="longitude">Longitude</label>
+                                        <span id="markerLongitude" class="locationInput"></span>
+                                        <input type="hidden" id="sightingLongitude" name="longitude" value="${param.longitude}"/>
+                                    </p>
+                                    <p><label for="coordinateUncertainty">Coordinate Uncertainty</label>
+                                        <select id="sightingCoordinateUncertainty" name="coordinateUncertainty">
+                                            <c:set var="selected">
+                                                <c:choose>
+                                                    <c:when test="${not empty param.coordinateUncertainty}">
+                                                        ${param.coordinateUncertainty}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        20
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </c:set>
+                                            <c:set var="values">1,5,10,20,50,100,500,1000</c:set>
+                                            <c:forEach var="option" items="${fn:split(values,',')}">
+                                                <option<c:if test="${option == selected}"> selected</c:if>>${option}</option>
+                                            </c:forEach>
+                                        </select>
+                                        <span class="hint">metres</span>
+                                    </p>
+                                    <p><label for="recordedBy">Observer</label>
+                                        <input type="text" id="recordedBy" name="recordedBy" size="30" value="${param.recordedBy}"/>
+                                        <input type="hidden" id="recordedById" name="recordedById"  value="${pageContext.request.remoteUser}"/>
+                                    </p>
+                                    <p><label for="notes" style="vertical-align: top">Notes</label>
+                                        <textarea id="sightingNotes" name="notes" cols="30" rows="5">${param.notes}</textarea>
+                                        <span id="notes" class="hint">(E.g. weather conditions, observed behaviour, <i>etc.</i>)</span>
+                                    </p>
+                                    <p><label for="action"></label>
+                                        <input type="submit" name="action" id="sightingSubmit" value="Next >"/>
+                                    </p>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div id="column-two">
+                            <div class="section">
+                                <div id="sightingAddress">
+                                    <label for="address">Enter the location or address of sighting: </label>
+                                    <input name="address" id="address" size="40" value="${address}"/>
+                                    <input id="locationSearch" type="button" value="Search"/>
                                 </div>
-                                <div style="margin-left: 115px" class="section">
-                                    <h2><a href="http://bie.ala.org.au/species/${taxonConcept.guid}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
-                                        (${taxonConcept.commonName})</a>
-                                        <input type="hidden" name="guid" id="sightingGuid" value="${param.guid}"/>
-                                    </h2>
-                                    <fieldset id="sightingInfo">
-                                        <p><label for="date">Date</label>
-                                            <input type="text" id="sightingDate" name="date" size="20" value="${param.date}"/>
-                                            <span>(DD-MM-YYYY)</span>
-                                        </p>
-                                        <p><label for="time">Time</label>
-                                            <input type="text" id="sightingTime" name="time" size="20" value="${param.time}"/>
-                                            <span>(HH:MM)</span>
-                                        </p>
-                                        <p><label for="number">Number observed</label>
-                                            <select id="sightingNumber" name="number">
-                                                <c:forEach var="option" begin="1" end="100" step="1">
-                                                    <option<c:if test="${option == param.number}"> selected</c:if>>${option}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </p>
-                                        <p><label for="verbatimLocality">Location</label>
-                                            <span id="markerAddress" class="locationInput"></span>
-                                            <input type="hidden" id="sightingLocation" name="verbatimLocality" value="${param.verbatimLocality}"/>
-                                            <input type="hidden" id="locality" name="locality" value="${param.locality}"/>
-                                            <input type="hidden" id="stateProvince" name="stateProvince" value="${param.stateProvince}"/>
-                                            <input type="hidden" id="country" name="country" value="${param.country}"/>
-                                            <input type="hidden" id="countryCode" name="countryCode" value="${param.countryCode}"/>
-                                        </p>
-                                            <p><label for="latitude">Latitude</label>
-                                            <span id="markerLatitude" class="locationInput"></span>
-                                            <input type="hidden" id="sightingLatitude" name="latitude" value="${param.latitude}"/>
-                                        </p>
-                                        <p><label for="longitude">Longitude</label>
-                                            <span id="markerLongitude" class="locationInput"></span>
-                                            <input type="hidden" id="sightingLongitude" name="longitude" value="${param.longitude}"/>
-                                        </p>
-                                        <p><label for="coordinateUncertainty">Accuracy</label>
-                                            <select id="sightingCoordinateUncertainty" name="coordinateUncertainty">
-                                                <c:set var="selected">
-                                                    <c:choose>
-                                                        <c:when test="${not empty param.coordinateUncertainty}">
-                                                            ${param.coordinateUncertainty}
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            50
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </c:set>
-                                                <c:set var="values">1,5,10,20,50,100,500,1000</c:set>
-                                                <c:forEach var="option" items="${fn:split(values,',')}">
-                                                    <option<c:if test="${option == selected}"> selected</c:if>>${option}</option>
-                                                </c:forEach>
-                                            </select>
-                                            <span>metres</span>
-                                        </p>
-                                        <p><label for="recordedBy">Observer</label>
-                                            <input type="text" id="recordedBy" name="recordedBy" size="30" value="${param.recordedBy}"/>
-                                            <input type="hidden" id="recordedById" name="recordedById"  value="${pageContext.request.remoteUser}"/>
-                                        </p>
-                                        <p><label for="notes">Notes</label>
-                                            <textarea id="sightingNotes" name="notes" cols="30" rows="5">${param.notes}</textarea>
-                                            <span id="notes">(E.g. weather conditions, observed behaviour, <i>etc.</i>)</span>
-                                        </p>
-                                        <p><label for=""></label>
-                                            <input type="submit" name="action" id="sightingSubmit" value="Next >"/>
-                                        </p>
-                                    </fieldset>
+                                <div id="mapCanvas"></div>
+                                <div style="font-size: 90%; margin-top: 5px;"><b>Hint:</b> click and drag the marker pin to fine-tune the location coordinates</div>
+                                <div style="display: none">
+                                    <div id="markerAddress"></div>
+                                    <div id="markerStatus"></div>
+                                    <div id="info"></div>
                                 </div>
                             </div>
-                            <div id="column-two">
-                                <div class="section">
-                                    <div id="sightingAddress">
-                                        <label for="address">Enter the location or address of sighting: </label>
-                                        <input name="address" id="address" size="40" value="${address}"/>
-                                        <input id="locationSearch" type="button" value="Search"/>
-                                    </div>
-                                    <div id="mapCanvas"></div>
-                                    <div style="font-size: 90%"><b>Hint:</b> click and drag the marker pin to fine-tune the location coordinates</div>
-                                    <div style="display: none">
-                                        <div id="markerAddress"></div>
-                                        <div id="markerStatus"></div>
-                                        <div id="info"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </c:if>
-                    <c:if test="${not empty error}">
-                        <div class="section">${error}</div>
-                    </c:if>
-                </c:when>
-                <c:otherwise><%-- User is NOT logged in --%>
-                    <jsp:include page="loginMsg.jsp"/>
-                </c:otherwise>
-            </c:choose>
+                        </div>
+                    </form>
+                </c:if>
+                <c:if test="${not empty error}">
+                    <div class="section">${error}</div>
+                </c:if>
+            </c:when>
+            <c:otherwise><%-- User is NOT logged in --%>
+                <jsp:include page="loginMsg.jsp"/>
+            </c:otherwise>
+        </c:choose>
     </body>
 </html>

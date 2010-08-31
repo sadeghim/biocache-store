@@ -1280,11 +1280,12 @@ li.taxonBreakdown { border: 1px solid gray; padding:10px; margin-bottom: 5px;}
     -moz-border-radius: 8px; /* FF1+ */
     -webkit-border-radius: 8px; /* Saf3+, Chrome */
     border-radius: 8px; /* Opera 10.5, IE 9 */
+    line-height: 16px;
 }
 #sightingInfo label {
     width: 120px;
     display: inline-block;
-    vertical-align: top;
+    vertical-align: middle;
 }
 #sightingNotes {
     width: 200px;
@@ -1308,8 +1309,11 @@ div#location {
     vertical-align: middle;
 }
 #sightingInfo p {
-    padding: 5px 8px;
+    padding: 6px 8px;
     vertical-align: top;
+}
+#sightingInfo .hint {
+    color: #555;
 }
 #confirmValues {
     padding: 10px;
@@ -1368,4 +1372,9 @@ div.time-picker {
     bottom: 45%;
     left: 45%;
     right: 45%;
+}
+.toolTip {
+    text-align: left;
+    width: 250px;
+    color: red;
 }
