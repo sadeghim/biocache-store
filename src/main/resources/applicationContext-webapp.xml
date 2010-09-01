@@ -55,4 +55,6 @@
   <bean id="taxonConceptDAO" class="org.ala.biocache.dao.TaxonConceptDAOImpl">
     <property name="dataSource" ref="dataSource" />
   </bean>
+  
+  <bean id="restfulClient" class="org.ala.client.util.RestfulClient"/>
 </beans>

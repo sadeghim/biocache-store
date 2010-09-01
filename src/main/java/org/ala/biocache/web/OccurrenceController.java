@@ -14,7 +14,10 @@
  ***************************************************************************/
 package org.ala.biocache.web;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
@@ -34,6 +37,8 @@ import org.ala.biocache.util.SearchUtils;
 import org.ala.client.appender.RestLevel;
 import org.ala.client.model.LogEventVO;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,18 +50,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import java.util.Map;
 import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import org.ala.biocache.util.CitationUtils;
-import org.ala.biocache.util.SearchUtils;
-import org.ala.client.appender.RestLevel;
-import org.ala.client.model.LogEventVO;
+
+//import org.ala.biocache.util.CitationUtils;
+import org.ala.client.util.RestfulClient;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Occurrences controller for the BIE biocache site
  *
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
+ * 
+ * History:
+ * 1 Sept 10 (MOK011): added restfulClient to retrieve citation information into citation.txt
+ * [private void getCitations(Set<String> keys, OutputStream out) throws HttpException, IOException]
+ * 
+ * 
  */
 @Controller
 public class OccurrenceController {
@@ -75,10 +86,12 @@ public class OccurrenceController {
 	protected DataProviderDAO dataProviderDAO;
 	@Inject
 	protected SearchUtils searchUtils;
-        @Inject
-	protected CitationUtils citationUtils;
 	@Inject
 	protected RawOccurrenceRecordDAO rawOccurrenceRecordDAO;
+//    @Inject
+//	protected CitationUtils citationUtils;	
+	@Inject
+	protected RestfulClient restfulClient;
 	
 	/** Name of view for site home page */
 	private String HOME = "homePage";
@@ -90,6 +103,9 @@ public class OccurrenceController {
 	protected String hostUrl = "http://localhost:8888/biocache-webapp";
 	protected String bieBaseUrl = "http://bie.ala.org.au/";
 	protected String collectoryBaseUrl = "http://collections.ala.org.au";
+	protected String citationServiceUrl = "http://collections.ala.org.au/lookup/citation";
+	
+	private ObjectMapper deserMapper = new ObjectMapper();       
 
 	/**
 	 * Custom handler for the welcome view.
@@ -620,7 +636,13 @@ public class OccurrenceController {
                 if(!uidStats.isEmpty()){
                     //add the citations for the supplied uids
                     zop.putNextEntry(new java.util.zip.ZipEntry("citation.txt"));
-                    citationUtils.addCitation(uidStats.keySet(), zop);
+                    try{
+                    	getCitations(uidStats.keySet(), zop);
+//                    citationUtils.addCitation(uidStats.keySet(), zop);
+                    }
+                    catch(Exception e){
+                    	logger.error(e);
+                    }
                     zop.closeEntry();
                 }
                 zop.flush();
@@ -634,7 +656,35 @@ public class OccurrenceController {
 		return null;
 	}
 
-
+	/**
+	 * get citation info from citation web service and write it into citation.txt file.
+	 * 
+	 * @param keys
+	 * @param out
+	 * @throws HttpException
+	 * @throws IOException
+	 */
+	private void getCitations(Set<String> keys, OutputStream out) throws HttpException, IOException{
+		if(keys == null || out == null){
+			throw new NullPointerException("keys and/or out is null!!");
+		}
+		
+        Object[] citations = restfulClient.restPost(citationServiceUrl, keys);
+        if((Integer)citations[0] == HttpStatus.SC_OK){
+        	deserMapper.getDeserializationConfig().set(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        	String[] rootNode = deserMapper.readValue((String)citations[1], String[].class);
+	        for(int j = 0; j < rootNode.length; j++){
+	        	//ignore UID XXXX not known
+	        	if(rootNode[j].startsWith("UID ") && rootNode[j].endsWith(" not known")){
+	        		logger.debug("**** Citation: " + rootNode[j]);
+	        	}
+	        	else{
+	        		out.write((rootNode[j] + "\r\n").getBytes());
+	        	}	        		        	
+	        }
+    	}		
+	}
+	
 	/**
 	 * Occurrence record page
 	 *
@@ -713,4 +763,12 @@ public class OccurrenceController {
 			RawOccurrenceRecordDAO rawOccurrenceRecordDAO) {
 		this.rawOccurrenceRecordDAO = rawOccurrenceRecordDAO;
 	}
+	
+    public String getCitationServiceUrl() {
+		return citationServiceUrl;
+	}
+
+	public void setCitationServiceUrl(String citationServiceUrl) {
+		this.citationServiceUrl = citationServiceUrl;
+	}	
 }
