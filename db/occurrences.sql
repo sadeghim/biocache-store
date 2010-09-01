@@ -1,3 +1,4 @@
+set @@session.max_sp_recursion_depth=255; 
 delimiter $$
 -- Function to get the names for a geo regino
 -- The arguments:
