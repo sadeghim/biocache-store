@@ -175,17 +175,22 @@
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="biogeographicRegion" fieldName="Biogeographic Region">${occurrence.biogeographicRegion}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="place" fieldName="Place">${occurrence.place}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="locality" fieldName="Locality">${rawOccurrence.locality}</alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="latitude" fieldName="Latitude">${occurrence.latitude}</alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="longitude" fieldName="Longitude">${occurrence.longitude}</alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="latitude" fieldName="Latitude">${rawOccurrence.latitude}</alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="longitude" fieldName="Longitude">${rawOccurrence.longitude}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="coordinatePrecision" fieldName="Coordinate Precision (metres)">
                             	<c:if test="${not empty occurrence.latitude || not empty occurrence.longitude}">
                             		${not empty occurrence.coordinatePrecision ? occurrence.coordinatePrecision : 'Unknown'}
                             	</c:if>
                             </alatag:occurrenceTableRow>
+                            <c:if test="${not empty rawOccurrence.generalisedInMetres}">
+                            	<alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="generalisedInMetres" fieldName="Coordinates generalised">
+                            		Due to sensitivity concerns, the coordinates of this record have been generalised to ${rawOccurrence.generalisedInMetres} metres.
+                            	</alatag:occurrenceTableRow>
+                            </c:if>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="geodeticDatum" fieldName="Geodetic datum">${rawOccurrence.geodeticDatum}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="occurrenceRemarks" fieldName="Notes">${rawOccurrence.occurrenceRemarks}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="individualCount" fieldName="Individual count">${rawOccurrence.individualCount}</alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="citation" fieldName="Individual count">${rawOccurrence.citation}</alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="citation" fieldName="Citation">${rawOccurrence.citation}</alatag:occurrenceTableRow>
 
                         </table>
                     </div>
