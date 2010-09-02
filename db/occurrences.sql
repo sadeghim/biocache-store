@@ -156,7 +156,7 @@ CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT)
 		,'IFNULL(get_taxa_guid(oc.species_concept_id),\'\'), IFNULL(get_taxa_canonical(oc.species_concept_id),\'\'),'
 		,'IFNULL(get_georegion_names(oc.id,0,2),\'\') as states,'
 		,'IFNULL(get_georegion_names(oc.id,2000,3999),\'\') as bio_geo_regions,'
-		,'IFNULL(get_georegion_names(oc.id,3,11),\'\') as places,'
+		,'IFNULL(get_georegion_names(oc.id,3,12),\'\') as places,'
 		,'IFNULL(oc.latitude,\'\'),IFNULL(oc.longitude,\'\'),IFNULL(ror.lat_long_precision,\'\'),'
 		,'IFNULL(CONCAT_WS(\'\,\', oc.latitude, oc.longitude),\'\') as lat_long,'
 		,'IFNULL(oc.cell_id,\'\'),IFNULL(oc.centi_cell_id,\'\'),IFNULL(oc.tenmilli_cell_id,\'\'),'
