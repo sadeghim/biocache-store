@@ -153,55 +153,58 @@ public class OccurrenceController {
 			@RequestParam(value="rad", required=false, defaultValue="10") Float radius,
 			@RequestParam(value="lat", required=false, defaultValue="-35.27412f") Float latitude,
 			@RequestParam(value="lon", required=false, defaultValue="149.11288f") Float longitude,
-			Model model)
-	throws Exception {
+			Model model) throws Exception {
 
 		if (query == null || query.isEmpty()) {
 			return LIST;
 		}
 
 		SearchQuery searchQuery = new SearchQuery(query, "taxon", filterQuery);
-		searchUtils.updateTaxonConceptSearchString(searchQuery);
+		boolean taxonFound = searchUtils.updateTaxonConceptSearchString(searchQuery);
 
-		if (startIndex == null) {
-			startIndex = 0;
+		if(taxonFound){
+		
+			if (startIndex == null) {
+				startIndex = 0;
+			}
+			if (pageSize == null) {
+				pageSize = 20;
+			}
+			if (sortField.isEmpty()) {
+				sortField = "score";
+			}
+			if (sortDirection.isEmpty()) {
+				sortDirection = "asc";
+			}
+	
+			SearchResultDTO searchResult = new SearchResultDTO();
+			String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+			model.addAttribute("entityQuery", searchQuery.getEntityQuery());
+			model.addAttribute("query", query);
+			model.addAttribute("queryJsEscaped", queryJsEscaped);
+			model.addAttribute("facetQuery", filterQuery);
+	        
+	        searchResult = searchDAO.findByFulltextQuery("*:*", searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
+	        
+			model.addAttribute("searchResult", searchResult);
+			logger.debug("query = "+query);
+			Long totalRecords = searchResult.getTotalRecords();
+			model.addAttribute("totalRecords", totalRecords);
+			//type of search
+			model.addAttribute("type", "taxon");
+	
+			if(logger.isDebugEnabled()){
+				logger.debug("Returning results set with: "+totalRecords);
+			}
+	
+			if (pageSize > 0) {
+				Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+				model.addAttribute("lastPage", lastPage);
+			}
+		} else {
+			model.addAttribute("totalRecords", 0);
+			model.addAttribute("searchResult", new SearchResultDTO());
 		}
-		if (pageSize == null) {
-			pageSize = 20;
-		}
-		if (sortField.isEmpty()) {
-			sortField = "score";
-		}
-		if (sortDirection.isEmpty()) {
-			sortDirection = "asc";
-		}
-
-		SearchResultDTO searchResult = new SearchResultDTO();
-		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
-		model.addAttribute("entityQuery", searchQuery.getEntityQuery());
-
-		model.addAttribute("query", query);
-		model.addAttribute("queryJsEscaped", queryJsEscaped);
-		model.addAttribute("facetQuery", filterQuery);
-        
-        searchResult = searchDAO.findByFulltextQuery("*:*", searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
-        
-		model.addAttribute("searchResult", searchResult);
-		logger.debug("query = "+query);
-		Long totalRecords = searchResult.getTotalRecords();
-		model.addAttribute("totalRecords", totalRecords);
-		//type of search
-		model.addAttribute("type", "taxon");
-
-		if(logger.isDebugEnabled()){
-			logger.debug("Returning results set with: "+totalRecords);
-		}
-
-		if (pageSize > 0) {
-			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-			model.addAttribute("lastPage", lastPage);
-		}
-
 		return LIST;
 	}
 

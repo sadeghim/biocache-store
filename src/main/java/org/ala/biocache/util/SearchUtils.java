@@ -99,61 +99,29 @@ public class SearchUtils {
      * @param query
      * @return
      */
-    public void updateTaxonConceptSearchString(SearchQuery searchQuery){
-        try {
+    public boolean updateTaxonConceptSearchString(SearchQuery searchQuery){
         	
-        	String guid = searchQuery.getQuery();
-        	TaxonConcept tc = taxonConceptDAO.getByGuid(guid);
-        	
-            //lets retrieve the details of a taxon
-		//http://alaslvweb2-cbr.vm.csiro.au:8080/bie-webapp/species/urn:lsid:biodiversity.org.au:apni.taxon:295882
-//
-//            String query = searchQuery.getQuery();
-//            String jsonObject = OccurrenceController.getUrlContentAsString(bieBaseUrl + "/species/" + query + ".json");
-//            
-//            JSONObject j = new JSONObject(jsonObject);
-//            JSONObject extendedDTO = j.getJSONObject("extendedTaxonConceptDTO");
-//            JSONObject taxonConcept = extendedDTO.getJSONObject("taxonConcept");
-//
-//            //retrieve the left and right values
-//            String left = taxonConcept.getString("left");
-//            String right = taxonConcept.getString("right");
-//
-//            logger.debug("Querying with left and right: " + left + ", " + right);
-//            logger.debug("Found concept: " + taxonConcept.getString("nameString"));
-//
-//            //get rank string
-//            String rankString = taxonConcept.getString("rankString");
-//            String commonName = null;
-//
-//            //get a common name
-//            JSONArray commonNames = extendedDTO.getJSONArray("commonNames");
-//            if (!commonNames.isEmpty()) {
-//                commonName = commonNames.getJSONObject(0).getString("nameString");
-//            }
-//
-//            //contruct a name for search purposes
-//            String scientificName = taxonConcept.getString("nameString");
-            StringBuffer entityQuerySb = new StringBuffer(tc.getRankString() + ": " + tc.getScientificName());
-            if (tc.getCommonName() != null) {
-                entityQuerySb.append(" (");
-                entityQuerySb.append(tc.getCommonName());
-                entityQuerySb.append(") ");
-            }
-            searchQuery.addToFilterQuery("lft:[" + tc.getLeft() + " TO " + tc.getRight() + "]");
-            
-            if (logger.isDebugEnabled()) {
-                for (String filter : searchQuery.getFilterQuery()) {
-                    logger.debug("Filter: " + filter);
-                }
-            }
-            searchQuery.setQuery("*:*");
-            searchQuery.setEntityQuery(entityQuerySb.toString());
-        } catch (Exception e) {
-            //TODO work out what we want to do to the search if an exception occurs while
-            //contacting the bie etc
-        	logger.error(e.getMessage(), e);
-        }
+    	String guid = searchQuery.getQuery();
+    	TaxonConcept tc = taxonConceptDAO.getByGuid(guid);
+    	if(tc!=null){
+	        StringBuffer entityQuerySb = new StringBuffer(tc.getRankString() + ": " + tc.getScientificName());
+	        if (tc.getCommonName() != null) {
+	            entityQuerySb.append(" (");
+	            entityQuerySb.append(tc.getCommonName());
+	            entityQuerySb.append(") ");
+	        }
+	        searchQuery.addToFilterQuery("lft:[" + tc.getLeft() + " TO " + tc.getRight() + "]");
+	        
+	        if (logger.isDebugEnabled()) {
+	            for (String filter : searchQuery.getFilterQuery()) {
+	                logger.debug("Filter: " + filter);
+	            }
+	        }
+	        searchQuery.setQuery("*:*");
+	        searchQuery.setEntityQuery(entityQuerySb.toString());
+	        return true;
+    	}
+    	return false;
     }
 
     /**
