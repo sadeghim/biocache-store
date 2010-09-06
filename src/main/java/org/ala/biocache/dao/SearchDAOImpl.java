@@ -14,13 +14,14 @@
  ***************************************************************************/
 package org.ala.biocache.dao;
 
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
@@ -52,8 +53,6 @@ import org.springframework.stereotype.Component;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.ibm.icu.text.SimpleDateFormat;
-import java.io.OutputStream;
-import java.util.Map;
 
 /**
  * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
@@ -212,12 +211,12 @@ public class SearchDAOImpl implements SearchDAO {
         logger.debug("There are " + species.size() + "records being downloaded");
         CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), '\t', '"');
         csvWriter.writeNext(new String[]{
-            		"Globally Unique Identifier (GUID)",
+            		"Taxon ID",
                     "Kingdom",
-                    "Familiy",
-            		"Scientific Name",
-            		"CommonName",
-                    "Count",
+                    "Family",
+            		"Scientific name",
+            		"Common name",
+                    "Record count",
         });
         int count = 0;
         for (TaxaCountDTO item : species) {
@@ -262,9 +261,9 @@ public class SearchDAOImpl implements SearchDAO {
             
             csvWriter.writeNext(new String[]{
             		"Record id",
-            		"Concept lsid",
+            		"Taxon ID",
             		"Original taxon name",
-                        "Supplied Common Name",
+                    "Supplied Common Name",
             		"Recognised taxon name",
             		"Taxon rank",
                     "Common name",
@@ -272,7 +271,7 @@ public class SearchDAOImpl implements SearchDAO {
             		"Latitude",
             		"Longitude",
             		"Coordinate Precision",
-            		"locality",
+            		"Locality",
             		"Bio region",
             		"Basis of record",
             		"State/Territory",
@@ -305,7 +304,7 @@ public class SearchDAOImpl implements SearchDAO {
             			result.getId(),
             			result.getTaxonConceptLsid(),
             			result.getRawTaxonName(),
-                                result.getRawCommonName(),
+                        result.getRawCommonName(),
             			result.getTaxonName(),
             			result.getRank(),
             			result.getCommonName(),
@@ -326,11 +325,12 @@ public class SearchDAOImpl implements SearchDAO {
             			result.getIdentifierName(),
             			result.getCitation(),
 	            	};
-                         //increment the counters....
-                        incrementCount(uidStats, result.getInstitutionCodeUid());
-                        incrementCount(uidStats, result.getCollectionCodeUid());
-                        incrementCount(uidStats, result.getDataProviderUid());
-                        incrementCount(uidStats, result.getDataResourceUid());
+	            	
+                     //increment the counters....
+                    incrementCount(uidStats, result.getInstitutionCodeUid());
+                    incrementCount(uidStats, result.getCollectionCodeUid());
+                    incrementCount(uidStats, result.getDataProviderUid());
+                    incrementCount(uidStats, result.getDataResourceUid());
                         
 	            	csvWriter.writeNext(record);
 	            	csvWriter.flush();
