@@ -27,6 +27,7 @@ import org.ala.biocache.dto.OccurrencePoint;
 import org.ala.biocache.dto.PointType;
 import org.ala.biocache.dto.SearchResultDTO;
 import org.ala.biocache.dto.TaxaCountDTO;
+import org.ala.biocache.dto.TaxaRankCountDTO;
 
 /**
  * DAO for searching occurrence records held in the biocache.
@@ -199,5 +200,16 @@ public interface SearchDAO {
     List<TaxaCountDTO> findTaxaByUserId(String userId) throws Exception;
 
     List<OccurrenceDTO> findPointsForUserId(String userId) throws Exception;
+    /**
+     * Find all the sources for the supplied query
+     *
+     * @param query
+     * @return
+     * @throws Exception
+     */
+    Map<String,Integer> getSourcesForQuery(String query, String[] filterQuery) throws Exception;
+
+
+    TaxaRankCountDTO findTaxonCountForUid(String query, int maximumFacets) throws Exception;
 }
 

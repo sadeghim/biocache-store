@@ -53,6 +53,8 @@ import org.springframework.stereotype.Component;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.ibm.icu.text.SimpleDateFormat;
+import org.ala.biocache.dto.TaxaRankCountDTO;
+import org.ala.biocache.util.SearchUtils;
 
 /**
  * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
@@ -723,6 +725,44 @@ public class SearchDAOImpl implements SearchDAO {
         }
         return fDTOs;
 	}
+        
+    /**
+     * Finds the counts for the taxa starting at the family level.
+     *
+     * If the number of distinct taxa is higher than maximumFacets then we
+     * move up to the next level of the taxonomic hierarchy.
+     *
+     * @param query
+     * @param maximumFacets
+     * @return
+     * @throws Exception
+     */
+    public TaxaRankCountDTO findTaxonCountForUid(String query, int maximumFacets) throws Exception {
+        logger.info("Attempting to find the counts for " + query);
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQueryType("standard");
+        solrQuery.setQuery(query);
+        solrQuery.setRows(0);
+        solrQuery.setFacet(true);
+        TaxaRankCountDTO trDTO = null;
+        for (int i = 5; i > 0 && trDTO == null; i--) {
+            String ffname = SearchUtils.getRankFacetName(i);
+            solrQuery.addFacetField(ffname);
+            solrQuery.setFacetMinCount(1);
+            QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, ffname, "asc");
+            FacetField ff = qr.getFacetField(ffname);
+            if (ff.getValues().size() <= maximumFacets) {
+                trDTO = new TaxaRankCountDTO(ffname);
+                List<FieldResultDTO> fDTOs = new ArrayList<FieldResultDTO>();
+                for (Count count : ff.getValues()) {
+                    FieldResultDTO f = new FieldResultDTO(count.getName(), count.getCount());
+                    fDTOs.add(f);
+                }
+                trDTO.setTaxa(fDTOs);
+            }
+        }
+        return trDTO;
+    }
 	
     /**
      * Perform SOLR query - takes a SolrQuery and search params
@@ -991,6 +1031,38 @@ public class SearchDAOImpl implements SearchDAO {
         }
 
         return speciesCounts;
+    }
+    /**
+     * Obtains a list and facet count of the source uids for the supplied query.
+     * 
+     * @param query
+     * @param filterQuery
+     * @return
+     * @throws Exception
+     */
+    public Map<String,Integer> getSourcesForQuery(String query, String[] filterQuery) throws Exception{
+       
+        Map<String,Integer> uidStats = new HashMap<String, Integer>();
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.setQuery(formatSearchQuery(query));
+        solrQuery.setQueryType("standard");
+        solrQuery.setRows(0);
+        solrQuery.setFacet(true);
+        solrQuery.addFacetField("data_provider_uid");
+        solrQuery.addFacetField("data_resource_uid");
+        solrQuery.addFacetField("collection_code_uid");
+        solrQuery.addFacetField("institution_code_uid");
+        QueryResponse qr = runSolrQuery(solrQuery, filterQuery, 1, 0, "score", "asc");
+        //now cycle through and get all the facets
+        List<FacetField> facets = qr.getFacetFields();
+        for(FacetField facet : facets){
+            if(facet.getValues() != null){
+                for(FacetField.Count ffc : facet.getValues()){
+                    uidStats.put(ffc.getName(), new Integer((int)ffc.getCount()));
+                }
+            }
+        }
+        return uidStats;
     }
 
 

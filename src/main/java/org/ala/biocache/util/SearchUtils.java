@@ -10,13 +10,15 @@ import org.ala.biocache.dto.OccurrenceDTO;
 import org.ala.biocache.dto.SearchQuery;
 import org.ala.biocache.model.TaxonConcept;
 import org.ala.biocache.web.OccurrenceController;
-import org.apache.commons.lang.StringUtils;
+
 import org.apache.commons.math.util.MathUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import atg.taglib.json.util.JSONArray;
+
 import atg.taglib.json.util.JSONObject;
+import java.util.Set;
+import org.ala.biocache.dto.OccurrenceSourceDTO;
 /**
  * A class to provide utility methods used to populate search details.
  * @author Natasha
@@ -45,7 +47,7 @@ public class SearchUtils {
             String query = searchQuery.getQuery();
 
 	        //query the collectory for the institute and collection codes needed to perform the search
-	        String jsonObject = OccurrenceController.getUrlContentAsString(collectoryBaseUrl + "/collection/summary/" + query);
+	        String jsonObject = OccurrenceController.getUrlContentAsString(collectoryBaseUrl + "/lookup/summary/" + query);
 	        JSONObject j = new JSONObject(jsonObject);
 	        String collectionName = j.getString("name");
 //	        JSONArray institutionCode = j.getJSONArray("derivedInstCodes");
@@ -180,6 +182,39 @@ public class SearchUtils {
 	    	occurrence.setPoint00001(MathUtils.round(lat, 4)+","+MathUtils.round(lon, 4));
     	}
     }
+    /**
+     * returns the solr field that should be used to search for a particular uid
+     * @param uid
+     * @return
+     */
+    public static String getUidSearchField(String uid){
+        if(uid.startsWith("co"))
+            return "collection_code_uid";
+        if(uid.startsWith("in"))
+            return "institution_code_uid";
+        if(uid.startsWith("dr"))
+            return "data_resource_uid";
+        if(uid.startsWith("dp"))
+            return "data_provider_uid";
+        return null;
+    }
+    /**
+     * Returns the rank name based on an integer position
+     * @param position
+     * @return
+     */
+    public static String getRankFacetName(int position){
+        switch(position){
+            case 1:return "kingdom";
+            case 2:return "phylum";
+            case 3:return "class";
+            case 4:return "order";
+            case 5:return "family";
+            case 6:return "genus";
+            case 7:return "species";
+            default: return "unknown";
+        }
+    }
 	/**
 	 * @param taxonConceptDAO the taxonConceptDAO to set
 	 */
@@ -198,4 +233,30 @@ public class SearchUtils {
 	public void setBieBaseUrl(String bieBaseUrl) {
 		this.bieBaseUrl = bieBaseUrl;
 	}
+
+        /**
+         * Returns the information for the supplied source keys
+         *
+         * TODO: There may be a better location for this method.
+         *
+         * @param keys
+         * @return
+         */
+        public List<OccurrenceSourceDTO> getSourceInformation(Set<String> keys){
+            logger.debug("Listing the source information for : " + keys);
+        List<OccurrenceSourceDTO> sources = new ArrayList<OccurrenceSourceDTO>();
+        try{
+        for(String key : keys){
+            //get the information for the uid
+            String jsonObject = OccurrenceController.getUrlContentAsString(collectoryBaseUrl + "/lookup/summary/" + key);
+	    JSONObject j = new JSONObject(jsonObject);
+            sources.add(new OccurrenceSourceDTO(j.getString("name"),key));
+
+        }
+        }
+        catch(Exception e){
+            logger.error(e.getMessage());
+        }
+        return sources;
+    }
 }

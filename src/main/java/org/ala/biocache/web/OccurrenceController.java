@@ -208,7 +208,36 @@ public class OccurrenceController {
 		}
 		return LIST;
 	}
+        /**
+         * Obtains a list of the sources for the supplied guid.
+         *
+         * It also handle's the logging for the BIE.
+         * 
+         * @param query
+         * @param request
+         * @param model
+         * @throws Exception
+         */
+        @RequestMapping(value = "/occurrences/sourceByTaxon/{guid}.json", method = RequestMethod.GET)
+        public void sourceByTaxon(
+			@PathVariable(value="guid") String query,
+                        HttpServletRequest request,
+                        Model model
+                        )
+        throws Exception{
+            String email = null;
+                String reason = "Viewing BIE species map";
+                String ip = request.getLocalAddr();
+            SearchQuery searchQuery = new SearchQuery(query, "taxon", null);
+		searchUtils.updateTaxonConceptSearchString(searchQuery);
+                Map<String, Integer> sources =searchDAO.getSourcesForQuery(searchQuery.getQuery(), searchQuery.getFilterQuery());
+                model.addAttribute("occurrenceSources", searchUtils.getSourceInformation(sources.keySet()));
 
+                //log the usages statistic to the logger
+                LogEventVO vo = new LogEventVO(2, email, reason, ip,sources);
+	    	logger.log(RestLevel.REMOTE, vo);
+            
+        }
 	/**
 	 * Occurrence search page uses SOLR JSON to display results
 	 * 

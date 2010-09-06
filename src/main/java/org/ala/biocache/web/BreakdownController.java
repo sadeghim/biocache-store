@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import org.ala.biocache.dao.SearchDAO;
 import org.ala.biocache.dto.FieldResultDTO;
 import org.ala.biocache.dto.SearchQuery;
+import org.ala.biocache.dto.TaxaRankCountDTO;
 import org.ala.biocache.util.SearchUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -106,8 +107,24 @@ public class BreakdownController {
     	List<FieldResultDTO> results = searchDAO.findRecordByStateFor(searchQuery.getQuery());
     	model.addAttribute("states", results);
     	return COLLECTIONS_JSON;
-    }    
-    
+    }
+
+    /**
+     * 
+     * @param query The UID to perform the breakdown for
+     * @param max The maximum number of taxa allowed in the result set
+     * @param model
+     * @throws Exception
+     */
+    @RequestMapping(value = "/breakdown/uid/taxa/{max}/{query}.json", method = RequestMethod.GET)
+      public void uidTaxonBreakdown(@PathVariable("query") String query, @PathVariable("max") Integer max, Model model) throws Exception {
+        String newQuery = SearchUtils.getUidSearchField(query);
+        if(newQuery != null){
+            newQuery +=":" +query;
+            TaxaRankCountDTO results = searchDAO.findTaxonCountForUid(newQuery, max);
+            model.addAttribute("breakdown", results);
+        }   
+        }
 
 	/**
 	 * @param searchDAO the searchDAO to set
