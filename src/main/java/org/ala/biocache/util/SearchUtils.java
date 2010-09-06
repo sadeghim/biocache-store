@@ -43,47 +43,48 @@ public class SearchUtils {
     public void updateCollectionSearchString(SearchQuery searchQuery) {
         try{
             String query = searchQuery.getQuery();
-	        StringBuilder solrQuery = new StringBuilder();
+
 	        //query the collectory for the institute and collection codes needed to perform the search
 	        String jsonObject = OccurrenceController.getUrlContentAsString(collectoryBaseUrl + "/collection/summary/" + query);
 	        JSONObject j = new JSONObject(jsonObject);
-	        String instituteName = j.getString("name");
-	        JSONArray institutionCode = j.getJSONArray("derivedInstCodes");
-	        JSONArray collectionCode = j.getJSONArray("derivedCollCodes");
+	        String collectionName = j.getString("name");
+//	        JSONArray institutionCode = j.getJSONArray("derivedInstCodes");
+//	        JSONArray collectionCode = j.getJSONArray("derivedCollCodes");
 	        StringBuilder displayString = new StringBuilder("Collection: ");
-	        displayString.append(instituteName);
-	        // Build Lucene query for institutions
-	        if (institutionCode != null && institutionCode.size() > 0) {
-	
-	            List<String> institutions = new ArrayList<String>();
-	            for (int i = 0; i < institutionCode.size(); i++) {
-	                institutions.add("institution_code:" + institutionCode.getString(i));
-	            }
-	            solrQuery.append("(");
-	            solrQuery.append(StringUtils.join(institutions, " OR "));
-	            solrQuery.append(")");
-	
-	        }
-	
-	        // Build Lucene query for collections
-	        if (collectionCode != null && collectionCode.size() > 0) {
-	            if (solrQuery.length() > 0) {
-	                solrQuery.append(" AND ");
-	
-	            }
-	            //StringBuilder displayString = new StringBuilder("Institution: ");
-	            List<String> collections = new ArrayList<String>();
-	            for (int i = 0; i < collectionCode.size(); i++) {
-	                //quote the collection code to solve issue with invalid characters (eg Invertebrates - Marine & Other)
-	                collections.add("collection_code:\"" + collectionCode.getString(i) +"\"");
-	                //	displayString.append(coll).append(" ");
-	            }
-	            solrQuery.append("(");
-	            solrQuery.append(StringUtils.join(collections, " OR "));
-	            solrQuery.append(")");
-	
-	        }
-	        searchQuery.setQuery(solrQuery.toString());
+	        displayString.append(collectionName);
+//	        // Build Lucene query for institutions
+//	        StringBuilder solrQuery = new StringBuilder();
+//	        if (institutionCode != null && institutionCode.size() > 0) {
+//	
+//	            List<String> institutions = new ArrayList<String>();
+//	            for (int i = 0; i < institutionCode.size(); i++) {
+//	                institutions.add("institution_code:" + institutionCode.getString(i));
+//	            }
+//	            solrQuery.append("(");
+//	            solrQuery.append(StringUtils.join(institutions, " OR "));
+//	            solrQuery.append(")");
+//	
+//	        }
+//	
+//	        // Build Lucene query for collections
+//	        if (collectionCode != null && collectionCode.size() > 0) {
+//	            if (solrQuery.length() > 0) {
+//	                solrQuery.append(" AND ");
+//	
+//	            }
+//	            //StringBuilder displayString = new StringBuilder("Institution: ");
+//	            List<String> collections = new ArrayList<String>();
+//	            for (int i = 0; i < collectionCode.size(); i++) {
+//	                //quote the collection code to solve issue with invalid characters (eg Invertebrates - Marine & Other)
+//	                collections.add("collection_code:\"" + collectionCode.getString(i) +"\"");
+//	                //	displayString.append(coll).append(" ");
+//	            }
+//	            solrQuery.append("(");
+//	            solrQuery.append(StringUtils.join(collections, " OR "));
+//	            solrQuery.append(")");
+//	
+//	        }
+	        searchQuery.setQuery("collection_code_uid:"+query);
 	        searchQuery.setDisplayString(displayString.toString());
 	        
         }
