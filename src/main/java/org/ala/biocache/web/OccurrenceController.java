@@ -16,6 +16,7 @@ package org.ala.biocache.web;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -476,6 +477,23 @@ public class OccurrenceController {
             // order is query, latitude, longitude, radius
             String[] queryParts = StringUtils.split(query, "|", 4);
             query = queryParts[0];
+            logger.info("(spatial) query: "+query);
+
+            if (query.contains("%%")) {
+                // mulitple parts (%% separated) need to be OR'ed (yes a hack for now)
+                String prefix = StringUtils.substringBefore(query, ":");
+                String suffix = StringUtils.substringAfter(query, ":");
+                String[] chunks = StringUtils.split(suffix, "%%");
+                ArrayList<String> formatted = new ArrayList<String>();
+
+                for (String s : chunks) {
+                    formatted.add(prefix+":"+s);
+                }
+
+                query = StringUtils.join(formatted, " OR ");
+                logger.info("new query: "+query);
+            }
+
             latitude = Float.parseFloat(queryParts[1]);
             longitude = Float.parseFloat(queryParts[2]);
             radius = Float.parseFloat(queryParts[3]);

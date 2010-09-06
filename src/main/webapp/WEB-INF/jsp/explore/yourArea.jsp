@@ -14,25 +14,29 @@
             <title>Explore Your Area</title>
 <!--            <script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensorfalse&amp;key=${googleKey}"></script>-->
             <script type="text/javascript" src="http://www.google.com/jsapi?key=${googleKey}"></script>
-            <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>
+<!--            <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>-->
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
             <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8">
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/explore/yourAreaMap.js"></script>
             <script type="text/javascript">
                 // Global variables for Openlayers
-                var lon = ${longitude};
-                var lat = ${latitude};
-                var radius = "${radius}";
-                var zoom = ${zoom};
                 var contextPath = "${pageContext.request.contextPath}";
+                var zoom = ${zoom};
 
                 //make the taxa and rank global variable so that they can be used in the download
                 var taxa = [];
                 taxa[0] ="*";
                 var rank ="*";
+
+                var zoomForRadius = {
+                    1000: 14,
+                    5000: 12,
+                    10000: 11
+                };
                 
                 // Load Google maps via AJAX API
-                google.load("maps", "2");
+                //google.load("maps", "2");
+                google.load("maps", "3", {other_params:"sensor=false"});
 
                 // all mapping JS code moved to /js/explore/yourAreaMap.js
 
@@ -104,7 +108,7 @@
                         var taxon = $(this).find('a.taxonBrowse2').attr('href');
                         rank = $(this).find('a.taxonBrowse2').attr('id');
                         taxa = []; // array of taxa
-                        taxa = (taxon.contains("|")) ? taxon.split("|") : taxon;
+                        taxa = (taxon.indexOf("|") > 0) ? taxon.split("|") : taxon;
                         //$(this).unbind('click'); // activate links inside this row
                         $('#rightList tbody tr').removeClass("activeRow2"); // un-highlight previous current taxon
                         // remove previous species info row
@@ -116,6 +120,7 @@
                         // hide previous selected spceies info box
                         $(this).addClass("activeRow2"); // highloght current taxon
                         // show the links for current selected species
+                        //console.log('species link -> loadRecordsLayer()');
                         loadRecordsLayer();
                     });
 
@@ -126,7 +131,7 @@
                             var taxon = $('#taxa-level-0 tr.activeRow').find('a.taxonBrowse').attr('href');
                             rank = $('#taxa-level-0 tr.activeRow').find('a.taxonBrowse').attr('id');
                             taxa = []; // array of taxa
-                            taxa = (taxon.contains("|")) ? taxon.split("|") : taxon;
+                            taxa = (taxon.indexOf("|") > 0) ? taxon.split("|") : taxon;
                             var start = $(this).attr('href');
                             // AJAX...
                             var uri = "${pageContext.request.contextPath}/explore/species.json";
@@ -152,14 +157,36 @@
                 }
 
                 /**
+                 * For each taxa group get species counts via AJAX call
+                 */
+                function LoadTaxaGroupCounts() {
+                    $('a.taxonBrowse').each(function(index) {
+                        var countsUrl = "${pageContext.request.contextPath}/explore/taxaGroupCount";
+                        var element = $(this); // for use inside ajax callback
+                        var params = {
+                            "group": $(this).attr('title'),
+                            "latitude": $('#latitude').val(),
+                            "longitude": $('#longitude').val(),
+                            "radius": $('#radius').val()
+                        }
+                        $.get(countsUrl, params, function(count) {
+                            $(element).parent('td').siblings(':last-child').html(count);
+                        });
+                    });
+                    // reload the all species right list
+                    $('#taxa-level-0 tbody td:first').click();
+                }
+
+                /**
                  * Document onLoad event using JQuery
                  */
                 $(document).ready(function() {
                     // re-call (skin) JS function to tweak with search input
                     greyInitialValues();
                     // instantiate GClientGeocoder
-                    geocoder = new GClientGeocoder(); //new google.maps.Geocoder();
-                    geocoder.setBaseCountryCode("AU");
+                    //geocoder = new GClientGeocoder(); //new google.maps.Geocoder();
+                    geocoder = new google.maps.Geocoder();
+                    //geocoder.setBaseCountryCode("AU");
                     // initial page load without params - geocode address
                     var location = $('input#location').val();
                     if (!location || location == '') {
@@ -184,28 +211,36 @@
                     // catch the link on the taxon groups table
                     $('#taxa-level-0 tbody tr').click(function(e) {
                         e.preventDefault(); // ignore the href text - used for data
-
-                        var taxon = $(this).find('a.taxonBrowse').attr('href'); // $(this+' a.taxonBrowse').attr('href');
+                        taxa = $(this).find('a.taxonBrowse').attr('href'); // $(this+' a.taxonBrowse').attr('href');
+                        //console.log("taxon: "+taxon);
                         rank = $(this).find('a.taxonBrowse').attr('id');
-                        taxa = []; // array of taxa
-                        taxa = (taxon.contains("|")) ? taxon.split("|") : taxon;
+                        //taxa = []; // array of taxa
+                        //taxa = (taxon.indexOf("|") > 0) ? taxon.split("|") : taxon;
                         $('#taxa-level-0 tr').removeClass("activeRow"); 
                         $(this).addClass("activeRow"); 
                         $('#taxa-level-1 tbody tr').addClass("activeRow"); 
                         // load records layer on map
-                        loadRecordsLayer(taxa, rank);
+                        //console.log('about to run: loadRecordsLayer()');
+                        if (map) loadRecordsLayer();
                         // AJAX...
                         var uri = "${pageContext.request.contextPath}/explore/species.json";
-                        var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank="+rank;
+                        var params = {
+                            latitude: $('#latitude').val(),
+                            longitude: $('#longitude').val(),
+                            radius: $('#radius').val(),
+                            taxa: taxa,
+                            rank: rank
+                        };
+                        //var params = "?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa="+taxa+"&rank="+rank;
                         $('#taxaDiv').html('[loading...]');
-                        $.getJSON(uri + params, function(data) {
+                        $.getJSON(uri, params, function(data, status) {
                             // process JSON data from request
-                            processSpeciesJsonData(data);
+                            if (status == "success") processSpeciesJsonData(data);
                         });
                     });
 
                     // By default action on page load - show the all species group (simulate a click)
-                    $('#taxa-level-0 tbody td:first a.taxonBrowse').click();
+                    //$('#taxa-level-0 tbody td:first').click();
 
                     // register click event on "Search" button"
                     $('input#locationSearch').click(
@@ -218,7 +253,14 @@
                     // Register onChange event on radius drop-down - will re-submit form
                     $('select#radius').change(
                         function(e) {
-                            $('form#searchForm').submit();
+                            var rad = parseInt($(this).val()) * 1000;
+                            circle.setRadius(rad);
+                            var zoom = zoomForRadius[rad];
+                            map.setZoom((zoom)?zoom:12);
+                            //loadRecordsLayer();
+                            LoadTaxaGroupCounts();
+                            // TODO: zoom map to appropriate level
+                            //$('form#searchForm').submit();
                         }
                     );
 
@@ -255,6 +297,8 @@
                         }
                     });
                     
+                    LoadTaxaGroupCounts();
+                    
                 }); // End: $(document).ready() function
             </script>
         </head>
@@ -271,7 +315,7 @@
                 <div class="section">
                     <div>
                         <div id="mapOuter" style="width: 400px; height: 450px; float:right;">
-                            <div id="yourMap"></div>
+                            <div id="mapCanvas" style="width: 400px; height: 430px;"></div>
                             <div style="font-size:11px;width:400px;color: black;" class="show-80">
                                 <table id="cellCountsLegend">
                                     <tr>
@@ -297,8 +341,8 @@
                                     <input type="hidden" name="location" id="location" value="${location}"/>
                                 </div>
                                 <div id="locationInfo">
-                                    <c:if test="${not empty location}">
-                                        <p>Showing records for: <b>${location}</b></p>
+                                    <c:if test="${true || not empty location}">
+                                        <p>Showing records for: <span id="markerAddress">${location}</span></p>
                                     </c:if>
                                     <button id="download" title="Download a list of all species (tab-delimited file)">Download</button>
                                     <div id="dialog-confirm" title="Continue with download?" style="display: none">
@@ -337,56 +381,56 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td><a href="*" id="*" class="taxonBrowse">All Species</a>
-                                                    <td>${fn:length(allLife)}</td>
+                                                    <td><a href="*" id="*" title="allLife" class="taxonBrowse">All Species</a>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent"><a href="Animalia" id="kingdom" class="taxonBrowse">Animals</a>
-                                                    <td>${fn:length(animals)}</td>
+                                                    <td class="indent"><a href="Animalia" id="kingdom" title="Animals" class="taxonBrowse">Animals</a>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent2"><a href="Mammalia" id="class" class="taxonBrowse">Mammals</a></td>
-                                                    <td>${fn:length(mammals)}</td>
+                                                    <td class="indent2"><a href="Mammalia" id="class" title="Mammals" class="taxonBrowse">Mammals</a></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent2"><a href="Aves" id="class" class="taxonBrowse">Birds</a></td>
-                                                    <td>${fn:length(birds)}</td>
+                                                    <td class="indent2"><a href="Aves" id="class" title="Birds" class="taxonBrowse">Birds</a></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent2"><a href="Reptilia" id="class" class="taxonBrowse">Reptiles</a></td>
-                                                    <td>${fn:length(reptiles)}</td>
+                                                    <td class="indent2"><a href="Reptilia" id="class" title="Reptiles" class="taxonBrowse">Reptiles</a></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent2"><a href="Amphibia" id="class" class="taxonBrowse">Amphibians</a></td>
-                                                    <td>${fn:length(frogs)}</td>
+                                                    <td class="indent2"><a href="Amphibia" id="class" title="Amphibians" class="taxonBrowse">Amphibians</a></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes" id="class" class="taxonBrowse">Fish</a></td>
-                                                    <td>${fn:length(fish)}</td>
+                                                    <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes|Actinopterygii|Sarcopterygii" id="class" title="Fish" class="taxonBrowse">Fish</a></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent2"><a href="Insecta" id="class" class="taxonBrowse">Insects</a></td>
-                                                    <td>${fn:length(insects)}</td>
+                                                    <td class="indent2"><a href="Insecta" id="class" title="Insects" class="taxonBrowse">Insects</a></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent"><a href="Plantae" id="kingdom" class="taxonBrowse">Plants</a></td>
-                                                    <td>${fn:length(plants)}</td>
+                                                    <td class="indent"><a href="Plantae" id="kingdom" title="Plants" class="taxonBrowse">Plants</a></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent"><a href="Fungi" id="kingdom" class="taxonBrowse">Fungi</a></td>
-                                                    <td>${fn:length(fungi)}</td>
+                                                    <td class="indent"><a href="Fungi" id="kingdom" title="Fungi" class="taxonBrowse">Fungi</a></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent"><a href="Chromista" id="kingdom" class="taxonBrowse">Chromista</a></td>
-                                                    <td>${fn:length(chromista)}</td>
+                                                    <td class="indent"><a href="Chromista" id="kingdom" title="Chromista" class="taxonBrowse">Chromista</a></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent"><a href="Protozoa" id="kingdom" class="taxonBrowse">Protozoa</a></td>
-                                                    <td>${fn:length(protozoa)}</td>
+                                                    <td class="indent"><a href="Protozoa" id="kingdom" title="Protozoa" class="taxonBrowse">Protozoa</a></td>
+                                                    <td></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="indent"><a href="Bacteria" id="kingdom" class="taxonBrowse">Bacteria</a></td>
-                                                    <td>${fn:length(bacteria)}</td>
+                                                    <td class="indent"><a href="Bacteria" id="kingdom" title="Bacteria" class="taxonBrowse">Bacteria</a></td>
+                                                    <td></td>
                                                 </tr>
                                             </tbody>
                                         </table>

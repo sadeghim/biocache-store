@@ -897,7 +897,9 @@ table.propertyTable td.propertyNames {
     -webkit-border-radius: 0 0 6px 0 ; /* Saf3+, Chrome */
     border-radius: 0 0 6px 0; /* Opera 10.5, IE 9 */
 }
-
+#markerAddress {
+    font-weight: bold;
+}
 #rightList table {
     width: 365px;
     height: 250px;
@@ -1274,6 +1276,9 @@ li.taxonBreakdown { border: 1px solid gray; padding:10px; margin-bottom: 5px;}
 #sightingAddress {
     margin: 5px 0;
 }
+#sightingAddress #address {
+    width: 200px;
+}
 #sightingInfo {
     background-color: #FAFBF5;
     border: 1px solid #E8EACE;
@@ -1376,5 +1381,9 @@ div.time-picker {
 .toolTip {
     text-align: left;
     width: 250px;
-    color: red;
+    color: black;
+}
+.infoWindow {
+    color: #444;
+    font-size: 12px;
 }

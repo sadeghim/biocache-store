@@ -144,7 +144,7 @@ public class GeoJsonController {
         }
 
         // Convert array to list so we append more values onto it
-        String[] taxaArray = StringUtils.split(taxa, ",");
+        String[] taxaArray = StringUtils.split(taxa, "|");
         ArrayList<String> taxaList = null;
         if (taxaArray != null) {
             taxaList = new ArrayList<String>(Arrays.asList(taxaArray));

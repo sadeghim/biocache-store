@@ -17,8 +17,10 @@ package org.ala.biocache.web;
 
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ala.biocache.dao.SearchDAO;
 import org.ala.biocache.dto.TaxaCountDTO;
+import org.ala.biocache.util.TaxaGroup;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -89,58 +92,12 @@ public class ExploreController {
 
         model.addAttribute("latitude", latitude);
         model.addAttribute("longitude", longitude);
-        model.addAttribute("location", location);
-        model.addAttribute("address", address);
+        model.addAttribute("location", location); // TDOD delete if not used in JSP
+        //model.addAttribute("address", address); // TDOD delete if not used in JSP
         model.addAttribute("radius", radius);
         model.addAttribute("zoom", radiusToZoomLevelMap.get(radius));
+        model.addAttribute("TaxaGroup", EnumSet.allOf(TaxaGroup.class)); // TODO delete if not used in JSP
 
-        //List<TaxaCountDTO> kingdoms = searchDao.findAllKingdomsByCircleArea(latitude, longitude, radius,  null, 0, -1, "kingdom", "asc");
-        List<TaxaCountDTO> allLife = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "*", "*", null, 0, -1, "species", "asc");
-        model.addAttribute("allLife", allLife);
-        model.addAttribute("allLifeCounts", calculateRecordCount(allLife));
-        // Kingdom groups
-        List<TaxaCountDTO> animals = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "kingdom", "Animalia", null, 0, -1, "species", "asc");
-        model.addAttribute("animals", animals);
-        model.addAttribute("animalsCount", calculateRecordCount(animals));
-        List<TaxaCountDTO> plants = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "kingdom", "Plantae", null, 0, -1, "species", "asc");
-        model.addAttribute("plants", plants);
-        model.addAttribute("plantsCount", calculateRecordCount(plants));
-        List<TaxaCountDTO> fungi = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "kingdom", "Fungi", null, 0, -1, "species", "asc");
-        model.addAttribute("fungi", fungi);
-        model.addAttribute("fungiCount", calculateRecordCount(fungi));
-        List<TaxaCountDTO> chromista = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "kingdom", "Chromista", null, 0, -1, "species", "asc");
-        model.addAttribute("chromista", chromista);
-        model.addAttribute("chromistaCount", calculateRecordCount(chromista));
-        List<TaxaCountDTO> protozoa = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "kingdom", "Protozoa", null, 0, -1, "species", "asc");
-        model.addAttribute("protozoa", protozoa);
-        model.addAttribute("protozoaCount", calculateRecordCount(protozoa));
-        List<TaxaCountDTO> bacteria = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "kingdom", "Bacteria", null, 0, -1, "species", "asc");
-        model.addAttribute("bacteria", bacteria);
-        model.addAttribute("bacteriaCount", calculateRecordCount(bacteria));
-        // Animal groups
-        List<TaxaCountDTO> insects = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "class", "Insecta", null, 0, -1, "species", "asc");
-        model.addAttribute("insects", insects);
-        model.addAttribute("insectsCount", calculateRecordCount(insects));
-        List<TaxaCountDTO> mammals = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "class", "Mammalia", null, 0, -1, "species", "asc");
-        model.addAttribute("mammals", mammals);
-        model.addAttribute("mammalsCount", calculateRecordCount(mammals));
-        List<TaxaCountDTO> birds = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "class", "Aves", null, 0, -1, "species", "asc");
-        model.addAttribute("birds", birds);
-        model.addAttribute("birdsCount", calculateRecordCount(birds));
-        List<TaxaCountDTO> reptiles = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "class", "Reptilia", null, 0, -1, "species", "asc");
-        model.addAttribute("reptiles", reptiles);
-        model.addAttribute("reptilesCount", calculateRecordCount(reptiles));
-        List<TaxaCountDTO> frogs = searchDao.findAllSpeciesByCircleAreaAndHigherTaxon(latitude, longitude, radius, "class", "Amphibia", null, 0, -1, "species", "asc");
-		model.addAttribute("frogs", frogs);
-        model.addAttribute("frogsCount", calculateRecordCount(frogs));
-        List<String> fishTaxa = new ArrayList<String>();
-        // Agnatha|Chondrichthyes|
-		fishTaxa.add("Agnatha");
-		fishTaxa.add("Chondrichthyes");
-		fishTaxa.add("Osteichthyes");
-		List<TaxaCountDTO> fish = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, "class", fishTaxa, null, 0, -1, "species", "asc");
-		model.addAttribute("fish", fish);
-        model.addAttribute("fishCount", calculateRecordCount(fish));
         // TODO: get from properties file or load via Spring
         model.addAttribute("speciesPageUrl", speciesPageUrl);
 
@@ -164,8 +121,7 @@ public class ExploreController {
             HttpServletResponse response)
             throws Exception {
 
-
-            logger.debug("Downloading the species in your area... ");
+        logger.debug("Downloading the species in your area... ");
         response.setHeader("Cache-Control", "must-revalidate");
         response.setHeader("Pragma", "must-revalidate");
         response.setHeader("Content-Disposition", "attachment;filename=data");
@@ -178,19 +134,10 @@ public class ExploreController {
             taxaList = new ArrayList<String>();
         }
         ServletOutputStream out = response.getOutputStream();
-        int count =searchDao.writeSpeciesCountByCircleToStream(latitude, longitude, radius, rank, taxaList, out);
+        int count = searchDao.writeSpeciesCountByCircleToStream(latitude, longitude, radius, rank, taxaList, out);
         logger.debug("Exported " + count + " species records in the requested area");
         
 	}
-
-    protected Long calculateRecordCount(List<TaxaCountDTO> taxa) {
-        // Get full count of records in area from facet breakdowns
-        Long totalRecords = 0l;
-        for (TaxaCountDTO taxon : taxa) {
-            totalRecords = totalRecords + taxon.getCount();
-        }
-        return totalRecords;
-    }
 
     /**
      * JSON web service that returns a list of species and record counts for a given location search
@@ -216,7 +163,7 @@ public class ExploreController {
             @RequestParam(value="sort", required=false, defaultValue ="taxon_name") String sort,
             Model model) throws Exception {
 
-        String[] taxaArray = StringUtils.split(taxa, ",");
+        String[] taxaArray = StringUtils.split(taxa, "|");
         ArrayList<String> taxaList = null;
         if (taxaArray != null) {
             taxaList = new ArrayList<String>(Arrays.asList(taxaArray));
@@ -229,6 +176,56 @@ public class ExploreController {
         List<TaxaCountDTO> species = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, taxaList, null, startIndex, pageSize, sort, "asc");
         model.addAttribute("species", species);
         model.addAttribute("speciesCount", species.size());
+    }
+
+    /**
+     * AJAX service to return number of species for given taxa group in a given location
+     *
+     * @param taxaGroupLabel
+     * @param radius
+     * @param latitude
+     * @param longitude
+     * @param model
+     * @return speciesCount
+     * @throws Exception
+     */
+    @RequestMapping(value = "/explore/taxaGroupCount", method = RequestMethod.GET)
+	public void listSpeciesForHigherTaxa(
+            @RequestParam(value="group", required=true, defaultValue ="") String taxaGroupLabel,
+            @RequestParam(value="radius", required=true, defaultValue="10f") Float radius,
+            @RequestParam(value="latitude", required=true, defaultValue="0f") Float latitude,
+            @RequestParam(value="longitude", required=true, defaultValue="0f") Float longitude,
+            HttpServletResponse response) throws Exception {
+
+        TaxaGroup group = TaxaGroup.getForLabel(taxaGroupLabel);
+
+        if (group != null) {
+            List<TaxaCountDTO> taxaCounts = searchDao.findAllSpeciesByCircleAreaAndHigherTaxa(latitude,
+                longitude, radius, group.getRank(), new ArrayList<String>(Arrays.asList(group.getTaxa())),
+                null, 0, -1, "species", "asc");
+            //Long speciesCount = calculateSpeciesCount(taxaCounts);
+            Integer speciesCount = taxaCounts.size();
+            logger.info("Species count for "+group.getLabel()+" = "+speciesCount);
+            OutputStreamWriter os = new OutputStreamWriter(response.getOutputStream());
+            response.setContentType("text/plain");
+            os.write(speciesCount.toString());
+            os.close();
+        }
+    }
+
+    /**
+     * Calculate the number of records for a given taxa group
+     *
+     * @param taxa
+     * @return
+     */
+    protected Long calculateSpeciesCount(List<TaxaCountDTO> taxa) {
+        // Get full count of records in area from facet breakdowns
+        Long totalRecords = 0l;
+        for (TaxaCountDTO taxon : taxa) {
+            totalRecords = totalRecords + taxon.getCount();
+        }
+        return totalRecords;
     }
 
 	/**

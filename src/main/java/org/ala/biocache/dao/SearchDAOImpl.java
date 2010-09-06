@@ -758,13 +758,14 @@ public class SearchDAOImpl implements SearchDAO {
                 }
 
                 solrQuery.addFilterQuery(prefix + ":" + suffix); // solrQuery.addFacetQuery(facetQuery)
-                logger.debug("adding filter query: " + prefix + ":" + suffix);
+                logger.info("adding filter query: " + prefix + ":" + suffix);
             }
         }
 
         solrQuery.setRows(pageSize);
         solrQuery.setStart(startIndex);
         solrQuery.setSortField(sortField, ORDER.valueOf(sortDirection));
+        logger.info("runSolrQuery: "+solrQuery.toString());
         return server.query(solrQuery); // can throw exception
     }
 

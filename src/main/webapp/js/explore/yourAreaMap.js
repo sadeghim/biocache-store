@@ -16,139 +16,163 @@
 // Note there are some global variables that are set by the calling page (which has access to
 // the ${pageContet} object, which are required by this file.:
 //
-//  var lon = ${longitude};
-//  var lat = ${latitude};
-//  var radius = ${radius};
 //  var contextPath = "${pageContext.request.contextPath}";
 
-var map, selectControl, vectorLayer, selectFeature, markerLayer, circleLayer, pinFeature;
+var map, selectControl, selectFeature, marker, circle, markerInfowindow, lastInfoWindow;
+var points = [];
+var infoWindows = [];
 var geocoder;
-var proj900913 = new OpenLayers.Projection("EPSG:900913");
-var proj4326 = new OpenLayers.Projection("EPSG:4326");
 
+//var proj900913 = new OpenLayers.Projection("EPSG:900913");
+//var proj4326 = new OpenLayers.Projection("EPSG:4326");
+
+// pointer fn
+function initialize() {
+    loadMap();
+}
 /**
- * Openlayers map
+ * Google map API v3
  */
 function loadMap() {
-    // create OpenLayers map object
-    map = new OpenLayers.Map('yourMap',{maxResolution: 2468,controls: []});
-    //add controls - restrict mouse wheel chaos
-    map.addControl(new OpenLayers.Control.Navigation({zoomWheelEnabled:false}));
-    map.addControl(new OpenLayers.Control.ZoomPanel({displayClass: "olControlZoomPanel olZoomPanel"}));
-    //map.addControl(new OpenLayers.Control.PanPanel());
-    map.addControl(new OpenLayers.Control.LayerSwitcher({ascending: false}));
-    //map.addControl(new OpenLayers.Control.OverviewMap());
-    
-    // create Google base layers
-    var gmap = new OpenLayers.Layer.Google(
-        "Google Streets",
-        {'sphericalMercator': true, maxExtent: new OpenLayers.Bounds(11548635,-5889094,18604187,-597430)}
-    );
-    
-    var gsat = new OpenLayers.Layer.Google(
-        "Google Satellite",
-        {'sphericalMercator': true, type: G_SATELLITE_MAP, maxExtent: new OpenLayers.Bounds(11548635,-5889094,18604187,-597430), numZoomLevels: 22}
-    );
-    
-    var ghyb = new OpenLayers.Layer.Google(
-        "Google Hybrid",
-        {'sphericalMercator': true, maxExtent: new OpenLayers.Bounds(11548635,-5889094,18604187,-597430), type: G_HYBRID_MAP}
-    );
+    var latLng = new google.maps.LatLng($('#latitude').val(), $('#longitude').val());
+    map = new google.maps.Map(document.getElementById('mapCanvas'), {
+        zoom: zoom,
+        center: latLng,
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+        },
+        navigationControl: true,
+        navigationControlOptions: {
+            style: google.maps.NavigationControlStyle.SMALL // DEFAULT
+        },
+        mapTypeId: google.maps.MapTypeId.HYBRID
+    });
+    marker = new google.maps.Marker({
+        position: latLng,
+        title: 'Sighting Location',
+        map: map,
+        draggable: true
+    });
 
-    map.addLayers([ghyb, gsat, gmap ]);
-
-    var point = new OpenLayers.LonLat(lon, lat);
-    map.setCenter(point.transform(proj4326, map.getProjectionObject()), zoom);
+    markerInfowindow = new google.maps.InfoWindow({
+        content: '<div class="infoWindow">marker address</div>' // gets updated by geocodePosition()
+    });
     
-    // draw Google style pin marker
-    drawMarkerLayer();
-    // load circle showing area included in search
-    drawCircleRadius();
-    // create the vector Layer
-    createVectorLayer();
-    // load occurrences data onto map
-    //loadRecordsLayer(); // loaded by AJAX when "all taxa" link is automatically triggered
-    // reload dynamic layers on zoom event
-    map.events.register('zoomend', map, function (e) {
-        drawCircleRadius();
+    google.maps.event.addListener(marker, 'click', function(event) {
+            if (lastInfoWindow) lastInfoWindow.close();
+            markerInfowindow.setPosition(event.latLng);
+            markerInfowindow.open(map, marker);
+            lastInfoWindow = markerInfowindow;
+    });
+
+    // Add a Circle overlay to the map.
+    var radius = parseInt($('select#radius').val()) * 1000;
+    circle = new google.maps.Circle({
+        map: map,
+        radius: radius,
+        strokeWeight: 1,
+        strokeColor: 'white',
+        strokeOpacity: 0.5,
+        fillColor: '#222', // '#2C48A6'
+        fillOpacity: 0.2,
+        zIndex: -10
+    });
+    // bind circle to marker
+    circle.bindTo('center', marker, 'position');
+
+    // Update current position info.
+    //updateMarkerPosition(latLng);
+    geocodePosition(latLng);
+
+    // Add dragging event listeners.
+    google.maps.event.addListener(marker, 'dragstart', function() {
+        updateMarkerAddress('Dragging...');
+    });
+
+    google.maps.event.addListener(marker, 'drag', function() {
+        updateMarkerAddress('Dragging...');
+        updateMarkerPosition(marker.getPosition());
+    });
+
+    google.maps.event.addListener(marker, 'dragend', function() {
+        updateMarkerAddress('Drag ended');
+        geocodePosition(marker.getPosition());
+        //loadRecordsLayer();
+        LoadTaxaGroupCounts();
+    });
+    
+    google.maps.event.addListener(map, 'zoom_changed', function() {
+        //loadRecordsLayer();
+    });
+    
+    if (!points || points.length == 0) {
+        //$('#taxa-level-0 tbody td:first').click(); // click on "all species" group
         loadRecordsLayer();
-        if (!$.browser.mozilla) markerLayer.setZIndex(750); // not for FF due to bug in FF
-        //markerLayer.setZIndex(750); //seems to break select control for points in FF
-        //if (console) console.log("markerLayer unrenderedFeatures",markerLayer.unrenderedFeatures);
+    }
+}
+
+/**
+ * Google geocode function
+ */
+function geocodePosition(pos) {
+    geocoder.geocode({
+        latLng: pos
+    }, function(responses) {
+        if (responses && responses.length > 0) {
+            //console.log("geocoded position", responses[0]);
+            var address = responses[0].formatted_address;
+            updateMarkerAddress(address);
+            var content = '<div class="infoWindow"><b>Your Location:</b><br/>'+address+'</div>';
+            markerInfowindow.setContent(content);
+        } else {
+            updateMarkerAddress('Cannot determine address at this location.');
+        }
     });
 }
 
 /**
- * Create vector Layer for GeoJSON data display
+ * Update the "address" hidden input and display span
  */
-function createVectorLayer() {
-    // remove existing data if present
-    if (vectorLayer != null) {
-        // Remove any active popups (otherwise they are stuck on screen)
-        for (pop in map.popups) {
-            map.removePopup(map.popups[pop]);
-        }
-        vectorLayer.destroyFeatures();
-        vectorLayer.destroy();
-        //vectorLayer = null;
-    }
-
-    // configuring the styling of the vetor layer
-    var myStyles = new OpenLayers.StyleMap({
-        "default": new OpenLayers.Style({
-            pointRadius: 4,
-            fillOpacity: 0.7,
-            fillColor: '${color}',
-            strokeColor: '${color}',
-            strokeWidth: 0
-        })
-    });
-
-    // projection options
-    var GeoJSON_options = {
-        ignoreExtraDims: true,
-        internalProjection: map.baseLayer.projection,
-        externalProjection: proj4326
-    };
-
-    // create vector layer for occurrence points
-    vectorLayer = new OpenLayers.Layer.Vector("Occurrences", {
-        projection: map.baseLayer.projection,
-        styleMap: myStyles,
-        //strategies: [new OpenLayers.Strategy.BBOX()], // new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.BBOX()
-        protocol: new OpenLayers.Protocol.HTTP({
-            format: new OpenLayers.Format.GeoJSON(GeoJSON_options)
-        })
-    });
-
-    map.addLayer(vectorLayer);
+ function updateMarkerAddress(str) {
+    $('#markerAddress').empty().html(str);
+    $('#location').val(str);
 }
+
+/**
+ * Update the lat & lon hidden input elements
+ */
+function updateMarkerPosition(latLng) {
+    $('#latitude').val(latLng.lat());
+    $('#longitude').val(latLng.lng());
+}
+
 /**
  * Load (reload) geoJSON data into vector layer
  */
-function loadRecordsLayer() {
-    if (!map || !vectorLayer) {
+function loadRecordsLayer(retry) {
+    if (!map && !retry) {
         // in case AJAX calls this function before map has initialised
+        setTimeout(function() {if (!points || points.length == 0) {loadRecordsLayer(true);console.log("retrying...");}}, 2000);
+        return;
+    } else if (!map) {
+        //console.log('retry failed');
         return;
     }
-    // clear vector featers and popups
-    vectorLayer.destroyFeatures();
-    // clear any open popups
-    for (pop in map.popups) {
-        map.removePopup(map.popups[pop]);
-    }
+  
     // URL for GeoJSON web service
-    var geoJsonUrl = contextPath + "/geojson/radius-points"; 
+    var geoJsonUrl = contextPath + "/geojson/radius-points";
     var zoom = (map && map.getZoom()) ? map.getZoom() : 12;
     // request params for ajax geojson call
     var params = {
         "taxa": taxa,
         "rank": rank,
-        "lat": lat,
-        "long":  lon,
-        "radius": radius,
+        "lat": $('#latitude').val(),
+        "long": $('#longitude').val(),
+        "radius": $('#radius').val(),
         "zoom": zoom
     };
+    //console.log('About to call $.get', map);
     // JQuery AJAX call
     $.get(geoJsonUrl, params, loadNewGeoJsonData);
 }
@@ -158,191 +182,115 @@ function loadRecordsLayer() {
  */
 function loadNewGeoJsonData(data) {
     // clear vector featers and popups
-    vectorLayer.destroyFeatures();
-    // options for geoJson
-    var geoJSON_options = {
-        internalProjection: map.baseLayer.projection,
-        externalProjection: proj4326
-    }
-    var features = new OpenLayers.Format.GeoJSON(geoJSON_options).read(data);
-    
-    vectorLayer.addFeatures(features);
-    
-    loadSelectControl();
-}
-
-/**
- * Register select event on occurrence points
- */
-function loadSelectControl() {
-    if (selectControl) {
-        map.removeControl(selectControl);
-        selectControl.destroy();
-        selectControl = null;
+    if (points && points.length > 0) {
+        $.each(points, function (i, p) {
+            p.setMap(null); // remove from map
+        });
+        points = [];
+    } else {
+        points = [];
     }
 
-    selectControl = new OpenLayers.Control.SelectFeature(vectorLayer, {
-        //hover: true,
-        onSelect: onFeatureSelect,
-        onUnselect: onFeatureUnselect
+    if (infoWindows && infoWindows.length > 0) {
+        $.each(infoWindows, function (i, n) {
+            n.close(); // close any open popups
+        });
+        infoWindows = [];
+    } else {
+        infoWindows = [];
+    }
+
+    $.each(data.features, function (i, n) {
+        var latLng1 = new google.maps.LatLng(n.geometry.coordinates[1], n.geometry.coordinates[0]);
+        var iconUrl = contextPath+"/static/images/circle-"+n.properties.color.replace('#','')+".png";
+        var markerImage = new google.maps.MarkerImage(iconUrl,
+            new google.maps.Size(9, 9),
+            new google.maps.Point(0,0),
+            new google.maps.Point(4, 5)
+        );
+        points[i] = new google.maps.Marker({
+            map: map,
+            position: latLng1,
+            title: n.properties.count+" occurrences",
+            icon: markerImage
+        });
+
+        var solrQuery;
+        if (taxa.indexOf("|") > 0) {
+            var parts = taxa.split("|");
+            var newParts = [];
+            for (j in parts) {
+                newParts.push(rank+":"+parts[j]);
+            }
+            solrQuery = newParts.join(" OR ");
+        } else {
+            solrQuery = rank+':'+taxa;
+        }
+
+        var content = '<div class="infoWindow">Number of records: '+n.properties.count+'<br/>'+
+                '<a href="'+ contextPath +'/occurrences/searchByArea?q='+solrQuery+'|'+
+                n.geometry.coordinates[1]+'|'+n.geometry.coordinates[0]+'|0.05">View list of records</a></div>';
+        infoWindows[i] = new google.maps.InfoWindow({
+            content: content,
+            maxWidth: 200,
+            disableAutoPan: false
+        });
+        google.maps.event.addListener(points[i], 'click', function(event) {
+            if (lastInfoWindow) lastInfoWindow.close(); // close any previously opened infoWindow
+            infoWindows[i].setPosition(event.latLng);
+            infoWindows[i].open(map, points[i]);
+            lastInfoWindow = infoWindows[i]; // keep reference to current infoWindow
+        });
     });
-
-    map.addControl(selectControl);
-    selectControl.activate();
-    //if (console) console.log("selectControl was loaded & activated");
-}
-
-/**
- * vectorLayer feature onSelect function
- */
-function onFeatureSelect(feature) {
-    selectedFeature = feature;
-    var featureCentre = feature.geometry.getCentroid().transform(map.getProjectionObject(), proj4326);
-    popup = new OpenLayers.Popup.FramedCloud(feature.attributes.type, feature.geometry.getBounds().getCenterLonLat(),
-        null, "<div style='font-size:12px'>Number of records: " + feature.attributes.count +
-        "<br /><a href='"+ contextPath +"/occurrences/searchByArea?q="+rank+":"+taxa+"|"+featureCentre.y+"|"+featureCentre.x+"|0.05'>View list of records</a></div>",
-        null, true, onPopupClose);
-    feature.popup = popup;
-    map.addPopup(popup);
-}
-
-/**
- * vectorLayer feature onUnselect function
- */
-function onFeatureUnselect(feature) {
-    map.removePopup(feature.popup);
-    feature.popup.destroy();
-    feature.popup = null;
-}
-
-function onPopupClose(evt) {
-    selectControl.unselect(selectedFeature);
-}
-
-function destroyMap() {
-    if (map != null) {
-        //alert("destroying map");
-        map.destroy();
-        $("#pointsMap").html('');
-    }
-}
-
-function drawMarkerLayer() {
-    if (markerLayer) {
-        //if (console) console.log("markerLayer",markerLayer);
-        //markerLayer.destroy();
-        //markerLayer = null;
-        markerLayer.drawFeature(pinFeature);
-    }
-    // marker pin (Google-style)
-    markerLayer = new OpenLayers.Layer.Vector("Pin");
-    var pinPoint = new OpenLayers.Geometry.Point(lon, lat);
-    pinFeature = new OpenLayers.Feature.Vector(
-        pinPoint.transform(proj4326, map.getProjectionObject()),
-        {title:'Your location'},
-        {   externalGraphic: contextPath +'/static/css/images/marker.png',
-            graphicHeight: 28,
-            graphicWidth: 18,
-            graphicYOffset: -24,
-            graphicZIndex: 750,
-            rendererOptions: {zIndexing: true}
-        }
-    );
-
-    markerLayer.addFeatures(pinFeature);
-    map.addLayer(markerLayer);
-    if (!$.browser.mozilla) markerLayer.setZIndex(750); // not for FF
-    // make marker draggable
-    var dragOptions = {
-        onComplete: function(feature, pixel) {
-            var featureCentre = feature.geometry.transform(map.getProjectionObject(), proj4326);
-            lon = featureCentre.x;
-            lat = featureCentre.y;
-            drawCircleRadius();
-            loadRecordsLayer();
-        }
-    }
-    var dragFeaturesControl = new OpenLayers.Control.DragFeature(markerLayer, dragOptions);
-    map.addControl(dragFeaturesControl);
-    //modifyFeaturesControl.activate(); // off until we can update list of taxa counts on page as well
-
-}
-
-/**
- * Draw a circle representing the area included in occurrence records search
- */
-function drawCircleRadius() {
-    if (circleLayer != null) {
-        circleLayer.destroy();
-        circleLayer = null;
-    }
-
-    circleLayer = new OpenLayers.Layer.Vector("Cirlce", {projection: map.getProjectionObject()});
-    var point = new OpenLayers.Geometry.Point(lon, lat);
-    //alert('proj = '+map.getProjectionObject());
-    var DOTS_PER_UNIT = OpenLayers.INCHES_PER_UNIT.km * OpenLayers.DOTS_PER_INCH;
-
-    var rad = radius * DOTS_PER_UNIT / map.getScale();
-    // add fudge factor for spherical mercapter projection (Google maps)
-    // function was determined using http://www.xuru.org/rt/NLR.asp
-    // works well for middle latitidues but is abit out for Hobart and Darwin
-    if (map.getProjectionObject() == "EPSG:900913") {
-        // (Math.pow(1.005940831, Math.abs(lat))
-        // (0.3534329364 * Math.log(Math.abs(lat))
-        // (Math.pow(Math.abs(lat), 0.55373737645)
-        rad = rad * (Math.pow(1.005940831, Math.abs(lat)));
-    }
-    var style_green = {
-        fillColor: "black",
-        fillOpacity: 0.1,
-        strokeColor: "white",
-        strokeOpacity: 0.8,
-        strokeWidth: 1,
-        //graphicZIndex: 10,
-        pointRadius: rad
-        //pointerEvents: "visiblePainted"
-    };
-    var pointFeature = new OpenLayers.Feature.Vector(point.transform(proj4326, map.getProjectionObject()),{},style_green);
-    //pointFeature.transform(proj4326, map.getProjectionObject());
-    circleLayer.addFeatures([pointFeature]);
-    map.addLayer(circleLayer);
-    //circleLayer.setZIndex(10);
+    
 }
 
 /**
  * Try to get a lat/long using HTML5 geoloation API
  */
 function attemptGeolocation() {
-    //alert("trying html5 geolocation...");  
     // HTML5 GeoLocation
     if (navigator && navigator.geolocation) {
-        //alert("trying to get coords with navigator.geolocation...");  
-        function getPostion(position) {  
-            $('#yourMap').html(''); // clear message
+        //console.log("trying to get coords with navigator.geolocation...");  
+        function getMyPostion(position) {  
             //alert('coords: '+position.coords.latitude+','+position.coords.longitude);
+            //console.log('geolocation request accepted');
+            $('#mapCanvas').empty();
             $('#latitude').val(position.coords.latitude);
             $('#longitude').val(position.coords.longitude);
-            codeAddress(true);
+            //zoom = 15;
+            //codeAddress(true);
+            initialize();
+            //loadRecordsLayer();
         }
-
-        function positionDeclined() {
-            //alert('geolocation request declined or errored');
-            $('#yourMap').html(''); // clear message
-            codeAddress();
+        
+        function positionWasDeclined() {
+            //console.log('geolocation request declined or errored');
+            $('#mapCanvas').empty();
+            //zoom = 12;
+            initialize();
         }
-
-        $('#yourMap').html('Waiting for confirmation to use your current location (see browser message at top of window').css('color','red').css('font-size','16px');
-        navigator.geolocation.getCurrentPosition(getPostion, positionDeclined);
-
+        // Add message to browser - FF needs this as it is not easy to see
+        var msg = 'Waiting for confirmation to use your current location (see browser message at top of window)'+
+            '<br/><a href="#" onClick="loadMap(); return false;">Click here to load map</a>';
+        $('#mapCanvas').html(msg).css('color','red').css('font-size','14px');
+        navigator.geolocation.getCurrentPosition(getMyPostion, positionWasDeclined);
+        //console.log("line after navigator.geolocation.getCurrentPosition...");  
+        // Neither functions gets called for some reason, so I've added a delay to initalize map anyway
+        setTimeout(function() {if (!map) positionWasDeclined();}, 9000);
     } else if (google.loader && google.loader.ClientLocation) {
         // Google AJAX API fallback GeoLocation
         //alert("getting coords using google geolocation");
         $('#latitude').val(google.loader.ClientLocation.latitude);
         $('#longitude').val(google.loader.ClientLocation.longitude);
-        codeAddress(true);
+        //zoom = 12;
+       // codeAddress(true);
+       initialize();
     } else {
         //alert("Client geolocation failed");
-        codeAddress();
+        //codeAddress();
+        zoom = 12;
+        initialize();
     }
 }
 
@@ -351,20 +299,32 @@ function attemptGeolocation() {
  */
 function codeAddress(reverseGeocode) {
     var address = $('input#address').val();
-    var lng = $('input#longitude').val();
-    var lat = $('input#latitude').val();
+//    var lng = $('input#longitude').val();
+//    var lat = $('input#latitude').val();
 
-    if (geocoder) {
-        if ((reverseGeocode || !address) && lng && lat) {
-            //alert("geocoding using latLon");
-            var latLon = new GLatLng(lat,lng);
-            geocoder.getLocations(latLon, addAddressToPage);
-        }
-        else if (address) {
-            geocoder.getLocations(address, addAddressToPage);
-        }
+    if (geocoder && address) {
+        //geocoder.getLocations(address, addAddressToPage);
+        geocoder.geocode( {'address': address, region: 'AU'}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                // geocode was successful
+                var lat = results[0].geometry.location.lat();
+                var lon = results[0].geometry.location.lng();
+                var locationStr = results[0].formatted_address;
+                //console.log("geocoded address", results[0]);
+                updateMarkerAddress(locationStr);
+                //$('input#sightingLocation').val(locationStr); // hidden form element
+                //$('#markerAddress').val(locationStr); // visible span
+                $('input#latitude').val(lat); // hidden form element
+                $('input#longitude').val(lon); // hidden form elemen
+                initialize();
+                loadRecordsLayer();
+                LoadTaxaGroupCounts();
+            } else {
+                alert("Geocode was not successful for the following reason: " + status);
+            }
+        });
     } else {
-        loadMap();
+        initialize();
     }
 }
 

@@ -95,7 +95,7 @@
                     },
                     navigationControl: true,
                     navigationControlOptions: {
-                        style: google.maps.NavigationControlStyle.DEFAULT
+                        style: google.maps.NavigationControlStyle.SMALL // DEFAULT
                     },
                     mapTypeId: google.maps.MapTypeId.HYBRID
                 });
@@ -290,6 +290,12 @@
                      codeAddress();
                 });
 
+                // trigger submit on Next button click
+                $('#sightingSubmit').click(function (e) {
+                     e.preventDefault(); // ignore the href text - used for data
+                     $('form#sighting').submit();
+                });
+
                 // catch the enter key and trigger location search
                 $(window).keydown(function(e){
                      if (e.which == 13) {
@@ -408,7 +414,8 @@
                                         <span id="notes" class="hint">(E.g. weather conditions, observed behaviour, <i>etc.</i>)</span>
                                     </p>
                                     <p><label for="action"></label>
-                                        <input type="submit" name="action" id="sightingSubmit" value="Next >"/>
+                                        <input type="button" id="sightingSubmit" value="Next >"/>
+                                        <input type="hidden" name="action"  value="Next >"/>
                                     </p>
                                 </fieldset>
                             </div>
