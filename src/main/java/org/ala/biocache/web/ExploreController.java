@@ -96,7 +96,7 @@ public class ExploreController {
         //model.addAttribute("address", address); // TDOD delete if not used in JSP
         model.addAttribute("radius", radius);
         model.addAttribute("zoom", radiusToZoomLevelMap.get(radius));
-        model.addAttribute("TaxaGroup", EnumSet.allOf(TaxaGroup.class)); // TODO delete if not used in JSP
+        model.addAttribute("taxaGroups", TaxaGroup.values()); 
 
         // TODO: get from properties file or load via Spring
         model.addAttribute("speciesPageUrl", speciesPageUrl);

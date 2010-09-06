@@ -380,58 +380,19 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td><a href="*" id="*" title="allLife" class="taxonBrowse">All Species</a>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent"><a href="Animalia" id="kingdom" title="Animals" class="taxonBrowse">Animals</a>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent2"><a href="Mammalia" id="class" title="Mammals" class="taxonBrowse">Mammals</a></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent2"><a href="Aves" id="class" title="Birds" class="taxonBrowse">Birds</a></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent2"><a href="Reptilia" id="class" title="Reptiles" class="taxonBrowse">Reptiles</a></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent2"><a href="Amphibia" id="class" title="Amphibians" class="taxonBrowse">Amphibians</a></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent2"><a href="Agnatha|Chondrichthyes|Osteichthyes|Actinopterygii|Sarcopterygii" id="class" title="Fish" class="taxonBrowse">Fish</a></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent2"><a href="Insecta" id="class" title="Insects" class="taxonBrowse">Insects</a></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent"><a href="Plantae" id="kingdom" title="Plants" class="taxonBrowse">Plants</a></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent"><a href="Fungi" id="kingdom" title="Fungi" class="taxonBrowse">Fungi</a></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent"><a href="Chromista" id="kingdom" title="Chromista" class="taxonBrowse">Chromista</a></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent"><a href="Protozoa" id="kingdom" title="Protozoa" class="taxonBrowse">Protozoa</a></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="indent"><a href="Bacteria" id="kingdom" title="Bacteria" class="taxonBrowse">Bacteria</a></td>
-                                                    <td></td>
-                                                </tr>
+                                                <c:forEach var="tg" items="${taxaGroups}">
+                                                    <c:set var="indent">
+                                                        <c:choose>
+                                                            <c:when test="${tg.parentGroup == null}"></c:when>
+                                                            <c:when test="${tg.parentGroup == 'ALL_LIFE'}">indent</c:when>
+                                                            <c:otherwise>indent2</c:otherwise>
+                                                        </c:choose>
+                                                    </c:set>
+                                                    <tr>
+                                                        <td class="${indent}"><a href="${fn:join(tg.taxa, "|")}" id="${tg.rank}" title="${tg.label}" class="taxonBrowse">${fn:replace(tg.label,"allLife","All Species")}</a>
+                                                        <td></td>
+                                                    </tr>
+                                                </c:forEach>
                                             </tbody>
                                         </table>
                                     </div>
@@ -439,6 +400,11 @@
                             </form>
                         </div>
                     </div>
+                    <ul>
+                        <c:forEach var="tg" items="${TaxaGroup}">
+                            <li>${tg.label} | ${tg.rank} | ${fn:join(tg.taxa, "|")}</li>
+                        </c:forEach>
+                    </ul>
                 </div>
             </div>
         </body>
