@@ -897,7 +897,7 @@ table.propertyTable td.propertyNames {
     -webkit-border-radius: 0 0 6px 0 ; /* Saf3+, Chrome */
     border-radius: 0 0 6px 0; /* Opera 10.5, IE 9 */
 }
-#markerAddress {
+#locationInfo #markerAddress {
     font-weight: bold;
 }
 #rightList table {

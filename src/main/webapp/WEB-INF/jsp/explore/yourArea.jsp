@@ -12,10 +12,8 @@
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
             <title>Explore Your Area</title>
-<!--            <script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensorfalse&amp;key=${googleKey}"></script>-->
             <script type="text/javascript" src="http://www.google.com/jsapi?key=${googleKey}"></script>
-<!--            <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>-->
-            <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
+            <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.4.custom.min.js"></script>
             <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8">
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.ba-hashchange.min.js"></script>
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/explore/yourAreaMap.js"></script>
@@ -43,7 +41,6 @@
                 };
                 
                 // Load Google maps via AJAX API
-                //google.load("maps", "2");
                 google.load("maps", "3", {other_params:"sensor=false"});
 
                 // all mapping JS code moved to /js/explore/yourAreaMap.js
@@ -194,16 +191,6 @@
                     // instantiate GClientGeocoder
                     //geocoder = new GClientGeocoder(); //new google.maps.Geocoder();
                     geocoder = new google.maps.Geocoder();
-                    //geocoder.setBaseCountryCode("AU");
-                    // initial page load without params - geocode address
-                    var location = $('input#location').val();
-//                    if (!location || location == '') {
-//                        // geocode the provided address
-//                        attemptGeolocation();
-//                    } else {
-//                        // load OpenLayers map
-//                        loadMap();
-//                    }
 
                     // onMouseOver event on Group items
                     $('#taxa-level-0 tbody tr').hover(
@@ -308,7 +295,7 @@
                     // trigger ajax to load counts for taxa groups (left column)
                     LoadTaxaGroupCounts();
 
-                    // BBQ plugin to handle back button and saved URLs
+                    // Handle back button and saved URLs
                     // hash coding: #lat|lng|zoom
                     var url = escape(window.location.hash.replace( /^#/, '')); // escape used to prevent injection attacks
 

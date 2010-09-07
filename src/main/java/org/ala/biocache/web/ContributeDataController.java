@@ -96,8 +96,9 @@ public class ContributeDataController {
         String clientIP = request.getLocalAddr();
         logger.info("client IP address = "+request.getRemoteAddr());
         Location loc = lookup.getLocation(clientIP);
-        Float latitude = null;
-        Float longitude = null;
+        // default values are for the Lambert gravitational centre of Australia
+        Float latitude = -25f;
+        Float longitude = 134f;
 
         if (loc != null) {
             logger.info(clientIP + " has location: " + loc.postalCode + ", " + loc.city + ", " + loc.region + ". Coords: " + loc.latitude + ", " + loc.longitude);

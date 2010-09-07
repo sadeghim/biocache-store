@@ -137,6 +137,7 @@
                 google.maps.event.addListener(marker, 'dragend', function() {
                     updateMarkerStatus('Drag ended');
                     geocodePosition(marker.getPosition());
+                    map.panTo(marker.getPosition());
                 });
             }
 
@@ -357,7 +358,7 @@
                                 <fieldset id="sightingInfo">
                                     <p><label for="date">Date</label>
                                         <input type="text" id="sightingDate" name="date" size="20" value="${param.date}"/>
-                                        <span class="hint">(DD-MM-YYYY)</span>
+                                        <span class="hint">(DD/MM/YYYY)</span>
                                     </p>
                                     <p><label for="time">Time</label>
                                         <input type="text" id="sightingTime" name="time" size="20" value="${param.time}"/>

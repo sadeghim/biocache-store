@@ -100,7 +100,7 @@ function loadMap() {
         updateMarkerPosition(marker.getPosition());
         geocodePosition(marker.getPosition());
         LoadTaxaGroupCounts();
-        map.setCenter(marker.getPosition());
+        map.panTo(marker.getPosition());
     });
     
     google.maps.event.addListener(map, 'zoom_changed', function() {
