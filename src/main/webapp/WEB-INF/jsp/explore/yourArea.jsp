@@ -17,6 +17,7 @@
 <!--            <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>-->
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
             <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8">
+            <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.ba-hashchange.min.js"></script>
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/explore/yourAreaMap.js"></script>
             <script type="text/javascript">
                 // Global variables for Openlayers
@@ -32,6 +33,12 @@
                     1000: 14,
                     5000: 12,
                     10000: 11
+                };
+
+                var radiusForZoom = {
+                    11: 10,
+                    12: 5,
+                    14: 1
                 };
                 
                 // Load Google maps via AJAX API
@@ -189,13 +196,13 @@
                     //geocoder.setBaseCountryCode("AU");
                     // initial page load without params - geocode address
                     var location = $('input#location').val();
-                    if (!location || location == '') {
-                        // geocode the provided address
-                        attemptGeolocation();
-                    } else {
-                        // load OpenLayers map
-                        loadMap();
-                    }
+//                    if (!location || location == '') {
+//                        // geocode the provided address
+//                        attemptGeolocation();
+//                    } else {
+//                        // load OpenLayers map
+//                        loadMap();
+//                    }
 
                     // onMouseOver event on Group items
                     $('#taxa-level-0 tbody tr').hover(
@@ -253,14 +260,13 @@
                     // Register onChange event on radius drop-down - will re-submit form
                     $('select#radius').change(
                         function(e) {
-                            var rad = parseInt($(this).val()) * 1000;
-                            circle.setRadius(rad);
-                            var zoom = zoomForRadius[rad];
+                            var radius = parseInt($(this).val());
+                            var radiusInMetres = radius * 1000;
+                            circle.setRadius(radiusInMetres);
+                            zoom = zoomForRadius[radiusInMetres];
                             map.setZoom((zoom)?zoom:12);
                             //loadRecordsLayer();
                             LoadTaxaGroupCounts();
-                            // TODO: zoom map to appropriate level
-                            //$('form#searchForm').submit();
                         }
                     );
 
@@ -298,6 +304,26 @@
                     });
                     
                     LoadTaxaGroupCounts();
+
+                    // BBQ plugin to handle back button and saved URLs
+                    // hash coding: #lat|lng|zoom
+                    var url = escape(window.location.hash.replace( /^#/, '')); // escape used to prevent injection attacks
+
+                    if (url) {
+                        var hashParts = url.split("%7C"); // note escaped version of |
+                        //console.log("url hash = ", url, coords);
+                        if (hashParts.length == 3) {
+                            zoom = parseInt(hashParts[2]); // set global var
+                            $('select#radius').val(radiusForZoom[zoom]); // update drop-down widget
+                            updateMarkerPosition(new google.maps.LatLng(hashParts[0], hashParts[1]));
+                            loadMap();
+                        } else {
+                            attemptGeolocation();
+                        }
+                    } else {
+                        //console.log("url not set, geolocating...");
+                        attemptGeolocation();
+                    }
                     
                 }); // End: $(document).ready() function
             </script>

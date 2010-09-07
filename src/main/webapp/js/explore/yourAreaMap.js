@@ -123,6 +123,7 @@ function geocodePosition(pos) {
             //console.log("geocoded position", responses[0]);
             var address = responses[0].formatted_address;
             updateMarkerAddress(address);
+            // update the info window for marker icon
             var content = '<div class="infoWindow"><b>Your Location:</b><br/>'+address+'</div>';
             markerInfowindow.setContent(content);
         } else {
@@ -145,6 +146,8 @@ function geocodePosition(pos) {
 function updateMarkerPosition(latLng) {
     $('#latitude').val(latLng.lat());
     $('#longitude').val(latLng.lng());
+    // Update URL hash for back button, etc
+    location.hash = latLng.lat() + "|" + latLng.lng() + "|" + zoom;
 }
 
 /**
@@ -256,12 +259,8 @@ function attemptGeolocation() {
             //alert('coords: '+position.coords.latitude+','+position.coords.longitude);
             //console.log('geolocation request accepted');
             $('#mapCanvas').empty();
-            $('#latitude').val(position.coords.latitude);
-            $('#longitude').val(position.coords.longitude);
-            //zoom = 15;
-            //codeAddress(true);
+            updateMarkerPosition(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
             initialize();
-            //loadRecordsLayer();
         }
         
         function positionWasDeclined() {
@@ -281,11 +280,8 @@ function attemptGeolocation() {
     } else if (google.loader && google.loader.ClientLocation) {
         // Google AJAX API fallback GeoLocation
         //alert("getting coords using google geolocation");
-        $('#latitude').val(google.loader.ClientLocation.latitude);
-        $('#longitude').val(google.loader.ClientLocation.longitude);
-        //zoom = 12;
-       // codeAddress(true);
-       initialize();
+        updateMarkerPosition(new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude));
+        initialize();
     } else {
         //alert("Client geolocation failed");
         //codeAddress();
@@ -299,23 +295,15 @@ function attemptGeolocation() {
  */
 function codeAddress(reverseGeocode) {
     var address = $('input#address').val();
-//    var lng = $('input#longitude').val();
-//    var lat = $('input#latitude').val();
 
     if (geocoder && address) {
         //geocoder.getLocations(address, addAddressToPage);
         geocoder.geocode( {'address': address, region: 'AU'}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 // geocode was successful
-                var lat = results[0].geometry.location.lat();
-                var lon = results[0].geometry.location.lng();
-                var locationStr = results[0].formatted_address;
-                //console.log("geocoded address", results[0]);
-                updateMarkerAddress(locationStr);
-                //$('input#sightingLocation').val(locationStr); // hidden form element
-                //$('#markerAddress').val(locationStr); // visible span
-                $('input#latitude').val(lat); // hidden form element
-                $('input#longitude').val(lon); // hidden form elemen
+                updateMarkerAddress(results[0].formatted_address);
+                updateMarkerPosition(results[0].geometry.location);
+                // reload map pin, etc
                 initialize();
                 loadRecordsLayer();
                 LoadTaxaGroupCounts();
@@ -340,13 +328,8 @@ function addAddressToPage(response) {
         var lat = location.Point.coordinates[1]
         var lon = location.Point.coordinates[0];
         var locationStr = response.Placemark[0].address;
-        if ($('input#location').val() == "") {
-            $('input#address').val(locationStr);
-        }
-        $('input#location').val(locationStr);
-        $('input#latitude').val(lat);
-        $('input#longitude').val(lon);
-        $('form#searchForm').submit();
+        updateMarkerAddress(locationStr);
+        updateMarkerPosition(new google.maps.LatLng(lat, lon));
     }
 }
 
