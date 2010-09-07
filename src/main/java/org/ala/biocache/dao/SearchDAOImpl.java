@@ -750,15 +750,19 @@ public class SearchDAOImpl implements SearchDAO {
             solrQuery.addFacetField(ffname);
             solrQuery.setFacetMinCount(1);
             QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, ffname, "asc");
-            FacetField ff = qr.getFacetField(ffname);
-            if (ff.getValues().size() <= maximumFacets) {
-                trDTO = new TaxaRankCountDTO(ffname);
-                List<FieldResultDTO> fDTOs = new ArrayList<FieldResultDTO>();
-                for (Count count : ff.getValues()) {
-                    FieldResultDTO f = new FieldResultDTO(count.getName(), count.getCount());
-                    fDTOs.add(f);
+            if (qr.getResults().size() > 0) {
+                FacetField ff = qr.getFacetField(ffname);
+                if (ff.getValues().size() <= maximumFacets) {
+                    trDTO = new TaxaRankCountDTO(ffname);
+                    List<FieldResultDTO> fDTOs = new ArrayList<FieldResultDTO>();
+                    for (Count count : ff.getValues()) {
+                        FieldResultDTO f = new FieldResultDTO(count.getName(), count.getCount());
+                        fDTOs.add(f);
+                    }
+                    trDTO.setTaxa(fDTOs);
                 }
-                trDTO.setTaxa(fDTOs);
+            } else {
+                return null;
             }
         }
         return trDTO;
