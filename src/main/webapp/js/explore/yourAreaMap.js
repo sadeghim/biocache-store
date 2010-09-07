@@ -92,14 +92,15 @@ function loadMap() {
 
     google.maps.event.addListener(marker, 'drag', function() {
         updateMarkerAddress('Dragging...');
-        updateMarkerPosition(marker.getPosition());
+        //updateMarkerPosition(marker.getPosition());
     });
 
     google.maps.event.addListener(marker, 'dragend', function() {
         updateMarkerAddress('Drag ended');
+        updateMarkerPosition(marker.getPosition());
         geocodePosition(marker.getPosition());
-        //loadRecordsLayer();
         LoadTaxaGroupCounts();
+        map.setCenter(marker.getPosition());
     });
     
     google.maps.event.addListener(map, 'zoom_changed', function() {
@@ -138,6 +139,7 @@ function geocodePosition(pos) {
  function updateMarkerAddress(str) {
     $('#markerAddress').empty().html(str);
     $('#location').val(str);
+    $('#dialog-confirm code').html(str); // download popup text
 }
 
 /**
@@ -148,6 +150,7 @@ function updateMarkerPosition(latLng) {
     $('#longitude').val(latLng.lng());
     // Update URL hash for back button, etc
     location.hash = latLng.lat() + "|" + latLng.lng() + "|" + zoom;
+    $('#dialog-confirm #rad').html(radius);
 }
 
 /**

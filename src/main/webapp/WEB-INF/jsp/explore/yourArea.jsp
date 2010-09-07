@@ -23,6 +23,7 @@
                 // Global variables for Openlayers
                 var contextPath = "${pageContext.request.contextPath}";
                 var zoom = ${zoom};
+                var radius = ${radius};
 
                 //make the taxa and rank global variable so that they can be used in the download
                 var taxa = [];
@@ -260,11 +261,12 @@
                     // Register onChange event on radius drop-down - will re-submit form
                     $('select#radius').change(
                         function(e) {
-                            var radius = parseInt($(this).val());
+                            radius = parseInt($(this).val());
                             var radiusInMetres = radius * 1000;
                             circle.setRadius(radiusInMetres);
                             zoom = zoomForRadius[radiusInMetres];
                             map.setZoom((zoom)?zoom:12);
+                            updateMarkerPosition(marker.getPosition()); // so bookmarks is updated
                             //loadRecordsLayer();
                             LoadTaxaGroupCounts();
                         }
@@ -302,7 +304,8 @@
                             }
                         }
                     });
-                    
+
+                    // trigger ajax to load counts for taxa groups (left column)
                     LoadTaxaGroupCounts();
 
                     // BBQ plugin to handle back button and saved URLs
@@ -314,7 +317,8 @@
                         //console.log("url hash = ", url, coords);
                         if (hashParts.length == 3) {
                             zoom = parseInt(hashParts[2]); // set global var
-                            $('select#radius').val(radiusForZoom[zoom]); // update drop-down widget
+                            radius = radiusForZoom[zoom];  // set global var
+                            $('select#radius').val(radius); // update drop-down widget
                             updateMarkerPosition(new google.maps.LatLng(hashParts[0], hashParts[1]));
                             loadMap();
                         } else {
@@ -360,6 +364,7 @@
                             <form name="searchForm" id="searchForm" action="" method="GET">
                                 <div id="locationInput">
                                     <h2>Enter your location or address:</h2>
+                                    <div id="searchHints">E.g. a street address, place name, postcode or coordinates (as lat, lon)</div>
                                     <input name="address" id="address" size="50" value="${address}"/>
                                     <input id="locationSearch" type="submit" value="Search"/>
                                     <input type="hidden" name="latitude" id="latitude" value="${latitude}"/>
@@ -373,7 +378,7 @@
                                     <button id="download" title="Download a list of all species (tab-delimited file)">Download</button>
                                     <div id="dialog-confirm" title="Continue with download?" style="display: none">
                                         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>You are about to
-                                            download a list of species found within a ${radius} km radius of <code>${location}</code>.<br/>
+                                            download a list of species found within a <span id="rad"></span> km radius of <code>${location}</code>.<br/>
                                             Format: tab-delimited text file (called data.xls)</p>
                                     </div>
                                     <p>Display records in a
@@ -415,7 +420,7 @@
                                                         </c:choose>
                                                     </c:set>
                                                     <tr>
-                                                        <td class="${indent}"><a href="${fn:join(tg.taxa, "|")}" id="${tg.rank}" title="${tg.label}" class="taxonBrowse">${fn:replace(tg.label,"allLife","All Species")}</a>
+                                                        <td class="${indent}"><a href="${fn:join(tg.taxa, "|")}" id="${tg.rank}" title="${tg.label}" class="taxonBrowse">${tg.label}</a>
                                                         <td></td>
                                                     </tr>
                                                 </c:forEach>
@@ -426,11 +431,6 @@
                             </form>
                         </div>
                     </div>
-                    <ul>
-                        <c:forEach var="tg" items="${TaxaGroup}">
-                            <li>${tg.label} | ${tg.rank} | ${fn:join(tg.taxa, "|")}</li>
-                        </c:forEach>
-                    </ul>
                 </div>
             </div>
         </body>

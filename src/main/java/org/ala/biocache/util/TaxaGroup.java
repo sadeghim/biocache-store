@@ -25,7 +25,7 @@ import java.util.Map;
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
 public enum TaxaGroup {
-    ALL_LIFE ("allLife", null, "*", "*" ),
+    ALL_LIFE ("All Species", null, "*", "*" ),
     ANIMALS ("Animals", ALL_LIFE, "kingdom", "Animalia"),
     MAMMALS ("Mammals", ANIMALS, "class", "Mammalia"),
     BIRDS ("Birds", ANIMALS, "class", "Aves"),

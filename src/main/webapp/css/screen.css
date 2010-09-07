@@ -1010,9 +1010,14 @@ a.taxonBrowse2, a.taxonBrowse2:hover, a.taxonBrowse2:focus {
 }
 #locationInput h2 {
     color:#FF5D00;
-    padding-bottom: 5px;
-    font-size: 1.4em;
+    padding-bottom: 0px;
+    font-size: 15px;
     font-weight: bold;
+}
+#locationInput #searchHints {
+    font-size: 11px;
+    color: #555;
+    padding-bottom: 2px;
 }
 #locationInfo { }
 #locationInfo { background-color: #FAFBF5 }
