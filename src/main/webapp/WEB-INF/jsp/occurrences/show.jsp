@@ -123,7 +123,7 @@
                                 <c:choose>
                                     <c:when test="${!(fn:containsIgnoreCase(occurrence.taxonName, occurrence.rawTaxonName) || fn:containsIgnoreCase(occurrence.author, occurrence.rawAuthor))}">
                                         <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.rawTaxonName}"/> ${occurrence.rawAuthor}
-                                        (interpreted as <a href="http://${pageContext.request.serverName}:${pageContext.request.serverPort}/${bieWebappContext}/species/${occurrence.taxonConceptLsid}">
+                                        (interpreted as <a href="${bieWebappContext}/species/${occurrence.taxonConceptLsid}">
                                             <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</a>)
                                     </c:when>
                                     <c:otherwise>
