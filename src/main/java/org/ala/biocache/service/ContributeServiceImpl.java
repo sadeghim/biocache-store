@@ -47,7 +47,7 @@ public class ContributeServiceImpl implements ContributeService {
 	protected String citizenScienceDRUID = "dr364";
 	
 	public final int BASIS_OF_RECORD_OBSERVATION = 1;
-	public final String BASIS_OF_RECORD_OBSERVATION_TEXT = "Observation";
+	public final String BASIS_OF_RECORD_OBSERVATION_TEXT = "observation";
 
 	@Inject
 	TaxonConceptDAO taxonConceptDAO;
