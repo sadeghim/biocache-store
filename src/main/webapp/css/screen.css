@@ -1392,3 +1392,22 @@ div.time-picker {
     color: #444;
     font-size: 12px;
 }
+/* confirm dialog */
+#dialog-confirm p{
+   padding: 4px 2px;
+   vertical-align: top;
+   text-align: left;
+   line-height: 16px;
+}
+
+#dialog-confirm label{
+    display: inline-block;
+    vertical-align: middle;
+    width: 100px;
+}
+#downloadReason {
+    width: 210px;
+}
+#downloadForm {
+    padding: 10px 0px;
+}

@@ -651,17 +651,19 @@ public class OccurrenceController {
 			@RequestParam(value="q", required=false) String query,
 			@RequestParam(value="fq", required=false) String[] filterQuery,
 			@RequestParam(value="type", required=false, defaultValue="normal") String type,
+                        @RequestParam(value="email", required=false) String email,
+                        @RequestParam(value="reason", required=false) String reason,
+                        @RequestParam(value="file", required=false, defaultValue="data") String filename,
 			HttpServletResponse response,
                         HttpServletRequest request)
 	throws Exception {
-                //The variables below need to be added as input
-                String email = null;
-                String reason = null;
-
+                
                 String ip = request.getLocalAddr();
 		if (query == null || query.isEmpty()) {
 			return LIST;
 		}
+                if(StringUtils.trimToNull(filename) == null)
+                    filename = "data";
 		// if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
 		if (filterQuery != null && filterQuery.length == 0) {
 			filterQuery = null;
@@ -669,7 +671,7 @@ public class OccurrenceController {
 
 		response.setHeader("Cache-Control", "must-revalidate");
 		response.setHeader("Pragma", "must-revalidate");
-		response.setHeader("Content-Disposition", "attachment;filename=data.zip");
+		response.setHeader("Content-Disposition", "attachment;filename="+filename+".zip");
 		response.setContentType("application/zip");
 
 		ServletOutputStream out = response.getOutputStream();
@@ -679,7 +681,7 @@ public class OccurrenceController {
 
                 //Use a zip output stream to include the data and citation together in the download
                 ZipOutputStream zop = new ZipOutputStream(out);
-                zop.putNextEntry(new java.util.zip.ZipEntry("data.csv"));
+                zop.putNextEntry(new java.util.zip.ZipEntry(filename+".csv"));
                 Map<String, Integer> uidStats =searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100);
                 zop.closeEntry();
 
