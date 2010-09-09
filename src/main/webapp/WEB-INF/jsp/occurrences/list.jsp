@@ -461,7 +461,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <table>
+                            <table id="occurrenceResults">
                                 <thead>
                                     <tr>
                                         <th>Scientific Name</th>
