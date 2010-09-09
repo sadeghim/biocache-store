@@ -52,7 +52,8 @@ public class GeoJsonController {
     /** Name of view for square cells GeoJSON service */
 	private final String CELLS_GEOJSON = "json/cellsGeoJson";
     /** Search Utils helper class */
-    protected SearchUtils searchUtils = new SearchUtils();
+    @Inject
+    protected SearchUtils searchUtils;
 
     /**
      * GeoJSON view of records as clusters of points
@@ -279,6 +280,22 @@ public class GeoJsonController {
                 logger.warn("BBOX does not contain the expected number of coords (4). Found: " + bounds.length);
             }
         }
+    }
+
+    public SearchDAO getSearchDAO() {
+        return searchDAO;
+    }
+
+    public void setSearchDAO(SearchDAO searchDAO) {
+        this.searchDAO = searchDAO;
+    }
+
+    public SearchUtils getSearchUtils() {
+        return searchUtils;
+    }
+
+    public void setSearchUtils(SearchUtils searchUtils) {
+        this.searchUtils = searchUtils;
     }
 
 }
