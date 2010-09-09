@@ -282,16 +282,8 @@ public class GeoJsonController {
         }
     }
 
-    public SearchDAO getSearchDAO() {
-        return searchDAO;
-    }
-
     public void setSearchDAO(SearchDAO searchDAO) {
         this.searchDAO = searchDAO;
-    }
-
-    public SearchUtils getSearchUtils() {
-        return searchUtils;
     }
 
     public void setSearchUtils(SearchUtils searchUtils) {
