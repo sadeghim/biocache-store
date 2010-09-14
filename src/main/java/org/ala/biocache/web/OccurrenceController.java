@@ -56,8 +56,7 @@ import javax.servlet.http.HttpServletRequest;
 
 //import org.ala.biocache.util.CitationUtils;
 import org.ala.client.util.RestfulClient;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
+
 
 /**
  * Occurrences controller for the BIE biocache site
@@ -68,6 +67,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  * 1 Sept 10 (MOK011): added restfulClient to retrieve citation information into citation.txt
  * [private void getCitations(Set<String> keys, OutputStream out) throws HttpException, IOException]
  * 
+ * 14 Dept 10 (MOK011): modified getCitations function to get csv format data from Citation Service.
  * 
  */
 @Controller
@@ -104,9 +104,7 @@ public class OccurrenceController {
 	protected String hostUrl = "http://localhost:8888/biocache-webapp";
 	protected String bieBaseUrl = "http://bie.ala.org.au/";
 	protected String collectoryBaseUrl = "http://collections.ala.org.au";
-	protected String citationServiceUrl = "http://collections.ala.org.au/lookup/citation";
-	
-	private ObjectMapper deserMapper = new ObjectMapper();       
+	protected String citationServiceUrl = collectoryBaseUrl + "/lookup/citation";
 
 	/**
 	 * Custom handler for the welcome view.
@@ -687,7 +685,7 @@ public class OccurrenceController {
 
                 if(!uidStats.isEmpty()){
                     //add the citations for the supplied uids
-                    zop.putNextEntry(new java.util.zip.ZipEntry("citation.txt"));
+                    zop.putNextEntry(new java.util.zip.ZipEntry("citation.csv"));
                     try{
                     	getCitations(uidStats.keySet(), zop);
 //                    citationUtils.addCitation(uidStats.keySet(), zop);
@@ -721,19 +719,9 @@ public class OccurrenceController {
 			throw new NullPointerException("keys and/or out is null!!");
 		}
 		
-        Object[] citations = restfulClient.restPost(citationServiceUrl, keys);
+        Object[] citations = restfulClient.restPost(citationServiceUrl, "text/plain", keys);
         if((Integer)citations[0] == HttpStatus.SC_OK){
-        	deserMapper.getDeserializationConfig().set(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        	String[] rootNode = deserMapper.readValue((String)citations[1], String[].class);
-	        for(int j = 0; j < rootNode.length; j++){
-	        	//ignore UID XXXX not known
-	        	if(rootNode[j].startsWith("UID ") && rootNode[j].endsWith(" not known")){
-	        		logger.debug("**** Citation: " + rootNode[j]);
-	        	}
-	        	else{
-	        		out.write((rootNode[j] + "\r\n").getBytes());
-	        	}	        		        	
-	        }
+        	out.write(((String)citations[1]).getBytes());
     	}		
 	}
 	
