@@ -3,68 +3,81 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
     version="2.0">
-    
+
   <description>ALA core library</description>
   <display-name>ALA core</display-name>
   <tlib-version>1.0</tlib-version>
   <short-name>ala</short-name>
   <uri>http://www.ala.org.au/jsp/core</uri>	
-	
+
   <tag>
     <description>Property Loader Tag</description>
     <name>propertyLoader</name>
-    <tag-class>org.ala.biocache.web.PropertyLoaderTag</tag-class>
+    <tag-class>au.org.ala.commonui.tag.PropertyLoaderTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
-     <description>The bundle name</description>
-     <name>bundle</name>
-     <required>true</required>
-     <rtexprvalue>true</rtexprvalue>
+      <description>The bundle name</description>
+      <name>bundle</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
     </attribute>
     <attribute>
-     <description>the property name</description>
-     <name>property</name>
-     <required>true</required>
-     <rtexprvalue>true</rtexprvalue>
-    </attribute>			  
-  </tag>	
-	
+      <description>the property name</description>
+      <name>property</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
   <tag>
     <description>Login Status Tag</description>
     <name>loginStatus</name>
-    <tag-class>org.ala.biocache.web.LoginStatusTag</tag-class>
+    <tag-class>au.org.ala.commonui.tag.LoginStatusTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
-     <description>The return url path that is appended to the context path</description>
-     <name>returnUrlPath</name>
-     <required>true</required>
-     <rtexprvalue>true</rtexprvalue>
-    </attribute>              
-  </tag>    
- 
+      <description>The return url path that is appended to the context path</description>
+      <name>returnUrlPath</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
   <tag>
-    <description>Login Logout Tag</description>
-    <name>loginLogoutLink</name>
-    <tag-class>org.ala.biocache.web.LoginLogoutTag</tag-class>
+    <description>Banner Menu Tag</description>
+    <name>bannerMenu</name>
+    <tag-class>au.org.ala.commonui.tag.BannerMenuTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
-     <description>The anchor element to login or logout</description>
-     <name>returnUrlPath</name>
-     <required>true</required>
-     <rtexprvalue>true</rtexprvalue>
-    </attribute>              
-  </tag>    
- 
+      <description>The return url path for the login/logout anchor</description>
+      <name>returnUrlPath</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <description>Footer Menu Tag</description>
+    <name>footerMenu</name>
+    <tag-class>au.org.ala.commonui.tag.FooterMenuTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The return url path for the login/logout anchor</description>
+      <name>returnUrlPath</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
   <tag>
     <description>Context Parameter Tag</description>
     <name>contextParam</name>
-    <tag-class>org.ala.biocache.web.ContextParamTag</tag-class>
+    <tag-class>au.org.ala.commonui.tag.ContextParamTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
-     <description>The context parameter name</description>
-     <name>name</name>
-     <required>true</required>
-     <rtexprvalue>true</rtexprvalue>
-    </attribute>              
-  </tag>    
+      <description>The context parameter name</description>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
 </taglib>
