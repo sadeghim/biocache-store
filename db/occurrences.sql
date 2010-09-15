@@ -165,7 +165,7 @@ CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT)
 		,'CONCAT(CONCAT(ROUND(round(oc.latitude *100)/100,2), \'\,\'), ROUND(round(oc.longitude *100)/100,2)),'
 		,'CONCAT(CONCAT(ROUND(round(oc.latitude *1000)/1000,3), \'\,\'), ROUND(round(oc.longitude *1000)/1000,3)),'
 		,'CONCAT(CONCAT(ROUND(round(oc.latitude *10000)/10000,4), \'\,\'), ROUND(round(oc.longitude *10000)/10000,4))'
-		,',IFNULL(oc.`year`,\'\'),IFNULL(oc.`month`,\'\'),IFNULL(DATE_FORMAT(oc.occurrence_date,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
+		,',IFNULL(oc.`year`,\'\'),IFNULL(LPAD(oc.`month`,2,\'0\'),\'\'),IFNULL(DATE_FORMAT(oc.occurrence_date,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
 		,'IFNULL(oc.basis_of_record,\'\'),IFNULL(bor.description,\'\'),IFNULL(ror.basis_of_record,\'\'),'
 		,'IFNULL(get_type_status(oc.id),\'\'),IFNULL(get_identifier_type(oc.id),\'\'),IFNULL(get_identifier_name(oc.id),\'\'),'
 		,'IFNULL(ror.identifier_name,\'\'),IFNULL(DATE_FORMAT(ror.identification_date,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
