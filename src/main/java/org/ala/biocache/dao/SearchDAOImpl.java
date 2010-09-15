@@ -259,10 +259,10 @@ public class SearchDAOImpl implements SearchDAO {
             int pageSize = 1000;
             
             QueryResponse qr = runSolrQuery(solrQuery, filterQuery, pageSize, startIndex, "score", "asc");
-            CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), '\t', '"');
+            CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), ',', '"');
             
             csvWriter.writeNext(new String[]{
-            		"Record id",
+            		"Record ID",
             		"Taxon ID",
             		"Original taxon name",
                     "Supplied Common Name",
