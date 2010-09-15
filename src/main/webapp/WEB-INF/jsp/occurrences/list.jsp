@@ -435,7 +435,18 @@
                                             <div class="facetTermBox">
                                                 <!-- <b class="facetTermDivider ui-icon ui-icon-triangle-1-e">&nbsp;</b>-->
                                                 <span class="facetFieldName"><fmt:message key="facet.${fqField}"/>:</span>
-                                                ${fn:replace(fqValue,'-01-01T12:00:00Z','')} <a href="#" onClick="removeFacet('${filter}'); return false;" class="facetCloseLink ui-icon ui-icon-closethick" title="Remove this restriction">&nbsp;</a>
+                                                <c:choose>
+                                                    <c:when test="${fqField == 'occurrence_date'}">
+                                                        ${fn:replace(fqValue,'-01-01T12:00:00Z','')}
+                                                    </c:when>
+                                                    <c:when test="${fqField == 'month'}">
+                                                        <fmt:message key="month.${fqValue}"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        ${fqValue}
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                <a href="#" onClick="removeFacet('${filter}'); return false;" class="facetCloseLink ui-icon ui-icon-closethick" title="Remove this restriction">&nbsp;</a>
                                             </div>
                                         </c:if>
                                     </c:forEach>
