@@ -929,7 +929,7 @@ public class SearchDAOImpl implements SearchDAO {
         solrQuery.addFacetField("family");
         //solrQuery.addFacetField("data_provider");
         solrQuery.addFacetField("month");
-        solrQuery.add("facet.month.sort","false"); // sort by Jan-Dec
+        solrQuery.add("f.month.facet.sort","false"); // sort by Jan-Dec
         // Date Facet Params
         // facet.date=occurrence_date&facet.date.start=1900-01-01T12:00:00Z&facet.date.end=2010-01-01T12:00:00Z&facet.date.gap=%2B1YEAR
         solrQuery.add("facet.date","occurrence_date");
