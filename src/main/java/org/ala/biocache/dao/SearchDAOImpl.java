@@ -927,6 +927,8 @@ public class SearchDAOImpl implements SearchDAO {
         solrQuery.addFacetField("rank");
         solrQuery.addFacetField("kingdom");
         solrQuery.addFacetField("family");
+        //solrQuery.addFacetField("data_provider");
+        solrQuery.addFacetField("month");
         // Date Facet Params
         // facet.date=occurrence_date&facet.date.start=1900-01-01T12:00:00Z&facet.date.end=2010-01-01T12:00:00Z&facet.date.gap=%2B1YEAR
         solrQuery.add("facet.date","occurrence_date");
