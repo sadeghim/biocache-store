@@ -52,7 +52,7 @@ public class SearchUtils {
 	        String collectionName = j.getString("name");
 //	        JSONArray institutionCode = j.getJSONArray("derivedInstCodes");
 //	        JSONArray collectionCode = j.getJSONArray("derivedCollCodes");
-	        StringBuilder displayString = new StringBuilder("Collection: ");
+	        StringBuilder displayString = new StringBuilder(getUidTitle(query) + ": ");
 	        displayString.append(collectionName);
 //	        // Build Lucene query for institutions
 //	        StringBuilder solrQuery = new StringBuilder();
@@ -86,7 +86,8 @@ public class SearchUtils {
 //	            solrQuery.append(")");
 //	
 //	        }
-	        searchQuery.setQuery("collection_code_uid:"+query);
+//	        searchQuery.setQuery("collection_code_uid:"+query);
+                searchQuery.setQuery(getUidSearchField(query) +":" + query);
 	        searchQuery.setDisplayString(displayString.toString());
 	        
         }
@@ -198,6 +199,24 @@ public class SearchUtils {
             return "data_provider_uid";
         return null;
     }
+    
+    /**
+     * returns the title that should be used to search for a particular uid
+     * @param uid
+     * @return
+     */
+    public static String getUidTitle(String uid){
+        if(uid.startsWith("co"))
+            return "Collection";
+        if(uid.startsWith("in"))
+            return "Institution";
+        if(uid.startsWith("dr"))
+            return "Data Resource";
+        if(uid.startsWith("dp"))
+            return "Data Provider";
+        return null;
+    }
+
     /**
      * Returns the rank name based on an integer position
      * @param position

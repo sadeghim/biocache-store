@@ -379,7 +379,7 @@ public class OccurrenceController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/occurrences/searchForCollection*", method = RequestMethod.GET)
+	@RequestMapping(value = {"/occurrences/searchForCollection*", "/occurrences/searchForUID*"}, method = RequestMethod.GET)
 	public String occurrenceSearchForCollection(
 			//@RequestParam(value="coll", required=false) String[] collectionCode,
 			//@RequestParam(value="inst", required=false) String[] institutionCode,
