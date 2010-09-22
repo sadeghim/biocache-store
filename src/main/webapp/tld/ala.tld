@@ -43,6 +43,19 @@
   </tag>
 
   <tag>
+    <description>Login Logout Tag</description>
+    <name>loginLogoutLink</name>
+    <tag-class>au.org.ala.commonui.tag.LoginLogoutTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+     <description>The anchor element to login or logout</description>
+     <name>returnUrlPath</name>
+     <required>true</required>
+     <rtexprvalue>true</rtexprvalue>
+    </attribute>              
+  </tag>    
+ 
+  <tag>
     <description>Banner Menu Tag</description>
     <name>bannerMenu</name>
     <tag-class>au.org.ala.commonui.tag.BannerMenuTag</tag-class>
