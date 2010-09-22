@@ -140,6 +140,7 @@ DROP PROCEDURE IF EXISTS dump_bio_occurrences$$
 CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT) 
 	BEGIN
 		DECLARE more BOOLEAN;
+                DECLARE newlow INT;
 		set @cmd = concat('SELECT STRAIGHT_JOIN oc.id,IFNULL(dp.uid,\'\'),IFNULL(dp.`name`,\'\'),IFNULL(dr.uid,\'\'),'
 		,'IFNULL(dr.`name`,\'\'),IFNULL(icm.institution_uid,\'\'),IFNULL(ic.code,\'\'),IFNULL(ic.`name`,\'\'),'
 		,'IFNULL(ic.lsid,\'\'),IFNULL(icm.collection_uid,\'\'),IFNULL(cc.code,\'\'),IFNULL(oc.catalogue_number_id,\'\'),'
@@ -157,7 +158,7 @@ CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT)
 		,'IFNULL(get_georegion_names(oc.id,0,2),\'\') as states,'
 		,'IFNULL(get_georegion_names(oc.id,2000,3999),\'\') as bio_geo_regions,'
 		,'IFNULL(get_georegion_names(oc.id,3,12),\'\') as places,'
-		,'IFNULL(oc.latitude,\'\'),IFNULL(oc.longitude,\'\'),IFNULL(ror.lat_long_precision,\'\'),'
+		,'IFNULL(oc.latitude,\'\'),IFNULL(ror.raw_latitude, \'\'),IFNULL(oc.longitude,\'\'),IFNULL(ror.raw_longitude,\'\'),IFNULL(ror.lat_long_precision,\'\'),'
 		,'IFNULL(CONCAT_WS(\'\,\', oc.latitude, oc.longitude),\'\') as lat_long,'
 		,'IFNULL(oc.cell_id,\'\'),IFNULL(oc.centi_cell_id,\'\'),IFNULL(oc.tenmilli_cell_id,\'\'),'
 		,'CONCAT(CONCAT(ROUND(round(oc.latitude *1)/1,1), \'\,\'), ROUND(round(oc.longitude *1)/1,1)),'
@@ -165,6 +166,7 @@ CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT)
 		,'CONCAT(CONCAT(ROUND(round(oc.latitude *100)/100,2), \'\,\'), ROUND(round(oc.longitude *100)/100,2)),'
 		,'CONCAT(CONCAT(ROUND(round(oc.latitude *1000)/1000,3), \'\,\'), ROUND(round(oc.longitude *1000)/1000,3)),'
 		,'CONCAT(CONCAT(ROUND(round(oc.latitude *10000)/10000,4), \'\,\'), ROUND(round(oc.longitude *10000)/10000,4))'
+                ,' IFNULL(oc.altitude_metres,\'\'), IFNULL(oc.depth_centimetres,\'\')'
 		,',IFNULL(oc.`year`,\'\'),IFNULL(LPAD(oc.`month`,2,\'0\'),\'\'),IFNULL(DATE_FORMAT(oc.occurrence_date,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
 		,'IFNULL(oc.basis_of_record,\'\'),IFNULL(bor.description,\'\'),IFNULL(ror.basis_of_record,\'\'),'
 		,'IFNULL(get_type_status(oc.id),\'\'),IFNULL(get_identifier_type(oc.id),\'\'),IFNULL(get_identifier_name(oc.id),\'\'),'
@@ -193,14 +195,16 @@ CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT)
 		PREPARE stmt1 FROM @cmd;
 		EXECUTE stmt1;
 		Deallocate prepare stmt1;
-		select concat('Finished processing ', low ,' ', now());
-		
-		select count(*) > 0 into more
-		from occurrence_record where id >= high;
-		
-		IF more THEN 
-			call dump_bio_occurrences(high, high + 1000000);
-		END IF;
+                select concat('Finished processing ', low ,' ', now()) as debug;
+
+                select IFNULL(min(id),0) into newlow
+                from occurrence_record where id >= high;
+
+
+                IF newlow>0 THEN
+                        call dump_bio_occurrences(newlow, newlow + 700000);
+                END IF;
+
 		
 	END;
 	$$
