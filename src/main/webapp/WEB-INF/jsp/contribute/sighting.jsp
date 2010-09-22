@@ -317,7 +317,7 @@
                 // set observer field based on user login
                 var recordedBy = "${param.recordedBy}";
                 if (!recordedBy) {
-                    $('input#recordedBy').val("${fn:replace(fn:substringBefore(pageContext.request.remoteUser, '@'),'.',' ')}");
+                    $('input#recordedBy').val("<ala:userName/>");
                 }
 
                 // set height of inner div
