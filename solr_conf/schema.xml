@@ -542,9 +542,16 @@
    <field name="occurrence_remarks" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="citation" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="raw_common_name" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
+   <field name="confidence" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+
+   <!-- fields to ignore-->
    <field name="raw_record_no" type="string" indexed="false" stored="false" multiValued="false" omitNorms="false" />
    <field name="raw_id_qualifier" type="string" indexed="false" stored="false" multiValued="false" omitNorms="false" />
-   <field name="confidence" type="int" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="sensitive_latitude" type="string" indexed="false" stored="false" multiValued="false" omitNorms="false" />
+   <field name="sensitive_longitude" type="string" indexed="false" stored="false" multiValued="false" omitNorms="false" />
+   <field name="altitudeMetres" type="string" indexed="false" stored="false" multiValued="false" omitNorms="false" />
+   <field name="depthCentimetres" type="string" indexed="false" stored="false" multiValued="false" omitNorms="false" />
+
    <!-- end of BIE Lucene Fields -->
 
    <!-- catchall field, containing all other searchable text fields (implemented
