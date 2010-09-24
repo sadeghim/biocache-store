@@ -79,7 +79,15 @@
                             <h3 style="margin-bottom: 8px;">Total sightings: <a href="${pageContext.request.contextPath}/occurrences/search?q=user_id:${pageContext.request.remoteUser}">${fn:length(occurrences)}</a></h3>
                             <c:forEach var="tc" items="${taxonConceptMap}">
                             	<a href="http://bie.ala.org.au/species/${tc.guid}">
-                                <img src="${tc.imageThumbnailUrl}" alt="species image thumbnail" style="display: block; float: left; margin-right: 10px;"/>
+                            		<c:choose>
+                            		<c:when test="${not empty tc.imageThumbnailUrl}">
+                                		<img src="${tc.imageThumbnailUrl}" alt="species image thumbnail" style="display: block; float: left; margin-right: 10px;"/>
+                                	</c:when>
+                                	<c:otherwise>
+	
+
+                                	</c:otherwise>
+                                	</c:choose>
                                 </a>
                                 <!-- 
                                 <div style="float: left; padding-right: 15px" id="images" class="section">

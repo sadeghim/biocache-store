@@ -17,15 +17,19 @@ package org.ala.biocache.web;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipOutputStream;
 
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ala.biocache.dao.DataProviderDAO;
 import org.ala.biocache.dao.DataResourceDAO;
+import org.ala.biocache.dao.ImageRecordDAO;
 import org.ala.biocache.dao.RawOccurrenceRecordDAO;
 import org.ala.biocache.dao.SearchDAO;
 import org.ala.biocache.dto.OccurrenceDTO;
@@ -33,10 +37,12 @@ import org.ala.biocache.dto.SearchQuery;
 import org.ala.biocache.dto.SearchResultDTO;
 import org.ala.biocache.model.DataProvider;
 import org.ala.biocache.model.DataResource;
+import org.ala.biocache.model.ImageRecord;
 import org.ala.biocache.model.RawOccurrenceRecord;
 import org.ala.biocache.util.SearchUtils;
 import org.ala.client.appender.RestLevel;
 import org.ala.client.model.LogEventVO;
+import org.ala.client.util.RestfulClient;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
@@ -51,11 +57,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import java.util.zip.ZipOutputStream;
-import javax.servlet.http.HttpServletRequest;
-
-//import org.ala.biocache.util.CitationUtils;
-import org.ala.client.util.RestfulClient;
 
 
 /**
@@ -85,12 +86,13 @@ public class OccurrenceController {
 	/** Data Provider DAO */
 	@Inject
 	protected DataProviderDAO dataProviderDAO;
+	/** Image Record DAO */
+	@Inject
+	protected ImageRecordDAO imageRecordDAO;
 	@Inject
 	protected SearchUtils searchUtils;
 	@Inject
 	protected RawOccurrenceRecordDAO rawOccurrenceRecordDAO;
-//    @Inject
-//	protected CitationUtils citationUtils;	
 	@Inject
 	protected RestfulClient restfulClient;
 	
@@ -740,8 +742,14 @@ public class OccurrenceController {
 		OccurrenceDTO occurrence = searchDAO.getById(id);
 		model.addAttribute("occurrence", occurrence);
 		if(id!=null){
-			RawOccurrenceRecord rawOccurrence =rawOccurrenceRecordDAO.getById(new Long(id));
+			Long occurrenceId = new Long(id);
+			
+			RawOccurrenceRecord rawOccurrence =rawOccurrenceRecordDAO.getById(occurrenceId);
 			model.addAttribute("rawOccurrence", rawOccurrence);
+			
+			List<ImageRecord> images = imageRecordDAO.findByOccurrenceId(occurrenceId);
+			model.addAttribute("images", images);
+			
 		}
 		model.addAttribute("hostUrl", hostUrl);
 		return SHOW;
@@ -810,5 +818,12 @@ public class OccurrenceController {
 
 	public void setCitationServiceUrl(String citationServiceUrl) {
 		this.citationServiceUrl = citationServiceUrl;
+	}
+
+	/**
+	 * @param imageRecordDAO the imageRecordDAO to set
+	 */
+	public void setImageRecordDAO(ImageRecordDAO imageRecordDAO) {
+		this.imageRecordDAO = imageRecordDAO;
 	}	
 }

@@ -43,6 +43,10 @@
     <property name="dataSource" ref="dataSource" />
   </bean>
   
+  <bean id="imageRecordDAO" class="org.ala.biocache.dao.ImageRecordDAOImpl">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+  
   <bean id="occurrenceRecordDAO" class="org.ala.biocache.dao.OccurrenceRecordDAOImpl">
   	<property name="dataSource" ref="dataSource" />
     <property name="namedParameterTemplate">
