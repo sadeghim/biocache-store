@@ -68,12 +68,13 @@
                     </script>
                     <div id="occurrenceMap"></div>
                     
-                    <div class="imageRecords">
+                    <div id="imageRecords">
                    	<c:forEach items="${images}" var="imageRecord">
+                   		<div class="imageRecord">
                    		<c:choose>
                    			<c:when test="${not empty imageRecord.htmlForDisplay}">
                    				<c:if test="${fn:startsWith(imageRecord.htmlForDisplay, 'http://')}">
-                   					<img src="${imageRecord.htmlForDisplay}"/>
+                   					<a href="${imageRecord.url}"><img src="${imageRecord.htmlForDisplay}"/></a>
                    					<p>
                    						${imageRecord.description}
                    					</p>
@@ -83,6 +84,7 @@
                    				<img src="${imageRecord.url}"/>	
                    			</c:otherwise>
                    		</c:choose>
+                   		</div>
                     </c:forEach>
                     </div>
                     
@@ -208,7 +210,9 @@
                             </c:if>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="geodeticDatum" fieldName="Geodetic datum">${rawOccurrence.geodeticDatum}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="occurrenceRemarks" fieldName="Notes">${rawOccurrence.occurrenceRemarks}</alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="individualCount" fieldName="Individual count">${rawOccurrence.individualCount}</alatag:occurrenceTableRow>
+                            <c:if test="${not empty rawOccurrence.individualCount && rawOccurrence.individualCount>0}">
+                            	<alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="individualCount" fieldName="Individual count">${rawOccurrence.individualCount}</alatag:occurrenceTableRow>
+                            </c:if>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="citation" fieldName="Citation">${rawOccurrence.citation}</alatag:occurrenceTableRow>
 
                         </table>
