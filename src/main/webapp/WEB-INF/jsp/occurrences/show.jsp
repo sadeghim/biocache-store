@@ -67,6 +67,25 @@
                         });
                     </script>
                     <div id="occurrenceMap"></div>
+                    
+                    <div class="imageRecords">
+                   	<c:forEach items="${images}" var="imageRecord">
+                   		<c:choose>
+                   			<c:when test="${not empty imageRecord.htmlForDisplay}">
+                   				<c:if test="${fn:startsWith(imageRecord.htmlForDisplay, 'http://')}">
+                   					<img src="${imageRecord.htmlForDisplay}"/>
+                   					<p>
+                   						${imageRecord.description}
+                   					</p>
+                   				</c:if>	
+                   			</c:when>
+                   			<c:otherwise>
+                   				<img src="${imageRecord.url}"/>	
+                   			</c:otherwise>
+                   		</c:choose>
+                    </c:forEach>
+                    </div>
+                    
                 </c:if>
                 <c:if test="${not empty occurrence}">
                     <c:set var="bieWebappContext" scope="request"><ala:propertyLoader bundle="biocache" property="bieWebappContext"/></c:set>
