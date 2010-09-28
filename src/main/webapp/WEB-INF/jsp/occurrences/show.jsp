@@ -67,8 +67,8 @@
                         });
                     </script>
                     <div id="occurrenceMap"></div>
-                    
-                    <div id="imageRecords">
+                </c:if>
+                <div id="imageRecords">
                    	<c:forEach items="${images}" var="imageRecord">
                    		<div class="imageRecord">
                    		<c:choose>
@@ -81,14 +81,15 @@
                    				</c:if>	
                    			</c:when>
                    			<c:otherwise>
-                   				<img src="${imageRecord.url}"/>	
+		             			<c:forEach var="url" items="${fn:split(imageRecord.url, ',')}">
+		             				<c:set var="url" value="${fn:trim(url)}"/>
+	                   				<a href="${url}"><img src="${url}"/></a>
+	                   			</c:forEach>	
                    			</c:otherwise>
                    		</c:choose>
                    		</div>
                     </c:forEach>
-                    </div>
-                    
-                </c:if>
+                </div>
                 <c:if test="${not empty occurrence}">
                     <c:set var="bieWebappContext" scope="request"><ala:propertyLoader bundle="biocache" property="bieWebappContext"/></c:set>
                     <!--
