@@ -71,9 +71,8 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/screen.css" type="text/css" media="screen" charset="utf-8"/>
         <!-- WP Menubar 4.7: start CSS -->
         <!-- WP Menubar 4.7: end CSS -->
-
     </head>
-    <body id="page-97" class="home page page-id-97 page-parent page-template page-template-default two-column-right">
+    <body class="two-column-right">
         <div id="wrapper">
             <div id="banner">
                 <div id="logo">
