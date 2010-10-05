@@ -21,12 +21,9 @@ public class FieldResultDTO {
     }
     public void setFieldValue(String fieldValue)
     {
-        //Currently not using the prefix, currently
-        //the field values are expected to shortened during
-        //the fedora indexing process. Full-stops are replaced
-        //here by uderscores as the jsp processor interprets full-stops
-        //as special characters and doesn't forward to the correct action
-        this.label = fieldValue.replace('.', '_');
+        //Currently not using the prefix
+        //TODO: NC: Do we need the prefix for anything?
+        this.label = fieldValue;
     }
     public String getFieldValue() {
     	if(prefix!=null){
