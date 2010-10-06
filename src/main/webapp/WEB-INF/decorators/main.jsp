@@ -10,8 +10,8 @@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %><%@
 taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><%@
 taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %><%@
 taglib uri="/tld/ala.tld" prefix="ala" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
     <head profile="http://gmpg.org/xfn/11">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
@@ -24,6 +24,7 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
         <link rel="stylesheet" type="text/css" media="screen" href="http://test.ala.org.au/wp-content/themes/ala/css/superfish.css" />
         <link rel="stylesheet" type="text/css" media="screen" href="http://test.ala.org.au/wp-content/themes/ala/css/skin.css" />
         <link rel="stylesheet" type="text/css" media="screen" href="http://test.ala.org.au/wp-content/themes/ala/css/auth.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="http://test.ala.org.au/wp-content/themes/ala/css/jquery.autocomplete.css" />
 
         <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/form.js"></script>
         <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/jquery-1.4.2.min.js"></script>
@@ -31,6 +32,7 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
         <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/ui.tabs.js"></script>
         <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/hoverintent-min.js"></script>
         <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/superfish/superfish.js"></script>
+        <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/jquery.autocomplete.js"></script>
         <script type="text/javascript">
 
             //add the indexOf method for IE7
@@ -52,10 +54,37 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
                     dropShadows:false
                 });
             });
-            // highlight explore menu tab
+
             jQuery(document).ready(function() {
-            	jQuery("div#nav li.nav-explore").addClass("selected");
-            });
+                // highlight explore menu tab
+                jQuery("div#nav li.nav-explore").addClass("selected");
+                // autocomplete for search input
+                $("form#search-form input#search").autocomplete('${pageContext.request.contextPath}/search/auto.jsonp', {
+                        extraParams: {limit:100},
+                        dataType: 'jsonp',
+                        parse: function(data) {
+                            var rows = new Array();
+                            data = data.autoCompleteList;
+                            for(var i=0; i<data.length; i++){
+                                rows[i] = {
+                                    data:data[i],
+                                    value: data[i].matchedNames[0],
+                                    result: data[i].matchedNames[0]
+                                };
+                            }
+                            return rows;
+                        },
+                        matchSubset: true,
+                        formatItem: function(row, i, n) {
+                            return row.matchedNames[0]; // + ' (' + row.rankString + ')';
+                        },
+                        cacheLength: 10,
+                        minChars: 3,
+                        scroll: false,
+                        max: 10,
+                        selectFirst: false
+                });
+            }); // End docuemnt ready
 
         </script>
         <meta name='robots' content='noindex,nofollow' />
