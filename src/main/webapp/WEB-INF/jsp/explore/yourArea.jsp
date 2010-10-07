@@ -262,7 +262,7 @@
                     // Dynamically set height of #taxaDiv (to match containing div height)
                     var tableHeight = $('#taxa-level-0').height();
                     //$('#rightList table').height(tableHeight+2);
-                    $('.tableContainer').height(tableHeight+8);
+                    $('.tableContainer').height(tableHeight+6);
                     var tbodyHeight = $('#taxa-level-0 tbody').height();
                     $('#rightList tbody').height(tbodyHeight);
                     
