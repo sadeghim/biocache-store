@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import atg.taglib.json.util.JSONObject;
 import java.util.Set;
 import org.ala.biocache.dto.OccurrenceSourceDTO;
+import org.ala.biocache.model.OccurrenceSource;
 /**
  * A class to provide utility methods used to populate search details.
  * @author Natasha
@@ -40,9 +41,9 @@ public class SearchUtils {
      * Returns an array that contains the search string to use for a collection
      * search and display name for the results.
      * @param query
-     * @return
+     * @return true when UID could be located and query updated correctly
      */
-    public void updateCollectionSearchString(SearchQuery searchQuery) {
+    public boolean updateCollectionSearchString(SearchQuery searchQuery) {
         try{
             String query = searchQuery.getQuery();
 
@@ -89,10 +90,12 @@ public class SearchUtils {
 //	        searchQuery.setQuery("collection_code_uid:"+query);
                 searchQuery.setQuery(getUidSearchField(query) +":" + query);
 	        searchQuery.setDisplayString(displayString.toString());
+                return true;
 	        
         }
         catch(Exception e){
         	logger.error("Problem contacting the collectory: "+e.getMessage(), e);
+                return false;
             //TODO work out what we want to do to the search if an exception occurs while
             //contacting the collectory etc
         }
@@ -150,12 +153,13 @@ public class SearchUtils {
      * Returns the query string based on the type of search that needs to be performed.
      * @param query
      * @param type
-     * @return [0] is the new query string to apply [1] is additional filter query strings to be applied
+     * @return true when the query updated correctly, false otherwise
      */
-    public void updateQueryDetails(SearchQuery searchQuery) {
+    public boolean updateQueryDetails(SearchQuery searchQuery) {
         logger.debug("Processing " + searchQuery.getQuery() +" using type: " + searchQuery.getType());
+        boolean success = true;
         if(searchQuery.getType().equals("collection")){
-            updateCollectionSearchString(searchQuery);
+            success =updateCollectionSearchString(searchQuery);
         }
         else if(searchQuery.getType().equals("provider")){
             searchQuery.setQuery(getDataProviderSearchString(searchQuery.getQuery()));
@@ -164,9 +168,25 @@ public class SearchUtils {
             searchQuery.setQuery(getDataResourceSearchString(searchQuery.getQuery()));
         }
         else if(searchQuery.getType().equals("taxon")){
-            updateTaxonConceptSearchString(searchQuery);
+            success =updateTaxonConceptSearchString(searchQuery);
         }
         //otherwise we can leave the query with its default values ("normal" type)
+
+        // upate the filterQuery if it contains an "OccurrenceSource" so that it has the correct filter query specified
+        String[] queries = searchQuery.getFilterQuery();
+        if(queries!= null){
+        for(String q: queries){
+            if(q.startsWith(OccurrenceSource.FACET_NAME+":")){
+               searchQuery.removeFromFilterQuery(q);
+               OccurrenceSource oc = OccurrenceSource.getForDisplayName(q.substring(q.indexOf(":") +1));
+               if(oc != null){
+                searchQuery.addToFilterQuery("confidence:" + oc.getRange());
+                }
+            }
+        }
+        }
+        return success;
+        
     }
     
     /**

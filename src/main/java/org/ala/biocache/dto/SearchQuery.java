@@ -40,6 +40,10 @@ public class SearchQuery {
             filterQuery = new ArrayList<String>();
         filterQuery.add(fq);
     }
+    public void removeFromFilterQuery(String fq){
+        if(filterQuery != null)
+            filterQuery.remove(fq);
+    }
 
     public String getQuery() {
         return query;

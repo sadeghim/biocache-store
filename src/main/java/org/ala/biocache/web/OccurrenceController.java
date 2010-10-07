@@ -161,7 +161,9 @@ public class OccurrenceController {
 		}
 
 		SearchQuery searchQuery = new SearchQuery(query, "taxon", filterQuery);
-		boolean taxonFound = searchUtils.updateTaxonConceptSearchString(searchQuery);
+		//boolean taxonFound = searchUtils.updateTaxonConceptSearchString(searchQuery);
+                //Change the method call so that the filter query can be updated
+                boolean taxonFound = searchUtils.updateQueryDetails(searchQuery);
 
 		if(taxonFound){
 		
@@ -422,8 +424,9 @@ public class OccurrenceController {
 		}
 
 
-		SearchQuery searchQuery = new SearchQuery(query, "collection");
-		searchUtils.updateCollectionSearchString(searchQuery);
+		SearchQuery searchQuery = new SearchQuery(query, "collection", filterQuery);
+		searchUtils.updateQueryDetails(searchQuery);//changed to this method so that the filter query has the correct updates applied
+                //searchUtils.updateCollectionSearchString(searchQuery);
 
 		logger.info("solr query: " + searchQuery.getQuery());
 		SearchResultDTO searchResult = new SearchResultDTO();
@@ -434,7 +437,7 @@ public class OccurrenceController {
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
 
-		searchResult = searchDAO.findByFulltextQuery(searchQuery.getQuery(), filterQuery, startIndex, pageSize, sortField, sortDirection);
+		searchResult = searchDAO.findByFulltextQuery(searchQuery.getQuery(), searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
 
 		model.addAttribute("searchResult", searchResult);
 		logger.debug("query = " + query);
@@ -486,6 +489,7 @@ public class OccurrenceController {
 		}
 
 		SearchQuery searchQuery = new SearchQuery(query, "spatial", filterQuery);
+                searchUtils.updateQueryDetails(searchQuery);
 		//searchUtils.updateTaxonConceptSearchString(searchQuery);
 
 		if (startIndex == null) {
@@ -623,7 +627,10 @@ public class OccurrenceController {
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
 
-		searchResult = searchDAO.findByFulltextQuery(query, filterQuery, startIndex, pageSize, sortField, sortDirection);
+                SearchQuery searchQuery = new SearchQuery(query, "normal", filterQuery);
+                searchUtils.updateQueryDetails(searchQuery);
+
+		searchResult = searchDAO.findByFulltextQuery(searchQuery.getQuery(), searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
                 model.addAttribute("searchResult", searchResult);
 		logger.debug("query = "+query);
 		Long totalRecords = searchResult.getTotalRecords();
@@ -634,7 +641,7 @@ public class OccurrenceController {
 			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
 			model.addAttribute("lastPage", lastPage);
 		}
-
+                
 		return LIST;
 	}
 

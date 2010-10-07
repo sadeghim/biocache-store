@@ -54,6 +54,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 import com.ibm.icu.text.SimpleDateFormat;
 import org.ala.biocache.dto.TaxaRankCountDTO;
+import org.ala.biocache.model.OccurrenceSource;
 import org.ala.biocache.util.SearchUtils;
 
 /**
@@ -767,7 +768,7 @@ public class SearchDAOImpl implements SearchDAO {
         }
         return trDTO;
     }
-	
+
     /**
      * Perform SOLR query - takes a SolrQuery and search params
      *
@@ -827,10 +828,11 @@ public class SearchDAOImpl implements SearchDAO {
         // Iterator it = qr.getResults().iterator() // Use for download 
         List<FacetField> facets = qr.getFacetFields();
         List<FacetField> facetDates = qr.getFacetDates();
+        Map<String, Integer> facetQueries = qr.getFacetQuery();
         if (facetDates != null) {
             logger.debug("Facet dates size: "+facetDates.size());
             facets.addAll(facetDates);
-        }
+        }        
         //Map<String, Map<String, List<String>>> highlights = qr.getHighlighting();
         List<OccurrenceDTO> results = qr.getBeans(OccurrenceDTO.class);
         List<FacetResultDTO> facetResults = new ArrayList<FacetResultDTO>();
@@ -851,18 +853,37 @@ public class SearchDAOImpl implements SearchDAO {
                 if ((facetEntries != null) && (facetEntries.size() > 0)) {
                     ArrayList<FieldResultDTO> r = new ArrayList<FieldResultDTO>();
                     for (FacetField.Count fcount : facetEntries) {
-//                        String msg = fcount.getName() + ": " + fcount.getCount();
+//                        String msg = fcount.getName() + ": " + fcount.getCount();                       
                         //logger.trace(fcount.getName() + ": " + fcount.getCount());
                         r.add(new FieldResultDTO(fcount.getName(), fcount.getCount()));
                     }
                     // only add facets if there are more than one facet result
                     if (r.size() > 1) {
-                        FacetResultDTO fr = new FacetResultDTO(facet.getName(), r);
+                        FacetResultDTO fr = new FacetResultDTO(facet.getName(), r);                       
                         facetResults.add(fr);
                     }
                 }
             }
         }
+
+        //handle the confidence facets in the facetQueries
+        ArrayList<FieldResultDTO> fqr = new ArrayList<FieldResultDTO>();
+        if(facetQueries != null){
+            for(String range: facetQueries.keySet()){
+                //get the OccurrenceSource
+                OccurrenceSource os = OccurrenceSource.getForRange(range.substring(range.indexOf(":")+1));
+                if(os != null && facetQueries.get(range)>0){
+                    fqr.add(new FieldResultDTO(os.getDisplayName(), facetQueries.get(range)));
+                }
+
+            }
+        }
+        //Only add the confidence facetResult if there is more than 1 facet
+        if(fqr.size()>1){
+                FacetResultDTO fr = new FacetResultDTO(OccurrenceSource.FACET_NAME, fqr);
+                facetResults.add(fr);
+            }
+
         searchResult.setFacetResults(facetResults);
         // The query result is stored in its original format so that all the information
         // returned is available later on if needed
@@ -938,6 +959,11 @@ public class SearchDAOImpl implements SearchDAO {
         solrQuery.add("facet.date.gap", "+10YEAR"); // gap interval of 10 years
         solrQuery.add("facet.date.other", "before"); // include counts before the facet start date ("before" label)
         solrQuery.add("facet.date.include", "lower"); // counts will be included for dates on the starting date but not ending date
+        //Manually add the integer ranges for the facet query required on the confidence field
+        for(OccurrenceSource os : OccurrenceSource.values()){
+            solrQuery.add("facet.query", "confidence:" + os.getRange());
+        }
+        
         //solrQuery.add("facet.date.other", "after");
 
         solrQuery.setFacetMinCount(1);
