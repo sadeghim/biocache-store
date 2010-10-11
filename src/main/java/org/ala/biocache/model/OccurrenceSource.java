@@ -21,8 +21,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Natasha Carter
  */
 public enum OccurrenceSource {
-    NON_CITIZEN("[0 TO 2]", "Non-Citizen Science"),
-    CITZEN("[2 TO *]", "Citizen Science");
+    NON_CITIZEN("[0 TO 2]", "Published datasets"),
+    CITZEN("[2 TO *]", "Individual sightings");
     /** The range to use in the SOLR query */
     private String range;
     /** The name to be displayed  */
