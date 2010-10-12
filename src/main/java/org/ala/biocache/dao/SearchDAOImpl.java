@@ -280,7 +280,7 @@ public class SearchDAOImpl implements SearchDAO {
             		"State/Territory",
             		"Collection code",
             		"Institution code",
-            		"Collector",
+            		"Collector/observer",
             		"Catalogue number",
             		"Data provider",
             		"Data resource",
