@@ -211,5 +211,13 @@ public interface SearchDAO {
 
 
     TaxaRankCountDTO findTaxonCountForUid(String query, int maximumFacets) throws Exception;
+    /**
+     * Returns the scientific name and counts for the taxon rank that proceed the supplied rank.
+     * @param query
+     * @param rank
+     * @return
+     * @throws Exception
+     */
+    TaxaRankCountDTO findTaxonCountForUid(String query, String rank) throws Exception;
 }
 

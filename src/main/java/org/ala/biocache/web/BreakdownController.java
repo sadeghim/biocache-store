@@ -28,6 +28,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * A simple controller for providing breakdowns on top of the biocache.
@@ -124,6 +125,33 @@ public class BreakdownController {
             TaxaRankCountDTO results = searchDAO.findTaxonCountForUid(newQuery, max);
             model.addAttribute("breakdown", results);
         }   
+        }
+
+        /**
+         * Provides a breakdown of taxa that are part of the supplied name.
+         * @param query The UID to perform the breakdown on
+         * @param scientificName  The name of the taxon on which to perform the breakdown
+         * @param rank The rank of the scientificName (the breakdown will include a rank under this)
+         * @param model
+         * @throws Exception
+         */
+        @RequestMapping(value="/breakdown/uid/namerank/{query}.json*", method=RequestMethod.GET)
+        public void uidNameRankTaxonBreakdown(
+                @PathVariable("query")String query,
+                @RequestParam(value="name", required = true) String scientificName,
+                @RequestParam(value="rank", required=true) String rank,
+                Model model
+                ) throws Exception{
+
+            String newQuery = SearchUtils.getUidSearchField(query) + ":" + query;
+           if(newQuery != null){
+                //add the scientific name to the search
+                newQuery += " AND " +rank +":" + scientificName;
+            }
+
+            TaxaRankCountDTO results = searchDAO.findTaxonCountForUid(newQuery, rank);
+            model.addAttribute("breakdown", results);
+
         }
 
 	/**

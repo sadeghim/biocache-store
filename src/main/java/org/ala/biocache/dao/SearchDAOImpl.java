@@ -768,6 +768,44 @@ public class SearchDAOImpl implements SearchDAO {
         }
         return trDTO;
     }
+    /**
+     * @see org.ala.biocache.dao.SearchDAO#findTaxonCountForUid(java.lang.String, java.lang.String)
+     */
+    public TaxaRankCountDTO findTaxonCountForUid(String query, String rank) throws Exception{
+        TaxaRankCountDTO trDTO = null;
+        List<String> ranks = SearchUtils.getNextRanks(rank);
+        if(ranks != null && ranks.size()>0){
+            SolrQuery solrQuery = new SolrQuery();
+            solrQuery.setQueryType("standard");
+            solrQuery.setQuery(query);
+            solrQuery.setRows(0);
+            solrQuery.setFacet(true);
+            solrQuery.setFacetMinCount(1);
+            for(String r :ranks){
+                solrQuery.addFacetField(r);
+            }
+            QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, rank, "asc");
+            if(qr.getResults().size()>0){
+                for(String r : ranks){
+                    trDTO = new TaxaRankCountDTO(r);
+                    FacetField ff = qr.getFacetField(r);
+                    if(ff != null){
+                        List<Count> counts = ff.getValues();
+                        if(counts.size()>0){
+                            List<FieldResultDTO> fDTOs = new ArrayList<FieldResultDTO>();
+                            for(Count count: counts){
+                                FieldResultDTO f = new FieldResultDTO(count.getName(), count.getCount());
+                                fDTOs.add(f);
+                            }
+                            trDTO.setTaxa(fDTOs);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return trDTO;
+    }
 
     /**
      * Perform SOLR query - takes a SolrQuery and search params

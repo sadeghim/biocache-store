@@ -36,6 +36,7 @@ public class SearchUtils {
     protected String collectoryBaseUrl = "http://collections.ala.org.au";
     
     protected String bieBaseUrl = "http://bie.ala.org.au";
+    private static final List<String> ranks =(List<String>)org.springframework.util.CollectionUtils.arrayToList(new String[]{"kingdom","phylum", "class", "order", "family", "genus", "species"});
     
     /**
      * Returns an array that contains the search string to use for a collection
@@ -254,6 +255,18 @@ public class SearchUtils {
             default: return "unknown";
         }
     }
+    /**
+     * Returns an ordered list of the next ranks after the supplied rank.
+     * @param rank
+     * @return
+     */
+    public static List<String> getNextRanks(String rank){
+        int start = ranks.indexOf(rank) +1;
+        if(start>0)
+            return ranks.subList(start , ranks.size());
+        return ranks;
+    }
+    
 	/**
 	 * @param taxonConceptDAO the taxonConceptDAO to set
 	 */
