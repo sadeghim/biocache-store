@@ -68,6 +68,7 @@
                     </script>
                     <div id="occurrenceMap"></div>
                 </c:if>
+                <c:if test="${not empty images}">
                 <div id="imageRecords">
                    	<c:forEach items="${images}" var="imageRecord">
                    		<div class="imageRecord">
@@ -90,6 +91,7 @@
                    		</div>
                     </c:forEach>
                 </div>
+                </c:if>
                 <c:if test="${not empty occurrence}">
                     <c:set var="bieWebappContext" scope="request"><ala:propertyLoader bundle="biocache" property="bieWebappContext"/></c:set>
                     <!--
@@ -133,7 +135,7 @@
                             <alatag:occurrenceTableRow annotate="false" section="dataset" fieldCode="${occurrence.identifierType}" fieldName="${occurrence.identifierType}" fieldNameIsMsgCode="true">${occurrence.identifierValue}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="identifierName" fieldName="Identifier">${occurrence.identifierName}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="identifierDate" fieldName="Identified Date"><fmt:formatDate value="${occurrence.identifierDate}" pattern="yyyy-MM-dd"/></alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="collectorName" fieldName="Collector">${occurrence.collector}</alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="collectorName" fieldName="Collector/observer">${occurrence.collector}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="typeStatus" fieldName="Type Status">${occurrence.typeStatus}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="dataset" fieldCode="taxonomicIssue" fieldName="taxonomic Issue"><c:if test="${occurrence.taxonomicIssue != 0}">${occurrence.taxonomicIssue}</c:if></alatag:occurrenceTableRow>
                         </table>
