@@ -13,7 +13,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="geo.position" content="${occurrence.latitude};${occurrence.longitude}"/>
-        <title>Occurrence Record: ${id}</title>
+        <title>Occurrence Record: ${id} | Atlas of Living Australia</title>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/annotation.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.form.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.url.js"></script>

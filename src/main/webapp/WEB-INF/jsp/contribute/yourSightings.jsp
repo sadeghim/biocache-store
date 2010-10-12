@@ -13,7 +13,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="UTF-8" >
-        <title>Your Sightings</title>
+        <title>Your Sightings | Atlas of Living Australia</title>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/date.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.timePicker.js"></script>
         <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/static/css/timePicker.css" />

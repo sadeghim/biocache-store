@@ -11,7 +11,7 @@
     <html>
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-            <title>Explore Your Area</title>
+            <title>Explore Your Area | Atlas of Living Australia</title>
             <script type="text/javascript" src="http://www.google.com/jsapi?key=${googleKey}"></script>
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.4.custom.min.js"></script>
             <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8">

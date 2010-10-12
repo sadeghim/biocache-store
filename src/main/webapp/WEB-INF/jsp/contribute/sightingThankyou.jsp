@@ -13,7 +13,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="UTF-8" >
-        <title>Contribute a Sighting - Thank you</title>
+        <title>Contribute a Sighting - Thank you | Atlas of Living Australia</title>
     </head>
     <body>
         <div id="header">
