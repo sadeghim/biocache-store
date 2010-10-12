@@ -352,7 +352,8 @@
                             </div>
                             <div style="margin-left: 115px" class="section">
                                 <h2><a href="http://bie.ala.org.au/species/${taxonConcept.guid}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
-                                    (${taxonConcept.commonName})</a>
+                                    <c:if test="${not empty taxonConcept.commonName}">(${taxonConcept.commonName})</c:if>
+                                    </a>
                                     <input type="hidden" name="guid" id="sightingGuid" value="${param.guid}"/>
                                 </h2>
                                 <fieldset id="sightingInfo">
