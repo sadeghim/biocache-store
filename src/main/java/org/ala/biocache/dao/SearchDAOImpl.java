@@ -212,7 +212,7 @@ public class SearchDAOImpl implements SearchDAO {
         logger.debug("Writing CSV file for species count by circle");
         List<TaxaCountDTO> species = findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, higherTaxa, null, 0, -1, "count", "asc");
         logger.debug("There are " + species.size() + "records being downloaded");
-        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), '\t', '"');
+        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), ',', '"');
         csvWriter.writeNext(new String[]{
             		"Taxon ID",
                     "Kingdom",
@@ -262,22 +262,25 @@ public class SearchDAOImpl implements SearchDAO {
             QueryResponse qr = runSolrQuery(solrQuery, filterQuery, pageSize, startIndex, "score", "asc");
             CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), ',', '"');
             
+            //should these be darwin core terms??
             csvWriter.writeNext(new String[]{
             		"Record ID",
             		"Taxon ID",
             		"Original taxon name",
-                    "Supplied Common Name",
+                    "Supplied common name",
             		"Recognised taxon name",
             		"Taxon rank",
                     "Common name",
             		"Family",
             		"Latitude",
             		"Longitude",
-            		"Coordinate Precision",
+            		"Coordinate Precision (metres)",
             		"Locality",
             		"Bio region",
             		"Basis of record",
             		"State/Territory",
+            		"Event date",
+            		"Event time",
             		"Collection code",
             		"Institution code",
             		"Collector/observer",
@@ -287,6 +290,9 @@ public class SearchDAOImpl implements SearchDAO {
             		"Identifier name",
             		"Citation",
             });
+            
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
             
             while(qr.getResults().size()>0 && resultsCount<MAX_DOWNLOAD_SIZE){
             	logger.debug("Start index: "+startIndex);
@@ -301,6 +307,16 @@ public class SearchDAOImpl implements SearchDAO {
 	            	}
 	            	if(result.getLatitude()!=null){
 	            		longitude = result.getLongitude().toString();
+	            	}
+	            	
+	            	String eventDate = "";
+	            	String eventTime = "";
+	            	if(result.getOccurrenceDate()!=null){
+	            		eventDate = dateFormat.format(result.getOccurrenceDate());
+	            		eventTime = timeFormat.format(result.getOccurrenceDate());
+	            		if("00:00".equals(eventTime)){
+	            			eventTime = "";
+	            		}
 	            	}
 	            	
 	            	String[] record = new String[]{
@@ -319,6 +335,8 @@ public class SearchDAOImpl implements SearchDAO {
             			result.getBiogeographicRegion(),
             			result.getBasisOfRecord(),
             			result.getState(),
+            			eventDate,
+            			eventTime,
             			result.getCollectionCode(),
             			result.getInstitutionCode(),
             			result.getCollector(),

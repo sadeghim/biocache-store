@@ -17,15 +17,16 @@ package org.ala.biocache.web;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.ala.biocache.dao.SearchDAO;
 import org.ala.biocache.dto.MiniTaxonConceptDTO;
+import org.ala.biocache.dto.OccurrenceDTO;
 import org.ala.biocache.dto.Sighting;
 import org.ala.biocache.dto.TaxaCountDTO;
 import org.ala.biocache.service.ContributeService;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringUtils;
@@ -37,12 +38,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import atg.taglib.json.util.JSONArray;
 import atg.taglib.json.util.JSONObject;
+
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
-import org.ala.biocache.dto.OccurrenceDTO;
-import org.ala.biocache.dto.OccurrencePoint;
 
 /**
  * Controller for the "contribute data" page
@@ -184,10 +185,13 @@ public class ContributeDataController {
             s.setRank(rank);
             
             if(StringUtils.isNotEmpty(eventDateAsString)){
-            	Date eventDate = DateUtils.parseDate(eventDateAsString, new String[]{"dd/MM/yyyy", "yyyy-MM-dd"});
+            	if(eventTime!=null){
+            		eventDateAsString = eventDateAsString + " " + eventTime; 
+            	}
+            	Date eventDate = DateUtils.parseDate(eventDateAsString, new String[]{"dd/MM/yyyy HH:mm", "yyyy-MM-dd HH:mm"});
             	s.setEventDate(eventDate);
             }
-            
+            s.setEventTime(eventTime);
             s.setUserId(userId);
             s.setCollectorName(collectorName);
             s.setLocality(locality);

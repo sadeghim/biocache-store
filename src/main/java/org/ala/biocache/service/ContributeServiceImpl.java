@@ -119,6 +119,7 @@ public class ContributeServiceImpl implements ContributeService {
 				ror.setMonth(month);
 				ror.setYear(year);
 			}
+			ror.setEventTime(s.getEventTime());
 			
 			long occurrenceId = rawOccurrenceRecordDAO.create(ror);
 			
