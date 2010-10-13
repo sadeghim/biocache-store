@@ -94,6 +94,7 @@
                 </c:if>
                 <c:if test="${not empty occurrence}">
                     <c:set var="bieWebappContext" scope="request"><ala:propertyLoader bundle="biocache" property="bieWebappContext"/></c:set>
+                    <c:set var="collectionsWebappContext" scope="request"><ala:propertyLoader bundle="biocache" property="collectionsWebappContext"/></c:set>                    
                     <!--
                     <h1>Occurrence Details: ${occurrence.institutionCode} ${occurrence.collectionCode} ${occurrence.catalogueNumber}</h1>
                     -->
@@ -121,14 +122,47 @@
                     <div id="occurrenceDataset" class="occurrenceSection">
                         <h2>Dataset</h2>
                         <table class="occurrenceTable" id="datasetTable">
-                            <alatag:occurrenceTableRow annotate="false" section="dataset" fieldCode="dataProvider" fieldName="Data Provider">${occurrence.dataProvider}</alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="false" section="dataset" fieldCode="dataResource" fieldName="Data Set">${occurrence.dataResource}</alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="false" section="dataset" fieldCode="dataProvider" fieldName="Data Provider">
+                            	<c:choose>
+									<c:when test="${occurrence.dataProviderUid != null && not empty occurrence.dataProviderUid}">
+		                            	<a href="${collectionsWebappContext}/public/show/${occurrence.dataProviderUid}">
+		                            		${occurrence.dataProvider}
+		                            	</a>
+		                            </c:when>
+		                            <c:otherwise>
+		                            	${occurrence.dataProvider}
+		                            </c:otherwise>
+	                            </c:choose>
+                            </alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="false" section="dataset" fieldCode="dataResource" fieldName="Data Set">
+                            	<c:choose>
+	                            	<c:when test="${occurrence.dataResourceUid != null && not empty occurrence.dataResourceUid}">
+		                            	<a href="${collectionsWebappContext}/public/show/${occurrence.dataResourceUid}">
+		                            		${occurrence.dataResource}
+		                            	</a>
+	                            	</c:when>
+	                            	<c:otherwise>
+	                            		${occurrence.dataResource}
+	                            	</c:otherwise>
+								</c:choose>                            	
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="institutionCode" fieldName="Institution Code">${occurrence.institutionCode}
                                 <c:if test="${not empty institutionCodeLsid && not empty institutionCodeName}">
                                     (<a href="${pageContext.request.contextPath}/institutions/${occurrence.institutionCodeLsid}">${occurrence.institutionCodeName}</a>)
                                 </c:if>
                             </alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="collectionCode" fieldName="Collection Code">${occurrence.collectionCode}</alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="collectionCode" fieldName="Collection Code">
+                            	 <c:choose>
+	                            	 <c:when test="${occurrence.collectionCodeUid != null && not empty occurrence.collectionCodeUid}">
+		                            	<a href="${collectionsWebappContext}/public/show/${occurrence.collectionCodeUid}">
+		                            		${occurrence.collectionCode}
+		                            	</a>
+	                            	</c:when>
+									<c:otherwise>
+		                            		${occurrence.collectionCode}
+	                            	</c:otherwise>
+                            	</c:choose>                            	
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="catalogueNumber" fieldName="Catalogue Number">${occurrence.catalogueNumber}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="basisOfRecord" fieldName="Basis of Record">${occurrence.basisOfRecord}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="occurrenceDate" fieldName="Record Date"><fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/></alatag:occurrenceTableRow>
