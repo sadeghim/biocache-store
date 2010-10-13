@@ -114,9 +114,8 @@ public class SearchUtils {
     	if(tc!=null){
 	        StringBuffer entityQuerySb = new StringBuffer(tc.getRankString() + ": " + tc.getScientificName());
 	        if (tc.getCommonName() != null) {
-	            entityQuerySb.append(" (");
+	            entityQuerySb.append(" : ");
 	            entityQuerySb.append(tc.getCommonName());
-	            entityQuerySb.append(") ");
 	        }
 	        searchQuery.addToFilterQuery("lft:[" + tc.getLeft() + " TO " + tc.getRight() + "]");
 	        
