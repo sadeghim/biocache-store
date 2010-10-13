@@ -97,7 +97,7 @@
                                 <div style="padding: 5px;">
                                 	<c:set var="speciesName">
                                 		<alatag:formatSciName name="${tc.scientificName}" rankId="${tc.rankId}"/>
-                                		<c:if test="${not empty tc.commonName}">(${tc.commonName})</c:if>
+                                		<c:if test="${not empty tc.commonName}"><br/>${tc.commonName}</c:if>
                                 	</c:set>
                                     <h4>${speciesName}</h4>
                                     Records: <a href="${pageContext.request.contextPath}/occurrences/search?q=user_id:${pageContext.request.remoteUser}&fq=taxon_name:${tc.scientificName}">${tc.count}</a>
