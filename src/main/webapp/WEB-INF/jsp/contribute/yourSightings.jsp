@@ -64,8 +64,8 @@
     <body>
         <div id="header">
             <div id="breadcrumb">
-                <a href="http://test.ala.org.au">Home</a>
-                <a href="http://test.ala.org.au/contribute">Contribute</a>
+                <a href="${initParam.centralServer}">Home</a>
+                <a href="${initParam.centralServer}/contribute">Contribute</a>
                 Your Sightings
             </div>
             <h1>Your Sightings</h1>

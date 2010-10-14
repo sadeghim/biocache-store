@@ -16,7 +16,7 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.simplemodal.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>
         <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8">
-        <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/basic.css" charset="utf-8">
+        <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/basic.css" charset="utf-8">
         <!--[if lt IE 7]>
         <link type='text/css' href='${pageContext.request.contextPath}/static/css/basic_ie.css' rel='stylesheet' media='screen' />
         <![endif]-->
@@ -383,8 +383,8 @@
     <body>
         <div id="header">
             <div id="breadcrumb">
-                <a href="http://test.ala.org.au">Home</a>
-                <a href="http://test.ala.org.au/explore">Explore</a>
+                <a href="${initParam.centralServer}">Home</a>
+                <a href="${initParam.centralServer}/explore">Explore</a>
                 Occurrence Records Search
             </div>
             <h1>Occurrence Search Results</h1>

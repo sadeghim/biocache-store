@@ -262,7 +262,7 @@
                     // Dynamically set height of #taxaDiv (to match containing div height)
                     var tableHeight = $('#taxa-level-0').height();
                     //$('#rightList table').height(tableHeight+2);
-                    $('.tableContainer').height(tableHeight+6);
+                    $('.tableContainer').height(tableHeight+8);
                     var tbodyHeight = $('#taxa-level-0 tbody').height();
                     $('#rightList tbody').height(tbodyHeight);
                     
@@ -322,8 +322,8 @@
         <body>
             <div id="header">
                 <div id="breadcrumb">
-                    <a href="http://test.ala.org.au">Home</a>
-                    <a href="http://test.ala.org.au/explore">Explore</a>
+                    <a href="${initParam.centralServer}">Home</a>
+                    <a href="${initParam.centralServer}/explore">Explore</a>
                     Your Area
                 </div>
                 <h1>Explore Your Area</h1>

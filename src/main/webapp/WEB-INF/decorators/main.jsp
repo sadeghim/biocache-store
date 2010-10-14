@@ -2,8 +2,8 @@
     Document   : main.jsp (sitemesh decorator file)
     Created on : 18/09/2009, 13:57
     Author     : dos009
---%>
-<%@taglib prefix="decorator" uri="http://www.opensymphony.com/sitemesh/decorator" %><%@
+--%><%@
+taglib prefix="decorator" uri="http://www.opensymphony.com/sitemesh/decorator" %><%@
 taglib prefix="page" uri="http://www.opensymphony.com/sitemesh/page" %><%@
 taglib prefix="spring" uri="http://www.springframework.org/tags" %><%@
 taglib prefix="form" uri="http://www.springframework.org/tags/form" %><%@
@@ -16,23 +16,21 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
         <title><decorator:title default="Atlas of Living Australia" /></title>
-        <link rel="stylesheet" href="http://test.ala.org.au/wp-content/themes/ala/style.css" type="text/css" media="screen" />
-        <link rel="icon" type="image/x-icon" href="http://test.ala.org.au/wp-content/themes/ala/images/favicon.ico" />
-        <link rel="shortcut icon" type="image/x-icon" href="http://test.ala.org.au/wp-content/themes/ala/images/favicon.ico" />
+        <link rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/style.css" type="text/css" media="screen" />
+        <link rel="icon" type="image/x-icon" href="${initParam.centralServer}/wp-content/themes/ala/images/favicon.ico" />
+        <link rel="shortcut icon" type="image/x-icon" href="${initParam.centralServer}/wp-content/themes/ala/images/favicon.ico" />
 
-        <link rel="stylesheet" type="text/css" media="screen" href="http://test.ala.org.au/wp-content/themes/ala/css/sf.css" />
-        <link rel="stylesheet" type="text/css" media="screen" href="http://test.ala.org.au/wp-content/themes/ala/css/superfish.css" />
-        <link rel="stylesheet" type="text/css" media="screen" href="http://test.ala.org.au/wp-content/themes/ala/css/skin.css" />
-        <link rel="stylesheet" type="text/css" media="screen" href="http://test.ala.org.au/wp-content/themes/ala/css/auth.css" />
-        <link rel="stylesheet" type="text/css" media="screen" href="http://test.ala.org.au/wp-content/themes/ala/css/jquery.autocomplete.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${initParam.centralServer}/wp-content/themes/ala/css/sf.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${initParam.centralServer}/wp-content/themes/ala/css/superfish.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${initParam.centralServer}/wp-content/themes/ala/css/skin.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${initParam.centralServer}/wp-content/themes/ala/css/auth.css" />
+<!--        <link rel="stylesheet" type="text/css" media="screen" href="${initParam.centralServer}/wp-content/themes/ala/css/jquery.autocomplete.css" />-->
 
-        <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/form.js"></script>
-        <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/jquery-1.4.2.min.js"></script>
-        <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/ui.core.js"></script>
-        <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/ui.tabs.js"></script>
-        <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/hoverintent-min.js"></script>
-        <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/superfish/superfish.js"></script>
-        <script language="JavaScript" type="text/javascript" src="http://test.ala.org.au/wp-content/themes/ala/scripts/jquery.autocomplete.js"></script>
+        <script language="JavaScript" type="text/javascript" src="${initParam.centralServer}/wp-content/themes/ala/scripts/form.js"></script>
+        <script language="JavaScript" type="text/javascript" src="${initParam.centralServer}/wp-content/themes/ala/scripts/jquery-1.4.2.min.js"></script>
+        <script language="JavaScript" type="text/javascript" src="${initParam.centralServer}/wp-content/themes/ala/scripts/hoverintent-min.js"></script>
+        <script language="JavaScript" type="text/javascript" src="${initParam.centralServer}/wp-content/themes/ala/scripts/superfish/superfish.js"></script>
+<!--        <script language="JavaScript" type="text/javascript" src="${initParam.centralServer}/wp-content/themes/ala/scripts/jquery.autocomplete.js"></script>-->
         <script type="text/javascript">
 
             //add the indexOf method for IE7
@@ -53,51 +51,53 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
                     autoArrows:false,
                     dropShadows:false
                 });
-            });
 
-            jQuery(document).ready(function() {
                 // highlight explore menu tab
                 jQuery("div#nav li.nav-explore").addClass("selected");
-                // autocomplete for search input
-                $("form#search-form input#search").autocomplete('${pageContext.request.contextPath}/search/auto.jsonp', {
-                        extraParams: {limit:100},
-                        dataType: 'jsonp',
-                        parse: function(data) {
-                            var rows = new Array();
-                            data = data.autoCompleteList;
-                            for(var i=0; i<data.length; i++){
-                                rows[i] = {
-                                    data:data[i],
-                                    value: data[i].matchedNames[0],
-                                    result: data[i].matchedNames[0]
-                                };
+                // autocomplete for search input (Note: JQuery UI version)
+                jQuery("form#search-form input#search").autocomplete({
+                    source: function( request, response ) {
+                        $.ajax({
+                            url: "http://bie.ala.org.au/search/auto.jsonp",
+                            dataType: "jsonp",
+                            data: {
+                                limit: 10,
+                                q: request.term
+                            },
+                            success: function( data ) {
+                                response( $.map( data.autoCompleteList, function( item ) {
+                                    return {
+                                            label: item.matchedNames[0],
+                                            value: item.matchedNames[0]
+                                    }
+                                }));
                             }
-                            return rows;
-                        },
-                        matchSubset: true,
-                        formatItem: function(row, i, n) {
-                            return row.matchedNames[0]; // + ' (' + row.rankString + ')';
-                        },
-                        cacheLength: 10,
-                        minChars: 3,
-                        scroll: false,
-                        max: 10,
-                        selectFirst: false
+                        });
+                    },
+                    minLength: 3,
+                    zIndex: 11
+
                 });
-            }); // End docuemnt ready
+            });
 
         </script>
+        <style type="text/css">
+            ul.ui-autocomplete {
+                text-align: left;
+                z-index: 11 !important;
+            }
+        </style>
         <meta name='robots' content='noindex,nofollow' />
-        <link rel="alternate" type="application/rss+xml" title="Atlas Living Australia NG &raquo; Feed" href="http://test.ala.org.au/?feed=rss2" />
-        <link rel="alternate" type="application/rss+xml" title="Atlas Living Australia NG &raquo; Comments Feed" href="http://test.ala.org.au/?feed=comments-rss2" />
-        <link rel='stylesheet' id='external-links-css'  href='http://test.ala.org.au/wp-content/plugins/sem-external-links/sem-external-links.css?ver=20090903' type='text/css' media='' />
-        <!--<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://test.ala.org.au/xmlrpc.php?rsd" />
-        <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://test.ala.org.au/wp-includes/wlwmanifest.xml" />
-        <link rel='index' title='Atlas Living Australia NG' href='http://test.ala.org.au' />
+        <link rel="alternate" type="application/rss+xml" title="Atlas Living Australia NG &raquo; Feed" href="${initParam.centralServer}/?feed=rss2" />
+        <link rel="alternate" type="application/rss+xml" title="Atlas Living Australia NG &raquo; Comments Feed" href="${initParam.centralServer}/?feed=comments-rss2" />
+        <link rel='stylesheet' id='external-links-css'  href='${initParam.centralServer}/wp-content/plugins/sem-external-links/sem-external-links.css?ver=20090903' type='text/css' media='' />
+        <!--<link rel="EditURI" type="application/rsd+xml" title="RSD" href="${initParam.centralServer}/xmlrpc.php?rsd" />
+        <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="${initParam.centralServer}/wp-includes/wlwmanifest.xml" />
+        <link rel='index' title='Atlas Living Australia NG' href='${initParam.centralServer}' />
         <meta name="generator" content="WordPress 2.9.2" />
-        <link rel='canonical' href='http://test.ala.org.au' />-->
+        <link rel='canonical' href='${initParam.centralServer}' />-->
         <decorator:head />
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/screen.css" type="text/css" media="screen" charset="utf-8"/>
+        <link rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/biocache.css" type="text/css" media="screen" charset="utf-8"/>
         <!-- WP Menubar 4.7: start CSS -->
         <!-- WP Menubar 4.7: end CSS -->
     </head>
@@ -105,7 +105,7 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
         <div id="wrapper">
             <div id="banner">
                 <div id="logo">
-                    <a href="http://test.ala.org.au" title="Atlas of Living Australia home"><img src="http://test.ala.org.au/wp-content/themes/ala/images/ala_logo.png" width="208" height="80" alt="Atlas of Living Ausralia logo" /></a>
+                    <a href="${initParam.centralServer}" title="Atlas of Living Australia home"><img src="${initParam.centralServer}/wp-content/themes/ala/images/ala_logo.png" width="208" height="80" alt="Atlas of Living Ausralia logo" /></a>
                 </div><!--close logo-->
 
                 <c:set var="queryString" value="${pageContext.request.queryString}"/>

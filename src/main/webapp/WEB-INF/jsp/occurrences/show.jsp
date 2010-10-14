@@ -19,7 +19,8 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.url.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.cookie.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.simplemodal.js"></script>
-        <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/basic.css" charset="utf-8">
+        <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/basic.css" charset="utf-8">
+        <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/occurrenceSpecial.css" charset="utf-8">
         <script>
             // Set some global variables to be used in imported JS files
             occurrenceHtmlUrl = "http://${pageContext.request.serverName}${pageContext.request.contextPath}/occurrences/${occurrence.id}";
@@ -29,13 +30,12 @@
             //saveAnnotationUrl = "${pageContext.request.contextPath}/annotation/saveAnnotation";
             //getAnnotationsUrl =  "<gbif:propertyLoader bundle='portal' property='hostName'/>/danno/annotea/";
         </script>
-         <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/occurrenceSpecial.css" charset="utf-8">
     </head>
     <body>
         <div id="header">
             <div id="breadcrumb">
-                <a href="http://test.ala.org.au">Home</a>
-                <a href="http://test.ala.org.au/explore">Explore</a>
+                <a href="${initParam.centralServer}">Home</a>
+                <a href="${initParam.centralServer}/explore">Explore</a>
                 Occurrence Record - ${occurrence.id}
             </div>
             <h1>Occurrence Details: ${occurrence.id}</h1>
