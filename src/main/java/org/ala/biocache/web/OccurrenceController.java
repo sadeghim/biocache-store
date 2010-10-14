@@ -220,9 +220,10 @@ public class OccurrenceController {
          * @param model
          * @throws Exception
          */
-        @RequestMapping(value = "/occurrences/sourceByTaxon/{guid}.json", method = RequestMethod.GET)
+        @RequestMapping(value = "/occurrences/sourceByTaxon/{guid}.json*", method = RequestMethod.GET)
         public void sourceByTaxon(
 			@PathVariable(value="guid") String query,
+                        @RequestParam(value="fq", required=false) String[] filterQuery,
                         HttpServletRequest request,
                         Model model
                         )
@@ -230,11 +231,11 @@ public class OccurrenceController {
             String email = null;
                 String reason = "Viewing BIE species map";
                 String ip = request.getLocalAddr();
-            SearchQuery searchQuery = new SearchQuery(query, "taxon", null);
+            SearchQuery searchQuery = new SearchQuery(query, "taxon", filterQuery);
 		searchUtils.updateTaxonConceptSearchString(searchQuery);
                 Map<String, Integer> sources =searchDAO.getSourcesForQuery(searchQuery.getQuery(), searchQuery.getFilterQuery());
-                model.addAttribute("occurrenceSources", searchUtils.getSourceInformation(sources.keySet()));
-
+                logger.debug("The sources and counts.... " + sources);
+                model.addAttribute("occurrenceSources", searchUtils.getSourceInformation(sources));
                 //log the usages statistic to the logger
                 LogEventVO vo = new LogEventVO(2, email, reason, ip,sources);
 	    	logger.log(RestLevel.REMOTE, vo);

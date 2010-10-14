@@ -1137,6 +1137,7 @@ public class SearchDAOImpl implements SearchDAO {
         solrQuery.setQueryType("standard");
         solrQuery.setRows(0);
         solrQuery.setFacet(true);
+        solrQuery.setFacetMinCount(1);
         solrQuery.addFacetField("data_provider_uid");
         solrQuery.addFacetField("data_resource_uid");
         solrQuery.addFacetField("collection_code_uid");

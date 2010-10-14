@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 
 import atg.taglib.json.util.JSONObject;
+import java.util.Map;
 import java.util.Set;
 import org.ala.biocache.dto.OccurrenceSourceDTO;
 import org.ala.biocache.model.OccurrenceSource;
@@ -293,21 +294,29 @@ public class SearchUtils {
          * @param keys
          * @return
          */
-        public List<OccurrenceSourceDTO> getSourceInformation(Set<String> keys){
+        public List<OccurrenceSourceDTO> getSourceInformation(Map<String, Integer> sources){
+         Set<String> keys= sources.keySet();
             logger.debug("Listing the source information for : " + keys);
-        List<OccurrenceSourceDTO> sources = new ArrayList<OccurrenceSourceDTO>();
+        List<OccurrenceSourceDTO> lsources = new ArrayList<OccurrenceSourceDTO>();
         try{
         for(String key : keys){
             //get the information for the uid
             String jsonObject = OccurrenceController.getUrlContentAsString(collectoryBaseUrl + "/lookup/summary/" + key);
 	    JSONObject j = new JSONObject(jsonObject);
-            sources.add(new OccurrenceSourceDTO(j.getString("name"),key));
-
+            lsources.add(new OccurrenceSourceDTO(j.getString("name"),key, sources.get(key)));
         }
         }
         catch(Exception e){
             logger.error(e.getMessage());
         }
-        return sources;
+        //sort the sources based on count
+        java.util.Collections.sort(lsources, new java.util.Comparator<OccurrenceSourceDTO>(){
+
+            @Override
+            public int compare(OccurrenceSourceDTO o1, OccurrenceSourceDTO o2) {
+                return o2.getCount() - o1.getCount();//sort the counts in reverse order so that max count appears at the top of the list
+            }
+        });
+        return lsources;
     }
 }

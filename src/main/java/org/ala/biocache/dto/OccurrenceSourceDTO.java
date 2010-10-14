@@ -9,14 +9,16 @@ package org.ala.biocache.dto;
 public class OccurrenceSourceDTO {
     private String name;
     private String uid;
+    private int count;
 
     public OccurrenceSourceDTO() {
 
     }
 
-    public OccurrenceSourceDTO(String name, String uid) {
+    public OccurrenceSourceDTO(String name, String uid, int count) {
         this.name = name;
         this.uid = uid;
+        this.count = count;
     }
 
     public String getName() {
@@ -35,5 +37,11 @@ public class OccurrenceSourceDTO {
         this.uid = uid;
     }
 
+    public int getCount() {
+        return count;
+    }
 
+    public void setCount(int count) {
+        this.count = count;
+    }
 }
