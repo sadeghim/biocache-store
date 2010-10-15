@@ -156,7 +156,7 @@
                            		<c:when test="${occurrence.institutionCodeUid != null && not empty occurrence.institutionCodeUid}">
 	                           		<alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="institutionCode" fieldName="Institution">
 		                            	<a href="${collectionsWebappContext}/public/show/${occurrence.institutionCodeUid}">
-		                            		${collectionInstitution}(Institution Code: ${occurrence.institutionCode})
+		                            		${collectionInstitution}&nbsp;&nbsp;(Institution Code: ${occurrence.institutionCode})
 		                            	</a>
 	                            	</alatag:occurrenceTableRow>
                             	</c:when>                            	
@@ -176,7 +176,7 @@
                             	 <c:when test="${occurrence.collectionCodeUid != null && not empty occurrence.collectionCodeUid}">
                             	 	<alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="collectionCode" fieldName="Collection">
 		                            	<a href="${collectionsWebappContext}/public/show/${occurrence.collectionCodeUid}">
-		                            		${collectionName} (Collection Code: ${occurrence.collectionCode})
+		                            		${collectionName}&nbsp;&nbsp;(Collection Code: ${occurrence.collectionCode})
 		                            	</a>
 	                            	</alatag:occurrenceTableRow>
                             	</c:when>
