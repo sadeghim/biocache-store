@@ -50,6 +50,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -107,7 +109,7 @@ public class OccurrenceController {
 	protected String bieBaseUrl = "http://bie.ala.org.au/";
 	protected String collectoryBaseUrl = "http://collections.ala.org.au";
 	protected String citationServiceUrl = collectoryBaseUrl + "/lookup/citation";
-
+	protected String summaryServiceUrl  = collectoryBaseUrl + "/lookup/summary";
 	/**
 	 * Custom handler for the welcome view.
 	 * <p>
@@ -749,6 +751,27 @@ public class OccurrenceController {
 		model.addAttribute("id", id);
 		OccurrenceDTO occurrence = searchDAO.getById(id);
 		model.addAttribute("occurrence", occurrence);
+		
+		Object[] resp = restfulClient.restGet(summaryServiceUrl + "/" + occurrence.getCollectionCodeUid());
+		if((Integer)resp[0] == HttpStatus.SC_OK){
+			String json = (String)resp[1];
+			ObjectMapper mapper = new ObjectMapper();		
+			JsonNode rootNode;
+			
+			try {			
+				rootNode = mapper.readValue(json, JsonNode.class);
+				String name = rootNode.path("name").getTextValue();
+				String logo = rootNode.path("institutionLogoUrl").getTextValue();
+				String institution = rootNode.path("institution").getTextValue();
+				model.addAttribute("collectionName", name);
+				model.addAttribute("collectionLogo", logo);
+				model.addAttribute("collectionInstitution", institution);
+			}
+			catch (Exception e) {
+				logger.error(e.toString());
+			} 
+		}
+		
 		if(id!=null){
 			Long occurrenceId = new Long(id);
 			

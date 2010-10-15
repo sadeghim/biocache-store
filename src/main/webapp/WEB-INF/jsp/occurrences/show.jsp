@@ -21,7 +21,7 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.simplemodal.js"></script>
         <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/basic.css" charset="utf-8">
         <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/occurrenceSpecial.css" charset="utf-8">
-        <script>
+         <script>
             // Set some global variables to be used in imported JS files
             occurrenceHtmlUrl = "http://${pageContext.request.serverName}${pageContext.request.contextPath}/occurrences/${occurrence.id}";
             occurrenceJsonUrl = "${pageContext.request.contextPath}/occurrences/${occurrence.id}.json";
@@ -68,7 +68,12 @@
                     </script>
                     <div id="occurrenceMap"></div>
                 </c:if>
-                <c:if test="${not empty images}">
+                <c:if test="${not empty collectionLogo}">
+                <div id="logoRecord">
+                	<img src="${collectionLogo}" />
+                </div>
+                </c:if>                
+				<c:if test="${not empty images}">
                 <div id="imageRecords">
                    	<c:forEach items="${images}" var="imageRecord">
                    		<div class="imageRecord">
@@ -91,7 +96,7 @@
                    		</div>
                     </c:forEach>
                 </div>
-                </c:if>
+				</c:if>
                 <c:if test="${not empty occurrence}">
                     <c:set var="bieWebappContext" scope="request"><ala:propertyLoader bundle="biocache" property="bieWebappContext"/></c:set>
                     <c:set var="collectionsWebappContext" scope="request"><ala:propertyLoader bundle="biocache" property="collectionsWebappContext"/></c:set>                    
@@ -146,23 +151,41 @@
 	                            	</c:otherwise>
 								</c:choose>                            	
                             </alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="institutionCode" fieldName="Institution Code">${occurrence.institutionCode}
-                                <c:if test="${not empty institutionCodeLsid && not empty institutionCodeName}">
-                                    (<a href="${pageContext.request.contextPath}/institutions/${occurrence.institutionCodeLsid}">${occurrence.institutionCodeName}</a>)
-                                </c:if>
-                            </alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="collectionCode" fieldName="Collection Code">
-                            	 <c:choose>
-	                            	 <c:when test="${occurrence.collectionCodeUid != null && not empty occurrence.collectionCodeUid}">
-		                            	<a href="${collectionsWebappContext}/public/show/${occurrence.collectionCodeUid}">
-		                            		${occurrence.collectionCode}
+                            
+                           	<c:choose>
+                           		<c:when test="${occurrence.institutionCodeUid != null && not empty occurrence.institutionCodeUid}">
+	                           		<alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="institutionCode" fieldName="Institution">
+		                            	<a href="${collectionsWebappContext}/public/show/${occurrence.institutionCodeUid}">
+		                            		${collectionInstitution}(Institution Code: ${occurrence.institutionCode})
 		                            	</a>
-	                            	</c:when>
-									<c:otherwise>
-		                            		${occurrence.collectionCode}
-	                            	</c:otherwise>
-                            	</c:choose>                            	
-                            </alatag:occurrenceTableRow>
+	                            	</alatag:occurrenceTableRow>
+                            	</c:when>                            	
+								<c:otherwise>
+									<alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="institutionCode" fieldName="Institution Code">
+	                            		${occurrence.institutionCode}
+	                            	</alatag:occurrenceTableRow>
+                            	</c:otherwise>  
+								<%--
+	                           	${occurrence.institutionCode}
+	                               <c:if test="${not empty institutionCodeLsid && not empty institutionCodeName}">
+	                                   (<a href="${pageContext.request.contextPath}/institutions/${occurrence.institutionCodeLsid}">${occurrence.institutionCodeName}</a>)
+	                               </c:if>
+	                            --%>                            	                          	
+                           	</c:choose>                           
+                           	 <c:choose>
+                            	 <c:when test="${occurrence.collectionCodeUid != null && not empty occurrence.collectionCodeUid}">
+                            	 	<alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="collectionCode" fieldName="Collection">
+		                            	<a href="${collectionsWebappContext}/public/show/${occurrence.collectionCodeUid}">
+		                            		${collectionName} (Collection Code: ${occurrence.collectionCode})
+		                            	</a>
+	                            	</alatag:occurrenceTableRow>
+                            	</c:when>
+								<c:otherwise>
+									<alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="collectionCode" fieldName="Collection Code">
+	                            		${occurrence.collectionCode}
+                            		</alatag:occurrenceTableRow>
+                            	</c:otherwise>
+                           	</c:choose>                            	                            
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="catalogueNumber" fieldName="Catalogue Number">${occurrence.catalogueNumber}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="basisOfRecord" fieldName="Basis of Record">${occurrence.basisOfRecord}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="occurrenceDate" fieldName="Record Date"><fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/></alatag:occurrenceTableRow>
