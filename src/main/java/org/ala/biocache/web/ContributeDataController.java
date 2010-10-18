@@ -78,7 +78,7 @@ public class ContributeDataController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/contribute/sighting/{guid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/share/sighting/{guid}", method = RequestMethod.GET)
 	public String contributeSighting(
             @PathVariable("guid") String guid,
             HttpServletRequest request,
@@ -130,7 +130,7 @@ public class ContributeDataController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/contribute/sighting/{guid}", method = RequestMethod.POST)
+    @RequestMapping(value = "/share/sighting/{guid}", method = RequestMethod.POST)
 	public String contributeSighting(
             @PathVariable("guid") String guid,
             @RequestParam(value="guid", required=false) String taxonConceptGuid,
@@ -207,7 +207,7 @@ public class ContributeDataController {
             if (!contributeService.recordSighting(s)) {
                 model.addAttribute("error", "Error: your sighting was not saved. Please try again later.");
             } else {
-            	return "redirect:/contribute/your-sightings";
+            	return "redirect:/share/your-sightings";
             }
         }
         
@@ -222,7 +222,7 @@ public class ContributeDataController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/contribute/your-sightings*", method = RequestMethod.GET)
+    @RequestMapping(value = "/share/your-sightings*", method = RequestMethod.GET)
 	public String yourSighting(
             HttpServletRequest request,
             Model model) throws Exception {
