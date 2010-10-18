@@ -35,9 +35,15 @@ import org.ala.biocache.dto.TaxaRankCountDTO;
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>" .
  */
 public interface SearchDAO {
-
+	
+	/**
+	 * Add an occurrence to the biocache.
+	 * 
+	 * @param oc
+	 * @return
+	 * @throws Exception
+	 */
 	boolean addOccurrence(OccurrenceDTO oc) throws Exception;
-//	boolean removeOccurrence(String id) throws Exception;
 	
     /**
      * Find all occurrences for a given (full text) query

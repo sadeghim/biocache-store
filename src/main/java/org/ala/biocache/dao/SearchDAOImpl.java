@@ -58,7 +58,7 @@ import org.ala.biocache.model.OccurrenceSource;
 import org.ala.biocache.util.SearchUtils;
 
 /**
- * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog)
+ * SOLR implementation of SearchDao. Uses embedded SOLR server (can be a memory hog).
  *
  * @see org.ala.biocache.dao.SearchDAO
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
