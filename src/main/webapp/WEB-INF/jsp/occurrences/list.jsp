@@ -15,10 +15,10 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.simplemodal.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>
-        <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bie-theme/jquery-ui-1.8.custom.css" charset="utf-8">
+        <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/biocache-theme/jquery-ui-1.8.custom.css" charset="utf-8">
         <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/basic.css" charset="utf-8">
         <!--[if lt IE 7]>
-        <link type='text/css' href='${pageContext.request.contextPath}/static/css/basic_ie.css' rel='stylesheet' media='screen' />
+        <link type='text/css' href='${initParam.centralServer}/wp-content/themes/ala/css/basic_ie.css' rel='stylesheet' media='screen' />
         <![endif]-->
         <script type="text/javascript">
             /* Openlayers vars */
