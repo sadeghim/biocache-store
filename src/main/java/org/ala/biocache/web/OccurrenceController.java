@@ -41,6 +41,7 @@ import org.ala.biocache.model.ImageRecord;
 import org.ala.biocache.model.RawOccurrenceRecord;
 import org.ala.biocache.util.SearchUtils;
 import org.ala.client.appender.RestLevel;
+import org.ala.client.model.LogEventType;
 import org.ala.client.model.LogEventVO;
 import org.ala.client.util.RestfulClient;
 import org.apache.commons.httpclient.HttpClient;
@@ -239,7 +240,7 @@ public class OccurrenceController {
                 logger.debug("The sources and counts.... " + sources);
                 model.addAttribute("occurrenceSources", searchUtils.getSourceInformation(sources));
                 //log the usages statistic to the logger
-                LogEventVO vo = new LogEventVO(2, email, reason, ip,sources);
+                LogEventVO vo = new LogEventVO(LogEventType.DEBUG, email, reason, ip,sources);
 	    	logger.log(RestLevel.REMOTE, vo);
             
         }
@@ -713,7 +714,7 @@ public class OccurrenceController {
                 //logger.debug("UID stats : " + uidStats);
                 //log the stats to ala logger
                 
-                LogEventVO vo = new LogEventVO(1, email, reason, ip,uidStats);
+                LogEventVO vo = new LogEventVO(LogEventType.DEBUG, email, reason, ip,uidStats);
 	    	logger.log(RestLevel.REMOTE, vo);
 		return null;
 	}
