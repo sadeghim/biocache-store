@@ -19,10 +19,10 @@
         <div id="header">
             <div id="breadcrumb">
                 <a href="${initParam.centralServer}">Home</a>
-                <a href="${initParam.centralServer}/contribute">Contribute</a>
-                Contribute a Sighting
+                <a href="${initParam.centralServer}/share">Share</a>
+                Share a Sighting
             </div>
-            <h1>Contribute a Sighting - Confirmation</h1>
+            <h1>Share a Sighting</h1>
         </div>
         
             <c:choose>

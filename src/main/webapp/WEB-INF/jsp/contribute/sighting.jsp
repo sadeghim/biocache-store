@@ -13,7 +13,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="UTF-8" >
-        <title>Contribute a Sighting | Atlas of Living Australia</title>
+        <title>Share a Sighting | Atlas of Living Australia</title>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/date.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.timePicker.js"></script>
         <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/static/css/timePicker.css" />
@@ -337,10 +337,10 @@
         <div id="header">
             <div id="breadcrumb">
                 <a href="${initParam.centralServer}">Home</a>
-                <a href="${initParam.centralServer}/contribute">Contribute</a>
-                Contribute a Sighting
+                <a href="${initParam.centralServer}/share">Share</a>
+                Share a Sighting
             </div>
-            <h1>Contribute a Sighting</h1>
+            <h1>Share a Sighting</h1>
         </div>
         <c:choose>
             <c:when test="${!empty pageContext.request.remoteUser}"><%-- User is logged in --%>

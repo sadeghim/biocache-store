@@ -65,7 +65,7 @@
         <div id="header">
             <div id="breadcrumb">
                 <a href="${initParam.centralServer}">Home</a>
-                <a href="${initParam.centralServer}/contribute">Contribute</a>
+                <a href="${initParam.centralServer}/share">Share</a>
                 Your Sightings
             </div>
             <h1>Your Sightings</h1>
