@@ -55,7 +55,7 @@
     <context-param>
         <!-- Parameter used by CAS filters -->
         <param-name>serverName</param-name>
-        <param-value>http://biocache.ala.org.au</param-value>
+        <param-value>http://localhost:8080</param-value>
     </context-param>
 
     <context-param>
@@ -63,20 +63,15 @@
         <param-value>https://auth.ala.org.au</param-value>
     </context-param>
 
-    <!-- The Central Server hosting the CMS -->
+	<!-- The Central Server hosting the CMS -->
     <context-param>
         <param-name>centralServer</param-name>
         <param-value>http://test.ala.org.au</param-value>
     </context-param>
 
     <context-param>
-        <param-name>contextPath</param-name>
-        <param-value></param-value>
-    </context-param>
-
-    <context-param>
         <param-name>uriFilterPattern</param-name>
-        <param-value>/, /occurrences/\d+, /occurrences/search, /explore/your-area, /contribute/.*</param-value>
+        <param-value>/, /occurrences/\d+, /occurrences/search, /explore/your-area, /share/.*</param-value>
     </context-param>
 
     <!-- CAS Authentication Service filters -->
