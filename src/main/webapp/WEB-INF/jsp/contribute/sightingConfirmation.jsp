@@ -30,9 +30,11 @@
                     <c:if test="${not empty taxonConcept}">
                         <form name="sighting" id="sighting" action="" method="POST">
                             <div id="column-one">
+                            	<c:if test="${not empty taxonConcept.imageThumbnailUrl}">
                                 <div style="float: left; padding-right: 15px" id="images" class="section">
                                     <img src="${taxonConcept.imageThumbnailUrl}" height="85px" alt="species thumbnail"/>
                                 </div>
+                                </c:if>
                                 <div style="margin-left: 115px" class="section">
                                     <h2><a href="http://bie.ala.org.au/species/${param.guid}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
                                         (${taxonConcept.commonName})</a>
