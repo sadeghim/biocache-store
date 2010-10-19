@@ -51,6 +51,7 @@
                                 zoom: 4,
                                 center: latlng,
                                 scaleControl: true,
+                                streetViewControl: false,
                                 mapTypeControlOptions: {
                                     mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN ]
                                 },
