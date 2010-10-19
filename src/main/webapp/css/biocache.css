@@ -605,7 +605,8 @@ a.occurrenceLink {
 }
 #searchButtons button {
 /*    width: 120px;*/
-    padding: 4px 10px;
+    padding: 2px 6px;
+    line-height: 1.8em;
 }
 #searchButtons  {
     float: right;
