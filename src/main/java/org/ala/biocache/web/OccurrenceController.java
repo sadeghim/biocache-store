@@ -240,7 +240,7 @@ public class OccurrenceController {
                 logger.debug("The sources and counts.... " + sources);
                 model.addAttribute("occurrenceSources", searchUtils.getSourceInformation(sources));
                 //log the usages statistic to the logger
-                LogEventVO vo = new LogEventVO(LogEventType.DEBUG, email, reason, ip,sources);
+                LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_VIEWED_ON_MAP, email, reason, ip,sources);
 	    	logger.log(RestLevel.REMOTE, vo);
             
         }
@@ -714,7 +714,7 @@ public class OccurrenceController {
                 //logger.debug("UID stats : " + uidStats);
                 //log the stats to ala logger
                 
-                LogEventVO vo = new LogEventVO(LogEventType.DEBUG, email, reason, ip,uidStats);
+                LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_DOWNLOADED, email, reason, ip,uidStats);
 	    	logger.log(RestLevel.REMOTE, vo);
 		return null;
 	}
