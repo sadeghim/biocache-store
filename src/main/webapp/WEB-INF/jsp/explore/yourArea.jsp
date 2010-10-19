@@ -350,7 +350,7 @@
                         <div id="left-col">
                             <form name="searchForm" id="searchForm" action="" method="GET">
                                 <div id="locationInput">
-                                    <h2>Enter your location or address:</h2>
+                                    <h2>Enter your location or address</h2>
                                     <div id="searchHints">E.g. a street address, place name, postcode or coordinates (as lat, lon)</div>
                                     <input name="address" id="address" size="50" value="${address}"/>
                                     <input id="locationSearch" type="submit" value="Search"/>

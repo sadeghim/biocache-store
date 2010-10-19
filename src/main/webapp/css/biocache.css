@@ -561,10 +561,6 @@ p.occurrenceResultRow span {
     padding-right: 4px;
     border-right: 1px solid gray;
 }
-p.occurrenceResultRow span span {
-    padding-right: 0px;
-    border-right: 0px solid gray;
-}
 
 div#decoratorBody {
     padding: 10px;
