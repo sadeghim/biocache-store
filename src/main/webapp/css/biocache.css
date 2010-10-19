@@ -123,6 +123,9 @@ td, th  {
     padding-bottom: 2px;
     /*margin-top: 58px;*/
 }
+#header h1 {
+    padding-bottom: 8px;
+}
 #menuSearch input {
     font-size: 13px;
     padding: 1px;
@@ -522,53 +525,47 @@ img.galleryImage {
 #footer .tabs a:hover {
     text-decoration: underline;
 }*/
-
-/* Facet links */
+div.results span .resultsLabel {
+    color: #555;
+    font-weight: normal;
+}
+div.results span.highlight {
+    display: inline;
+}
 #facets {
-    width: 185px;
-    margin-right: 5px;
+    margin-top:-1px;
 }
-#facetBar {
-    float: right;
-    width: 180px;
-    padding: 5px;
-    margin-top: -16px;
+#facets > h3 {
+    border-bottom: 1px solid #E8EACE;
+    font-size: 1em;
+    font-weight: bold;
+    line-height: 1.8em !important;
 }
-#facetBar ul {
-    list-style-type: none;
-    background-color: #CBDAF0;
-    margin: 0px;
+#facets  h3 {
+    padding: 0px 10px !important;
 }
-#facetBar ul#navlist {
-    border-top: 1px solid #99B5E3;
+#subnavlist li {
+    text-transform: capitalize;
 }
-#facetBar li {
-    padding : 4px;
-    padding-left: 10px;
-    border: 1px solid #99B5E3;
-    border-top: none;
-    list-style-type: none;
-}
-#facetBar #subnavlist li {
-    padding-left: 20px;
-    background-color: #EBF1FA;
-    list-style-type: none;
-}
-span#facetName {
-    color: #F26649;
-}
-#removeFacet {
+#facets #accordion {
     display: block;
-    padding: 10px;
-    background-color: #D3E0EA;
-    border: 1px solid #99B5E3;
 }
-#removeFacet li {
-    list-style-type: disc;
+#subnavlist {
+    font-size: 90%;
 }
-div#accordion > h3.ui-state-active {
-    background-color: #d6d6d6 !important;
+div.results span.commonNameSummary {
+    display: inline;
+    color: #222;
 }
+p.occurrenceResultRow span {
+    padding-right: 4px;
+    border-right: 1px solid gray;
+}
+p.occurrenceResultRow span span {
+    padding-right: 0px;
+    border-right: 0px solid gray;
+}
+
 div#decoratorBody {
     padding: 10px;
     color: #444;
@@ -576,123 +573,7 @@ div#decoratorBody {
 #decoratorBody > h2, #decoratorBody > h3 {
     margin-bottom: 10px;
 }
-div#searchResults {
-    margin-top: 10px;
 
-}
-div.solrResults {
-    width:770px;
-    float: right;
-    clear: both;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    text-align: center;
-    background-color: #D3E0EA;
-    border: 4px solid #99B5E3;
-    font-size: 12px;
-}
-div.solrResults table {
-    width: 100%;
-    margin-bottom: 10px;
-    text-align: left;
-    background-color: white;
-}
-div.solrResults table td, div.solrResults table th {
-    padding: 2px 4px;
-    border-bottom: 1px solid #D3E0EA;
-}
-div.solrResults table th {
-    border-bottom: 2px solid #D3E0EA;
-    font-weight: bold;
-}
-div#resultsStats {
-    width: 50%;
-    float: left;
-    padding: 8px 0 5px 0;
-    text-align: left;
-}
-div#searchControls {
-    width: 50%;
-    float: left;
-    padding: 5px 0 5px 0;
-    text-align: right;
-}
-div#searchTerms {
-    margin: 8px 0 0px 0;
-    font-size: 13px;
-    font-weight: bold;
-    text-align: left;
-}
-div#searchTypes {
-    padding: 10px 0;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
-}
-div#searchTypes ul {
-    list-style: none;
-    margin: 0;
-}
-div#searchTypes ul li {
-    padding: 2px 5px;
-    width: 110%;
-}
-div#searchTypes ul li.active {
-    font-weight: bold;
-    color: #222;
-    background-color: #99B5E3;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-}
-#refineMore, #refineLess {
-    margin-top: 5px;
-}
-#refineLess {
-    display: none;
-}
-#accordion {
-    display: none;
-    font-size:13px;
-    margin-top: 10px;
-}
-#accordion h3{
-    font-size: inherit;
-}
-.queryTermBox, .facetTermBox {
-    display: inline-block;
-    zoom: 1; /* HASLAYOUT hack */
-    *display: inline; /* IE7 hack */
-    line-height: 18px;
-    padding: 2px 4px 2px;
-    margin-top: 2px;
-}
-.queryTermBox {
-    background-color: #F8F2E5;
-    border: 1px solid #D75A20;
-}
-.facetTermBox {
-    background-color: #EBF1FA; /* #D3E0EA; */
-    border: 1px solid #99B5E3;
-}
-.facetTermDivider {
-    display: inline-block;
-    height: 14px;
-    padding-right: 4px;
-}
-.facetCloseLink {
-    display: inline-block;
-    height: 14px;
-}
-.facetFieldName {
-    color:#666666;
-}
-#debug {
-    display: none;
-    border: 1px solid #D75A20;
-}
-div#sortWidget {
-    padding: 6px;
-    text-align: right;
-}
 
 /** occurrence record... */
 div.occurrenceSection {
@@ -724,17 +605,17 @@ a.occurrenceLink {
 }
 #searchButtons button {
 /*    width: 120px;*/
-    float: right;
-    padding: 3px 10px;
+    padding: 4px 10px;
 }
-#searchButtons button span {
-    font-size: 12px;
-    padding: 0 !important;
+#searchButtons  {
+    float: right;
+    padding-bottom: 5px;
 }
 #subnavlist > ul {
     margin: 0 1em 0 2em;
     padding-bottom: 0.5em;
 }
+
 /* Openlayers map */
 
 div#pointsMap {
@@ -988,7 +869,7 @@ input#locationSearch{
 	padding:1px 2px;
 }
 button#download {
-	padding:1px;
+/*	padding:1px;*/
 }
 #locationInfo { 
 	padding-top:.8em;
@@ -1353,4 +1234,17 @@ div.time-picker {
     bottom: 45%;
     left: 45%;
     right: 45%;
+}
+
+li.showHide a {
+    font-size: 90%;
+    text-decoration: none;
+}
+
+#header #breadcrumb {
+    width: 750px;
+}
+#downloadForm label {
+    width: 75px;
+    display: inline-block;
 }

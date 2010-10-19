@@ -4,12 +4,7 @@
     Author     : dos009
 --%><%@
 taglib prefix="decorator" uri="http://www.opensymphony.com/sitemesh/decorator" %><%@
-taglib prefix="page" uri="http://www.opensymphony.com/sitemesh/page" %><%@
-taglib prefix="spring" uri="http://www.springframework.org/tags" %><%@
-taglib prefix="form" uri="http://www.springframework.org/tags/form" %><%@
-taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><%@
-taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %><%@
-taglib uri="/tld/ala.tld" prefix="ala" %>
+include file="/common/taglibs.jsp" %>
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
     <head profile="http://gmpg.org/xfn/11">
@@ -25,6 +20,7 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
         <link rel="stylesheet" type="text/css" media="screen" href="${initParam.centralServer}/wp-content/themes/ala/css/skin.css" />
         <link rel="stylesheet" type="text/css" media="screen" href="${initParam.centralServer}/wp-content/themes/ala/css/auth.css" />
         <link rel="stylesheet" type="text/css" media="screen" href="${initParam.centralServer}/wp-content/themes/ala/css/jquery.autocomplete.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/static/css/biocache.css" />
 
         <script language="JavaScript" type="text/javascript" src="${initParam.centralServer}/wp-content/themes/ala/scripts/form.js"></script>
         <script language="JavaScript" type="text/javascript" src="${initParam.centralServer}/wp-content/themes/ala/scripts/jquery-1.4.2.min.js"></script>
@@ -97,7 +93,6 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
         <meta name="generator" content="WordPress 2.9.2" />
         <link rel='canonical' href='${initParam.centralServer}' />-->
         <decorator:head />
-        <link rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/biocache.css" type="text/css" media="screen" charset="utf-8"/>
         <!-- WP Menubar 4.7: start CSS -->
         <!-- WP Menubar 4.7: end CSS -->
     </head>
@@ -123,7 +118,7 @@ taglib uri="/tld/ala.tld" prefix="ala" %>
                 <div id="wrapper_search">
                     <form id="search-form" action="http://bie.ala.org.au/search" method="get" name="search-form">
                         <label for="search">Search</label>
-                        <input type="text" class="filled" id="search" name="q" value="${not empty query ? query : 'Search the Atlas'}" />
+                        <input type="text" class="filled" id="search" name="q" value="Search the Atlas" />
                         <span class="search-button-wrapper"><input type="submit" class="search-button" id="search-button" alt="Search" value="Search" /></span>
                     </form>
                 </div><!--close wrapper_search-->

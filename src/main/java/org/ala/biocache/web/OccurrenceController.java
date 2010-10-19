@@ -17,6 +17,7 @@ package org.ala.biocache.web;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -198,6 +199,7 @@ public class OccurrenceController {
 			model.addAttribute("totalRecords", totalRecords);
 			//type of search
 			model.addAttribute("type", "taxon");
+            model.addAttribute("facetMap", addFacetMap(filterQuery));
 	
 			if(logger.isDebugEnabled()){
 				logger.debug("Returning results set with: "+totalRecords);
@@ -296,6 +298,7 @@ public class OccurrenceController {
 				Long totalRecords = searchResult.getTotalRecords();
 				model.addAttribute("totalRecords", totalRecords);
 				model.addAttribute("facetQuery", filterQuery);
+                model.addAttribute("facetMap", addFacetMap(filterQuery));
 				//type of serach
 				model.addAttribute("type", "provider");
 				if (pageSize > 0) {
@@ -359,6 +362,7 @@ public class OccurrenceController {
 				Long totalRecords = searchResult.getTotalRecords();
 				model.addAttribute("totalRecords", totalRecords);
 				model.addAttribute("facetQuery", filterQuery);
+                model.addAttribute("facetMap", addFacetMap(filterQuery));
 				//type of serach
 				model.addAttribute("type", "resource");
 				if (pageSize > 0) {
@@ -447,6 +451,7 @@ public class OccurrenceController {
 		logger.debug("query = " + query);
 		Long totalRecords = searchResult.getTotalRecords();
 		model.addAttribute("totalRecords", totalRecords);
+        model.addAttribute("facetMap", addFacetMap(filterQuery));
 		//type of serach
 		model.addAttribute("type", "collection");
 		if (pageSize > 0) {
@@ -544,6 +549,7 @@ public class OccurrenceController {
 		model.addAttribute("query", query);
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
+        model.addAttribute("facetMap", addFacetMap(filterQuery));
 
         searchResult = searchDAO.findByFulltextSpatialQuery(query, searchQuery.getFilterQuery(), latitude, longitude, radius, startIndex, pageSize, sortField, sortDirection);
         
@@ -639,6 +645,7 @@ public class OccurrenceController {
 		logger.debug("query = "+query);
 		Long totalRecords = searchResult.getTotalRecords();
 		model.addAttribute("totalRecords", totalRecords);
+        model.addAttribute("facetMap", addFacetMap(filterQuery));
 		//type of serach
 		model.addAttribute("type", "normal");
 		if (pageSize > 0) {
@@ -786,6 +793,27 @@ public class OccurrenceController {
 		model.addAttribute("hostUrl", hostUrl);
 		return SHOW;
 	}
+
+    /**
+     * Create a HashMap for the filter queries
+     *
+     * @param filterQuery
+     * @return
+     */
+    private HashMap<String, String> addFacetMap(String[] filterQuery) {
+               HashMap<String, String> facetMap = new HashMap<String, String>();
+
+        if (filterQuery != null && filterQuery.length > 0) {
+            logger.debug("filterQuery = "+StringUtils.join(filterQuery, "|"));
+            for (String fq : filterQuery) {
+                if (fq != null && !fq.isEmpty()) {
+                    String[] fqBits = StringUtils.split(fq, ":", 2);
+                    facetMap.put(fqBits[0], fqBits[1]);
+                }
+            }
+        }
+        return facetMap;
+    }
 
 	/**
 	 * @param hostUrl the hostUrl to set

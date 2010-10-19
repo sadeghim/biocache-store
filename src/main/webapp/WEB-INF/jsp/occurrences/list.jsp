@@ -10,16 +10,18 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="pageName" content="species"/>
-        <title>Occurrence Search Results</title>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.query.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-ui-1.8.custom.min.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.simplemodal.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.oneshowhide.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/openlayers/OpenLayers.js"></script>
         <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/biocache-theme/jquery-ui-1.8.custom.css" charset="utf-8">
         <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/basic.css" charset="utf-8">
         <!--[if lt IE 7]>
         <link type='text/css' href='${initParam.centralServer}/wp-content/themes/ala/css/basic_ie.css' rel='stylesheet' media='screen' />
         <![endif]-->
+        <title><c:choose><c:when test="${not empty entityQuery}">${entityQuery}</c:when><c:otherwise>${queryJsEscaped}</c:otherwise></c:choose> | Occurrence Search | Atlas of Living Australia</title>
+        <link rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/bie.css" type="text/css" media="screen" charset="utf-8"/>
         <script type="text/javascript">
             /* Openlayers vars */
             var lon = 133;
@@ -193,11 +195,11 @@
                     headerSelected: "ui-icon-circle-arrow-s"
                 };
 
-                $("#accordion").accordion({
-                    icons: icons,
-                    collapsible: true,
-                    autoHeight: false
-                });
+//                $("#accordion").accordion({
+//                    icons: icons,
+//                    collapsible: true,
+//                    autoHeight: false
+//                });
 
                 $("#toggle").button().toggle(function() {
                     $("#accordion").accordion("option", "icons", false);
@@ -214,7 +216,7 @@
                     reloadWithParam('dir',val);
                 });
 
-                $("#searchButtons > button").button();
+                //$("#searchButtons > button").button();
                 $("#searchButtons > button#download").click(function() {
                     //var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?q=${query}&fq=${fn:join(facetQuery, '&fq=')}&type=${type}";
                     
@@ -256,7 +258,7 @@
                     });
 
                 $('button#showMap').click(function (e) {
-                    window.location.replace("#searchResults");
+                    //window.location.replace("#searchResults");
                     $("#pointsMap").show();
                     loadMap();
                     $('#pointsMap').modal();
@@ -277,12 +279,37 @@
                     $("#refineMore").show('slow');
                 });
 
+                // Remove hanging border inside search results
+                $("p.occurrenceResultRow :last-child").css('border-right','none');
+
+                // listeners for sort widgets
+                $("select#sort").change(function() {
+                    var val = $("option:selected", this).val();
+                    reloadWithParam('sort',val);
+                });
+                $("select#dir").change(function() {
+                    var val = $("option:selected", this).val();
+                    reloadWithParam('dir',val);
+                });
+                $("select#per-page").change(function() {
+                    var val = $("option:selected", this).val();
+                    reloadWithParam('pageSize',val);
+                });
+
+                // add show/hide links to facets
+                $('#subnavlist ul').oneShowHide({
+                    numShown: 4,
+                    showText : '+ show More',
+                    hideText : '- show Less',
+                    className: 'showHide'
+                });
+                
             });
 
             /**
              * Catch sort drop-down and build GET URL manually
              */
-            function reloadWithParam(paramName, paramValue) {
+            function reloadWithParam1(paramName, paramValue) {
                 var paramList = [];
                 var q = $.getQueryParam('q'); //$.query.get('q')[0];
                 var fqList = $.getQueryParam('fq'); //$.query.get('fq');
@@ -312,6 +339,38 @@
                 window.location.replace(window.location.pathname + '?' + paramList.join('&'));
             }
 
+            /**
+             * Catch sort drop-down and build GET URL manually
+             */
+            function reloadWithParam(paramName, paramValue) {
+                var paramList = [];
+                var q = $.getQueryParam('q'); //$.query.get('q')[0];
+                var fqList = $.getQueryParam('fq'); //$.query.get('fq');
+                var sort = $.getQueryParam('sort');
+                var dir = $.getQueryParam('dir');
+                // add query param
+                if (q != null) {
+                    paramList.push("q=" + q);
+                }
+                // add filter query param
+                if (fqList != null) {
+                    paramList.push("fq=" + fqList.join("&fq="));
+                }
+                // add sort param if already set
+                if (paramName != 'sort' && sort != null) {
+                    paramList.push('sort' + "=" + sort);
+                }
+
+                if (paramName != null && paramValue != null) {
+                    paramList.push(paramName + "=" +paramValue);
+                }
+
+                //alert("params = "+paramList.join("&"));
+                //alert("url = "+window.location.pathname);
+                window.location.replace(window.location.pathname + '?' + paramList.join('&'));
+            }
+
+
             function removeFacet(facet) {
                 var q = $.getQueryParam('q'); //$.query.get('q')[0];
                 var fqList = $.getQueryParam('fq'); //$.query.get('fq');
@@ -324,8 +383,9 @@
                 if (fqList instanceof Array) {
                     //alert("fqList is an array");
                     for (var i in fqList) {
-                        //alert("i == "+i+"| fq = "+fqList[i]);
-                        if (decodeURI(fqList[i]) == facet) {
+                        var thisFq = decodeURI(fqList[i]).replace(':[',':'); // for dates to work
+                        //alert("fq = "+thisFq + " || facet = "+facet);
+                        if (thisFq.indexOf(facet) != -1) {  // if(str1.indexOf(str2) != -1){
                             //alert("removing fq: "+fqList[i]);
                             fqList.splice(fqList.indexOf(fqList[i]),1);
                         }
@@ -385,11 +445,165 @@
             <div id="breadcrumb">
                 <a href="${initParam.centralServer}">Home</a>
                 <a href="${initParam.centralServer}/explore">Explore</a>
-                Occurrence Records Search
+                Occurrence Records
             </div>
-            <h1>Occurrence Search Results</h1>
+            <div id="searchButtons">
+                <c:if test="${!fn:contains(entityQuery, 'km of point')}"><%-- Don't display buttons on searchByArea version of page --%>
+                    <button id="download" title="Download all ${totalHits} results as XLS (tab-delimited) file">Download</button>
+                    <button id="showMap" title="Display a small map showing points for records">View as Map</button>
+                </c:if>
+            </div>
+            <div class="astrisk" style="display:block">
+                <h1>Occurrence Records</h1>
+            </div>
+            <div id="dialog-confirm" title="Download Occurrences" style="display:none">
+                <!--p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Download the result list.</p-->
+                <p>Please provide the following optional details before downloading:</p>
+                <form id="downloadForm">
+                    <fieldset>
+                        <p><label for="email">Email</label>
+                            <input type="text" name="email" id="email" value="${pageContext.request.remoteUser}" size="30"  /></p>
+                        <p><label for="filename">File Name</label>
+                            <input type="text" name="filename" id="filename" value="data" size="30"  /></p>
+                        <p><label for="reason" style="vertical-align: top">Download Reason</label>
+                            <textarea name="reason" rows="5" cols="30" id="downloadReason"  ></textarea></p>
+                    </fieldset>
+                </form>
+            </div>
+        </div><!--close header-->
+        <div id="refine-results" class="section no-margin-top">
+            <h2>Refine results</h2>
+            <h3><strong><fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###"/></strong> results
+                returned for <strong>
+                <c:choose>
+                    <c:when test="${not empty entityQuery}">
+                        ${entityQuery}
+                    </c:when>
+                    <c:otherwise>
+                        Search: <a href="?q=${queryJsEscaped}">${queryJsEscaped}</a><a name="searchResults">&nbsp;</a>
+                    </c:otherwise>
+                </c:choose>
+                </strong></h3>
         </div>
-        <div id="column-one" class="full-width">
+        <div id="searchResults">
+            <div id="facets">
+                <div id="accordion"  style="display:block;">
+                    <c:if test="${not empty query}">
+                        <c:set var="queryParam">q=<c:out value="${param['q']}" escapeXml="true"/><c:if
+                                test="${not empty param.fq}">&fq=${fn:join(paramValues.fq, "&fq=")}</c:if></c:set>
+                    </c:if>
+                    <c:forEach var="facetResult" items="${searchResult.facetResults}">
+                        <c:if test="${fn:length(facetResult.fieldResult) > 1 || not empty facetMap[facetResult.fieldName]}"> <%-- ${!fn:containsIgnoreCase(facetQuery, facetResult.fieldResult[0].label)} --%>
+                            <h3><span class="FieldName"><fmt:message key="facet.${facetResult.fieldName}"/></span></h3>
+                            <div id="subnavlist">
+                                <ul>
+                                    <c:set var="lastElement" value="${facetResult.fieldResult[fn:length(facetResult.fieldResult)-1]}"/>
+                                    <c:if test="${lastElement.label eq 'before' && lastElement.count > 0}">
+                                        <li><c:set var="firstYear" value="${fn:substring(facetResult.fieldResult[0].label, 0, 4)}"/>
+                                            <a href="?${queryParam}&fq=${facetResult.fieldName}:[* TO ${facetResult.fieldResult[0].label}]">Before ${firstYear}</a>
+                                            (<fmt:formatNumber value="${lastElement.count}" pattern="#,###,###"/>)
+                                        </li>
+                                    </c:if>
+                                    <c:forEach var="fieldResult" items="${facetResult.fieldResult}" varStatus="vs">
+                                        <c:if test="${fieldResult.count > 0}">
+                                            <c:set var="dateRangeTo"><c:choose><c:when test="${vs.last || facetResult.fieldResult[vs.count].label=='before'}">*</c:when><c:otherwise>${facetResult.fieldResult[vs.count].label}</c:otherwise></c:choose></c:set>
+                                            <c:choose>
+                                                <c:when test="${not empty facetMap[facetResult.fieldName] && fn:contains(facetMap[facetResult.fieldName], fieldResult.label)}"> <%-- fieldResult.label == facetMap[facetResult.fieldName] --%>
+                                                    <%-- catch an "active" fq search and provide option to clear it --%>
+                                                    <li><a href="#" onClick="removeFacet('${facetResult.fieldName}:${fieldResult.label}'); return false;" class="facetCancelLink">&lt; Any <fmt:message key="facet.${facetResult.fieldName}"/></a><br/>
+                                                        <b>
+                                                            <c:choose>
+                                                                <c:when test="${fn:containsIgnoreCase(facetResult.fieldName, 'month')}"><fmt:message key="month.${fieldResult.label}"/></c:when>
+                                                                <c:when test="${fn:containsIgnoreCase(facetResult.fieldName, 'occurrence_date') && fn:endsWith(fieldResult.label, 'Z')}">
+                                                                    <c:set var="startYear" value="${fn:substring(fieldResult.label, 0, 4)}"/>${startYear} - ${startYear + 10}
+                                                                </c:when>
+                                                                <c:otherwise><fmt:message key="${fieldResult.label}"/></c:otherwise>
+                                                            </c:choose>
+
+                                                        </b></li>
+                                                </c:when>
+                                                <c:when test="${fn:containsIgnoreCase(facetResult.fieldName, 'occurrence_date') && fn:endsWith(fieldResult.label, 'Z')}">
+                                                    <li><c:set var="startYear" value="${fn:substring(fieldResult.label, 0, 4)}"/>
+                                                        <a href="?${queryParam}&fq=${facetResult.fieldName}:[${fieldResult.label} TO ${dateRangeTo}]">${startYear} - ${startYear + 10}</a>
+                                                        (<fmt:formatNumber value="${fieldResult.count}" pattern="#,###,###"/>)</li>
+                                                </c:when>
+                                                <c:when test="${fn:endsWith(fieldResult.label, 'before')}"><%-- skip, otherwise gets inserted at bottom, not top of list --%></c:when>
+                                                <c:when test="${fn:containsIgnoreCase(facetResult.fieldName, 'month')}">
+                                                    <li><a href="?${queryParam}&fq=${facetResult.fieldName}:${fieldResult.label}"><fmt:message key="month.${not empty fieldResult.label ? fieldResult.label : 'unknown'}"/></a>
+                                                        (<fmt:formatNumber value="${fieldResult.count}" pattern="#,###,###"/>)</li>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <li><a href="?${queryParam}&fq=${facetResult.fieldName}:${fieldResult.label}"><fmt:message key="${not empty fieldResult.label ? fieldResult.label : 'unknown'}"/></a>
+                                                        (<fmt:formatNumber value="${fieldResult.count}" pattern="#,###,###"/>)</li>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:if>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                        </c:if>
+                    </c:forEach>
+                </div>
+            </div><!--facets-->
+            <div class="solrResults">
+                <div id="dropdowns">
+                    <div id="resultsStats">
+                        <label for="per-page">Results per page</label>
+                        <select id="per-page" name="per-page">
+                            <c:set var="pageSizeVar">
+                                <c:choose>
+                                    <c:when test="${not empty param.pageSize}">${param.pageSize}</c:when>
+                                    <c:otherwise>20</c:otherwise>
+                                </c:choose>
+                            </c:set>
+                            <option value="10" <c:if test="${pageSizeVar eq '10'}">selected</c:if>>10</option>
+                            <option value="20" <c:if test="${pageSizeVar eq '20'}">selected</c:if>>20</option>
+                            <option value="50" <c:if test="${pageSizeVar eq '50'}">selected</c:if>>50</option>
+                            <option value="100" <c:if test="${pageSizeVar eq '100'}">selected</c:if>>100</option>
+                        </select>
+                    </div>
+                    <div id="sortWidget">
+                        Sort by
+                        <select id="sort" name="sort">
+                            <option value="score" <c:if test="${param.sort eq 'score'}">selected</c:if>>best match</option>
+                            <option value="taxon_name" <c:if test="${param.sort eq 'taxon_name'}">selected</c:if>>scientific name</option>
+                            <option value="common_name" <c:if test="${param.sort eq 'common_name'}">selected</c:if>>common name</option>
+                            <!--                            <option value="rank">rank</option>-->
+                            <option value="occurrence_date" <c:if test="${param.sort eq 'occurrence_date'}">selected</c:if>>record date</option>
+                            <option value="record_type" <c:if test="${param.sort eq 'record_type'}">selected</c:if>>record type</option>
+                        </select>
+                        Sort order
+                        <select id="dir" name="dir">
+                            <option value="asc" <c:if test="${param.dir eq 'asc'}">selected</c:if>>normal</option>
+                            <option value="desc" <c:if test="${param.dir eq 'desc'}">selected</c:if>>reverse</option>
+                        </select>
+
+                    </div><!--sortWidget-->
+                </div><!--drop downs-->
+                <div class="results">
+                    <c:forEach var="occurrence" items="${searchResult.occurrences}">
+                        <h4>Occurrence: <a href="${occurrence.id}" class="occurrenceLink">${occurrence.id}</a> &mdash;
+                            <span style="text-transform: capitalize; display: inline;">${occurrence.rank}</span>: <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/>
+                            <c:if test="${not empty occurrence.commonName}"><span style="text-transform: capitalize; display: inline;"> | Common name: ${occurrence.commonName}</span></c:if>
+                        </h4>
+                        <p class="occurrenceResultRow">
+                            <c:if test="${not empty occurrence.dataResource}"><span style="text-transform: capitalize; display: inline;"><strong class="resultsLabel">Dateset:</strong> ${occurrence.dataResource}</span></c:if>
+                            <c:if test="${not empty occurrence.basisOfRecord}"><span style="text-transform: capitalize; display: inline;"><strong class="resultsLabel">Record type:</strong> ${occurrence.basisOfRecord}</span></c:if>
+                            <c:if test="${not empty occurrence.occurrenceDate}"><span style="text-transform: capitalize; display: inline;"><strong class="resultsLabel">Record date:</strong> <fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/></span></c:if>
+                            <c:if test="${not empty occurrence.states}"><span style="text-transform: capitalize; display: inline;"><strong class="resultsLabel">State:</strong> <fmt:message key="region.${occurrence.states[0]}"/></span></c:if>
+                        </p>
+                    </c:forEach>
+                </div><!--close results-->
+                <div id="searchNavBar">
+                    <alatag:searchNavigationLinks totalRecords="${searchResult.totalRecords}" startIndex="${searchResult.startIndex}"
+                         lastPage="${lastPage}" pageSize="${searchResult.pageSize}"/>
+                </div>
+            </div><!--solrResults-->
+            <div id="pointsMap"></div>
+            <div id="busyIcon" style="display:none;"><img src="${pageContext.request.contextPath}/static/css/images/wait.gif" alt="busy/spinning icon" /></div>
+        </div>
+
+        <div id="column-one" class="full-width" style="display: none">
             <div class="section">
                 <c:if test="${not empty searchResult && searchResult.totalRecords > 0}">
                     <fmt:formatNumber value="${searchResult.totalRecords}" pattern="#,###,###" var="totalHits"/>
@@ -403,7 +617,7 @@
                                         <button id="showMap" title="Display a small map showing points for records">View as Map</button>
                                     </c:if>
                                 </div>
-                                    <div id="dialog-confirm" title="Download Occurrences" >
+                                    <div id="dialog-confirm2" title="Download Occurrences" >
                                         <!--p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Download the result list.</p-->
                                         <p>Please provide the following optional details before downloading:</p>
                                         <form id="downloadForm">
@@ -559,8 +773,8 @@
                         </div>
                         <div id="refineLess" style="display:none;"><a href="#">Fewer Search Options</a></div>
                         <br/>
-                        <div id="pointsMap"></div>
-                        <div id="busyIcon" style="display:none;"><img src="${pageContext.request.contextPath}/static/css/images/wait.gif" alt="busy/spinning icon" /></div>
+<!--                        <div id="pointsMap"></div>
+                        <div id="busyIcon" style="display:none;"><img src="${pageContext.request.contextPath}/static/css/images/wait.gif" alt="busy/spinning icon" /></div>-->
                     </div>
                 </c:if>
                 <c:if test="${empty searchResult || searchResult.totalRecords == 0}">

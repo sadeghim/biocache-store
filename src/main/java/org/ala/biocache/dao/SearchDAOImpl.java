@@ -914,7 +914,7 @@ public class SearchDAOImpl implements SearchDAO {
                         r.add(new FieldResultDTO(fcount.getName(), fcount.getCount()));
                     }
                     // only add facets if there are more than one facet result
-                    if (r.size() > 1) {
+                    if (r.size() > 0) {
                         FacetResultDTO fr = new FacetResultDTO(facet.getName(), r);                       
                         facetResults.add(fr);
                     }
