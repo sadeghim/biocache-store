@@ -271,36 +271,36 @@
 		                <c:if test="${not empty rawOccurrence}">
 		                    <div style="display:none; text-align: left;">
 			                    <div id="rawOccurrenceRecord" style="text-align: left;">
-			                       <h2>Taxonomy</h2>
-			                        <table class="occurrenceTable"  id="taxonomyTable">
-			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="scientificName" fieldName="Scientific Name">
+			                       <h2>Raw Occurrence Taxonomy</h2>
+			                        <table class="occurrenceTable"  id="rawtaxonomyTable">
+			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="scientificName" fieldName="Scientific Name">
 			                            	<span style="text-transform: capitalize;">${rawOccurrence.scientificName}</span>
 			                            </alatag:occurrenceTableRow>
-			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="taxonRank" fieldName="Taxon Rank">
+			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="taxonRank" fieldName="Taxon Rank">
 			                                <span style="text-transform: capitalize;">${rawOccurrence.rank}</span>
 			                            </alatag:occurrenceTableRow>
 			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="commonName" fieldName="Common Name">
 			                                 <span style="text-transform: capitalize;">${rawOccurrence.vernacularName}</span>
 			                            </alatag:occurrenceTableRow>
-			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="kingdom" fieldName="Kingdom">
+			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="kingdom" fieldName="Kingdom">
 			                                <span style="text-transform: capitalize;">${rawOccurrence.kingdom}</span>
 			                            </alatag:occurrenceTableRow>
-			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="phylum" fieldName="Phylum">
+			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="phylum" fieldName="Phylum">
 			                                <span style="text-transform: capitalize;">${rawOccurrence.phylum}</span>
 			                            </alatag:occurrenceTableRow>
-			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="class" fieldName="Class">
+			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="class" fieldName="Class">
 			                                <span style="text-transform: capitalize;">${rawOccurrence.klass}</span>
 			                            </alatag:occurrenceTableRow>
-			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="order" fieldName="Order">
+			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="order" fieldName="Order">
 			                                <span style="text-transform: capitalize;">${rawOccurrence.order}</span>
 			                            </alatag:occurrenceTableRow>
-			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="family" fieldName="Family">
+			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="family" fieldName="Family">
 			                                <span style="text-transform: capitalize;">${rawOccurrence.family}</span>
 			                            </alatag:occurrenceTableRow>
-			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="genus" fieldName="Genus">
+			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="genus" fieldName="Genus">
 			                                <span style="text-transform: capitalize;">${rawOccurrence.genus}</span>
 			                            </alatag:occurrenceTableRow>
-			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="species" fieldName="Species">
+			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="species" fieldName="Species">
 			                                <span style="text-transform: capitalize;">${rawOccurrence.species}</span>
 			                            </alatag:occurrenceTableRow>
 			                        </table>                        
