@@ -31,7 +31,7 @@
     <attribute>
       <description>The context parameter name</description>
       <name>name</name>
-      <required>true</required>
+      <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>
