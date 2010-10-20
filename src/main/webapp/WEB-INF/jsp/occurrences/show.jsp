@@ -35,11 +35,11 @@
             $(document).ready(function() {
                 // modal popup for raw occurrence record
                 $("a#ror").fancybox({
-                    'hideOnContentClick' : true,
+                    'hideOnContentClick' : false,
                     'titleShow' : false,
                     'autoDimensions' : false,
-                    'width' : "80%",
-                    'height' : "80%"
+                    'width' : "60%",
+                    'height' : "60%"
                 });
 
             });
@@ -55,12 +55,7 @@
             <h1>Occurrence Details: ${occurrence.id}</h1>
         </div>
         <div id="column-one" class="full-width">
-            <div class="section">
-                <c:if test="${not empty rawOccurrence}">
-                    <div id="rawRecordLink">
-                        <a href="#rawOccurrenceRecord" id="ror" title="view raw occurrence record (pop-up)">View original record</a>
-                    </div>
-                </c:if>
+            <div class="section">                
                 <c:if test="${not empty occurrence.latitude && not empty occurrence.longitude}">
                     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
                     <script type="text/javascript">
@@ -218,7 +213,12 @@
                         </table>
                     </div>
                     <div id="occurrenceTaxonomy" class="occurrenceSection">
-                        <h2>Taxonomy</h2>
+                        <h2>Taxonomy&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h2>
+                        <c:if test="${not empty rawOccurrence}">
+		                    <div id="rawRecordLink">
+		                        <a href="#rawOccurrenceRecord" id="ror" class="local" title="view raw occurrence record (pop-up)">View original/raw record</a>
+		                    </div>
+                       	</c:if>
                         <table class="occurrenceTable"  id="taxonomyTable">
                             <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="scientificName" fieldName="Scientific Name">
                                 <c:choose>
@@ -267,6 +267,47 @@
                                 ${occurrence.species}
                             </alatag:occurrenceTableRow>
                         </table>
+		            	<%-- start: for raw occurrence data popup --%>
+		                <c:if test="${not empty rawOccurrence}">
+		                    <div style="display:none; text-align: left;">
+			                    <div id="rawOccurrenceRecord" style="text-align: left;">
+			                       <h2>Taxonomy</h2>
+			                        <table class="occurrenceTable"  id="taxonomyTable">
+			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="scientificName" fieldName="Scientific Name">
+			                            	<span style="text-transform: capitalize;">${rawOccurrence.scientificName}</span>
+			                            </alatag:occurrenceTableRow>
+			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="taxonRank" fieldName="Taxon Rank">
+			                                <span style="text-transform: capitalize;">${rawOccurrence.rank}</span>
+			                            </alatag:occurrenceTableRow>
+			                            <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="commonName" fieldName="Common Name">
+			                                 <span style="text-transform: capitalize;">${rawOccurrence.vernacularName}</span>
+			                            </alatag:occurrenceTableRow>
+			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="kingdom" fieldName="Kingdom">
+			                                <span style="text-transform: capitalize;">${rawOccurrence.kingdom}</span>
+			                            </alatag:occurrenceTableRow>
+			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="phylum" fieldName="Phylum">
+			                                <span style="text-transform: capitalize;">${rawOccurrence.phylum}</span>
+			                            </alatag:occurrenceTableRow>
+			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="class" fieldName="Class">
+			                                <span style="text-transform: capitalize;">${rawOccurrence.klass}</span>
+			                            </alatag:occurrenceTableRow>
+			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="order" fieldName="Order">
+			                                <span style="text-transform: capitalize;">${rawOccurrence.order}</span>
+			                            </alatag:occurrenceTableRow>
+			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="family" fieldName="Family">
+			                                <span style="text-transform: capitalize;">${rawOccurrence.family}</span>
+			                            </alatag:occurrenceTableRow>
+			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="genus" fieldName="Genus">
+			                                <span style="text-transform: capitalize;">${rawOccurrence.genus}</span>
+			                            </alatag:occurrenceTableRow>
+			                            <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="species" fieldName="Species">
+			                                <span style="text-transform: capitalize;">${rawOccurrence.species}</span>
+			                            </alatag:occurrenceTableRow>
+			                        </table>                        
+			                    </div>
+		                    </div>                    
+		                </c:if>
+		                <%-- end: for raw occurrence data popup --%>                       
                     </div>
                     <div id="occurrenceGeospatial" class="occurrenceSection">
                         <h2>Geospatial</h2>
@@ -301,9 +342,6 @@
                         First indexed: <fmt:formatDate value="${occurrence.createdDate}" pattern="yyyy-MM-dd"/>
                         <br/>
                         Last indexed:  <fmt:formatDate value="${occurrence.modifiedDate}" pattern="yyyy-MM-dd"/>
-                    </div>
-                    <div id="rawOccurrenceRecord" style="display: none;">
-                        ${rawOccurrence}
                     </div>
                     <jsp:include page="annotateDataset.jsp"/>
                     <jsp:include page="annotateTaxonomy.jsp"/>
