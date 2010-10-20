@@ -99,31 +99,7 @@ include file="/common/taglibs.jsp" %>
     </head>
     <body class="two-column-right">
         <div id="wrapper">
-            <div id="banner">
-                <div id="logo">
-                    <a href="${initParam.centralServer}" title="Atlas of Living Australia home"><img src="${initParam.centralServer}/wp-content/themes/ala/images/ala_logo.png" width="215" height="80" alt="Atlas of Living Ausralia logo" /></a>
-                </div><!--close logo-->
-
-                <c:set var="queryString" value="${pageContext.request.queryString}"/>
-                <c:choose>
-                    <c:when test="${empty queryString}">
-                        <c:set var="requestUrl" value="${pageContext.request.requestURL}"/>
-                    </c:when>
-                    <c:otherwise>
-                        <c:set var="requestUrl" value="${pageContext.request.requestURL}?${fn:replace(queryString, '+', '%2B')}"/>
-                    </c:otherwise>
-                </c:choose>
-
-                <ala:bannerMenu returnUrlPath="${requestUrl}"/>
-
-                <div id="wrapper_search">
-                    <form id="search-form" action="http://bie.ala.org.au/search" method="get" name="search-form">
-                        <label for="search">Search</label>
-                        <input type="text" class="filled" id="search" name="q" value="Search the Atlas" />
-                        <span class="search-button-wrapper"><input type="submit" class="search-button" id="search-button" alt="Search" value="Search" /></span>
-                    </form>
-                </div><!--close wrapper_search-->
-            </div><!--close banner-->
+            <ala:bannerMenu />
             <div id="wrapper_border"><!--main content area-->
                 <div id="border">
                     <div id="content">
