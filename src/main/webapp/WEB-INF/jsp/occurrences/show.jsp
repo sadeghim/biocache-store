@@ -19,6 +19,8 @@
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.url.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.cookie.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.simplemodal.js"></script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery-fancybox/jquery.fancybox-1.3.1.pack.js"></script>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/js/jquery-fancybox/jquery.fancybox-1.3.1.css" media="screen" />
         <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/basic.css" charset="utf-8">
         <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/occurrenceSpecial.css" charset="utf-8">
          <script>
@@ -29,6 +31,18 @@
             annotationReplyJsonUrl = "${pageContext.request.contextPath}/annotation/retrieveReplyAnnotationsForAnnotation";
             //saveAnnotationUrl = "${pageContext.request.contextPath}/annotation/saveAnnotation";
             //getAnnotationsUrl =  "<gbif:propertyLoader bundle='portal' property='hostName'/>/danno/annotea/";
+
+            $(document).ready(function() {
+                // modal popup for raw occurrence record
+                $("a#ror").fancybox({
+                    'hideOnContentClick' : true,
+                    'titleShow' : false,
+                    'autoDimensions' : false,
+                    'width' : "80%",
+                    'height' : "80%"
+                });
+
+            });
         </script>
     </head>
     <body>
@@ -42,6 +56,11 @@
         </div>
         <div id="column-one" class="full-width">
             <div class="section">
+                <c:if test="${not empty rawOccurrence}">
+                    <div id="rawRecordLink">
+                        <a href="#rawOccurrenceRecord" id="ror" title="view raw occurrence record (pop-up)">View original record</a>
+                    </div>
+                </c:if>
                 <c:if test="${not empty occurrence.latitude && not empty occurrence.longitude}">
                     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
                     <script type="text/javascript">
@@ -283,7 +302,9 @@
                         <br/>
                         Last indexed:  <fmt:formatDate value="${occurrence.modifiedDate}" pattern="yyyy-MM-dd"/>
                     </div>
-
+                    <div id="rawOccurrenceRecord" style="display: none;">
+                        ${rawOccurrence}
+                    </div>
                     <jsp:include page="annotateDataset.jsp"/>
                     <jsp:include page="annotateTaxonomy.jsp"/>
                     <jsp:include page="annotateGeospatial.jsp"/>
