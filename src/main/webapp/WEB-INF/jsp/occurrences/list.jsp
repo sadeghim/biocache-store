@@ -102,14 +102,9 @@
                 // url vars
                 var geoJsonUrl = "${pageContext.request.contextPath}/geojson/cells"; //+"&zoom=4&callback=?";
                 var zoomLevel = map.getZoom();
-                var params = {
-                    q: "${query}",
-                <c:forEach items="${facetQuery}" var="fq">fq: "${fq}",</c:forEach>
-                    zoom: zoomLevel,
-                    type: "${type}"
-                };
+                var paramString = "q=${query}&zoom="+zoomLevel+"&type=${type}&fq=${fn:join(facetQuery, '&fq=')}";
                 // JQuery GET
-                $.get(geoJsonUrl, params, dataRequestHandler);
+                $.get(geoJsonUrl, paramString, dataRequestHandler);
             }
 
             /* handler for loading features */
