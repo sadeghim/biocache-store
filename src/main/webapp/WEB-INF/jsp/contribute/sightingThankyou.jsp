@@ -13,16 +13,16 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="UTF-8" >
-        <title>Contribute a Sighting - Thank you | Atlas of Living Australia</title>
+        <title>Share a sighting - Thank you | Atlas of Living Australia</title>
     </head>
     <body>
         <div id="header">
             <div id="breadcrumb">
                 <a href="${initParam.centralServer}">Home</a>
                 <a href="${initParam.centralServer}/share">Share</a>
-                Share a Sighting
+                Share a sighting
             </div>
-            <h1>Share a Sighting - Completed</h1>
+            <h1>Share a sighting - Completed</h1>
         </div>
         <c:choose>
             <%-- User is logged in --%>

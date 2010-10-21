@@ -13,7 +13,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="UTF-8" >
-        <title>Share a Sighting | Atlas of Living Australia</title>
+        <title>Share a sighting | Atlas of Living Australia</title>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/date.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.timePicker.js"></script>
         <link rel="stylesheet" type="text/css" media="screen" href="${pageContext.request.contextPath}/static/css/timePicker.css" />
@@ -354,7 +354,7 @@
                             </c:if>
                             <div style="margin-left: 115px" class="section">
                                 <h2><a href="http://bie.ala.org.au/species/${taxonConcept.guid}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
-                                    <c:if test="${not empty taxonConcept.commonName}">(${taxonConcept.commonName})</c:if>
+                                    <c:if test="${not empty taxonConcept.commonName}"> : ${taxonConcept.commonName}</c:if>
                                     </a>
                                     <input type="hidden" name="guid" id="sightingGuid" value="${param.guid}"/>
                                 </h2>

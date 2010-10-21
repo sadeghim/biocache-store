@@ -13,16 +13,16 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="UTF-8" >
-        <title>Contribute a Sighting - Confirmation | Atlas of Living Australia</title>
+        <title>Share a sighting - Confirmation | Atlas of Living Australia</title>
     </head>
     <body>
         <div id="header">
             <div id="breadcrumb">
                 <a href="${initParam.centralServer}">Home</a>
                 <a href="${initParam.centralServer}/share">Share</a>
-                Share a Sighting
+                Share a sighting
             </div>
-            <h1>Share a Sighting</h1>
+            <h1>Share a sighting</h1>
         </div>
         
             <c:choose>
@@ -37,7 +37,7 @@
                                 </c:if>
                                 <div style="margin-left: 115px" class="section">
                                     <h2><a href="http://bie.ala.org.au/species/${param.guid}"><alatag:formatSciName name="${taxonConcept.scientificName}" rankId="${taxonConcept.rankId}"/>
-                                        (${taxonConcept.commonName})</a>
+                                         <c:if test="${not empty taxonConcept.commonName}"> : ${taxonConcept.commonName}</c:if></a>
                                         <input type="hidden" name="guid" id="sightingGuid" value="${taxonConcept.guid}"/>
                                         <input type="hidden" name="scientificName" id="sightingSciName" value="${taxonConcept.scientificName}"/>
                                         <input type="hidden" name="commonName" id="sightingCommonName" value="${taxonConcept.commonName}"/>
