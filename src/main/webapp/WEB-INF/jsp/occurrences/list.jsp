@@ -168,17 +168,16 @@
                 }
             }
 
-    function checkRegexp(o,regexp,n) {
+            function checkRegexp(o,regexp,n) {
 
-        if ( o.val().length>0 &&!( regexp.test( o.val() ) ) ) {
-            o.addClass('ui-state-error');
-            alert(n);
-            return false;
-        } else {
-            return true;
-        }
-
-}
+                if ( o.val().length>0 &&!( regexp.test( o.val() ) ) ) {
+                    o.addClass('ui-state-error');
+                    alert(n);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
 
             // Jquery Document.onLoad equivalent
             $(document).ready(function() {
@@ -383,7 +382,7 @@
                 if (fqList instanceof Array) {
                     //alert("fqList is an array");
                     for (var i in fqList) {
-                        var thisFq = decodeURI(fqList[i]).replace(':[',':'); // for dates to work
+                        var thisFq = decodeURI(fqList[i]); //.replace(':[',':'); // for dates to work
                         //alert("fq = "+thisFq + " || facet = "+facet);
                         if (thisFq.indexOf(facet) != -1) {  // if(str1.indexOf(str2) != -1){
                             //alert("removing fq: "+fqList[i]);
@@ -492,8 +491,34 @@
                         <c:set var="queryParam">q=<c:out value="${param['q']}" escapeXml="true"/><c:if
                                 test="${not empty param.fq}">&fq=${fn:join(paramValues.fq, "&fq=")}</c:if></c:set>
                     </c:if>
+                    <c:if  test="${not empty facetMap}">
+                        <h3><span class="FieldName">Current Restrictions</span></h3>
+                        <div id="subnavlist">
+                            <ul style="padding-left: 24px;">
+                                <c:forEach var="item" items="${facetMap}">
+                                    <li style="text-indent: -12px;">
+                                        <c:set var="closeLink">&nbsp;[<b><a href="#" onClick="removeFacet('${item.key}:${item.value}'); return false;" style="text-decoration: none" title="remove">X</a></b>]</c:set>
+                                        <fmt:message key="facet.${item.key}"/>:
+                                        <c:choose>
+                                            <c:when test="${fn:containsIgnoreCase(item.key, 'month')}"><fmt:message key="month.${item.value}"/></c:when>
+                                            <c:when test="${fn:containsIgnoreCase(item.key, 'occurrence_date') && fn:startsWith(item.value, '[*')}">
+                                                <c:set var="endYear" value="${fn:substring(item.value, 6, 10)}"/><b>Before ${endYear}</b>${closeLink}
+                                            </c:when>
+                                            <c:when test="${fn:containsIgnoreCase(item.key, 'occurrence_date') && fn:endsWith(item.value, '*]')}">
+                                                <c:set var="startYear" value="${fn:substring(item.value, 1, 5)}"/><b>After ${startYear}</b>${closeLink}
+                                            </c:when>
+                                            <c:when test="${fn:containsIgnoreCase(item.key, 'occurrence_date') && fn:endsWith(item.value, 'Z]')}">
+                                                <c:set var="startYear" value="${fn:substring(item.value, 1, 5)}"/><b>${startYear} - ${startYear + 10}</b>${closeLink}
+                                            </c:when>
+                                            <c:otherwise><b><fmt:message key="${item.value}"/></b>${closeLink}</c:otherwise>
+                                        </c:choose>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                    </c:if>
                     <c:forEach var="facetResult" items="${searchResult.facetResults}">
-                        <c:if test="${fn:length(facetResult.fieldResult) > 1 || not empty facetMap[facetResult.fieldName]}"> <%-- ${!fn:containsIgnoreCase(facetQuery, facetResult.fieldResult[0].label)} --%>
+                        <c:if test="${fn:length(facetResult.fieldResult) > 1 }"> <%-- || not empty facetMap[facetResult.fieldName] --%>
                             <h3><span class="FieldName"><fmt:message key="facet.${facetResult.fieldName}"/></span></h3>
                             <div id="subnavlist">
                                 <ul>
@@ -510,7 +535,7 @@
                                             <c:choose>
                                                 <c:when test="${not empty facetMap[facetResult.fieldName] && fn:contains(facetMap[facetResult.fieldName], fieldResult.label)}"> <%-- fieldResult.label == facetMap[facetResult.fieldName] --%>
                                                     <%-- catch an "active" fq search and provide option to clear it --%>
-                                                    <li><a href="#" onClick="removeFacet('${facetResult.fieldName}:${fieldResult.label}'); return false;" class="facetCancelLink">&lt; Any <fmt:message key="facet.${facetResult.fieldName}"/></a><br/>
+                                                    <%--<li><a href="#" onClick="removeFacet('${facetResult.fieldName}:${fieldResult.label}'); return false;" class="facetCancelLink">&lt; Any <fmt:message key="facet.${facetResult.fieldName}"/></a><br/>
                                                         <b>
                                                             <c:choose>
                                                                 <c:when test="${fn:containsIgnoreCase(facetResult.fieldName, 'month')}"><fmt:message key="month.${fieldResult.label}"/></c:when>
@@ -520,7 +545,7 @@
                                                                 <c:otherwise><fmt:message key="${fieldResult.label}"/></c:otherwise>
                                                             </c:choose>
 
-                                                        </b></li>
+                                                        </b></li>--%>
                                                 </c:when>
                                                 <c:when test="${fn:containsIgnoreCase(facetResult.fieldName, 'occurrence_date') && fn:endsWith(fieldResult.label, 'Z')}">
                                                     <li><c:set var="startYear" value="${fn:substring(fieldResult.label, 0, 4)}"/>
@@ -582,15 +607,15 @@
                 </div><!--drop downs-->
                 <div class="results">
                     <c:forEach var="occurrence" items="${searchResult.occurrences}">
-                        <h4>Occurrence: <a href="${occurrence.id}" class="occurrenceLink">${occurrence.id}</a> &mdash;
-                            <span style="text-transform: capitalize; display: inline;">${occurrence.rank}</span>: <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/>
-                            <c:if test="${not empty occurrence.commonName}"><span style="text-transform: capitalize; display: inline;"> | Common name: ${occurrence.commonName}</span></c:if>
+                        <h4>Record: <a href="${occurrence.id}" class="occurrenceLink">${occurrence.id}</a> &mdash;
+                            <span style="text-transform: capitalize">${occurrence.rank}</span>: <span class="occurrenceNames"><alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/></span>
+                            <c:if test="${not empty occurrence.commonName}"> | <span class="occurrenceNames">${occurrence.commonName}</span></c:if>
                         </h4>
                         <p class="occurrenceResultRow">
-                            <c:if test="${not empty occurrence.dataResource}"><span style="text-transform: capitalize; display: inline;"><strong class="resultsLabel">Dateset:</strong> ${occurrence.dataResource}</span></c:if>
-                            <c:if test="${not empty occurrence.basisOfRecord}"><span style="text-transform: capitalize; display: inline;"><strong class="resultsLabel">Record type:</strong> ${occurrence.basisOfRecord}</span></c:if>
-                            <c:if test="${not empty occurrence.occurrenceDate}"><span style="text-transform: capitalize; display: inline;"><strong class="resultsLabel">Record date:</strong> <fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/></span></c:if>
-                            <c:if test="${not empty occurrence.states}"><span style="text-transform: capitalize; display: inline;"><strong class="resultsLabel">State:</strong> <fmt:message key="region.${occurrence.states[0]}"/></span></c:if>
+                            <c:if test="${not empty occurrence.dataResource}"><span style="text-transform: capitalize;"><strong class="resultsLabel">Dataset:</strong> ${occurrence.dataResource}</span></c:if>
+                            <c:if test="${not empty occurrence.basisOfRecord}"><span style="text-transform: capitalize;"><strong class="resultsLabel">Record type:</strong> ${occurrence.basisOfRecord}</span></c:if>
+                            <c:if test="${not empty occurrence.occurrenceDate}"><span style="text-transform: capitalize;"><strong class="resultsLabel">Record date:</strong> <fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/></span></c:if>
+                            <c:if test="${not empty occurrence.states}"><span style="text-transform: capitalize;"><strong class="resultsLabel">State:</strong> <fmt:message key="region.${occurrence.states[0]}"/></span></c:if>
                         </p>
                     </c:forEach>
                 </div><!--close results-->

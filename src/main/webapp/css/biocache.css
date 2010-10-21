@@ -525,12 +525,15 @@ img.galleryImage {
 #footer .tabs a:hover {
     text-decoration: underline;
 }*/
+div.solrResults div.results span {
+    display: inline;
+}
 div.results span .resultsLabel {
-    color: #555;
+    color: #666;
     font-weight: normal;
 }
-div.results span.highlight {
-    display: inline;
+div.results span.occurrenceNames {
+    color: #111;
 }
 #facets {
     margin-top:-1px;
@@ -557,9 +560,13 @@ div.results span.commonNameSummary {
     display: inline;
     color: #222;
 }
+p.occurrenceResultRow {
+    font-size: 90%;
+}
 p.occurrenceResultRow span {
+    color: #222;
     padding-right: 4px;
-    border-right: 1px solid gray;
+    border-right: 0px solid gray;
 }
 
 div#decoratorBody {
