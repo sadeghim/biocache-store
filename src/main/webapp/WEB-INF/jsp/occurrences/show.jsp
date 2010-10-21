@@ -224,8 +224,8 @@
                                 <c:choose>
                                     <c:when test="${!(fn:containsIgnoreCase(occurrence.taxonName, occurrence.rawTaxonName) || fn:containsIgnoreCase(occurrence.author, occurrence.rawAuthor))}">
                                         <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.rawTaxonName}"/> ${occurrence.rawAuthor}
-                                        (interpreted as <a href="${bieWebappContext}/species/${occurrence.taxonConceptLsid}">
-                                            <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</a>)<br/>Original value:"${rawOccurrence.scientificName}"
+                                        (interpreted as <c:if test="${not empty occurrence.taxonConceptLsid}"><a href="${bieWebappContext}/species/${occurrence.taxonConceptLsid}"></c:if>
+                                            <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}<c:if test="${not empty occurrence.taxonConceptLsid}"></a></c:if>)<br/>Original value:"${rawOccurrence.scientificName}"
                                     </c:when>
                                     <c:otherwise>
                                         <c:if test="${not empty occurrence.taxonConceptLsid}">
