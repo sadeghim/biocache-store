@@ -760,26 +760,27 @@ public class OccurrenceController {
 		OccurrenceDTO occurrence = searchDAO.getById(id);
 		model.addAttribute("occurrence", occurrence);
 		
-		Object[] resp = restfulClient.restGet(summaryServiceUrl + "/" + occurrence.getCollectionCodeUid());
-		if((Integer)resp[0] == HttpStatus.SC_OK){
-			String json = (String)resp[1];
-			ObjectMapper mapper = new ObjectMapper();		
-			JsonNode rootNode;
-			
-			try {			
-				rootNode = mapper.readValue(json, JsonNode.class);
-				String name = rootNode.path("name").getTextValue();
-				String logo = rootNode.path("institutionLogoUrl").getTextValue();
-				String institution = rootNode.path("institution").getTextValue();
-				model.addAttribute("collectionName", name);
-				model.addAttribute("collectionLogo", logo);
-				model.addAttribute("collectionInstitution", institution);
+		if(occurrence != null){
+			Object[] resp = restfulClient.restGet(summaryServiceUrl + "/" + occurrence.getCollectionCodeUid());
+			if((Integer)resp[0] == HttpStatus.SC_OK){
+				String json = (String)resp[1];
+				ObjectMapper mapper = new ObjectMapper();		
+				JsonNode rootNode;
+				
+				try {			
+					rootNode = mapper.readValue(json, JsonNode.class);
+					String name = rootNode.path("name").getTextValue();
+					String logo = rootNode.path("institutionLogoUrl").getTextValue();
+					String institution = rootNode.path("institution").getTextValue();
+					model.addAttribute("collectionName", name);
+					model.addAttribute("collectionLogo", logo);
+					model.addAttribute("collectionInstitution", institution);
+				}
+				catch (Exception e) {
+					logger.error(e.toString());
+				} 
 			}
-			catch (Exception e) {
-				logger.error(e.toString());
-			} 
 		}
-		
 		if(id!=null){
 			Long occurrenceId = new Long(id);
 			
