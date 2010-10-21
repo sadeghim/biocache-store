@@ -500,7 +500,9 @@
                                         <c:set var="closeLink">&nbsp;[<b><a href="#" onClick="removeFacet('${item.key}:${item.value}'); return false;" style="text-decoration: none" title="remove">X</a></b>]</c:set>
                                         <fmt:message key="facet.${item.key}"/>:
                                         <c:choose>
-                                            <c:when test="${fn:containsIgnoreCase(item.key, 'month')}"><fmt:message key="month.${item.value}"/></c:when>
+                                            <c:when test="${fn:containsIgnoreCase(item.key, 'month')}">
+                                                <b><fmt:message key="month.${item.value}"/></b>${closeLink}
+                                            </c:when>
                                             <c:when test="${fn:containsIgnoreCase(item.key, 'occurrence_date') && fn:startsWith(item.value, '[*')}">
                                                 <c:set var="endYear" value="${fn:substring(item.value, 6, 10)}"/><b>Before ${endYear}</b>${closeLink}
                                             </c:when>
@@ -510,7 +512,9 @@
                                             <c:when test="${fn:containsIgnoreCase(item.key, 'occurrence_date') && fn:endsWith(item.value, 'Z]')}">
                                                 <c:set var="startYear" value="${fn:substring(item.value, 1, 5)}"/><b>${startYear} - ${startYear + 10}</b>${closeLink}
                                             </c:when>
-                                            <c:otherwise><b><fmt:message key="${item.value}"/></b>${closeLink}</c:otherwise>
+                                            <c:otherwise>
+                                                <b><fmt:message key="${item.value}"/></b>${closeLink}
+                                            </c:otherwise>
                                         </c:choose>
                                     </li>
                                 </c:forEach>
@@ -650,7 +654,7 @@
                                                 <p><label for="email">Email</label>
                                                 <input type="text" name="email" id="email" value="${pageContext.request.remoteUser}" size="30"  /></p>
                                                 <p><label for="filename">File Name</label>
-                                                <input type="text" name="filename" id="filename" value="data" size="30"  /></p>
+                                                <input type="text" name="filename" id="filename" value="data.zip" size="30"  /></p>
                                                 <p><label for="reason" style="vertical-align: top">Download Reason</label>
                                                 <textarea name="reason" rows="5" cols="30" id="downloadReason"  ></textarea></p>
                                             </fieldset>
