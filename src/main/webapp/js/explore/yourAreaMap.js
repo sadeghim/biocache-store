@@ -264,6 +264,7 @@ function attemptGeolocation() {
             //console.log('geolocation request accepted');
             $('#mapCanvas').empty();
             updateMarkerPosition(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+            LoadTaxaGroupCounts();
             initialize();
         }
         
@@ -273,6 +274,7 @@ function attemptGeolocation() {
             //zoom = 12;
             //alert('latitude = '+$('#latitude').val());
             updateMarkerPosition(new google.maps.LatLng($('#latitude').val(), $('#longitude').val()));
+            LoadTaxaGroupCounts();
             initialize();
         }
         // Add message to browser - FF needs this as it is not easy to see
@@ -287,6 +289,7 @@ function attemptGeolocation() {
         // Google AJAX API fallback GeoLocation
         //alert("getting coords using google geolocation");
         updateMarkerPosition(new google.maps.LatLng(google.loader.ClientLocation.latitude, google.loader.ClientLocation.longitude));
+        LoadTaxaGroupCounts();
         initialize();
     } else {
         //alert("Client geolocation failed");
