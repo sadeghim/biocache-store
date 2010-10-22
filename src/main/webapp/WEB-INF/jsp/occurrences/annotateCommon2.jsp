@@ -7,8 +7,8 @@
         <input type="hidden" name="dataResourceId" value="${rawOccurrenceRecord.dataResourceId}" id="dataResourceId"/>
         <input type="hidden" name="dataResourceUid" value="${occurrence.dataResourceUid}" id="dataResourceUid"/>
         <input type="hidden" name="dataResource" value="${occurrence.dataResource}" id="dataResource"/>
-        <input type="hidden" name="collectionUid" value="${occurrence.collectionCodeUid}" id="collectionUid"/>
-        <input type="hidden" name="institutionUid" value="${occurrence.institutionUid}" id="institutionUid"/>
+        <input type="hidden" name="collectionUid" value="${occurrence.collectionCodeUid}" id="collectionCodeUid"/>
+        <input type="hidden" name="institutionUid" value="${occurrence.institutionUid}" id="institutionCodeUid"/>
         <input type="hidden" name="ref" value="" size="128"/>
         <input type="hidden" name="token" value="/tmp/TUEb3WK"/>
         <div class="submitButtons">
