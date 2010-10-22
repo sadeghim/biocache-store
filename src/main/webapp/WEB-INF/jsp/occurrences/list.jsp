@@ -517,7 +517,7 @@
                         </div>
                     </c:if>
                     <c:forEach var="facetResult" items="${searchResult.facetResults}">
-                        <c:if test="${fn:length(facetResult.fieldResult) > 1 }"> <%-- || not empty facetMap[facetResult.fieldName] --%>
+                        <c:if test="${fn:length(facetResult.fieldResult) > 1 && empty facetMap[facetResult.fieldName]}"> <%-- || not empty facetMap[facetResult.fieldName] --%>
                             <h3><span class="FieldName"><fmt:message key="facet.${facetResult.fieldName}"/></span></h3>
                             <div id="subnavlist">
                                 <ul>
