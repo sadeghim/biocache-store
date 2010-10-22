@@ -167,7 +167,7 @@ public class ContributeDataController {
         // If user submits form show the confirmation page with option to go back and edit values
         if ("Next >".equalsIgnoreCase(sightingAction)) {
             pageType = SIGHTING_CONFIRM;
-        } else if ("Finish".equalsIgnoreCase(sightingAction)) {
+        } else if ("Submit".equalsIgnoreCase(sightingAction)) {
             pageType = SIGHTING_THANKYOU;
             // populate bean and pass to DAO...
             
