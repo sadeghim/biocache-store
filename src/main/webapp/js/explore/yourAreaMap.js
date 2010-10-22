@@ -417,8 +417,9 @@ function processSpeciesJsonData(data, appendResults) {
         $('#rightList tbody tr#info').detach();
         var info = $(this).find('.speciesInfo').html();
         // copy contents of species into a new (tmp) row
-        if (info)
+        if (info) {
             $(this).after('<tr id="info"><td><td>'+info+'<td></td></tr>');
+        }
         // hide previous selected spceies info box
         $(this).addClass("activeRow2"); // highloght current taxon
         // show the links for current selected species
