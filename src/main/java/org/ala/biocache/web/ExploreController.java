@@ -15,12 +15,9 @@
 
 package org.ala.biocache.web;
 
-import com.maxmind.geoip.Location;
-import com.maxmind.geoip.LookupService;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,6 +37,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.maxmind.geoip.Location;
+import com.maxmind.geoip.LookupService;
+
 /**
  * Controller for the "explore your area" page
  *
@@ -57,7 +57,7 @@ public class ExploreController {
 	private String YOUR_AREA = "explore/yourArea";
     private String speciesPageUrl = "http://bie.ala.org.au/species/";
     private String geoIpDatabase = "/data/geoip/GeoLiteCity.dat"; // get from http://www.maxmind.com/app/geolitecity
-    private HashMap<String, List<Float>> addressCache = new HashMap<String, List<Float>>();
+//    private HashMap<String, List<Float>> addressCache = new HashMap<String, List<Float>>();
     private final String DEFAULT_LOCATION = "Clunies Ross St, Black Mountain, ACT";
     /** Mapping of radius in km to OpenLayers zoom level */
     public final static HashMap<Float, Integer> radiusToZoomLevelMap = new HashMap<Float, Integer>();
@@ -240,12 +240,12 @@ public class ExploreController {
 	public void setSpeciesPageUrl(String speciesPageUrl) {
 		this.speciesPageUrl = speciesPageUrl;
 	}
-	/**
-	 * @param addressCache the addressCache to set
-	 */
-	public void setAddressCache(HashMap<String, List<Float>> addressCache) {
-		this.addressCache = addressCache;
-	}
+//	/**
+//	 * @param addressCache the addressCache to set
+//	 */
+//	public void setAddressCache(HashMap<String, List<Float>> addressCache) {
+//		this.addressCache = addressCache;
+//	}
 	/**
 	 * @param geoIpDatabase the geoIpDatabase to set
 	 */
