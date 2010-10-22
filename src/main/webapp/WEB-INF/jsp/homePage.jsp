@@ -14,7 +14,7 @@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
         <p>
           This is an early release of this functionality for <strong>release 5 (October 29th 2010)</strong>.
         </p>
-        <h2>Free text occurrence search of occurrence records</h2>
+        <h2>Free text search of occurrence records</h2>
 		<div id="inpage_search">
 			<form id="search-inpage" action="occurrences/search" method="get" name="search-form">
 			<label for="search">Search</label>
