@@ -38,6 +38,7 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.ala.biocache.dao.OccurrenceRecordDAO;
 import org.ala.biocache.dto.OccurrenceAnnotation;
 import org.ala.biocache.dto.OccurrenceAnnotationBody;
 import org.ala.biocache.dto.OccurrenceAnnotationUpdate;
@@ -100,7 +101,9 @@ public class AnnotationController {
 	private String twitterUsername;
 	private String twitterPassword;
 
-    private boolean enableTwitterSync = false;
+    private boolean enableTwitterSync = true;
+    
+    protected OccurrenceRecordDAO occurrenceRecordDAO;
     
     /**
      * Constructor to populate fields with values from the portal.properties file.
@@ -229,22 +232,19 @@ public class AnnotationController {
         String annotationType = ServletRequestUtils.getStringParameter(request, "type", "Annotation");
         String replyRoot = request.getParameter("rootAnnotation");
         String replyField = request.getParameter("field");
-        String dataResourceKey = null;
+        String dataResourceId = request.getParameter("dataResourceId");
+        String dataResourceUid = request.getParameter("dataResourceUid");
+        String dataResourceName = request.getParameter("dataResource");
         String type = "change";
 
-        /*if (occurrenceManager.isValidOccurrenceRecordKey(occurrenceRecordKey)) {
-             OccurrenceRecordDTO or = occurrenceManager.getOccurrenceRecordFor(occurrenceRecordKey);
-             dataResourceKey = or.getDataResourceKey();
-        } else {
-            // Generate a "not found" error response
-            response.sendError(response.SC_NOT_FOUND,"No occurrence record found for record: "+occurrenceRecordKey);
-        }*/
 
 		//retrieve old values
 		List<String> paramNames = getParamsWithPrefix(request, "old.");
 		annotationBody.append("<ala:occurrenceRecordAnnotation>");
         annotationBody.append("<ala:hasOccurrenceRecordId>"+occurrenceRecordKey+"</ala:hasOccurrenceRecordId>");
-        annotationBody.append("<ala:hasDataResourceId>"+dataResourceKey+"</ala:hasDataResourceId>");
+        annotationBody.append("<ala:hasDataResourceId>"+dataResourceId+"</ala:hasDataResourceId>");
+        annotationBody.append("<ala:hasDataResourceUid>"+dataResourceUid+"</ala:hasDataResourceUid>");
+        annotationBody.append("<ala:hasDataResourceName>"+dataResourceName+"</ala:hasDataResourceName>");
         annotationBody.append("<ala:hasOccurrenceSection>"+xpath+"</ala:hasOccurrenceSection>");
         annotationBody.append("<ala:hasIssueCode>"+issueCode+"</ala:hasIssueCode>");
         annotationBody.append("<ala:hasComment>"+comment+"</ala:hasComment>");
@@ -256,7 +256,7 @@ public class AnnotationController {
 			if(StringUtils.isNotEmpty(newValue)){
 				addFieldUpdate(annotationBody, paramName, oldValue, newValue);
 				if(tw==null){
-					tw = createTweeter(tw, url, dataResourceKey);
+					tw = createTweeter(tw, url, dataResourceUid);
 					tw.setFieldName(paramName);
 					tw.setNewValue(newValue);
 					tw.setOldValue(oldValue);
@@ -265,7 +265,7 @@ public class AnnotationController {
 		}
 
         if (tw==null && StringUtils.isNotEmpty(comment)){
-        	tw = createTweeter(tw, url, dataResourceKey); // comment-only annotation
+        	tw = createTweeter(tw, url, dataResourceUid); // comment-only annotation
         	tw.setComment(comment);
             type = "Comment";
         }
