@@ -487,7 +487,7 @@
                                 test="${not empty param.fq}">&fq=${fn:join(paramValues.fq, "&fq=")}</c:if></c:set>
                     </c:if>
                     <c:if  test="${not empty facetMap}">
-                        <h3><span class="FieldName">Current Restrictions</span></h3>
+                        <h3><span class="FieldName">Current Filters</span></h3>
                         <div id="subnavlist">
                             <ul style="padding-left: 24px;">
                                 <c:forEach var="item" items="${facetMap}">
