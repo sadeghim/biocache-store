@@ -52,9 +52,9 @@
         </table>
         <jsp:include page="annotateCommon2.jsp"><jsp:param name="section" value="geospatial" /></jsp:include>
         </form>
-    </div>
 </c:otherwise>
 </c:choose>
+    </div>
     <!-- Mask to cover the whole screen -->
     <div id="mask"></div>
 </div>
