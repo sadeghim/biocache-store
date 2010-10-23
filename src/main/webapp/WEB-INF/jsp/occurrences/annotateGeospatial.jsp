@@ -1,6 +1,6 @@
 <%@ include file="/common/taglibs.jsp"%>
 <div class="boxes">
-    <div id="dataset" class="window">
+    <div id="geospatial" class="window">
     	<h2>Geospatial Annotation</h2>
 <c:choose>
 <c:when test="${empty pageContext.request.userPrincipal}">

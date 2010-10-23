@@ -1,6 +1,6 @@
 <%@ include file="/common/taglibs.jsp"%>
 <div class="boxes">
-    <div id="dataset" class="window">
+    <div id="taxonomy" class="window">
     	<h2>Taxonomy Annotation</h2>
 <c:choose>
 <c:when test="${empty pageContext.request.userPrincipal}">
