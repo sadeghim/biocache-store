@@ -1,8 +1,13 @@
 <%@ include file="/common/taglibs.jsp"%>
 <div class="boxes">
-    <div id="geospatial" class="window">
+    <div id="dataset" class="window">
+    	<h2>Geospatial Annotation</h2>
+<c:choose>
+<c:when test="${empty pageContext.request.userPrincipal}">
+	<jsp:include page="annotateAuth.jsp"/>
+</c:when>
+<c:otherwise>
         <form action="${pageContext.request.contextPath}/annotation/saveAnnotation" method="post" name="geospatialForm" id="geospatialForm">
-        <h4 style="margin:0 0 10px 0">Geospatial Annotation</h4>
         <table>
           <thead>
             <tr>
@@ -48,6 +53,8 @@
         <jsp:include page="annotateCommon2.jsp"><jsp:param name="section" value="geospatial" /></jsp:include>
         </form>
     </div>
-    <!-- Mask to cover the whole screen
-    <div id="mask"></div> -->
+</c:otherwise>
+</c:choose>
+    <!-- Mask to cover the whole screen -->
+    <div id="mask"></div>
 </div>
