@@ -57,7 +57,7 @@
     <attribute>
       <description>The return url path that is appended to the context path</description>
       <name>returnUrlPath</name>
-      <required>true</required>
+      <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
   </tag>

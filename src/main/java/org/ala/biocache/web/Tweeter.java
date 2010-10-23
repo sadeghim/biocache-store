@@ -25,7 +25,7 @@ public class Tweeter implements Runnable {
 	private String oldValue = null;
 	private String newValue = null;
 	private String url = null;
-	private String dataResourceKey;
+	private String dataResourceUid;
 	private String urlToAnnotation = null;
 	private String bitlyLogin = null;
 	private String bitlyApiKey = null;
@@ -72,7 +72,7 @@ public class Tweeter implements Runnable {
     		
     		//submit to twitter    		
 			Twitter twitter = new Twitter(twitterUsername,twitterPassword);
-			StringBuffer sb = new StringBuffer("#ala-dataset-"+dataResourceKey+" ");
+			StringBuffer sb = new StringBuffer("#ala"+dataResourceUid+" ");
 			if(fieldName!=null){
 				sb.append("#");
 				sb.append(fieldName);
@@ -107,7 +107,7 @@ public class Tweeter implements Runnable {
 			} else {
 				message = sb.toString();
 			}
-			twitter.setSource("ALA GIS Portal");
+			twitter.setSource("alau");
 			Status status = twitter.updateStatus(message+shortUrl);
 			logger.debug("Successfully updated the status to [" + status.getText() + "].");
 		} catch (Exception e) {
@@ -272,15 +272,15 @@ public class Tweeter implements Runnable {
 	/**
 	 * @return the dataResourceKey
 	 */
-	public String getDataResourceKey() {
-		return dataResourceKey;
+	public String getDataResourceUid() {
+		return dataResourceUid;
 	}
 
 	/**
 	 * @param dataResourceKey the dataResourceKey to set
 	 */
-	public void setDataResourceKey(String dataResourceKey) {
-		this.dataResourceKey = dataResourceKey;
+	public void setDataResourceKey(String dataResourceUid) {
+		this.dataResourceUid = dataResourceUid;
 	}
 
     /**

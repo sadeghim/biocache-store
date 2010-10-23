@@ -103,7 +103,7 @@ include file="/common/taglibs.jsp" %>
                 <div id="border">
                     <div id="content">
 		                <c:if test="${!empty pageContext.request.remoteUser}">
-		                    <div id="loginId"> You are logged in as: ${pageContext.request.remoteUser}</div>
+		                    <div id="loginId"><ala:loginStatus /></div>
 		                </c:if>
 <!--                        <div id="decoratorBody">-->
                             <decorator:body />

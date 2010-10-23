@@ -3,7 +3,7 @@
         <input type="hidden" name="act" value="2" id="act"/>
         <input type="hidden" name="xpath" value="${param.section}" id="xpath"/>
         <input type="hidden" name="url" value="http://${pageContext.request.serverName}${pageContext.request.contextPath}/occurrences/${occurrence.id}" size="128"/>
-        <input type="hidden" name="recordKey" value="${rawOccurrenceRecord.id}" id="recordid"/>
+        <input type="hidden" name="recordKey" value="${occurrence.id}" id="recordid"/>
         <input type="hidden" name="dataResourceId" value="${rawOccurrenceRecord.dataResourceId}" id="dataResourceId"/>
         <input type="hidden" name="dataResourceUid" value="${occurrence.dataResourceUid}" id="dataResourceUid"/>
         <input type="hidden" name="dataResource" value="${occurrence.dataResource}" id="dataResource"/>

@@ -101,7 +101,7 @@ public class AnnotationController {
 	private String twitterUsername;
 	private String twitterPassword;
 
-    private boolean enableTwitterSync = true;
+    private boolean enableTwitterSync = false;
     
     protected OccurrenceRecordDAO occurrenceRecordDAO;
     
@@ -223,7 +223,6 @@ public class AnnotationController {
 		String xpath = request.getParameter("xpath");
 		String url = request.getParameter("url");
         String comment = HtmlUtils.htmlEscape(request.getParameter("comment"));
-        String ident = request.getParameter("ident");
         String creator = HtmlUtils.htmlEscape(request.getParameter("creator"));
         String fullName = HtmlUtils.htmlEscape(request.getParameter("creator-name"));
         String email = HtmlUtils.htmlEscape(request.getParameter("creator-email"));
@@ -236,7 +235,6 @@ public class AnnotationController {
         String dataResourceUid = request.getParameter("dataResourceUid");
         String dataResourceName = request.getParameter("dataResource");
         String type = "change";
-
 
 		//retrieve old values
 		List<String> paramNames = getParamsWithPrefix(request, "old.");
@@ -270,12 +268,8 @@ public class AnnotationController {
             type = "Comment";
         }
 
-        if ("name".equals(ident)) {
-            // Name & Email supplied
-            creator = creator + " | mailto:" + email;
-        } else if ("anon".equals(ident)) {
-        	creator = "anon | mailto:";
-        }
+        // Name & Email supplied
+        String creatorString = creator +" | " + fullName + " | mailto:" + email;
 
         if ("reply".equals(annotationType)) type = "Comment";
 
@@ -297,7 +291,7 @@ public class AnnotationController {
         ctx.put("replyRoot", replyRoot);  // for replies
 		ctx.put("url", url);
 		ctx.put("xpath", replyField);  // was xpath
-		ctx.put("creator", creator);
+		ctx.put("creator", creatorString);
         //ctx.put("email", email);
 		ctx.put("title", title);
 		ctx.put("lang", "en");
@@ -587,15 +581,12 @@ public class AnnotationController {
 	 * @return email or name.
 	 */
 	private String formatCreator(String creator) {
-		String pattern = " | mailto:";
-		String name = creator.substring(0, creator.indexOf(pattern));
-		String email = creator.substring(creator.indexOf(pattern) + pattern.length());
-		
-		if (email.equalsIgnoreCase("null") || email.equals("")) {
+		String[] creatorParts = creator.split("\\|");
+		if(creatorParts.length>1){
+			String name = creatorParts[1];
 			return name;
-		} else {
-			return email;
 		}
+		return "";
 	}
 
 	/**
