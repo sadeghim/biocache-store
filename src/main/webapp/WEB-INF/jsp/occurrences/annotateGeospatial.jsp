@@ -55,6 +55,4 @@
 </c:otherwise>
 </c:choose>
     </div>
-    <!-- Mask to cover the whole screen -->
-    <div id="mask"></div>
 </div>
