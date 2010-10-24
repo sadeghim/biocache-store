@@ -66,13 +66,28 @@
             <div id="breadcrumb">
                 <a href="${initParam.centralServer}">Home</a>
                 <a href="${initParam.centralServer}/share">Share</a>
-                Your Sightings
+                Your sightings
             </div>
-            <h1>Your Sightings</h1>
+            <h1>Your sightings</h1>
         </div>
         
         <c:choose>
             <c:when test="${!empty pageContext.request.remoteUser}"><%-- User is logged in --%>
+                 <c:if test="${empty taxonConceptMap">
+                  	<p>You have not yet shared any sightings of species</p>
+					<p style="text-align: left;"><span>Individual sightings can be recorded from the species page.</span></p>
+					<ol>
+					<li>
+					<div style="text-align: left;"><span>Enter the species you have seen in the search box above and open the species page</span></div>
+					</li>
+					<li>
+					<div style="text-align: left;"><span>Click contribute and select sightings</span></div>
+					</li>
+					<li>
+					<div style="text-align: left;"><span>Complete the details of the sighting.</span></div>
+					</li>
+					</ol>
+	            </c:if>
                 <c:if test="${not empty taxonConceptMap}">
                     <div id="column-one">
                         <div class="section">
@@ -102,22 +117,6 @@
                                 </div>
                                 <div style="clear: both; height:5px;"></div>
                             </c:forEach>
-                            
-                            <c:if test="">
-                            	<p>You have not yet shared any sightings of species</p>
-								<p style="text-align: left;"><span>Individual sightings can be recorded from the species page.</span></p>
-								<ol>
-								<li>
-								<div style="text-align: left;"><span>Enter the species you have seen in the search box above and open the species page</span></div>
-								</li>
-								<li>
-								<div style="text-align: left;"><span>Click contribute and select sightings</span></div>
-								</li>
-								<li>
-								<div style="text-align: left;"><span>Complete the details of the sighting.</span></div>
-								</li>
-								</ol>
-                            </c:if>
                         </div>
                     </div>
                     <div id="column-two">
