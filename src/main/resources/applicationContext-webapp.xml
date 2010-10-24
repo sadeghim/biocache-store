@@ -9,8 +9,6 @@
 
   <!-- Scan source files for annotations for DI -->
   <context:component-scan base-package="org.ala.biocache"/>
-  <!-- override bean fields with values from properties file -->
-  <context:property-override location="classpath:overrides.properties"/>
   <!-- load properties file into the context -->
   <context:property-placeholder location="classpath:repository.properties"/>
 

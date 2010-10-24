@@ -17,6 +17,7 @@ package org.ala.biocache.web;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
@@ -38,7 +39,6 @@ import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.ala.biocache.dao.OccurrenceRecordDAO;
 import org.ala.biocache.dto.OccurrenceAnnotation;
 import org.ala.biocache.dto.OccurrenceAnnotationBody;
 import org.ala.biocache.dto.OccurrenceAnnotationUpdate;
@@ -69,7 +69,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 /**
- * Occurrences controller for the BIE biocache site
+ * Occurrences controller for the BioCache
  *
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
@@ -81,29 +81,27 @@ public class AnnotationController {
 
 	/** Name of view for an empty search page */
 	private final String JSON = "json/annotationJson";
-//    private final String XML_RDF = "annotation/annotationRdf";
 
-//    protected String annoteaServerUrl = "http://localhost/danno/annotea";
     protected String annoteaServerUrl = "http://annotate.ala.org.au/annotea";
 	protected String annotationTemplate = "annotation.vm";
 
-    //protected String jsonView; // Spring-injected view name
-    //protected String jsonAnnotations; // Spring-injected view name
+	protected String twitterConsumerKey = "";
+	protected String twitterConsumerSecret = "";
+	
+	protected String twitterTokenFilePath = "/token.txt";
+	protected String twitterTokenSecretFilePath = "/tokenSecret.txt";
+
+	private String bitlyLogin = "";
+	private String bitlyApiKey ="";
 
     private String dannoServer = "annotate.ala.org.au";
     private int dannoPort = 80;
     private String dannoUser = "biocache-webapp";
     private String dannoPassword = "biocache";
+    
     private int timeoutInMillisec = 10000;
 
-	private String bitlyLogin;
-	private String bitlyApiKey;
-	private String twitterUsername;
-	private String twitterPassword;
-
-    private boolean enableTwitterSync = false;
-    
-    protected OccurrenceRecordDAO occurrenceRecordDAO;
+    private boolean enableTwitterSync = true;
     
     /**
      * Constructor to populate fields with values from the portal.properties file.
@@ -111,19 +109,20 @@ public class AnnotationController {
      * directly from the portal.properties file.
      */
     public AnnotationController() {
-		ResourceBundle rb = ResourceBundle.getBundle("biocache");
-		try {
-			annoteaServerUrl = rb.getString("annotationController.annoteaServerUrl");
-            dannoServer = rb.getString("annotationController.dannoServer");
-            twitterUsername = rb.getString("annotationController.twitterUsername");
-            twitterPassword = rb.getString("annotationController.twitterPassword");
-            bitlyLogin = rb.getString("annotationController.bitlyLogin");
-            bitlyApiKey = rb.getString("annotationController.bitlyApiKey");
-		} catch (Exception e){
-			logger.warn("Unable to retrieve annotationController.* from portal.properties. Using default values.", e);
-		}
-	}
-
+	    ResourceBundle rb = ResourceBundle.getBundle("biocache");
+	    try {
+	        this.annoteaServerUrl = rb.getString("annotationController.annoteaServerUrl");
+	        this.dannoServer = rb.getString("annotationController.dannoServer");
+	        this.twitterConsumerKey = rb.getString("annotationController.twitterConsumerKey");
+            this.twitterConsumerSecret = rb.getString("annotationController.twitterConsumerSecret");
+            this.bitlyLogin = rb.getString("annotationController.bitlyLogin");
+            this.bitlyApiKey = rb.getString("annotationController.bitlyApiKey");
+        } catch (Exception e){
+        	logger.warn("Unable to retrieve annotationController.* from portal.properties. Using default values.", e);
+        }
+    }
+    
+    
 	/**
 	 * Retrieve all annotations for a given URI and render data as JSON.
 	 *
@@ -217,7 +216,7 @@ public class AnnotationController {
 	 */
     @RequestMapping(value = "/annotation/saveAnnotation", method = RequestMethod.POST)
 	public ModelAndView saveAnnotation(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
+    	
 		StringBuffer annotationBody = new StringBuffer();
 		String title = "Occurrence Record Annotation";
 		String xpath = request.getParameter("xpath");
@@ -254,16 +253,18 @@ public class AnnotationController {
 			if(StringUtils.isNotEmpty(newValue)){
 				addFieldUpdate(annotationBody, paramName, oldValue, newValue);
 				if(tw==null){
-					tw = createTweeter(tw, url, dataResourceUid);
-					tw.setFieldName(paramName);
-					tw.setNewValue(newValue);
-					tw.setOldValue(oldValue);
+					tw = createTweeter(url, dataResourceUid);
+					if(tw!=null){
+						tw.setFieldName(paramName);
+						tw.setNewValue(newValue);
+						tw.setOldValue(oldValue);
+					}
 				}
 			}
 		}
 
         if (tw==null && StringUtils.isNotEmpty(comment)){
-        	tw = createTweeter(tw, url, dataResourceUid); // comment-only annotation
+        	tw = createTweeter(url, dataResourceUid); // comment-only annotation
         	tw.setComment(comment);
             type = "Comment";
         }
@@ -415,17 +416,38 @@ public class AnnotationController {
 		fieldUpdates.append("</ala:hasFieldUpdate>");
 	}
 
-    private Tweeter createTweeter(Tweeter tw, String url, String dataResourceKey) {
-        tw = new Tweeter();
-        tw.setTwitterUsername(twitterUsername);
-        tw.setTwitterPassword(twitterPassword);
-        tw.setBitlyApiKey(bitlyApiKey);
-        tw.setBitlyLogin(bitlyLogin);
-		tw.setUrl(url);
-		tw.setDataResourceKey(dataResourceKey);
-        return tw;
+    private Tweeter createTweeter( String url, String dataResourceKey) {
+        
+    	try {
+    		Tweeter tw = new Tweeter();
+			InputStream tokenStream = getClass().getResourceAsStream(twitterTokenFilePath);
+			ObjectInputStream objectInputStream = new ObjectInputStream(tokenStream);
+			String twitterToken = (String) objectInputStream.readObject();
+			InputStream tokenSecretStream = getClass().getResourceAsStream(twitterTokenSecretFilePath);
+			objectInputStream = new ObjectInputStream(tokenSecretStream);
+			String twitterTokenSecret = (String) objectInputStream.readObject();
+			tw.setTwitterConsumerKey(twitterConsumerKey);
+			tw.setTwitterConsumerSecret(twitterConsumerSecret);
+			tw.setTwitterToken(twitterToken);
+			tw.setTwitterTokenSecret(twitterTokenSecret);
+			
+			System.out.println("########################### bitlyLogin : "+bitlyLogin);
+			System.out.println("########################### bitlyApiKey : "+bitlyApiKey);
+			tw.setBitlyLogin(bitlyLogin);
+			tw.setBitlyApiKey(bitlyApiKey);
+			tw.setUrl(url);
+			tw.setDataResourceKey(dataResourceKey);
+	        return tw;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
     }
 
+    
+    
+    
 	/**
 	 * Retrieve a list of parameters for update.
 	 *
@@ -726,23 +748,37 @@ public class AnnotationController {
 	}
 
 	/**
-	 * @param twitterUsername the twitterUsername to set
-	 */
-	public void setTwitterUsername(String twitterUsername) {
-		this.twitterUsername = twitterUsername;
-	}
-
-	/**
-	 * @param twitterPassword the twitterPassword to set
-	 */
-	public void setTwitterPassword(String twitterPassword) {
-		this.twitterPassword = twitterPassword;
-	}
-
-	/**
 	 * @param enableTwitterSync the enableTwitterSync to set
 	 */
 	public void setEnableTwitterSync(boolean enableTwitterSync) {
 		this.enableTwitterSync = enableTwitterSync;
+	}
+
+	/**
+	 * @param twitterConsumerKey the twitterConsumerKey to set
+	 */
+	public void setTwitterConsumerKey(String twitterConsumerKey) {
+		this.twitterConsumerKey = twitterConsumerKey;
+	}
+
+	/**
+	 * @param twitterConsumerSecret the twitterConsumerSecret to set
+	 */
+	public void setTwitterConsumerSecret(String twitterConsumerSecret) {
+		this.twitterConsumerSecret = twitterConsumerSecret;
+	}
+
+	/**
+	 * @param twitterTokenFilePath the twitterTokenFilePath to set
+	 */
+	public void setTwitterTokenFilePath(String twitterTokenFilePath) {
+		this.twitterTokenFilePath = twitterTokenFilePath;
+	}
+
+	/**
+	 * @param twitterTokenSecretFilePath the twitterTokenSecretFilePath to set
+	 */
+	public void setTwitterTokenSecretFilePath(String twitterTokenSecretFilePath) {
+		this.twitterTokenSecretFilePath = twitterTokenSecretFilePath;
 	}
 }

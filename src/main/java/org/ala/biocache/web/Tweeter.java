@@ -1,3 +1,17 @@
+/**************************************************************************
+ *  Copyright (C) 2010 Atlas of Living Australia
+ *  All Rights Reserved.
+ *
+ *  The contents of this file are subject to the Mozilla Public
+ *  License Version 1.1 (the "License"); you may not use this file
+ *  except in compliance with the License. You may obtain a copy of
+ *  the License at http://www.mozilla.org/MPL/
+ *
+ *  Software distributed under the License is distributed on an "AS
+ *  IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ *  implied. See the License for the specific language governing
+ *  rights and limitations under the License.
+ ***************************************************************************/
 package org.ala.biocache.web;
 
 import java.net.URLEncoder;
@@ -8,8 +22,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import winterwell.jtwitter.Twitter;
-import winterwell.jtwitter.Twitter.Status;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.http.AccessToken;
+
 
 /**
  * Submits a tweet annotation to twitter. Done in a thread so as to not impact
@@ -29,8 +46,13 @@ public class Tweeter implements Runnable {
 	private String urlToAnnotation = null;
 	private String bitlyLogin = null;
 	private String bitlyApiKey = null;
-	private String twitterUsername = null;
-	private String twitterPassword = null;
+	
+	//twitter authentication params
+	private String twitterConsumerKey = null;
+	private String twitterConsumerSecret = null;
+	private String twitterToken = null;
+	private String twitterTokenSecret = null;
+	
 	private int timeoutInMillisec = 10000;
 
 	public static final int MAX_CHARACTER_LIMIT = 160;
@@ -71,8 +93,8 @@ public class Tweeter implements Runnable {
 			int maxTextLength = (MAX_CHARACTER_LIMIT-shortUrl.length());
     		
     		//submit to twitter    		
-			Twitter twitter = new Twitter(twitterUsername,twitterPassword);
-			StringBuffer sb = new StringBuffer("#ala"+dataResourceUid+" ");
+
+			StringBuffer sb = new StringBuffer("#ala_"+dataResourceUid+" ");
 			if(fieldName!=null){
 				sb.append("#");
 				sb.append(fieldName);
@@ -107,14 +129,17 @@ public class Tweeter implements Runnable {
 			} else {
 				message = sb.toString();
 			}
-			twitter.setSource("alau");
+			
+			AccessToken accessToken = new AccessToken(twitterToken, twitterTokenSecret);
+			TwitterFactory factory = new TwitterFactory();
+			Twitter twitter = factory.getOAuthAuthorizedInstance(twitterConsumerKey, twitterConsumerSecret, accessToken);
 			Status status = twitter.updateStatus(message+shortUrl);
-			logger.debug("Successfully updated the status to [" + status.getText() + "].");
+			System.out.println("Successfully updated the status to ["+ status.getText() + "].");
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 		}
 	}
-
+	
 	/**
 	 * @return the logger
 	 */
@@ -228,34 +253,6 @@ public class Tweeter implements Runnable {
 	}
 
 	/**
-	 * @return the twitterUsername
-	 */
-	public String getTwitterUsername() {
-		return twitterUsername;
-	}
-
-	/**
-	 * @param twitterUsername the twitterUsername to set
-	 */
-	public void setTwitterUsername(String twitterUsername) {
-		this.twitterUsername = twitterUsername;
-	}
-
-	/**
-	 * @return the twitterPassword
-	 */
-	public String getTwitterPassword() {
-		return twitterPassword;
-	}
-
-	/**
-	 * @param twitterPassword the twitterPassword to set
-	 */
-	public void setTwitterPassword(String twitterPassword) {
-		this.twitterPassword = twitterPassword;
-	}
-
-	/**
 	 * @return the comment
 	 */
 	public String getComment() {
@@ -296,5 +293,69 @@ public class Tweeter implements Runnable {
     public void setTimeoutInMillisec(int timeoutInMillisec) {
         this.timeoutInMillisec = timeoutInMillisec;
     }
+
+
+	/**
+	 * @return the twitterConsumerKey
+	 */
+	public String getTwitterConsumerKey() {
+		return twitterConsumerKey;
+	}
+
+
+	/**
+	 * @param twitterConsumerKey the twitterConsumerKey to set
+	 */
+	public void setTwitterConsumerKey(String twitterConsumerKey) {
+		this.twitterConsumerKey = twitterConsumerKey;
+	}
+
+
+	/**
+	 * @return the twitterConsumerSecret
+	 */
+	public String getTwitterConsumerSecret() {
+		return twitterConsumerSecret;
+	}
+
+
+	/**
+	 * @param twitterConsumerSecret the twitterConsumerSecret to set
+	 */
+	public void setTwitterConsumerSecret(String twitterConsumerSecret) {
+		this.twitterConsumerSecret = twitterConsumerSecret;
+	}
+
+
+	/**
+	 * @return the twitterToken
+	 */
+	public String getTwitterToken() {
+		return twitterToken;
+	}
+
+
+	/**
+	 * @param twitterToken the twitterToken to set
+	 */
+	public void setTwitterToken(String twitterToken) {
+		this.twitterToken = twitterToken;
+	}
+
+
+	/**
+	 * @return the twitterTokenSecret
+	 */
+	public String getTwitterTokenSecret() {
+		return twitterTokenSecret;
+	}
+
+
+	/**
+	 * @param twitterTokenSecret the twitterTokenSecret to set
+	 */
+	public void setTwitterTokenSecret(String twitterTokenSecret) {
+		this.twitterTokenSecret = twitterTokenSecret;
+	}
 
 }
