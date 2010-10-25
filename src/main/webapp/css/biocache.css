@@ -90,7 +90,7 @@ td, th  {
     filter:alpha(opacity=50);
     opacity:.50;
 }
-/* header 
+/* header
 #header {
     margin: 6px 0 7px 0;
     padding: 2px 6px;
@@ -577,7 +577,10 @@ div#decoratorBody {
     margin-bottom: 10px;
 }
 
-
+#debug {
+    display: none;
+    border: 1px solid #D75A20;
+}
 /** occurrence record... */
 div.occurrenceSection {
     width:640px;
@@ -733,7 +736,7 @@ table.propertyTable td.propertyNames {
 	padding-top:12px;
 }
 #yourMap {
-    width: 400px; 
+    width: 400px;
     height: 420px;
 }
 #left-col {
@@ -875,7 +878,7 @@ input#locationSearch{
 button#download {
 /*	padding:1px;*/
 }
-#locationInfo { 
+#locationInfo {
 	padding-top:.8em;
 	margin-top:.8em;
 	border-top:1px solid #d9d9d9;
@@ -1252,3 +1255,5 @@ li.showHide a {
     width: 75px;
     display: inline-block;
 }
+
+.originalValue { padding-left:10px; font-style: italic; font-size: 0.9em; }
