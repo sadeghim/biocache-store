@@ -686,10 +686,15 @@ public class OccurrenceController {
 		if (filterQuery != null && filterQuery.length == 0) {
 			filterQuery = null;
 		}
+		
+		if(filename!=null && !filename.toLowerCase().endsWith(".zip")){
+			filename = filename +".zip";
+		}
+		
 
 		response.setHeader("Cache-Control", "must-revalidate");
 		response.setHeader("Pragma", "must-revalidate");
-		response.setHeader("Content-Disposition", "attachment;filename="+filename+".zip");
+		response.setHeader("Content-Disposition", "attachment;filename="+filename);
 		response.setContentType("application/zip");
 
 		ServletOutputStream out = response.getOutputStream();
@@ -700,7 +705,7 @@ public class OccurrenceController {
                 //Use a zip output stream to include the data and citation together in the download
                 ZipOutputStream zop = new ZipOutputStream(out);
                 zop.putNextEntry(new java.util.zip.ZipEntry(filename+".csv"));
-                Map<String, Integer> uidStats =searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100);
+                Map<String, Integer> uidStats = searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100);
                 zop.closeEntry();
 
                 if(!uidStats.isEmpty()){
