@@ -460,7 +460,7 @@
                         <p><label for="filename">File Name</label>
                             <input type="text" name="filename" id="filename" value="data" size="30"  /></p>
                         <p><label for="reason" style="vertical-align: top">Download Reason</label>
-                            <textarea name="reason" rows="5" cols="30" id="downloadReason"  ></textarea></p>
+                            <textarea name="reason" rows="5" cols="30" id="reason"  ></textarea></p>
                     </fieldset>
                 </form>
             </div>
