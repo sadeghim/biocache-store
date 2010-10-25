@@ -265,7 +265,9 @@ public class AnnotationController {
 
         if (tw==null && StringUtils.isNotEmpty(comment)){
         	tw = createTweeter(url, dataResourceUid); // comment-only annotation
-        	tw.setComment(comment);
+        	if (tw != null) {
+                tw.setComment(comment);
+            }
             type = "Comment";
         }
 
