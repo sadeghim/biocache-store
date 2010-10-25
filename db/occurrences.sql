@@ -76,6 +76,8 @@ READS SQL DATA
 
 -- Stored function to lookup type status.
 -- Nick dos Remedios 2010-05-16
+-- NC: We are limiting this to one just in case there are more that 1 typ record for an occurrence record
+-- TODO : Check to see if this is the case. If it is we will need to have a pipe separated list of type_status
 -- Args:
 -- concept_id: the input concept id
 DROP FUNCTION IF EXISTS get_type_status$$
@@ -87,47 +89,11 @@ READS SQL DATA
         SELECT typ.type_status
         INTO type_status
         FROM typification_record typ
-        WHERE typ.occurrence_id = occurrence_id;
+        WHERE typ.occurrence_id = occurrence_id limit 1;
 
         RETURN type_status;
     END $$
 
--- Stored function to lookup type status.
--- Nick dos Remedios 2010-05-16
--- Args:
--- concept_id: the input concept id
-DROP FUNCTION IF EXISTS get_identifier_type$$
-CREATE FUNCTION get_identifier_type(occurrence_id INT) returns VARCHAR(1000)
-DETERMINISTIC
-READS SQL DATA
-    BEGIN
-        DECLARE identifier_type VARCHAR(1000);
-        SELECT lit.it_value
-        INTO identifier_type
-        FROM identifier_record idr
-        LEFT JOIN lookup_identifier_type lit ON lit.it_key = idr.identifier_type
-        WHERE idr.occurrence_id = occurrence_id;
-
-        RETURN identifier_type;
-    END $$
-
--- Stored function to lookup type status.
--- Nick dos Remedios 2010-05-16
--- Args:
--- concept_id: the input concept id
-DROP FUNCTION IF EXISTS get_identifier_name$$
-CREATE FUNCTION get_identifier_name(occurrence_id INT) returns VARCHAR(1000)
-DETERMINISTIC
-READS SQL DATA
-    BEGIN
-        DECLARE identifier_name VARCHAR(1000);
-        SELECT idr.identifier
-        INTO identifier_name
-        FROM identifier_record idr
-        WHERE idr.occurrence_id = occurrence_id;
-
-        RETURN identifier_name;
-    END $$
 
 -- A recursive stored procedure that dumps the occurrences
 -- records to mulitple temporary files. This procedure improves 
@@ -169,7 +135,7 @@ CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT)
                 ,',IFNULL(oc.altitude_metres,\'\'), IFNULL(oc.depth_centimetres,\'\')'
 		,',IFNULL(oc.`year`,\'\'),IFNULL(LPAD(oc.`month`,2,\'0\'),\'\'),IFNULL(DATE_FORMAT(oc.occurrence_date,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
 		,'IFNULL(oc.basis_of_record,\'\'),IFNULL(bor.description,\'\'),IFNULL(ror.basis_of_record,\'\'),'
-		,'IFNULL(get_type_status(oc.id),\'\'),IFNULL(get_identifier_type(oc.id),\'\'),IFNULL(get_identifier_name(oc.id),\'\'),'
+		,'IFNULL(get_type_status(oc.id),\'\'),\'\',\'\''
 		,'IFNULL(ror.identifier_name,\'\'),IFNULL(DATE_FORMAT(ror.identification_date,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
 		,'IFNULL(ror.collector_name,\'\'),IFNULL(oc.taxonomic_issue,\'\'),IFNULL(oc.geospatial_issue,\'\'),'
 		,'IFNULL(oc.other_issue,\'\'),IFNULL(DATE_FORMAT(ror.created,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),IFNULL(DATE_FORMAT(ror.modified,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
