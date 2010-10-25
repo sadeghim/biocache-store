@@ -79,15 +79,15 @@
                   	<p>You have not yet shared any sightings of species</p>
 					<p style="text-align: left;"><span>Individual sightings can be recorded from the species page.</span></p>
 					<ol>
-					<li>
-					<div style="text-align: left;"><span>Enter the species you have seen in the search box above and open the species page</span></div>
-					</li>
-					<li>
-					<div style="text-align: left;"><span>Click contribute and select sightings</span></div>
-					</li>
-					<li>
-					<div style="text-align: left;"><span>Complete the details of the sighting.</span></div>
-					</li>
+						<li>
+							<div style="text-align: left;"><span>Enter the species you have seen in the search box above and open the species page</span></div>
+						</li>
+						<li>
+							<div style="text-align: left;"><span>Click contribute and select sightings</span></div>
+						</li>
+						<li>
+							<div style="text-align: left;"><span>Complete the details of the sighting.</span></div>
+						</li>
 					</ol>
 					</div>
 					</div>
