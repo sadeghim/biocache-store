@@ -248,11 +248,11 @@
             <artifactId>json-taglib</artifactId>
             <version>0.4.1</version>
         </dependency>
-        <!-- JTWITTER -->
+        <!-- TWITTER4J -->
         <dependency>
-            <groupId>jtwitter</groupId>
-            <artifactId>jtwitter</artifactId>
-            <version>1.2</version>
+            <groupId>twitter4j</groupId>
+            <artifactId>twitter4j</artifactId>
+            <version>2.1.7-SNAPSHOT</version>
         </dependency>
         <!-- GEOSERVER -->
         <!-- <dependency>
