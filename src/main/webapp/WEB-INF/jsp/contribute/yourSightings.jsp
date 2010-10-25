@@ -73,7 +73,7 @@
         
         <c:choose>
             <c:when test="${!empty pageContext.request.remoteUser}"><%-- User is logged in --%>
-                 <c:if test="${empty taxonConceptMap">
+                 <c:if test="${empty taxonConceptMap}">
                   	<p>You have not yet shared any sightings of species</p>
 					<p style="text-align: left;"><span>Individual sightings can be recorded from the species page.</span></p>
 					<ol>
