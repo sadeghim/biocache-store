@@ -346,7 +346,7 @@
                             <li>Taxonomic issues: ${taxonomicIssueText}</li>
                         </c:if>
                     </ul>
-                    <p><a href="${initParam.centralServer}/about/media-centre/terms-of-use">What does this mean?</a></p>
+                    <!-- <p><a href="${initParam.centralServer}/about/media-centre/terms-of-use">What does this mean?</a></p> -->
                 </div>
             </c:if>
             <c:if test="${not empty images}">
