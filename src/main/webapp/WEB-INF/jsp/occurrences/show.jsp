@@ -24,7 +24,7 @@
         <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/basic.css" charset="utf-8">
         <%-- <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/occurrenceSpecial.css" charset="utf-8"> --%>
         <%-- <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/static/css/record.css" charset="utf-8"> --%>
-        <link type="text/css" rel="stylesheet" href="http://test.ala.org.au/wp-content/themes/ala/css/record.css" charset="utf-8">
+        <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/record.css" charset="utf-8">
         <script type="text/javascript">
             // Set some global variables to be used in imported JS files
             occurrenceHtmlUrl = "http://${pageContext.request.serverName}${pageContext.request.contextPath}/occurrences/${occurrence.id}";
