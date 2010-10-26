@@ -22,6 +22,8 @@
 
 /** Jquery dependent JS follows */
 var annotationsToHighlight = new Array();
+var sections = ["dataset", "taxonomy", "geospatial"];
+var countLabel = "comment";
 
 $(document).ready(function() {
     // Set the default values for all AJAX requests
@@ -38,8 +40,6 @@ $(document).ready(function() {
     });
 
     // Add icons for the general comments
-    var sections = ["dataset", "taxonomy", "geospatial"];
-    var countLabel = "comment";
 
     for (var i in sections) {
         var section = sections[i];
@@ -51,7 +51,7 @@ $(document).ready(function() {
         $('#'+section+'Table tr:last').after(newRow);
     }
 
-    $('a.annotationIcon').css('display','none');
+    //$('a.annotationIcon').css('display','none');
 
     // only if using icons for annotation adding
     if (false) {
@@ -65,7 +65,7 @@ $(document).ready(function() {
     }  
 
     // Make the mask (background div for annotations) translucent
-    $('#mask').css('opacity', 0.5);
+    //$('#mask').css('opacity', 0.5);
 
     // Register event on all the "a" tags with name=modal
     $('a[name=modal]').click(function(e) {
@@ -152,7 +152,7 @@ $(document).ready(function() {
         $("tr[class=annoInfo][id], tr.annoComment td.annoInfo").each(function(i){
             $(this).show();
             var id =  $(this).attr("id");
-            $("tr#"+id+" td.value").css("border","1px solid #CBDAF0");
+            //$("tr#"+id+" td.value").css("border","1px solid #CBDAF0");
         });
     });
     $('a[name=hideAnnotations]').click(function(e) {
@@ -160,7 +160,7 @@ $(document).ready(function() {
         $("tr[class=annoInfo][id], tr.annoComment td.annoInfo").each(function(i){
             $(this).hide();
             var id =  $(this).attr("id");
-            $("tr#"+id+" td.value").css("border","none");
+            //$("tr#"+id+" td.value").css("border","none");
         });
     });
 
@@ -281,8 +281,8 @@ function jsonAnnoSuccess(data, textStatus) {
             if (count != 1) thisCountLabel = thisCountLabel + "s";
             $("span#"+commentSection+"CommentCountLabel").html(thisCountLabel);
             // add some CSS eye candy
-            $("tr#comment-"+rec.section+" td.annoInfo").css("background-color","#CBDAF0"); // style the annotation background-color
-            $("tr#"+replyField+" td.annoInfo").css("background-color","#CBDAF0"); // style the annotation background-color
+            //$("tr#comment-"+rec.section+" td.annoInfo").addClass('activeAnnotation'); // style the annotation background-color
+            //$("tr#"+replyField+" td.annoInfo").addClass('activeAnnotation'); // style the annotation background-color
 
         } else {
             // iterate over each of the "fieldUpdateSet" nodes in json data
@@ -306,7 +306,7 @@ function jsonAnnoSuccess(data, textStatus) {
                 $("table#"+rec.section+"Table tr#"+fieldName+":last").after(annoText);
                 $("#debug").append("table#"+rec.section+"Table tr#"+fieldName+":last"+"<br>");
                 $("#debug").append("<quote>"+annoText+"</quote><br/>");
-                $("table#"+rec.section+"Table tr#"+fieldName+" > td.annoInfo").css("background-color","#CBDAF0"); // style the annotation background-color
+                //$("table#"+rec.section+"Table tr#"+fieldName+" > td.annoInfo").addClass('activeAnnotation'); // style the annotation background-color
             });
         }
 
@@ -323,14 +323,14 @@ function jsonAnnoSuccess(data, textStatus) {
             var id =  $(this).attr("id");
             $("tr.annoInfo[id="+id+"]").fadeIn();
             $("td.annoInfo[id="+id+"]").fadeIn();
-            $("tr#"+id+" td.value").css("border","1px solid #CBDAF0");
+            //$("tr#"+id+" td.value").css("border","1px solid #CBDAF0");
         },
         function(e) {
             e.preventDefault(); //Cancel the link behavior
             var id =  $(this).attr("id");
             $("tr.annoInfo[id="+id+"]").fadeOut();
             $("td.annoInfo[id="+id+"]").fadeOut();
-            $("tr#"+id+" td.value").css("border","none");
+            //$("tr#"+id+" td.value").css("border","none");
         }
     );
 
@@ -343,15 +343,17 @@ function jsonAnnoSuccess(data, textStatus) {
         //hideAnnotation(this);
     });
     // fix taxonomy display where there is an extra column
-    $("table#taxonomyTable tr.annoInfo td.annoInfo, table#taxonomyTable tr.annoComment td.annoInfo").attr("colspan","2");
+    //$("table#taxonomyTable tr.annoInfo td.annoInfo, table#taxonomyTable tr.annoComment td.annoInfo").attr("colspan","2");
+    $("tr.annoInfo td.annoInfo, tr.annoComment td.annoInfo").attr("colspan","2");
     $("div#ajaxLoading").remove();
     // check for highlighting annotation via "annotation" request parameter in URI
     var annoParam = jQuery.url.param("annotation");
     if (annoParam) {
         annotationsToHighlight.push(annoParam);
     }
+    
     // highlight new or requested annotations
-    highlightAnnotation();
+    highlightAnnotation(annotationsToHighlight);
     // check cookie for ceratorName and creatorEmail values
     insertFromCookie(); // callback so we trigger from here so values are added sequencially
 }
@@ -362,14 +364,16 @@ function jsonAnnoError(XMLHttpRequest, textStatus, errorThrown) {
         ") <input type='button' value='ok' onclick='$(\"div#ajaxLoading\").remove();'/> ");
 }
 
-function highlightAnnotation() {
+function highlightAnnotation(annotations) {
     // iterate over list of annotationUrls
-    for (i in annotationsToHighlight) {
-        $("tr[key="+annotationsToHighlight[i]+"]").show();
-        $("tr[key="+annotationsToHighlight[i]+"] td").show();
-        $("td[key="+annotationsToHighlight[i]+"]").show();
-        var id = $("tr[key="+annotationsToHighlight[i]+"]").attr("id");
-        $("tr#"+id+" td.value").css("border","1px solid #CBDAF0");
+    for (i in annotations) {
+        //$("tr[key="+annotations[i]+"]").show();
+        //$("tr[key="+annotations[i]+"] td").show();
+        //$("td[key="+annotations[i]+"]").show();
+        //$("tr[key="+annotations[i]+"] a[name=modal2]").click();
+        $("tr[key="+annotations[i]+"]").prev('tr').find('a[href=#]').click();
+        //var id = $("tr[key="+annotations[i]+"]").attr("id");
+        //$("tr#"+id+" td.value").css("border","1px solid #CBDAF0");
     }
 }
 
@@ -381,7 +385,7 @@ function loadAnnotations(annotationUrl) {
         $("tr.annoComment").remove();
         $("td.annoText").html("");
         $("span#datasetCommentCount, span#taxonomyCommentCount, span#geospatialCommentCount").html("0");
-        $("td.value").css("border","none");
+        //$("td.value").css("border","none");
         annotationsToHighlight.push(annotationUrl);
     }
 

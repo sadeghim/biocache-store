@@ -251,10 +251,18 @@ tr.annoInfo > td.annoReply {
     border-bottom: 1px solid white;
 }
 
+td.annoInfo {
+    background-color: #CBDAF0;
+}
+
 div.replyBody { 
     border-left: 4px solid #6590D4;
     border-bottom: 1px;
     padding: 4px 0 4px 4px;
+}
+
+td.annoText {
+    width: 20px;
 }
 
 input, textarea, select {
@@ -348,4 +356,12 @@ div.reply_button > input {
 
 div.imageRecord img, div.logoRecord img {
     max-width: 315px;
+}
+
+a.annotationIcon {
+    display: none;
+}
+
+#mask {
+    opacity: 0.5;
 }
