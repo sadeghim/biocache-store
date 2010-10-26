@@ -128,15 +128,25 @@
                                     </alatag:occurrenceTableRow>
                                 </c:otherwise>
                             </c:choose>
-                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="catalogueNumber" fieldName="Catalogue Number">
-                                ${occurrence.catalogueNumber}
-                                <c:if test="${not empty rawOccurrence.catalogueNumber && (fn:toLowerCase(occurrence.catalogueNumber) != fn:toLowerCase(rawOccurrence.catalogueNumber))}">
+                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="catalogueNumber" fieldName="Catalogue Number">                                
+                                <c:if test="${not empty occurrence.catalogueNumber}">
+                                	${occurrence.catalogueNumber}
+                                </c:if>
+                                <c:if test="${empty occurrence.catalogueNumber && not empty rawOccurrence.catalogueNumber}">
+                                	${rawOccurrence.catalogueNumber}
+                                </c:if> 
+                                <c:if test="${not empty occurrence.catalogueNumber && not empty rawOccurrence.catalogueNumber && (fn:toLowerCase(occurrence.catalogueNumber) != fn:toLowerCase(rawOccurrence.catalogueNumber))}">
                                     <br/><span class="originalValue">Supplied as: "${rawOccurrence.catalogueNumber}"</span>
                                	</c:if>                            	
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="basisOfRecord" fieldName="Basis of Record">
-                                ${occurrence.basisOfRecord}
-                                <c:if test="${not empty rawOccurrence.basisOfRecord && (fn:toLowerCase(occurrence.basisOfRecord) != fn:toLowerCase(rawOccurrence.basisOfRecord))}">
+                                <c:if test="${not empty occurrence.basisOfRecord}">
+                                	${occurrence.basisOfRecord}
+                                </c:if>
+                                <c:if test="${empty occurrence.basisOfRecord && not empty rawOccurrence.basisOfRecord}">
+                                	${rawOccurrence.basisOfRecord}
+                                </c:if>                                
+                                <c:if test="${not empty occurrence.basisOfRecord && not empty rawOccurrence.basisOfRecord && (fn:toLowerCase(occurrence.basisOfRecord) != fn:toLowerCase(rawOccurrence.basisOfRecord))}">
                                     <br/><span class="originalValue">Supplied as: "${rawOccurrence.basisOfRecord}"</span>
                                	</c:if>
                             </alatag:occurrenceTableRow>
@@ -144,8 +154,13 @@
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="identifierName" fieldName="Identifier">${occurrence.identifierName}</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="identifierDate" fieldName="Identified Date"><fmt:formatDate value="${occurrence.identifierDate}" pattern="yyyy-MM-dd"/></alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="collectorName" fieldName="Collector/observer">
-                                ${occurrence.collector}
-                                <c:if test="${not empty rawOccurrence.collectorName && (fn:toLowerCase(occurrence.collector) != fn:toLowerCase(rawOccurrence.collectorName))}">
+                                <c:if test="${not empty occurrence.collector}">
+                                	${occurrence.collector}
+                                </c:if>
+                                <c:if test="${empty occurrence.collector && not empty rawOccurrence.collectorName}">
+                                	${rawOccurrence.collectorName}
+                                </c:if>                                 
+                                <c:if test="${not empty occurrence.collector && not empty rawOccurrence.collectorName && (fn:toLowerCase(occurrence.collector) != fn:toLowerCase(rawOccurrence.collectorName))}">
                                     <br/><span class="originalValue">Supplied as: "${rawOccurrence.collectorName}"</span>
                                	</c:if>
                             </alatag:occurrenceTableRow>
@@ -167,35 +182,56 @@
                                         <c:if test="${not empty occurrence.taxonConceptLsid}">
                                           <a href="${bieWebappContext}/species/${occurrence.taxonConceptLsid}">
                                         </c:if>
-                                        <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/>
+                                        <c:if test="${not empty occurrence.taxonName}">
+                                        	<alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/>
                                                 ${occurrence.author}
+                                        </c:if>
+                                        <c:if test="${empty occurrence.taxonName && not empty rawOccurrence.scientificName}">                                        	
+                                                ${rawOccurrence.scientificName}
+                                        </c:if>        
                                         <c:if test="${not empty occurrence.taxonConceptLsid}">
                                           </a>
                                         </c:if>
-                                        <c:if test="${not empty rawOccurrence.scientificName && (fn:toLowerCase(occurrence.taxonName) != fn:toLowerCase(rawOccurrence.scientificName))}">
+                                        <c:if test="${not empty occurrence.taxonName && not empty rawOccurrence.scientificName && (fn:toLowerCase(occurrence.taxonName) != fn:toLowerCase(rawOccurrence.scientificName))}">
                                         	<br/><span class="originalValue">Supplied as: "${rawOccurrence.scientificName}"</span>
                                         </c:if>
                                     </c:otherwise>
                                 </c:choose>
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="taxonRank" fieldName="Taxon Rank">
-                                <span style="text-transform: capitalize;">${occurrence.rank}
-                                	<c:if test="${not empty rawOccurrence.rank  && (fn:toLowerCase(occurrence.rank) != fn:toLowerCase(rawOccurrence.rank))}">
-                                		<br/><span class="originalValue">Supplied as: "${rawOccurrence.rank}"</span>
-                                	</c:if>
-                               	</span>
+                            	<span style="text-transform: capitalize;">
+	                            	<c:if test="${not empty occurrence.rank}">
+	                                	${occurrence.rank}
+	                                </c:if>
+	                                <c:if test="${empty occurrence.rank && not empty rawOccurrence.rank}">
+	                                	${rawOccurrence.rank}
+	                                </c:if>
+                                </span>
+                               	<c:if test="${not empty occurrence.rank && not empty rawOccurrence.rank  && (fn:toLowerCase(occurrence.rank) != fn:toLowerCase(rawOccurrence.rank))}">
+                               		<br/><span class="originalValue">Supplied as: "${rawOccurrence.rank}"</span>
+                               	</c:if>                               	
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="taxonomy" fieldCode="commonName" fieldName="Common Name">
-                                 ${occurrence.commonName}
-                                 <c:if test="${not empty rawOccurrence.vernacularName && (fn:toLowerCase(occurrence.commonName) != fn:toLowerCase(rawOccurrence.vernacularName))}">
+                                 <c:if test="${not empty occurrence.commonName}">
+	                                	${occurrence.commonName}
+                                </c:if>
+                                <c:if test="${empty occurrence.commonName && not empty rawOccurrence.vernacularName}">
+                                	${rawOccurrence.vernacularName}
+                                </c:if>
+                                 <c:if test="${not empty occurrence.commonName && not empty rawOccurrence.vernacularName && (fn:toLowerCase(occurrence.commonName) != fn:toLowerCase(rawOccurrence.vernacularName))}">
                                		<br/><span class="originalValue">Supplied as: "${rawOccurrence.vernacularName}"</span>
                                	 </c:if>
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="kingdom" fieldName="Kingdom">
-                                <a href="${bieWebappContext}/species/${occurrence.kingdomLsid}">
-                                	${occurrence.kingdom}
-                                </a>
-								<c:if test="${not empty rawOccurrence.kingdom && (fn:toLowerCase(occurrence.kingdom) != fn:toLowerCase(rawOccurrence.kingdom))}">
+                                <c:if test="${not empty occurrence.kingdom}">
+                                	<a href="${bieWebappContext}/species/${occurrence.kingdomLsid}">
+                                		${occurrence.kingdom}
+                                	</a>
+                                </c:if>
+                                <c:if test="${empty occurrence.kingdom && not empty rawOccurrence.kingdom}">
+                                	${rawOccurrence.kingdom}
+                                </c:if>                                 
+								<c:if test="${not empty occurrence.kingdom && not empty rawOccurrence.kingdom && (fn:toLowerCase(occurrence.kingdom) != fn:toLowerCase(rawOccurrence.kingdom))}">
                                		<br/><span class="originalValue">Supplied as: "${rawOccurrence.kingdom}"</span>
                                	</c:if>                                
                             </alatag:occurrenceTableRow>
