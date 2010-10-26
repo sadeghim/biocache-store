@@ -321,6 +321,11 @@
             </div>
         </div><!--close col-one--> 
         <div id="column-two">
+            <c:if test="${not empty collectionLogo}">
+                <div id="logoRecord" class="section">
+                    <img src="${collectionLogo}" alt="collection logo"/>
+                </div>
+            </c:if> 
             <!-- add the occurrence issue descriptions if necessary -->
             <c:set var="noIssues" value="${!((empty occurrence.taxonomicIssue || occurrence.taxonomicIssue==0)  && (empty occurrence.geospatialIssue || occurrence.geospatialIssue==0) && (empty occurrence.otherIssue || occurrence.otherIssue==0))}"/>
             <c:if test="${noIssues}">
@@ -344,13 +349,9 @@
                     <p><a href="${initParam.centralServer}/about/media-centre/terms-of-use">What does this mean?</a></p>
                 </div>
             </c:if>
-            <c:if test="${not empty collectionLogo}">
-                <div id="logoRecord">
-                    <img src="${collectionLogo}" alt="collection logo"/>
-                </div>
-            </c:if> 
             <c:if test="${not empty images}">
-                <div id="imageRecords">
+                <div id="imageRecords" class="section">
+                    <h2>Images</h2>
                     <c:forEach items="${images}" var="imageRecord">
                         <div class="imageRecord">
                             <c:choose>
