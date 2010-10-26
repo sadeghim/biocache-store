@@ -256,7 +256,7 @@
                             	<c:if test="${not empty occurrence.countryCode}">
                             		<fmt:message key="country.${occurrence.countryCode}"/>
                            		</c:if>
-								<c:if test="${not empty rawOccurrence.country  && (fn:toLowerCase(occurrence.countryCode) != fn:toLowerCase(rawOccurrence.country))}">
+								<c:if test="${empty occurrence.countryCode}">
                                 		<br/><span class="originalValue">Supplied as: "${rawOccurrence.country}"</span>
                                	 </c:if>                           		
                         	</alatag:occurrenceTableRow>
