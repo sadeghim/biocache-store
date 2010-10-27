@@ -46,6 +46,7 @@
                         }
                     });
                 });
+
             }); // end document ready
         </script>
     </head>
@@ -426,8 +427,8 @@
             <c:set var="noIssues" value="${!((empty occurrence.taxonomicIssue || occurrence.taxonomicIssue==0)  && (empty occurrence.geospatialIssue || occurrence.geospatialIssue==0) && (empty occurrence.otherIssue || occurrence.otherIssue==0))}"/>
             <c:if test="${noIssues}">
                 <div id="warnings" class="section">
-                    <h2>Data validation errors</h2> 
-                    <p class="half-padding-bottom">The Atlas was unable to validate the following data:</p> 
+                    <h2>Possible Issues</h2>
+                    <p class="half-padding-bottom">Data validation tools identified the following possible issues:</p>
                     <ul>
                         <alatag:formatGeospatialIssues issuesBit="${occurrence.geospatialIssue}"/>
                         <c:if test="${not empty geospatialIssueText}">

@@ -68,10 +68,22 @@ $(document).ready(function() {
     //$('#mask').css('opacity', 0.5);
 
     // Register event on all the "a" tags with name=modal
-    $('a[name=modal]').click(function(e) {
-        e.preventDefault();  //Cancel the link behavior
-        registerFormLink(this);
+    $("a[name=modal]").fancybox({
+        'hideOnContentClick' : false,
+        'hideOnOverlayClick': false,
+        'showCloseButton': false,
+        'titleShow' : false,
+        'autoDimensions' : false,
+        'width': 550,
+        'height': 'auto',
+        'padding': 10,
+        'margin': 10
     });
+
+//    $('a[name=modal]').click(function(e) {
+//        e.preventDefault();  //Cancel the link behavior
+//        registerFormLink(this);
+//    });
 
     // if close button is clicked
     $('.window .close').click(function (e) {
@@ -403,9 +415,10 @@ function loadAnnotations(annotationUrl) {
 
 // hide the form
 function hideForm() {
-    $('#mask').hide();
-    $('.window').hide();
-    $.modal.close();
+    //$('#mask').hide();
+    //$('.window').hide();
+    //$.modal.close();
+    $.fancybox.close();
 }
 
 // Insert name/email from cookie if set

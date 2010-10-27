@@ -47,17 +47,17 @@ th.sortable a { color: #872f2f; border-bottom: none; }
 	width: 57%;
 	margin-bottom: 20px;
 	padding-left: 16px;
-  padding-bottom: 16px;	
+  padding-bottom: 16px;
 	line-height: 1.2em;
-	-webkit-border-radius: 5px; 
+	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 }*/
-.occurrenceContainer #furtherActions { 
+.occurrenceContainer #furtherActions {
 	float: right;
     width: 38%;
     margin-right: 10px;
     line-height: 1.2em;
-    -webkit-border-radius: 5px; 
+    -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
 }
 
@@ -103,7 +103,7 @@ fieldset p { clear:left; }
 .selectedLayerSet { font-weight: bold; }
 .nonSelectedLayerSet { font-weight: normal; }
 
-.generatedModel { height:360px; width: 720px; border: 1px solid #CCCCCC; } 
+.generatedModel { height:360px; width: 720px; border: 1px solid #CCCCCC; }
 .lastModified { color: gray; font-size: 0.81em;  }
 
 #actionsAndResults .actionsListInline a, #occurrenceActions .actionsListInline a  {
@@ -151,7 +151,7 @@ table.taxonClassificationComparison {
 div.annotate {
     float: right;
     /* background: url('images/icon_comment_add.png') no-repeat 0px 0px; */
-    
+
 }
 
 div.annotation {
@@ -174,39 +174,12 @@ div.annotation.tr {
     display:none;
 }
 
-.boxes .window {
-    position:absolute;
-    left:0;
-    top:0;
-    width:440px;
-    height:200px;
-    display:none;
-    z-index:9999;
-    padding:10px;
-    font-size: 11px;
-}
-
-#simplemodal-container-ala {
-    height:500px;
+div.window {
     width:550px;
-/*    color:#bbb;
-    background-color:#333;
-    border:4px solid #444; */
-    padding:12px;
 }
 
-.boxes td {
-    font-family: Arial,Helvetica,sans-serif;
-    color: #494949;
-}
-
-.boxes #dataset, .boxes #taxonomy, .boxes #geospatial, .boxes #comment, .boxes #replyTo {
-    width: 550px;
-    height: auto;
-    padding: 10px;
-    background-color: #ffffff;
-    /*-webkit-border-radius: 9px;
-    -moz-border-radius: 9px;*/
+div.window td {
+    text-align: left;
 }
 
 a.annotationLink {
@@ -237,15 +210,11 @@ span.newValue {
     color: #CE573E;/*#F26649*/
 }
 
-table.occurrenceTable th {
-    /*color: #316AC5;*/
-}
-
 tr.annoInfo, tr.annoComment {
     display: none;
 }
 
-tr.annoInfo > td.annoReply { 
+tr.annoInfo > td.annoReply {
     background-color: #CBDAF0;
     padding:0px;
     border-bottom: 1px solid white;
@@ -255,7 +224,7 @@ td.annoInfo {
     background-color: #CBDAF0;
 }
 
-div.replyBody { 
+div.replyBody {
     border-left: 4px solid #6590D4;
     border-bottom: 1px;
     padding: 4px 0 4px 4px;
@@ -265,23 +234,16 @@ td.annoText {
     width: 20px;
 }
 
-input, textarea, select {
-    font-family: Verdana,Arial,Helvetica,sans-serif;
-    font-size: 11px;
-    color: #494949;
-    padding: 2px 2px 3px 2px;
-}
-
 .oldValues {
     border: none;
 }
 
 input.newValues, textarea.newValues {
-    width: 95%;
+    width: 160px;
 }
 
 textarea.comment {
-    width: 100%;
+    width: 320px;
 }
 
 div#ajaxLoading {
@@ -297,12 +259,9 @@ div#ajaxLoading {
     -moz-border-radius: 5px;
 }
 
-div.loading, div.message, div.errorMsg {
+div.loading, div.message {
     display: none;
     padding: 5px 2px;
-}
-div.errorMsg {
-    display: none;
 }
 
 div.creatorInfo  {
