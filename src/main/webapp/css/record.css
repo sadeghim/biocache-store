@@ -165,6 +165,10 @@ div.annotation.tr {
     margin-top: -19px;
 }
 
+div.boxes {
+    display: none;
+}
+
 #mask {
     position:absolute;
     left:0;
