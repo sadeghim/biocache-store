@@ -445,10 +445,10 @@
                 <h1>Occurrence Records</h1>
             </div>
             <div id="dialog-confirm" title="Download Occurrences" style="display:none">
-               	<p>By downloading this content you are agreeing to use it in accordance with the Atlas
+               	<p id="termsOfUseDownload">By downloading this content you are agreeing to use it in accordance with the Atlas
                	  <a href="http://www.ala.org.au/about/terms-of-use/">Terms of Use</a>.
-               </p>
-                <p>Please provide the following optional details before downloading:</p>
+				  Please provide the following optional details before downloading:
+				</p>
                 <form id="downloadForm">
                     <fieldset>
                         <p><label for="email">Email</label>
