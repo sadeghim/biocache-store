@@ -487,7 +487,7 @@
                         <div id="subnavlist">
                             <ul style="padding-left: 24px;">
                                 <c:forEach var="item" items="${facetMap}">
-                                    <li style="text-indent: -12px;">
+                                    <li style="text-indent: -12px; text-transform: none;">
                                         <c:set var="closeLink">&nbsp;[<b><a href="#" onClick="removeFacet('${item.key}:${item.value}'); return false;" style="text-decoration: none" title="remove">X</a></b>]</c:set>
                                         <fmt:message key="facet.${item.key}"/>:
                                         <c:choose>
