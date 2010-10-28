@@ -102,7 +102,7 @@
                 // url vars
                 var geoJsonUrl = "${pageContext.request.contextPath}/geojson/cells"; //+"&zoom=4&callback=?";
                 var zoomLevel = map.getZoom();
-                var paramString = "q=${query}&zoom="+zoomLevel+"&type=${type}&fq=${fn:join(facetQuery, '&fq=')}";
+                var paramString = "xq=true&q=${query}&zoom="+zoomLevel+"&type=${type}&fq=${fn:join(facetQuery, '&fq=')}";
                 // JQuery GET
                 $.get(geoJsonUrl, paramString, dataRequestHandler);
             }
@@ -232,7 +232,7 @@
                                 var reason = $("#reason").val();
                                 if(typeof reason == "undefined")
                                     reason="";
-                                var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?q=${query}&fq=${fn:join(facetQuery, '&fq=')}&type=${type}&email="+email.val()+"&reason="+encodeURIComponent(reason)+"&file="+$("#filename").val();
+                                var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?xq=true&q=${query}&fq=${fn:join(facetQuery, '&fq=')}&type=${type}&email="+email.val()+"&reason="+encodeURIComponent(reason)+"&file="+$("#filename").val();
 
                                 window.location.replace(downloadUrl);
                                 $(this).dialog('close');
@@ -470,7 +470,7 @@
                         ${entityQuery}
                     </c:when>
                     <c:otherwise>
-                        Search: <a href="?q=${queryJsEscaped}">${queryJsEscaped}</a><a name="searchResults">&nbsp;</a>
+                        Search: <a href="?xq=true&q=${queryJsEscaped}">${queryJsEscaped}</a><a name="searchResults">&nbsp;</a>
                     </c:otherwise>
                 </c:choose>
                 </strong></h3>
@@ -479,7 +479,7 @@
             <div id="facets">
                 <div id="accordion"  style="display:block;">
                     <c:if test="${not empty query}">
-                        <c:set var="queryParam">q=<c:out value="${param['q']}" escapeXml="true"/><c:if
+                        <c:set var="queryParam">xq=true&q=<c:out value="${param['q']}" escapeXml="true"/><c:if
                                 test="${not empty param.fq}">&fq=${fn:join(paramValues.fq, "&fq=")}</c:if></c:set>
                     </c:if>
                     <c:if  test="${not empty facetMap}">
