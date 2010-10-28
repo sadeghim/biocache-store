@@ -755,13 +755,15 @@ public class OccurrenceController {
 	 *
 	 * @param id
 	 * @param model
+         * @param log Optional supplied value to specify whether or not the log the statistics.  Statistics are logged by default
 	 * @return view name
 	 * @throws Exception
 	 */
 	@RequestMapping(value = {"/occurrences/{id}", "/occurrences/{id}.json"}, method = RequestMethod.GET)
-	public String showOccurrence(@PathVariable("id") String id, Model model) throws Exception {
+	public String showOccurrence(@PathVariable("id") String id,
+                HttpServletRequest request, Model model) throws Exception {
 		logger.debug("Retrieving occurrence record with guid: "+id+".");
-		model.addAttribute("id", id);
+                model.addAttribute("id", id);
 		OccurrenceDTO occurrence = searchDAO.getById(id);
 		model.addAttribute("occurrence", occurrence);
 		
@@ -797,6 +799,24 @@ public class OccurrenceController {
 			
 		}
 		model.addAttribute("hostUrl", hostUrl);
+                
+                //log the usage statistics to the ala logger if necessary
+                //We only want to log the stats if a non-json request was made.
+                if(request.getRequestURL()!= null && !request.getRequestURL().toString().endsWith("json")){
+                    String email = null;
+                    String reason = "Viewing Occurrence Record " + id;
+                    String ip = request.getLocalAddr();
+                    Map<String, Integer> uidStats = new HashMap<String, Integer>();
+                    if(occurrence.getCollectionCodeUid() != null)
+                        uidStats.put(occurrence.getCollectionCodeUid(), 1);
+                    if(occurrence.getInstitutionCodeUid() != null)
+                        uidStats.put(occurrence.getInstitutionCodeUid(), 1);
+                    //all occurrence records must have a dpuid and druid
+                    uidStats.put(occurrence.getDataProviderUid(), 1);
+                    uidStats.put(occurrence.getDataResourceUid(), 1);
+                    LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_VIEWED, email, reason, ip,uidStats);
+                    logger.log(RestLevel.REMOTE, vo);
+                }
 		return SHOW;
 	}
 
