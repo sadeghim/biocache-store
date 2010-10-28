@@ -73,7 +73,7 @@ public class SearchDAOImpl implements SearchDAO {
     /** SOLR server instance */
     protected EmbeddedSolrServer server;
     /** Limit search results - for performance reasons */
-    protected static final Integer MAX_DOWNLOAD_SIZE = 100000;
+    protected static final Integer MAX_DOWNLOAD_SIZE = 15000;
     protected static final String POINT = "point-0.1";
     protected static final String KINGDOM = "kingdom";
     protected static final String KINGDOM_LSID = "kingdom_lsid";
