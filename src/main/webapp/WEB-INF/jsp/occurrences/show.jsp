@@ -348,26 +348,10 @@
                             	${rawOccurrence.locality}
                            	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="latitude" fieldName="Latitude">
-                            	<c:if test="${not empty occurrence.latitude}">
-                                	${occurrence.latitude}
-                                </c:if>
-                                <c:if test="${empty occurrence.latitude && not empty rawOccurrence.latitude}">
                                 	${rawOccurrence.latitude}
-                                </c:if>
-                                <c:if test="${not empty occurrence.latitude && not empty rawOccurrence.latitude && (fn:toLowerCase(rawOccurrence.latitude) != fn:toLowerCase(occurrence.latitude))}">
-                                		<br/><span class="originalValue">Supplied as: "${rawOccurrence.latitude}"</span>
-                               	 </c:if>
                            	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="longitude" fieldName="Longitude">
-                            	<c:if test="${not empty occurrence.longitude}">
-                                	${occurrence.longitude}
-                                </c:if>
-                                <c:if test="${empty occurrence.longitude && not empty rawOccurrence.longitude}">
                                 	${rawOccurrence.longitude}
-                                </c:if>
-                                <c:if test="${not empty occurrence.longitude && not empty rawOccurrence.longitude && (fn:toLowerCase(rawOccurrence.longitude) != fn:toLowerCase(occurrence.longitude))}">
-                                		<br/><span class="originalValue">Supplied as: "${rawOccurrence.longitude}"</span>
-                               	 </c:if>
                            	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="coordinatePrecision" fieldName="Coordinate Precision (metres)">
                             	<c:if test="${not empty occurrence.latitude || not empty occurrence.longitude}">
