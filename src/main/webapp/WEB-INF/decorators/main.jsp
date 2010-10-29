@@ -105,7 +105,7 @@ include file="/common/taglibs.jsp" %>
     </head>
     <body class="two-column-right">
         <div id="wrapper">
-            <ala:bannerMenu />
+            <ala:bannerMenu populateSearchBox="false"/>
             <div id="wrapper_border"><!--main content area-->
                 <div id="border">
                     <div id="content">
