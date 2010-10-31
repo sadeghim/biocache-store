@@ -23,6 +23,7 @@ import java.util.List;
 import org.ala.biocache.web.CustomDateSerializer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.beans.Field;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -679,7 +680,8 @@ public class OccurrenceDTO implements Serializable {
 	/**
 	 * @return the userId
 	 */
-	public String getUserId() {
+	@JsonIgnore
+    public String getUserId() {
 		return userId;
 	}
 

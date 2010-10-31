@@ -1,6 +1,7 @@
 package org.ala.biocache.model;
 
 import java.util.Date;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  * Represents the raw data captured for a single 
@@ -754,7 +755,8 @@ public class RawOccurrenceRecord extends ModelObject {
 	/**
 	 * @return the userId
 	 */
-	public String getUserId() {
+	@JsonIgnore
+    public String getUserId() {
 		return userId;
 	}
 
