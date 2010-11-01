@@ -115,7 +115,7 @@
                                     <h4>${speciesName}</h4>
                                     Records: <a href="${pageContext.request.contextPath}/occurrences/search?q=user_id:${pageContext.request.remoteUser}&fq=taxon_name:${tc.scientificName}">${tc.count}</a>
                                     <br/>
-                                    <a href="${pageContext.request.contextPath}/contribute/sighting/${tc.guid}">Record another sighting</a>
+                                    <a href="${pageContext.request.contextPath}/share/sighting/${tc.guid}">Record another sighting</a>
                                     <br/>
                                     <a href="http://bie.ala.org.au/species/${tc.guid}">View species page</a>
                                 </div>
