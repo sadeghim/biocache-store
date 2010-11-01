@@ -44,6 +44,7 @@ import atg.taglib.json.util.JSONObject;
 
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
+import org.jasig.cas.client.authentication.AttributePrincipal;
 
 /**
  * Controller for the "contribute data" page
@@ -59,6 +60,7 @@ public class ContributeDataController {
     private String SIGHTING_CONFIRM = "contribute/sightingConfirmation";
     private String SIGHTING_THANKYOU = "contribute/sightingThankyou";
     private String YOUR_SIGHTINGS = "contribute/yourSightings";
+    private String CONFIRM_DELETE = "contribute/deleteSightingConfirmation";
     /** Base URL for BIE webapp */
     private String bieBaseUrl = "http://bie.ala.org.au";
     /** Google API key - injected by Spring */
@@ -207,11 +209,38 @@ public class ContributeDataController {
             if (!contributeService.recordSighting(s)) {
                 model.addAttribute("error", "Error: your sighting was not saved. Please try again later.");
             } else {
-            	return "redirect:/share/your-sightings";
+            	return "redirect:/share/your-sightings"; // user sees their list of sightings
             }
         }
         
         return pageType;
+    }
+    
+    @RequestMapping(value = "/share/sighting/delete", method = RequestMethod.POST)
+	public String deleteSighting(
+            @RequestParam(value="sightingId", required=true) String sightingId,
+            @RequestParam(value="userId", required=true) String userId,
+            HttpServletRequest request,
+            Model model) throws Exception {
+
+        AttributePrincipal principal = (AttributePrincipal) request.getUserPrincipal();
+        String casUserId = principal.getName();
+
+        if (!userId.equalsIgnoreCase(casUserId))  {
+            // casUserId must match userId -  if not someone is trying something dodgey...
+            String msg = "Logged in userId does not match requested userId. ";
+            logger.error(msg + "sightingId = "+sightingId+"; userId = "+userId+"; casUserId = "+casUserId);
+            model.addAttribute("error", msg);
+        } else {
+            // requested userId = logged-in userId - go ahead and delete sighting
+            if (!contributeService.deleteSighting(sightingId)) {
+                model.addAttribute("error", "Your sighting was not deleted. Please try again later.");
+            } else {
+                model.addAttribute("sightingDeleted", true);
+            }
+        }
+        
+        return CONFIRM_DELETE;
     }
 
     /**

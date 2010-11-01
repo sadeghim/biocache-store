@@ -1,9 +1,13 @@
 package org.ala.biocache.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.ala.biocache.model.OccurrenceRecord;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -117,6 +121,11 @@ public class OccurrenceRecordDAOImpl extends JdbcDaoSupport implements Occurrenc
 		"from occurrence_record ore " +
 		"where ore.id=?";
 
+    /**
+     * The delete by id
+     */
+    protected static final String DELETE_SQL = "DELETE FROM occurrence_record WHERE id=?";
+
 	/**
 	 * OccurrenceRecord row mapper
 	 */
@@ -168,7 +177,7 @@ public class OccurrenceRecordDAOImpl extends JdbcDaoSupport implements Occurrenc
 	}	
 	
 	/**
-	 * @see org.gbif.portal.dao.OccurrenceRecordDAO#create(org.gbif.portal.model.OccurrenceRecord)
+	 * @see org.ala.biocache.dao.OccurrenceRecordDAO#create(org.gbif.portal.model.OccurrenceRecord)
 	 */
 	public long create(final OccurrenceRecord occurrenceRecord) {
 		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(occurrenceRecord);
@@ -181,7 +190,7 @@ public class OccurrenceRecordDAOImpl extends JdbcDaoSupport implements Occurrenc
 	}
 
 	/**
-	 * @see org.gbif.portal.dao.OccurrenceRecordDAO#update(org.gbif.portal.model.OccurrenceRecord)
+	 * @see org.ala.biocache.dao.OccurrenceRecordDAO#update(org.gbif.portal.model.OccurrenceRecord)
 	 */
 	public long update(final OccurrenceRecord occurrenceRecord) {
 		SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(occurrenceRecord);
@@ -190,6 +199,23 @@ public class OccurrenceRecordDAOImpl extends JdbcDaoSupport implements Occurrenc
 				namedParameters);
 		return occurrenceRecord.getId();	
 	}
+
+    /**
+     * @see org.ala.biocache.dao.OccurrenceRecordDAO#deleteById(long) 
+     */
+    @Override
+    public void deleteById(final long id) {
+        getJdbcTemplate().update(
+            new PreparedStatementCreator() {
+                public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+                       PreparedStatement ps = conn.prepareStatement(DELETE_SQL);
+                       ps.setLong(1, id);
+                       return ps;
+                }
+            }
+        );
+    }
+
 	/**
 	 * @return the namedParameterTemplate
 	 */

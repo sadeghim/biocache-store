@@ -89,9 +89,8 @@
                                         </p>
                                         <p id="confirmValues">Is this information correct? Click "Back" to edit or "Submit" to confirm.
                                             <br/>
-                                            <a href="${initParam.centralServer}/about/media-centre/terms-of-use#TOUContent" style="text-decoration: none" id="asterisk" class="asterisk-med" title="terms of use"><img src="${initParam.centralServer}/wp-content/themes/ala/images/clear.png" width="20" height="19">
-                                                Information submitted is subject to the <u>Atlas Terms of Use</u>
-                                            </a></p>
+                                            <span class="asterisk-container"><a href="${initParam.centralServer}/about/media-centre/terms-of-use#TOUContent" title="Terms of Use" style="text-decoration: none">Information submitted is subject to the <u>Atlas Terms of Use</u></a>.</span>
+                                        </p>
                                         <p><label for=""><input type="submit" name="action" id="sightingBack" value="< Back"/></label>
                                             <input type="submit" name="action" id="sightingSubmit" value="Submit"/>
                                         </p>

@@ -146,7 +146,18 @@ public class SearchDAOImpl implements SearchDAO {
 		server.commit();
 		return true;
 	}
-	
+
+    /**
+     * @see org.ala.biocache.dao.SearchDAO#deleteOccurrence(String)
+     */
+    @Override
+	public boolean deleteOccurrence(String occurrenceId) throws Exception {
+        // will throw exception if it fails...
+        server.deleteById(occurrenceId);
+        server.commit();
+        return true;
+    }
+    
     /**
      * @see org.ala.biocache.dao.SearchDAO#findByFulltextQuery(java.lang.String, java.lang.String,
      *         java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.String)

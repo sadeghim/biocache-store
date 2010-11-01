@@ -16,6 +16,7 @@ package org.ala.biocache.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 
@@ -240,12 +241,20 @@ public class ContributeServiceImpl implements ContributeService {
 	
 	@Override
 	public boolean deleteSighting(String sightingId) {
-
-		//update record in raw occurrence table
-		
-		
-		
-		return false;
+        
+        try {
+            // delete record from search index
+            searchDAO.deleteOccurrence(sightingId);
+            // delete from occurence record table
+            occurrenceRecordDAO.deleteById(Long.parseLong(sightingId));
+            // delete from rawOccurence record table
+            rawOccurrenceRecordDAO.deleteById(Long.parseLong(sightingId));
+        } catch (Exception ex) {
+            logger.error("Failed to delete occurrence (id: "+sightingId+"): "+ex.getMessage(), ex);
+            return false;
+        }
+        
+		return true;
 	}
 
 	/**

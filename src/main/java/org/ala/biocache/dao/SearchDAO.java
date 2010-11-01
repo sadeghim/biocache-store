@@ -44,6 +44,15 @@ public interface SearchDAO {
 	 * @throws Exception
 	 */
 	boolean addOccurrence(OccurrenceDTO oc) throws Exception;
+
+    /**
+     * Delete an occurrence from the biocache search index
+     *
+     * @param occurrenceId
+     * @return
+     * @throws Exception
+     */
+    boolean deleteOccurrence(String occurrenceId) throws Exception;
 	
     /**
      * Find all occurrences for a given (full text) query

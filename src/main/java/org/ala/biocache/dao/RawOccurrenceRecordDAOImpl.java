@@ -207,6 +207,11 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 
 	protected static final String QUERY_DATA_RESOURCE = "select distinct data_resource_id from raw_occurrence_record where resource_access_point_id=? order by 1";
 
+    /**
+     * The delete by id
+     */
+    protected static final String DELETE_SQL = "DELETE FROM raw_occurrence_record WHERE id=?";
+
 	/**
 	 * RawOccurrenceRecord row mapper
 	 */
@@ -508,6 +513,21 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 				new RowMapperResultSetExtractor(longRowMapper, 3));
 		return results;
 	}
+
+    /**
+     * @see org.ala.biocache.dao.RawOccurrenceRecordDAO#deleteById(long) 
+     */
+    public void deleteById(final long id) {
+        getJdbcTemplate().update(
+            new PreparedStatementCreator() {
+                public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+                       PreparedStatement ps = conn.prepareStatement(DELETE_SQL);
+                       ps.setLong(1, id);
+                       return ps;
+                }
+            }
+        );
+    }
 
 	/**
 	 * @return Returns the rawOccurrenceRecordRowMapper.

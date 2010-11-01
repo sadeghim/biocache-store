@@ -41,4 +41,12 @@ public interface OccurrenceRecordDAO {
      * @return The occurrence record
      */
     public OccurrenceRecord getById(long id);
+
+    /**
+     * Delete a record
+     * 
+     * @param id
+     * @return
+     */
+    public void deleteById(long id);
 }

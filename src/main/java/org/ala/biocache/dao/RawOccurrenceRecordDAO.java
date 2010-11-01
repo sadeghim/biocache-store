@@ -74,4 +74,11 @@ public interface RawOccurrenceRecordDAO {
      * @return The raw occurrence record
      */
     public RawOccurrenceRecord getById(long id);
+
+    /**
+     * Delete the record by its id
+     *
+     * @param id
+     */
+    public void deleteById(long id);
 }
