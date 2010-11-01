@@ -29,10 +29,15 @@
                 $(document).ready(function() {
                     var myOptions = {
                         scaleControl: true,
+                        mapTypeControl: true,
                         mapTypeControlOptions: {
-                            mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.TERRAIN ]
+                            style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
                         },
-                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                        navigationControl: true,
+                        navigationControlOptions: {
+                            style: google.maps.NavigationControlStyle.SMALL // DEFAULT
+                        },
+                        mapTypeId: google.maps.MapTypeId.HYBRID
                     };
 
                     var map = new google.maps.Map(document.getElementById("mapCanvas"), myOptions);
