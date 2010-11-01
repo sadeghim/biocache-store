@@ -432,7 +432,9 @@
                                     <input id="locationSearch" type="button" value="Search"/>
                                 </div>
                                 <div id="mapCanvas"></div>
-                                <div style="font-size: 90%; margin-top: 5px;"><b>Hint:</b> click and drag the marker pin to fine-tune the location coordinates</div>
+                                <div style="font-size: 90%; margin-top: 5px;"><b>Hints:</b> click and drag
+                                    the marker pin to fine-tune the location coordinates. Using a GPS?
+                                    Then you enter the coordinates as &quot;latitude, longitude&quot; in the search bar above the map.</div>
                                 <div style="display: none">
                                     <div id="markerAddress"></div>
                                     <div id="markerStatus"></div>
