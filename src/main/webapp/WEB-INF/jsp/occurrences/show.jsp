@@ -417,7 +417,7 @@
         </div><!--close col-one--> 
         <div id="column-two">
             <%-- Allow logged-in user to delete/edit their own observations --%>
-            <c:if test="${not empty pageContext.request.userPrincipal && pageContext.request.userPrincipal.name == rawOccurrence.userId}">
+            <c:if test="${not empty pageContext.request.userPrincipal && fn:containsIgnoreCase(pageContext.request.userPrincipal.name, rawOccurrence.userId)}">
                 <!-- userPrincipal = ${pageContext.request.userPrincipal.name} -->
                 <div id="editOccurrence" class="section">
                     <button id="deleteButton" style="font-size: 120%; color: #E8572F; padding: 3px 6px 4px 6px;">Delete this record</button>
