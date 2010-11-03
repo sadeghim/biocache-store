@@ -172,6 +172,7 @@
                             radius = radiusForZoom[zoom];  // set global var
                             $('select#radius').val(radius); // update drop-down widget
                             updateMarkerPosition(new google.maps.LatLng(hashParts[0], hashParts[1]));
+                            LoadTaxaGroupCounts();
                             loadMap();
                         } else {
                             attemptGeolocation();
