@@ -13,7 +13,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="geo.position" content="${occurrence.latitude};${occurrence.longitude}"/>
-        <title>Occurrence Record: ${id} | Atlas of Living Australia</title>
+        <title>Occurrence Record: ${id} - ${occurrence.taxonName} | Atlas of Living Australia</title>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/annotation.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.form.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.url.js"></script>
@@ -69,7 +69,7 @@
             <div id="breadcrumb">
                 <a href="${initParam.centralServer}">Home</a>
                 <a href="${initParam.centralServer}/explore">Explore</a>
-                Occurrence Record - ${occurrence.id}
+                Occurrence Record ${occurrence.id}
             </div>
             <h1>
                 Occurrence Record: ${occurrence.id} 
@@ -344,7 +344,7 @@
 								<c:if test="${empty occurrence.countryCode && not empty rawOccurrence.country}">
                                 		<br/><span class="originalValue">Supplied as: "${rawOccurrence.country}"</span>
                                	 </c:if>                           		
-                        	</alatag:occurrenceTableRow>
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="state" fieldName="State/Province">
                             	<c:if test="${not empty occurrence.state}">
                                 	${occurrence.state}
@@ -355,22 +355,22 @@
                             	<c:if test="${not empty occurrence.state && not empty rawOccurrence.stateOrProvince && (fn:toLowerCase(occurrence.state) != fn:toLowerCase(rawOccurrence.stateOrProvince))}">
                                 		<br/><span class="originalValue">Supplied as: "${rawOccurrence.stateOrProvince}"</span>
                                	 </c:if>
-                           	</alatag:occurrenceTableRow>
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="biogeographicRegion" fieldName="Biogeographic Region">
                             	${occurrence.biogeographicRegion}
-                           	</alatag:occurrenceTableRow>
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="place" fieldName="Place">
                             	${occurrence.place}
-                           	</alatag:occurrenceTableRow>
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="locality" fieldName="Locality">
                             	${rawOccurrence.locality}
-                           	</alatag:occurrenceTableRow>
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="latitude" fieldName="Latitude">
-                                	${rawOccurrence.latitude}
-                           	</alatag:occurrenceTableRow>
+                                ${(not empty rawOccurrence.latitude) ? rawOccurrence.latitude : occurrence.latitude}
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="longitude" fieldName="Longitude">
-                                	${rawOccurrence.longitude}
-                           	</alatag:occurrenceTableRow>
+                                ${(not empty rawOccurrence.longitude) ? rawOccurrence.longitude : occurrence.longitude}
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="coordinatePrecision" fieldName="Coordinate Precision (metres)">
                             	<c:if test="${not empty occurrence.latitude || not empty occurrence.longitude}">
                             		${not empty occurrence.coordinatePrecision ? occurrence.coordinatePrecision : 'Unknown'}
@@ -378,15 +378,15 @@
                             </alatag:occurrenceTableRow>
                             <c:if test="${not empty rawOccurrence.generalisedInMetres}">
                             	<alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="generalisedInMetres" fieldName="Coordinates generalised">
-                            		Due to sensitivity concerns, the coordinates of this record have been generalised to ${rawOccurrence.generalisedInMetres} metres.
+                                    Due to sensitivity concerns, the coordinates of this record have been generalised to ${rawOccurrence.generalisedInMetres} metres.
                             	</alatag:occurrenceTableRow>
                             </c:if>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="geodeticDatum" fieldName="Geodetic datum">
                             	${rawOccurrence.geodeticDatum}
-                           	</alatag:occurrenceTableRow>
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="occurrenceRemarks" fieldName="Notes">
                             	${rawOccurrence.occurrenceRemarks}
-                           	</alatag:occurrenceTableRow>
+                            </alatag:occurrenceTableRow>
                             <c:if test="${not empty rawOccurrence.individualCount && rawOccurrence.individualCount>0}">
                             	<alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="individualCount" fieldName="Individual count">${rawOccurrence.individualCount}</alatag:occurrenceTableRow>
                             </c:if>
@@ -401,7 +401,7 @@
                                 		<br/><span class="originalValue">Supplied as: "${rawOccurrence.citation}"</span>
                                	 </c:if>
                             	${rawOccurrence.citation}
-                           	</alatag:occurrenceTableRow>
+                            </alatag:occurrenceTableRow>
                         </table>
                     </div>
                     <div id="occurrenceMetadata">
@@ -420,15 +420,15 @@
             </div>
         </div><!--close col-one--> 
         <div id="column-two">
-            <%-- Allow logged-in user to delete/edit their own observations --%>
-            <c:if test="${not empty pageContext.request.userPrincipal && fn:containsIgnoreCase(pageContext.request.userPrincipal.name, rawOccurrence.userId)}">
+            <%-- Allow logged-in user to delete/edit their own observations --%><%-- casUser = ${pageContext.request.userPrincipal.name} | remoteUser = ${pageContext.request.remoteUser} |userId = ${rawOccurrence.userId} --%>
+            <c:if test="${not empty pageContext.request.userPrincipal && not empty rawOccurrence.userId && fn:containsIgnoreCase(pageContext.request.userPrincipal.name, rawOccurrence.userId)}">
                 <!-- userPrincipal = ${pageContext.request.userPrincipal.name} -->
                 <div id="editOccurrence" class="section">
                     <button id="deleteButton" style="font-size: 120%; color: #E8572F; font-weight: bold; padding: 3px 6px 4px 6px;">Delete this record</button>
                 </div>
                 <div style="display: none">
                     <div id="deleteConfirm">
-                        <h3>Are you sure you want to delete this record?</h3>
+                        <h2>Are you sure you want to delete this record?</h2>
                         <p>(the record will be permanently deleted)</p>
                         <p>&nbsp;</p>
                         <form action="${pageContext.request.contextPath}/share/sighting/delete" method="post" name="deleteSighting" id="deleteSighting">
@@ -520,6 +520,23 @@
                                 map: map,
                                 title:"Occurrence Location"
                             });
+
+                            <c:if test="${not empty occurrence.coordinatePrecision}">
+                                // Add a Circle overlay to the map.
+                                var radius = parseInt('${occurrence.coordinatePrecision}');
+                                console.log("radius",radius);
+                                circle = new google.maps.Circle({
+                                    map: map,
+                                    radius: radius, // 3000 km
+                                    strokeWeight: 1,
+                                    strokeColor: 'white',
+                                    strokeOpacity: 0.5,
+                                    fillColor: '#2C48A6',
+                                    fillOpacity: 0.2
+                                });
+                                // bind circle to marker
+                                circle.bindTo('center', marker, 'position');
+                            </c:if>
                         });
                     </script>
                     <h2>Location of record</h2>
