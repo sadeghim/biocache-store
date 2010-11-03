@@ -88,7 +88,7 @@
 							<div style="text-align: left;"><span>Enter the species you have seen in the search box above and open the species page</span></div>
 						</li>
 						<li>
-							<div style="text-align: left;"><span>Click contribute and select sightings</span></div>
+							<div style="text-align: left;"><span>Click share and select sightings</span></div>
 						</li>
 						<li>
 							<div style="text-align: left;"><span>Complete the details of the sighting.</span></div>
