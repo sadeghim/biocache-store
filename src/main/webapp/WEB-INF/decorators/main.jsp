@@ -61,7 +61,7 @@ include file="/common/taglibs.jsp" %>
                 jQuery("form#search-form input#search").autocomplete({
                     source: function( request, response ) {
                         $.ajax({
-                            url: "http://bie.ala.org.au/search/auto.jsonp",
+                            url: "http://bie.ala.org.au/search/auto.json",
                             dataType: "jsonp",
                             data: {
                                 limit: 10,
