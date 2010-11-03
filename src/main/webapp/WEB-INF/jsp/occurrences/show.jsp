@@ -71,7 +71,11 @@
                 <a href="${initParam.centralServer}/explore">Explore</a>
                 Occurrence Record - ${occurrence.id}
             </div>
-            <h1>Occurrence Record Details: ${occurrence.id}</h1>
+            <h1>
+                Occurrence Record: ${occurrence.id} 
+                <c:if test="${not empty occurrence.taxonName}">- <alatag:formatSciName rankId="${occurrence.rankId}" name="${occurrence.taxonName}"/> ${occurrence.author}</c:if>
+                <c:if test="${not empty occurrence.commonName}"> | ${occurrence.commonName}</c:if>
+            </h1>
         </div>
         <div id="column-one">
             <div class="section">
@@ -420,7 +424,7 @@
             <c:if test="${not empty pageContext.request.userPrincipal && fn:containsIgnoreCase(pageContext.request.userPrincipal.name, rawOccurrence.userId)}">
                 <!-- userPrincipal = ${pageContext.request.userPrincipal.name} -->
                 <div id="editOccurrence" class="section">
-                    <button id="deleteButton" style="font-size: 120%; color: #E8572F; padding: 3px 6px 4px 6px;">Delete this record</button>
+                    <button id="deleteButton" style="font-size: 120%; color: #E8572F; font-weight: bold; padding: 3px 6px 4px 6px;">Delete this record</button>
                 </div>
                 <div style="display: none">
                     <div id="deleteConfirm">
