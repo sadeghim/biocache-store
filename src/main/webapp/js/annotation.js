@@ -77,7 +77,7 @@ $(document).ready(function() {
         'width': 550,
         'height': 'auto',
         'padding': 10,
-        'margin': 10
+        'margin': 5
     });
 
 //    $('a[name=modal]').click(function(e) {
@@ -111,11 +111,11 @@ $(document).ready(function() {
           $("input[name='old.institutionCode']").val(data.occurrence.institutionCode);
           $("input[name='old.collectionCode']").val(data.occurrence.collectionCode);
           $("input[name='old.catalogueNumber']").val(data.occurrence.catalogueNumber);
-          $("input[name='old.basisOfRecord']").val(data.occurrence.rawBasisOfRecord);
+          $("input[name='old.basisOfRecord']").val((data.occurrence.rawBasisOfRecord) ? data.occurrence.rawBasisOfRecord : data.occurrence.basisOfRecord);
           $("input[name='old.basisOfRecordInterpreted']").val(data.occurrence.basisOfRecord);
           $("input[name='old.identifierName']").val(data.occurrence.identifierName);
           $("input[name='old.identificationDate']").val(data.occurrence.identifierDate);
-          $("input[name='old.collectorName']").val(data.occurrence.collectorName);
+          $("input[name='old.collectorName']").val((data.occurrence.collector) ? data.occurrence.collector : data.rawOccurrence.collectorName);
           $("input[name='old.collectionDate']").val(data.occurrence.occurrenceDate);
           // taxonomy
           $("input[name='old.scientificName']").val(data.occurrence.taxonName);
@@ -323,10 +323,23 @@ function jsonAnnoSuccess(data, textStatus) {
         }
 
         // register click event on reply button
-        $('input#reply').click(function(e) {
-            e.preventDefault();  //Cancel the link behavior
-            registerFormLink(this);
-        });
+//        $('input#reply').click(function(e) {
+//            e.preventDefault();  //Cancel the link behavior
+//            registerFormLink(this);
+//        });
+//        $('input#reply').fancybox({
+//            'href': '#replyTo',
+//            'hideOnContentClick' : false,
+//            'hideOnOverlayClick': false,
+//            'showCloseButton': false,
+//            'titleShow' : false,
+//            'autoDimensions' : false,
+//            'width': 550,
+//            'height': 'auto',
+//            'padding': 10,
+//            'margin': 10
+//        });
+        $('input#reply').hide();
     });
 
     $('a[name=modal2]').toggle(
