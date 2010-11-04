@@ -215,7 +215,18 @@ public class ContributeDataController {
         
         return pageType;
     }
-    
+
+    /**
+     * Delete a sighting - gets called by occurrence record page if user is logged-in and the
+     * sighting was created by that user. Returns a confirmation page on completion.
+     *
+     * @param sightingId
+     * @param userId
+     * @param request
+     * @param model
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/share/sighting/delete", method = RequestMethod.POST)
 	public String deleteSighting(
             @RequestParam(value="sightingId", required=true) String sightingId,
@@ -223,13 +234,12 @@ public class ContributeDataController {
             HttpServletRequest request,
             Model model) throws Exception {
 
-        AttributePrincipal principal = (AttributePrincipal) request.getUserPrincipal();
-        String casUserId = principal.getName();
+        String remoteuser = request.getRemoteUser();
 
-        if (!userId.equalsIgnoreCase(casUserId))  {
+        if (!userId.equalsIgnoreCase(remoteuser)) {
             // casUserId must match userId -  if not someone is trying something dodgey...
             String msg = "Logged in userId does not match requested userId. ";
-            logger.error(msg + "sightingId = "+sightingId+"; userId = "+userId+"; casUserId = "+casUserId);
+            logger.error(msg + "sightingId = "+sightingId+"; userId = "+userId+"; remoteuser = "+remoteuser);
             model.addAttribute("error", msg);
         } else {
             // requested userId = logged-in userId - go ahead and delete sighting
