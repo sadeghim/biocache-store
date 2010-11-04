@@ -761,62 +761,65 @@ public class OccurrenceController {
 	 */
 	@RequestMapping(value = {"/occurrences/{id}", "/occurrences/{id}.json"}, method = RequestMethod.GET)
 	public String showOccurrence(@PathVariable("id") String id,
-                HttpServletRequest request, Model model) throws Exception {
+        HttpServletRequest request, Model model) throws Exception {
 		logger.debug("Retrieving occurrence record with guid: "+id+".");
-                model.addAttribute("id", id);
+        model.addAttribute("id", id);
 		OccurrenceDTO occurrence = searchDAO.getById(id);
 		model.addAttribute("occurrence", occurrence);
 		
-		if(occurrence != null){
-			Object[] resp = restfulClient.restGet(summaryServiceUrl + "/" + occurrence.getCollectionCodeUid());
-			if((Integer)resp[0] == HttpStatus.SC_OK){
-				String json = (String)resp[1];
-				ObjectMapper mapper = new ObjectMapper();		
-				JsonNode rootNode;
-				
-				try {			
-					rootNode = mapper.readValue(json, JsonNode.class);
-					String name = rootNode.path("name").getTextValue();
-					String logo = rootNode.path("institutionLogoUrl").getTextValue();
-					String institution = rootNode.path("institution").getTextValue();
-					model.addAttribute("collectionName", name);
-					model.addAttribute("collectionLogo", logo);
-					model.addAttribute("collectionInstitution", institution);
-				}
-				catch (Exception e) {
-					logger.error(e.toString());
-				} 
-			}
-		}
-		if(id!=null){
-			Long occurrenceId = new Long(id);
-			
-			RawOccurrenceRecord rawOccurrence =rawOccurrenceRecordDAO.getById(occurrenceId);
-			model.addAttribute("rawOccurrence", rawOccurrence);
-			
-			List<ImageRecord> images = imageRecordDAO.findByOccurrenceId(occurrenceId);
-			model.addAttribute("images", images);
-			
-		}
-		model.addAttribute("hostUrl", hostUrl);
-                
-                //log the usage statistics to the ala logger if necessary
-                //We only want to log the stats if a non-json request was made.
-                if(request.getRequestURL()!= null && !request.getRequestURL().toString().endsWith("json")){
-                    String email = null;
-                    String reason = "Viewing Occurrence Record " + id;
-                    String ip = request.getLocalAddr();
-                    Map<String, Integer> uidStats = new HashMap<String, Integer>();
-                    if(occurrence.getCollectionCodeUid() != null)
-                        uidStats.put(occurrence.getCollectionCodeUid(), 1);
-                    if(occurrence.getInstitutionCodeUid() != null)
-                        uidStats.put(occurrence.getInstitutionCodeUid(), 1);
-                    //all occurrence records must have a dpuid and druid
-                    uidStats.put(occurrence.getDataProviderUid(), 1);
-                    uidStats.put(occurrence.getDataResourceUid(), 1);
-                    LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_VIEWED, email, reason, ip,uidStats);
-                    logger.log(RestLevel.REMOTE, vo);
+		if (occurrence != null) {
+            Object[] resp = restfulClient.restGet(summaryServiceUrl + "/" + occurrence.getCollectionCodeUid());
+            if ((Integer) resp[0] == HttpStatus.SC_OK) {
+                String json = (String) resp[1];
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode rootNode;
+
+                try {
+                    rootNode = mapper.readValue(json, JsonNode.class);
+                    String name = rootNode.path("name").getTextValue();
+                    String logo = rootNode.path("institutionLogoUrl").getTextValue();
+                    String institution = rootNode.path("institution").getTextValue();
+                    model.addAttribute("collectionName", name);
+                    model.addAttribute("collectionLogo", logo);
+                    model.addAttribute("collectionInstitution", institution);
+                } catch (Exception e) {
+                    logger.error(e.toString());
                 }
+            }
+            
+            if (id != null) {
+                Long occurrenceId = new Long(id);
+
+                RawOccurrenceRecord rawOccurrence = rawOccurrenceRecordDAO.getById(occurrenceId);
+                model.addAttribute("rawOccurrence", rawOccurrence);
+
+                List<ImageRecord> images = imageRecordDAO.findByOccurrenceId(occurrenceId);
+                model.addAttribute("images", images);
+
+            }
+            model.addAttribute("hostUrl", hostUrl);
+
+            //log the usage statistics to the ala logger if necessary
+            //We only want to log the stats if a non-json request was made.
+            if (request.getRequestURL() != null && !request.getRequestURL().toString().endsWith("json")) {
+                String email = null;
+                String reason = "Viewing Occurrence Record " + id;
+                String ip = request.getLocalAddr();
+                Map<String, Integer> uidStats = new HashMap<String, Integer>();
+                if (occurrence.getCollectionCodeUid() != null) {
+                    uidStats.put(occurrence.getCollectionCodeUid(), 1);
+                }
+                if (occurrence.getInstitutionCodeUid() != null) {
+                    uidStats.put(occurrence.getInstitutionCodeUid(), 1);
+                }
+                //all occurrence records must have a dpuid and druid
+                uidStats.put(occurrence.getDataProviderUid(), 1);
+                uidStats.put(occurrence.getDataResourceUid(), 1);
+                LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_VIEWED, email, reason, ip, uidStats);
+                logger.log(RestLevel.REMOTE, vo);
+            }
+        }
+        
 		return SHOW;
 	}
 
