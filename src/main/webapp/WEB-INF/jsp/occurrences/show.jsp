@@ -243,9 +243,9 @@
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="kingdom" fieldName="Kingdom">
                                 <c:if test="${not empty occurrence.kingdom}">
-                                	<a href="${bieWebappContext}/species/${occurrence.kingdomLsid}">
+                                	<c:if test="${not empty occurrence.kingdomLsid}"><a href="${bieWebappContext}/species/${occurrence.kingdomLsid}"></c:if>
                                 		${occurrence.kingdom}
-                                	</a>
+                                	<c:if test="${not empty occurrence.kingdomLsid}"></a></c:if>
                                 </c:if>
                                 <c:if test="${empty occurrence.kingdom && not empty rawOccurrence.kingdom}">
                                 	${rawOccurrence.kingdom}
@@ -256,9 +256,9 @@
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="phylum" fieldName="Phylum">
                                 <c:if test="${not empty occurrence.phylum}">
-                                	<a href="${bieWebappContext}/species/${occurrence.phylumLsid}">
+                                	<c:if test="${not empty occurrence.phylumLsid}"><a href="${bieWebappContext}/species/${occurrence.phylumLsid}"></c:if>
                                 		${occurrence.phylum}
-                                	</a>
+                                	<c:if test="${not empty occurrence.phylumLsid}"></a></c:if>
                                 </c:if>
                                 <c:if test="${empty occurrence.phylum && not empty rawOccurrence.phylum}">
                                 	${rawOccurrence.phylum}
@@ -269,9 +269,9 @@
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="class" fieldName="Class">
                                 <c:if test="${not empty occurrence.clazz}">
-                                	<a href="${bieWebappContext}/species/${occurrence.classLsid}">
+                                	<c:if test="${not empty occurrence.classLsid}"><a href="${bieWebappContext}/species/${occurrence.classLsid}"></c:if>
                                 		${occurrence.clazz}
-                                	</a>
+                                	<c:if test="${not empty occurrence.classLsid}"></a></c:if>
                                 </c:if>
                                 <c:if test="${empty occurrence.clazz && not empty rawOccurrence.klass}">
                                 	${rawOccurrence.klass}
@@ -282,9 +282,9 @@
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="order" fieldName="Order">
                                 <c:if test="${not empty occurrence.order}">
-                                	<a href="${bieWebappContext}/species/${occurrence.orderLsid}">
+                                	<c:if test="${not empty occurrence.orderLsid}"><a href="${bieWebappContext}/species/${occurrence.orderLsid}"></c:if>
                                 		${occurrence.order}
-                                	</a>
+                                	<c:if test="${not empty occurrence.familyLsid}"></a></c:if>
                                 </c:if>
                                 <c:if test="${empty occurrence.order && not empty rawOccurrence.order}">
                                 	${rawOccurrence.order}
@@ -295,9 +295,9 @@
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="family" fieldName="Family">
                                 <c:if test="${not empty occurrence.family}">
-                                	<a href="${bieWebappContext}/species/${occurrence.familyLsid}">
+                                	<c:if test="${not empty occurrence.familyLsid}"><a href="${bieWebappContext}/species/${occurrence.familyLsid}"></c:if>
                                 		${occurrence.family}
-                                	</a>
+                                	<c:if test="${not empty occurrence.familyLsid}"></a></c:if>
                                 </c:if>
                                 <c:if test="${empty occurrence.family && not empty rawOccurrence.family}">
                                 	${rawOccurrence.family}
@@ -308,9 +308,9 @@
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="genus" fieldName="Genus">
                                 <c:if test="${not empty occurrence.genus}">
-                                	<a href="${bieWebappContext}/species/${occurrence.genusLsid}">
+                                	<c:if test="${not empty occurrence.genusLsid}"><a href="${bieWebappContext}/species/${occurrence.genusLsid}"></c:if>
                                 		${occurrence.genus}
-                                	</a>
+                                	<c:if test="${not empty occurrence.genusLsid}"></a></c:if>
                                 </c:if>
                                 <c:if test="${empty occurrence.genus && not empty rawOccurrence.genus}">
                                 	${rawOccurrence.genus}
@@ -321,9 +321,9 @@
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="taxonomy" fieldCode="species" fieldName="Species">
                                 <c:if test="${not empty occurrence.species}">
-                                	<a href="${bieWebappContext}/species/${occurrence.speciesLsid}">
+                                	<c:if test="${not empty occurrence.speciesLsid}"><a href="${bieWebappContext}/species/${occurrence.speciesLsid}"></c:if>
                                 		${occurrence.species}
-                                	</a>
+                                	<c:if test="${not empty occurrence.speciesLsid}"></a></c:if>
                                 </c:if>
                                 <c:if test="${empty occurrence.species && not empty rawOccurrence.species}">
                                 	${rawOccurrence.species}
@@ -355,22 +355,22 @@
                             	<c:if test="${not empty occurrence.state && not empty rawOccurrence.stateOrProvince && (fn:toLowerCase(occurrence.state) != fn:toLowerCase(rawOccurrence.stateOrProvince))}">
                                 		<br/><span class="originalValue">Supplied as: "${rawOccurrence.stateOrProvince}"</span>
                                	 </c:if>
-                            </alatag:occurrenceTableRow>
+                           	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="biogeographicRegion" fieldName="Biogeographic Region">
                             	${occurrence.biogeographicRegion}
-                            </alatag:occurrenceTableRow>
+                           	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="place" fieldName="Place">
                             	${occurrence.place}
-                            </alatag:occurrenceTableRow>
+                           	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="locality" fieldName="Locality">
                             	${rawOccurrence.locality}
-                            </alatag:occurrenceTableRow>
+                           	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="latitude" fieldName="Latitude">
-                                ${(not empty rawOccurrence.latitude) ? rawOccurrence.latitude : occurrence.latitude}
-                            </alatag:occurrenceTableRow>
+                                	${rawOccurrence.latitude}
+                           	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="longitude" fieldName="Longitude">
-                                ${(not empty rawOccurrence.longitude) ? rawOccurrence.longitude : occurrence.longitude}
-                            </alatag:occurrenceTableRow>
+                                	${rawOccurrence.longitude}
+                           	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="coordinatePrecision" fieldName="Coordinate Precision (metres)">
                             	<c:if test="${not empty occurrence.latitude || not empty occurrence.longitude}">
                             		${not empty occurrence.coordinatePrecision ? occurrence.coordinatePrecision : 'Unknown'}
@@ -378,15 +378,15 @@
                             </alatag:occurrenceTableRow>
                             <c:if test="${not empty rawOccurrence.generalisedInMetres}">
                             	<alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="generalisedInMetres" fieldName="Coordinates generalised">
-                                    Due to sensitivity concerns, the coordinates of this record have been generalised to ${rawOccurrence.generalisedInMetres} metres.
+                            		Due to sensitivity concerns, the coordinates of this record have been generalised to ${rawOccurrence.generalisedInMetres} metres.
                             	</alatag:occurrenceTableRow>
                             </c:if>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="geodeticDatum" fieldName="Geodetic datum">
                             	${rawOccurrence.geodeticDatum}
-                            </alatag:occurrenceTableRow>
+                           	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="occurrenceRemarks" fieldName="Notes">
                             	${rawOccurrence.occurrenceRemarks}
-                            </alatag:occurrenceTableRow>
+                           	</alatag:occurrenceTableRow>
                             <c:if test="${not empty rawOccurrence.individualCount && rawOccurrence.individualCount>0}">
                             	<alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="individualCount" fieldName="Individual count">${rawOccurrence.individualCount}</alatag:occurrenceTableRow>
                             </c:if>
