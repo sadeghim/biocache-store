@@ -359,7 +359,7 @@
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="biogeographicRegion" fieldName="Biogeographic Region">
                             	${occurrence.biogeographicRegion}
                            	</alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="place" fieldName="Place">
+                            <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="locality" fieldName="Place">
                             	${occurrence.place}
                            	</alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="geospatial" fieldCode="locality" fieldName="Locality">
