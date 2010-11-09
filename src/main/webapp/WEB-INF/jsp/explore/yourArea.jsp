@@ -147,7 +147,7 @@
                         autoOpen: false,
                         buttons: {
                             'Download File': function() {
-                                var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude=${latitude}&longitude=${longitude}&radius=${radius}&taxa=*&rank=*";
+                                var downloadUrl ="${pageContext.request.contextPath}/explore/download?latitude="+$('#latitude').val()+"&longitude="+$('#longitude').val()+"&radius="+$('#radius').val()+"&taxa=*&rank=*";
                                 window.location.replace(downloadUrl);
                                 $(this).dialog('close');
                             },
