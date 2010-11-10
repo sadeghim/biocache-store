@@ -391,16 +391,7 @@
                             	<alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="individualCount" fieldName="Individual count">${rawOccurrence.individualCount}</alatag:occurrenceTableRow>
                             </c:if>
                             <alatag:occurrenceTableRow annotate="false" section="geospatial" fieldCode="citation" fieldName="Citation">
-                            	<c:if test="${not empty occurrence.citation}">
-                                	${occurrence.citation}
-                                </c:if>
-                                <c:if test="${empty occurrence.citation && not empty rawOccurrence.citation}">
-                                	${rawOccurrence.citation}
-                                </c:if>
-                                <c:if test="${not empty occurrence.citation && not empty rawOccurrence.citation && (fn:toLowerCase(rawOccurrence.citation) != fn:toLowerCase(occurrence.citation))}">
-                                		<br/><span class="originalValue">Supplied as: "${rawOccurrence.citation}"</span>
-                               	 </c:if>
-                            	${rawOccurrence.citation}
+                               	${rawOccurrence.citation}
                             </alatag:occurrenceTableRow>
                         </table>
                     </div>
