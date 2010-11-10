@@ -157,7 +157,7 @@ CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT)
 		,' where dr.release_flag and oc.id >= ',low,' and oc.id < ', high
 		,' INTO OUTFILE '
 		,"'",'/data/bie-staging/biocache/tmp/file.out.', low,"'"
-		,' FIELDS TERMINATED BY \'\,\' OPTIONALLY ENCLOSED BY \'"\'');
+		,' FIELDS TERMINATED BY \'\,\' OPTIONALLY ENCLOSED BY \'"\' ESCAPED BY \'"\' ');
 		PREPARE stmt1 FROM @cmd;
 		EXECUTE stmt1;
 		Deallocate prepare stmt1;
@@ -178,5 +178,5 @@ CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT)
 	
 DELIMITER ;
 
---start at the lowest id for an occurrence record
+-- start at the lowest id for an occurrence record
 call dump_bio_occurrences(34588487, 35588487);
