@@ -303,6 +303,7 @@ public class ContributeDataController {
      */
     protected MiniTaxonConceptDTO getTaxonConceptProperties(String guid) throws Exception {
         MiniTaxonConceptDTO dto = new MiniTaxonConceptDTO();
+        logger.info("JSON URI: "+bieBaseUrl + "/species/" + guid + ".json");
         String JsonString = getUrlContentAsString(bieBaseUrl + "/species/" + guid + ".json");
         logger.debug("json string for "+guid+": "+JsonString);
         JSONObject jsonObj = new JSONObject(JsonString);
@@ -314,6 +315,11 @@ public class ContributeDataController {
             dto.setScientificName(tc.getString("nameString"));
             dto.setRankId(tc.getString("rankID"));
             dto.setRank(tc.getString("rankString"));
+        }
+
+        JSONObject taxonName = etc.getJSONObject("taxonName");
+        if (taxonName != null) {
+            dto.setTaxonName(taxonName.getString("nameComplete"));
         }
         
         JSONObject classification = etc.getJSONObject("classification");

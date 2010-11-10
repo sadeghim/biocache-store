@@ -103,9 +103,9 @@
                             <h3 style="margin-bottom: 8px;">Total sightings: <a href="${pageContext.request.contextPath}/occurrences/search?q=user_id:${pageContext.request.remoteUser}">${fn:length(occurrences)}</a></h3>
                             <c:forEach var="tc" items="${taxonConceptMap}">
                             	<a href="http://bie.ala.org.au/species/${tc.guid}">
-									<c:if test="${not empty tc.imageThumbnailUrl}">
-                                		<img src="${tc.imageThumbnailUrl}" alt="species image thumbnail" style="display: block; float: left; margin-right: 10px;"/>
-                                	</c:if>
+                                    <c:if test="${not empty tc.imageThumbnailUrl}">
+                                        <img src="${tc.imageThumbnailUrl}" alt="species image thumbnail" style="display: block; float: left; margin-right: 10px;"/>
+                                    </c:if>
                                 </a>
                                 <!-- 
                                 <div style="float: left; padding-right: 15px" id="images" class="section">
@@ -118,7 +118,7 @@
                                 		<c:if test="${not empty tc.commonName}"><br/>${tc.commonName}</c:if>
                                 	</c:set>
                                     <h4>${speciesName}</h4>
-                                    Records: <a href="${pageContext.request.contextPath}/occurrences/search?q=user_id:${pageContext.request.remoteUser}&fq=taxon_name:${tc.scientificName}">${tc.count}</a>
+                                    Records: <a href="${pageContext.request.contextPath}/occurrences/search?q=user_id:${pageContext.request.remoteUser}&fq=taxon_name:${tc.taxonName}">${tc.count}</a>
                                     <br/>
                                     <a href="${pageContext.request.contextPath}/share/sighting/${tc.guid}">Record another sighting</a>
                                     <br/>
