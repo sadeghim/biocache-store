@@ -135,7 +135,7 @@ CREATE PROCEDURE dump_bio_occurrences(IN low INT, IN high INT)
                 ,',IFNULL(oc.altitude_metres,\'\'), IFNULL(oc.depth_centimetres,\'\')'
 		,',IFNULL(oc.`year`,\'\'),IFNULL(LPAD(oc.`month`,2,\'0\'),\'\'),IFNULL(DATE_FORMAT(oc.occurrence_date,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
 		,'IFNULL(oc.basis_of_record,\'\'),IFNULL(bor.description,\'\'),IFNULL(ror.basis_of_record,\'\'),'
-		,'IFNULL(get_type_status(oc.id),\'\'),\'\',\'\''
+		,'IFNULL(get_type_status(oc.id),\'\'),\'\',\'\','
 		,'IFNULL(ror.identifier_name,\'\'),IFNULL(DATE_FORMAT(ror.identification_date,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
 		,'IFNULL(ror.collector_name,\'\'),IFNULL(oc.taxonomic_issue,\'\'),IFNULL(oc.geospatial_issue,\'\'),'
 		,'IFNULL(oc.other_issue,\'\'),IFNULL(DATE_FORMAT(ror.created,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),IFNULL(DATE_FORMAT(ror.modified,\'%Y-%m-%dT%H:%i:%sZ\'),\'\'),'
