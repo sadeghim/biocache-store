@@ -181,6 +181,13 @@
                         //console.log("url not set, geolocating...");
                         attemptGeolocation();
                     }
+
+                    // catch the link for "View all records"
+                    $('#viewAllRecords').click(function(e) {
+                        e.preventDefault();
+                        var params = "q=taxon_name:*|"+$('#latitude').val()+"|"+$('#longitude').val()+"|"+$('#radius').val();
+                        document.location.href = contextPath +'/occurrences/searchByArea?' + params;
+                    });
                     
                 }); // End: $(document).ready() function
             </script>
@@ -217,7 +224,7 @@
                             <form name="searchForm" id="searchForm" action="" method="GET">
                                 <div id="locationInput">
                                     <h2>Enter your location or address</h2>
-                                    <div id="searchHints">E.g. a street address, place name, postcode or coordinates (as lat, lon)</div>
+                                    <div id="searchHints">E.g. a street address, place name, postcode or GPS coordinates (as lat, long)</div>
                                     <input name="address" id="address" size="50" value="${address}"/>
                                     <input id="locationSearch" type="submit" value="Search"/>
                                     <input type="hidden" name="latitude" id="latitude" value="${latitude}"/>
@@ -234,12 +241,16 @@
                                             download a list of species found within a <span id="rad"></span> km radius of <code>${location}</code>.<br/>
                                             Format: tab-delimited text file (called data.xls)</p>
                                     </div>
-                                    <p>Display records in a
+                                    <div style="float: left">Display records in a
                                         <select id="radius" name="radius">
                                             <option value="1" <c:if test="${radius eq '1.0'}">selected</c:if>>1</option>
                                             <option value="5" <c:if test="${radius eq '5.0'}">selected</c:if>>5</option>
                                             <option value="10" <c:if test="${radius eq '10.0'}">selected</c:if>>10</option>
                                         </select> km radius <!--<input type="submit" value="Reload"/>-->
+                                    </div>
+                                    <div style="float: left; padding-left: 40px;"><a href="#" id="viewAllRecords">View
+                                            list of all occurrence records</a></div>
+                                        
                                 </div>
                                 <div id="taxaBox">
                                     <div id="rightList" class="tableContainer">

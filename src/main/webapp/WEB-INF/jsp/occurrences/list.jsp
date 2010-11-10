@@ -228,12 +228,17 @@
                             //Only allow empty or valid email addresses
                             // From jquery.validate.js (by joern), contributed by Scott Gonzalez: http://projects.scottsplayground.com/email_address_validation/
                             if(checkRegexp(email, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i,"Invalid email format. (eg. name@host.com)")){
-
+                                var lat = "${latitude}";
+                                var lon = "${longitude}";
+                                var rad = "${radius}";
                                 var reason = $("#reason").val();
                                 if(typeof reason == "undefined")
                                     reason="";
                                 var downloadUrl = "${pageContext.request.contextPath}/occurrences/download?xq=true&q=${query}&fq=${fn:join(facetQuery, '&fq=')}&type=${type}&email="+email.val()+"&reason="+encodeURIComponent(reason)+"&file="+$("#filename").val();
-
+                                if (lat && lon && rad) {
+                                    rad = parseInt(rad);
+                                    downloadUrl = downloadUrl + "&lat=" + lat + "&lon=" + lon +"&rad=" + rad;
+                                }
                                 window.location.replace(downloadUrl);
                                 $(this).dialog('close');
                             }
@@ -436,8 +441,8 @@
                 Occurrence Records
             </div>
             <div id="searchButtons">
+                <button id="download" title="Download all ${totalHits} results as XLS (tab-delimited) file">Download</button>
                 <c:if test="${!fn:contains(entityQuery, 'km of point')}"><%-- Don't display buttons on searchByArea version of page --%>
-                    <button id="download" title="Download all ${totalHits} results as XLS (tab-delimited) file">Download</button>
                     <button id="showMap" title="Display a small map showing points for records">View as Map</button>
                 </c:if>
             </div>

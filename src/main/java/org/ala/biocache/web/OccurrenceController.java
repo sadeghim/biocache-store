@@ -550,6 +550,9 @@ public class OccurrenceController {
 		model.addAttribute("queryJsEscaped", queryJsEscaped);
 		model.addAttribute("facetQuery", filterQuery);
         model.addAttribute("facetMap", addFacetMap(filterQuery));
+        model.addAttribute("latitude", latitude);
+        model.addAttribute("longitude", longitude);
+        model.addAttribute("radius", radius);
 
         searchResult = searchDAO.findByFulltextSpatialQuery(query, searchQuery.getFilterQuery(), latitude, longitude, radius, startIndex, pageSize, sortField, sortDirection);
         
@@ -632,26 +635,26 @@ public class OccurrenceController {
 		}
 
 		SearchResultDTO searchResult = new SearchResultDTO();
-		String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
-		model.addAttribute("query", query);
-		model.addAttribute("queryJsEscaped", queryJsEscaped);
-		model.addAttribute("facetQuery", filterQuery);
+        String queryJsEscaped = StringEscapeUtils.escapeJavaScript(query);
+        model.addAttribute("query", query);
+        model.addAttribute("queryJsEscaped", queryJsEscaped);
+        model.addAttribute("facetQuery", filterQuery);
 
-                SearchQuery searchQuery = new SearchQuery(query, "normal", filterQuery);
-                searchUtils.updateQueryDetails(searchQuery);
+        SearchQuery searchQuery = new SearchQuery(query, "normal", filterQuery);
+        searchUtils.updateQueryDetails(searchQuery);
 
-		searchResult = searchDAO.findByFulltextQuery(searchQuery.getQuery(), searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
-                model.addAttribute("searchResult", searchResult);
-		logger.debug("query = "+query);
-		Long totalRecords = searchResult.getTotalRecords();
-		model.addAttribute("totalRecords", totalRecords);
+        searchResult = searchDAO.findByFulltextQuery(searchQuery.getQuery(), searchQuery.getFilterQuery(), startIndex, pageSize, sortField, sortDirection);
+        model.addAttribute("searchResult", searchResult);
+        logger.debug("query = " + query);
+        Long totalRecords = searchResult.getTotalRecords();
+        model.addAttribute("totalRecords", totalRecords);
         model.addAttribute("facetMap", addFacetMap(filterQuery));
-		//type of serach
-		model.addAttribute("type", "normal");
-		if (pageSize > 0) {
-			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-			model.addAttribute("lastPage", lastPage);
-		}
+        //type of serach
+        model.addAttribute("type", "normal");
+        if (pageSize > 0) {
+            Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
+            model.addAttribute("lastPage", lastPage);
+        }
                 
 		return LIST;
 	}
@@ -669,66 +672,75 @@ public class OccurrenceController {
 			@RequestParam(value="q", required=false) String query,
 			@RequestParam(value="fq", required=false) String[] filterQuery,
 			@RequestParam(value="type", required=false, defaultValue="normal") String type,
-                        @RequestParam(value="email", required=false) String email,
-                        @RequestParam(value="reason", required=false) String reason,
-                        @RequestParam(value="file", required=false, defaultValue="data") String filename,
+            @RequestParam(value="email", required=false) String email,
+            @RequestParam(value="reason", required=false) String reason,
+            @RequestParam(value="file", required=false, defaultValue="data") String filename,
+			@RequestParam(value="rad", required=false) Integer radius,
+			@RequestParam(value="lat", required=false) Float latitude,
+			@RequestParam(value="lon", required=false) Float longitude,
 			HttpServletResponse response,
-                        HttpServletRequest request)
+            HttpServletRequest request)
 	throws Exception {
-                
-                String ip = request.getLocalAddr();
-		if (query == null || query.isEmpty()) {
-			return LIST;
-		}
-                if(StringUtils.trimToNull(filename) == null)
-                    filename = "data";
-		// if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
-		if (filterQuery != null && filterQuery.length == 0) {
-			filterQuery = null;
-		}
-		
-		if(filename!=null && !filename.toLowerCase().endsWith(".zip")){
-			filename = filename +".zip";
-		}
-		
+       
+        String ip = request.getLocalAddr();
+        if (query == null || query.isEmpty()) {
+            return LIST;
+        }
+        if (StringUtils.trimToNull(filename) == null) {
+            filename = "data";
+        }
+        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
+        if (filterQuery != null && filterQuery.length == 0) {
+            filterQuery = null;
+        }
 
-		response.setHeader("Cache-Control", "must-revalidate");
-		response.setHeader("Pragma", "must-revalidate");
-		response.setHeader("Content-Disposition", "attachment;filename="+filename);
-		response.setContentType("application/zip");
+        if (filename != null && !filename.toLowerCase().endsWith(".zip")) {
+            filename = filename + ".zip";
+        }
 
-		ServletOutputStream out = response.getOutputStream();
-		//get the new query details
-		SearchQuery searchQuery = new SearchQuery(query, type, filterQuery);
-		searchUtils.updateQueryDetails(searchQuery);
+        response.setHeader("Cache-Control", "must-revalidate");
+        response.setHeader("Pragma", "must-revalidate");
+        response.setHeader("Content-Disposition", "attachment;filename=" + filename);
+        response.setContentType("application/zip");
 
-                //Use a zip output stream to include the data and citation together in the download
-                ZipOutputStream zop = new ZipOutputStream(out);
-                zop.putNextEntry(new java.util.zip.ZipEntry(filename+".csv"));
-                Map<String, Integer> uidStats = searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100);
-                zop.closeEntry();
+        ServletOutputStream out = response.getOutputStream();
+        //get the new query details
+        SearchQuery searchQuery = new SearchQuery(query, type, filterQuery);
+        searchUtils.updateQueryDetails(searchQuery);
 
-                if(!uidStats.isEmpty()){
-                    //add the citations for the supplied uids
-                    zop.putNextEntry(new java.util.zip.ZipEntry("citation.csv"));
-                    try{
-                    	getCitations(uidStats.keySet(), zop);
+        //Use a zip output stream to include the data and citation together in the download
+        ZipOutputStream zop = new ZipOutputStream(out);
+        zop.putNextEntry(new java.util.zip.ZipEntry(filename + ".csv"));
+        Map<String, Integer> uidStats = null;
+        
+        if (checkValidSpatialParams(latitude, longitude, radius)) {
+            // spatial search
+            uidStats = searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100, latitude, longitude, radius);
+        } else {
+            uidStats = searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100);
+        }
+        zop.closeEntry();
+
+        if (!uidStats.isEmpty()) {
+            //add the citations for the supplied uids
+            zop.putNextEntry(new java.util.zip.ZipEntry("citation.csv"));
+            try {
+                getCitations(uidStats.keySet(), zop);
 //                    citationUtils.addCitation(uidStats.keySet(), zop);
-                    }
-                    catch(Exception e){
-                    	logger.error(e);
-                    }
-                    zop.closeEntry();
-                }
-                zop.flush();
-                zop.close();
-                
-                //logger.debug("UID stats : " + uidStats);
-                //log the stats to ala logger
-                
-                LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_DOWNLOADED, email, reason, ip,uidStats);
-	    	logger.log(RestLevel.REMOTE, vo);
-		return null;
+            } catch (Exception e) {
+                logger.error(e);
+            }
+            zop.closeEntry();
+        }
+        zop.flush();
+        zop.close();
+
+        //logger.debug("UID stats : " + uidStats);
+        //log the stats to ala logger
+
+        LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_DOWNLOADED, email, reason, ip, uidStats);
+        logger.log(RestLevel.REMOTE, vo);
+        return null;
 	}
 
 	/**
@@ -914,5 +926,21 @@ public class OccurrenceController {
 	 */
 	public void setImageRecordDAO(ImageRecordDAO imageRecordDAO) {
 		this.imageRecordDAO = imageRecordDAO;
-	}	
+	}
+
+    /**
+     * Simple check for valid latitude, longitude & radius values
+     *
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @return
+     */
+    private boolean checkValidSpatialParams(Float latitude, Float longitude, Integer radius) {
+        if (latitude != null && !latitude.isNaN() && longitude != null && !longitude.isNaN() && radius != null && radius > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

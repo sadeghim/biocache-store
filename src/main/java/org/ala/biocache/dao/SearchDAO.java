@@ -125,6 +125,21 @@ public interface SearchDAO {
 	Map<String,Integer> writeResultsToStream(String query, String[] filterQuery, OutputStream out, int maxNoOfRecords) throws Exception;
 
     /**
+     * Write out the results of this spatial query to the output stream
+     *
+     * @param query
+     * @param filterQuery
+     * @param out
+     * @param maxNoOfRecords
+     * @param latitiude
+     * @param longitiude
+     * @param radius
+     * @return
+     * @throws Exception
+     */
+    Map<String,Integer> writeResultsToStream(String query, String[] filterQuery, OutputStream out, int maxNoOfRecords, Float latitiude, Float longitiude, Integer radius) throws Exception;
+
+    /**
      * Retrieve an OccurrencePoint (distinct list of points - lat-long to 4 decimal places) for a given search
      *
      * @param query

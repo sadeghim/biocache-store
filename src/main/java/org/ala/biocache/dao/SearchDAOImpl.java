@@ -379,6 +379,16 @@ public class SearchDAOImpl implements SearchDAO {
         }
         return uidStats;
     }
+
+    /**
+     * @see org.ala.biocache.dao.SearchDAO#writeResultsToStream(java.lang.String, java.lang.String[], java.io.OutputStream, int, Float, Float, Integer)
+     */
+    @Override
+    public Map<String,Integer> writeResultsToStream(String query, String[] filterQuery, OutputStream out, int i, Float lat, Float lon, Integer rad) throws Exception {
+        Float radius = Float.parseFloat(rad + "f");
+        String queryString = buildSpatialQueryString(formatSearchQuery(query), lat, lon, radius);
+        return writeResultsToStream(queryString, filterQuery, out, i);
+    }
     
     private void incrementCount(Map<String,Integer> values, String uid){
         if(uid != null){
@@ -982,7 +992,8 @@ public class SearchDAOImpl implements SearchDAO {
     protected String formatSearchQuery(String query) {
         // set the query
         StringBuilder queryString = new StringBuilder();
-        if (query.equals("*:*") || query.contains(" AND ") || query.contains(" OR ") || query.startsWith("(")) {
+        if (query.equals("*:*") || query.contains(" AND ") || query.contains(" OR ") || query.startsWith("(") 
+                || query.endsWith("*") || query.startsWith("{")) {
             queryString.append(query);
         } else if (query.contains(":") && !query.startsWith("urn")) {
             // search with a field name specified (other than an LSID guid)
