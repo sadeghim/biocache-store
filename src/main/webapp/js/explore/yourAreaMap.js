@@ -374,13 +374,13 @@ function processSpeciesJsonData(data, appendResults) {
             var speciesInfo = '<div class="speciesInfo">';
             if (data.species[i].guid) {
                 speciesInfo = speciesInfo + '<a title="'+infoTitle+'" href="'+speciesPageUrl + data.species[i].guid+
-                    '"><img src="'+ contextPath +'/static/css/images/page_white_go.png" alt="species page icon" style="margin-bottom:-3px;"/>'+
+                    '"><img src="'+ contextPath +'/static/css/images/page_white_go.png" alt="species page icon" style="margin-bottom:-3px;" class="no-rounding"/>'+
                     ' species profile</a> | ';
             }
             speciesInfo = speciesInfo + '<a href="'+ contextPath +'/occurrences/searchByArea?q=taxon_name:'+data.species[i].name+
                     '|'+$('input#latitude').val()+'|'+$('input#longitude').val()+'|'+$('select#radius').val()+'" title="'+
                     recsTitle+'"><img src="'+ contextPath +'/static/css/images/database_go.png" '+
-                    'alt="search list icon" style="margin-bottom:-3px;"/> list of records</a></div>';
+                    'alt="search list icon" style="margin-bottom:-3px;" class="no-rounding"/> list of records</a></div>';
             tr = tr + speciesInfo;
             // add number of records
             tr = tr + '</td><td class="rightCounts">'+data.species[i].count+' </td></tr>';
