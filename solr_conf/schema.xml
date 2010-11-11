@@ -287,6 +287,17 @@
         <!-- <filter class="solr.SnowballPorterFilterFactory" language="English" protected="protwords.txt"/> -->
       </analyzer>
     </fieldType>
+    
+    <fieldType name="string_lowercase" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+    </fieldType>
 
     <!-- Less flexible matching, but less false matches.  Probably not ideal for product names,
          but may be good for SKUs.  Can insert dashes in the wrong place and still match. -->
@@ -533,7 +544,7 @@
    <field name="other_issue" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="created_date" type="tdate" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="modified_date" type="tdate" indexed="false" stored="true" multiValued="false" omitNorms="false" />
-   <field name="user_id" type="string" indexed="true" stored="true" multiValued="false" omitNorms="false" />
+   <field name="user_id" type="string_lowercase" indexed="true" stored="true" multiValued="false" omitNorms="false" />
    <field name="generalised_metres" type="int" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="geodetic_datum" type="string" indexed="false" stored="true" multiValued="false" omitNorms="false" />
    <field name="individual_count" type="int" indexed="false" stored="true" multiValued="false" omitNorms="false" />
