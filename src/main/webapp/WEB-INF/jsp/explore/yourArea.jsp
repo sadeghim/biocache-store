@@ -235,22 +235,20 @@
                                     <c:if test="${true || not empty location}">
                                         <p>Showing records for: <span id="markerAddress">${location}</span></p>
                                     </c:if>
-                                    <button id="download" title="Download a list of all species (tab-delimited file)">Download</button>
-                                    <div id="dialog-confirm" title="Continue with download?" style="display: none">
-                                        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>You are about to
-                                            download a list of species found within a <span id="rad"></span> km radius of <code>${location}</code>.<br/>
-                                            Format: tab-delimited text file (called data.xls)</p>
-                                    </div>
-                                    <div style="float: left">Display records in a
-                                        <select id="radius" name="radius">
-                                            <option value="1" <c:if test="${radius eq '1.0'}">selected</c:if>>1</option>
-                                            <option value="5" <c:if test="${radius eq '5.0'}">selected</c:if>>5</option>
-                                            <option value="10" <c:if test="${radius eq '10.0'}">selected</c:if>>10</option>
-                                        </select> km radius <!--<input type="submit" value="Reload"/>-->
-                                    </div>
-                                    <div style="float: left; padding-left: 40px;"><a href="#" id="viewAllRecords">View
-                                            list of all occurrence records</a></div>
-                                        
+                                    <table id="locationOptions">
+                                        <tbody>
+                                            <tr>
+                                                <td>Display records in a
+                                                    <select id="radius" name="radius">
+                                                        <option value="1" <c:if test="${radius eq '1.0'}">selected</c:if>>1</option>
+                                                        <option value="5" <c:if test="${radius eq '5.0'}">selected</c:if>>5</option>
+                                                        <option value="10" <c:if test="${radius eq '10.0'}">selected</c:if>>10</option>
+                                                    </select> km radius <!--<input type="submit" value="Reload"/>--></td>
+                                                <td><img src="${pageContext.request.contextPath}/static/css/images/database_go.png" alt="search list icon" style="margin-bottom:-3px;" class="no-rounding"><a href="#" id="viewAllRecords">View all occurrence records</a></td>
+                                                <td><button id="download" title="Download a list of all species (tab-delimited file)">Download</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                                 <div id="taxaBox">
                                     <div id="rightList" class="tableContainer">
