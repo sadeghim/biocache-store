@@ -13,6 +13,7 @@ package org.ala.biocache.dao;
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
  ***************************************************************************/
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,9 +27,12 @@ import java.util.List;
 
 import org.ala.biocache.model.RawOccurrenceRecord;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
+import org.springframework.jdbc.core.SqlOutParameter;
+import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -39,7 +43,13 @@ import org.springframework.jdbc.support.KeyHolder;
  * @author trobertson
  */
 public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOccurrenceRecordDAO {
-	
+        
+        protected static final String PROC_SQL = "call addCitizenScienceRecord(?,?,?,?,?,?,?,?,?,?,"
+                                                                            + "?,?,?,?,?,?,?,?,?,?,"
+                                                                            + "?,?,?,?,?,?,?,?,?,?,"
+                                                                            + "?,?,?,?,?,?,?,?,?,?,"
+                                                                            + "?,?,?,?,?,?,?,?,?,?,?,?)";
+
 	/**
 	 * The create SQL
 	 */
@@ -276,6 +286,85 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			);
 		}
 	}
+        /**
+         * Creates a new raw occurrence record using the "addCitizenScienceRecord" stored procedure.
+         *
+         * Using this procedure instead of a direct insert will ensure that unique id's are being assigned.
+         *
+         * @param rawOccurrenceRecord
+         * @return
+         */
+        /*public long create(final RawOccurrenceRecord rawOccurrenceRecord){
+            java.util.List<SqlParameter> params = new java.util.ArrayList<SqlParameter>();
+            params.add(new SqlOutParameter("o_id", Types.NUMERIC));
+            java.util.Map<String, Object> results =getJdbcTemplate().call(new CallableStatementCreator(){
+                Timestamp createTime = new Timestamp(System.currentTimeMillis());
+            @Override
+            public CallableStatement createCallableStatement(Connection con) throws SQLException {
+                CallableStatement cs = con.prepareCall(PROC_SQL);
+                cs.registerOutParameter(1, Types.NUMERIC);
+                cs.setLong(2, rawOccurrenceRecord.getDataProviderId());
+                cs.setLong(3, rawOccurrenceRecord.getDataResourceId());
+                cs.setLong(4, rawOccurrenceRecord.getResourceAccessPointId());
+                cs.setString(5, StringUtils.trimToNull(rawOccurrenceRecord.getInstitutionCode()));
+                cs.setString(6, rawOccurrenceRecord.getCollectionCode());
+                cs.setString(7, rawOccurrenceRecord.getCatalogueNumber());
+                cs.setString(8, StringUtils.trimToNull(rawOccurrenceRecord.getScientificName()));
+                cs.setString(9, StringUtils.trimToNull(rawOccurrenceRecord.getAuthor()));
+                cs.setString(10, StringUtils.trimToNull(rawOccurrenceRecord.getRank()));
+                cs.setString(11, StringUtils.trimToNull(rawOccurrenceRecord.getVernacularName()));
+                cs.setString(12, StringUtils.trimToNull(rawOccurrenceRecord.getKingdom()));
+                cs.setString(13, StringUtils.trimToNull(rawOccurrenceRecord.getPhylum()));
+                cs.setString(14, StringUtils.trimToNull(rawOccurrenceRecord.getKlass()));
+                cs.setString(15, StringUtils.trimToNull(rawOccurrenceRecord.getOrder()));
+                cs.setString(16, StringUtils.trimToNull(rawOccurrenceRecord.getFamily()));
+                cs.setString(17, StringUtils.trimToNull(rawOccurrenceRecord.getGenus()));
+                cs.setString(18, StringUtils.trimToNull(rawOccurrenceRecord.getSpecies()));
+                cs.setString(19, StringUtils.trimToNull(rawOccurrenceRecord.getSubspecies()));
+                cs.setString(20, StringUtils.trimToNull(rawOccurrenceRecord.getLatitude()));
+                cs.setString(21, StringUtils.trimToNull(rawOccurrenceRecord.getLongitude()));
+                cs.setString(22, StringUtils.trimToNull(rawOccurrenceRecord.getLatLongPrecision()));
+                cs.setString(23, StringUtils.trimToNull(rawOccurrenceRecord.getMinAltitude()));
+                cs.setString(24, StringUtils.trimToNull(rawOccurrenceRecord.getMaxAltitude()));
+                cs.setString(25, StringUtils.trimToNull(rawOccurrenceRecord.getAltitudePrecision()));
+                cs.setString(26, StringUtils.trimToNull(rawOccurrenceRecord.getMinDepth()));
+                cs.setString(27, StringUtils.trimToNull(rawOccurrenceRecord.getMaxDepth()));
+                cs.setString(28, StringUtils.trimToNull(rawOccurrenceRecord.getDepthPrecision()));
+                cs.setString(29, StringUtils.trimToNull(rawOccurrenceRecord.getContinentOrOcean()));
+                cs.setString(30, StringUtils.trimToNull(rawOccurrenceRecord.getCountry()));
+                cs.setString(31, StringUtils.trimToNull(rawOccurrenceRecord.getStateOrProvince()));
+                cs.setString(32, StringUtils.trimToNull(rawOccurrenceRecord.getCounty()));
+                cs.setString(33, StringUtils.trimToNull(rawOccurrenceRecord.getCollectorName()));
+                cs.setString(34, StringUtils.trimToNull(rawOccurrenceRecord.getLocality()));
+                cs.setString(35, StringUtils.trimToNull(rawOccurrenceRecord.getYear()));
+                cs.setString(36, StringUtils.trimToNull(rawOccurrenceRecord.getMonth()));
+                cs.setString(37, StringUtils.trimToNull(rawOccurrenceRecord.getDay()));
+                cs.setString(38, StringUtils.trimToNull(rawOccurrenceRecord.getEventTime()));
+                cs.setString(39, StringUtils.trimToNull(rawOccurrenceRecord.getBasisOfRecord()));
+                cs.setString(40, StringUtils.trimToNull(rawOccurrenceRecord.getIdentifierName()));
+                cs.setDate(41, createSQLDate(rawOccurrenceRecord.getDateIdentified()));
+                cs.setString(42, StringUtils.trimToNull(rawOccurrenceRecord.getUnitQualifier()));
+                cs.setTimestamp(43, createTime);
+                cs.setTimestamp(44, createTime);
+                cs.setString(45, rawOccurrenceRecord.getTaxonConceptGuid());
+                cs.setString(46, rawOccurrenceRecord.getUserId());
+                cs.setString(47, rawOccurrenceRecord.getOccurrenceRemarks());
+                cs.setString(48, rawOccurrenceRecord.getLocationRemarks());
+                cs.setObject(49, rawOccurrenceRecord.getIndividualCount());
+                cs.setString(50, rawOccurrenceRecord.getCitation());
+                cs.setString(51, rawOccurrenceRecord.getGeodeticDatum());
+                cs.setObject(52, rawOccurrenceRecord.getGeneralisedInMetres());
+                
+                return cs;
+            }
+        }, params);
+
+            //now get the id that was added
+            Object value = results.get("o_id");
+            if(value != null)
+                return Long.parseLong(value.toString());
+            return -1;
+        }*/
 
 	/**
 	 * @see org.gbif.portal.dao.RawOccurrenceRecordDAO#create(org.gbif.portal.model.RawOccurrenceRecord)
