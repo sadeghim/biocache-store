@@ -779,7 +779,7 @@ public class OccurrenceController {
 		OccurrenceDTO occurrence = searchDAO.getById(id);
 		model.addAttribute("occurrence", occurrence);
 		
-		if (occurrence != null) {
+		if (occurrence != null && occurrence.getCollectionCodeUid() != null) {
 			
 			if(occurrence.getCollectionCodeUid()!=null){
 	            Object[] resp = restfulClient.restGet(summaryServiceUrl + "/" + occurrence.getCollectionCodeUid());
