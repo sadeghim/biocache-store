@@ -7,7 +7,6 @@ public class MiniTaxonConceptDTO {
 
     private String guid;
     private String scientificName;
-    private String taxonName;
     private String rankId;
     private String rank;
     private String commonName;
@@ -109,13 +108,5 @@ public class MiniTaxonConceptDTO {
 
     public void setCount(Long count) {
         this.count = count;
-    }
-
-    public String getTaxonName() {
-        return taxonName;
-    }
-
-    public void setTaxonName(String taxonName) {
-        this.taxonName = taxonName;
     }
 }

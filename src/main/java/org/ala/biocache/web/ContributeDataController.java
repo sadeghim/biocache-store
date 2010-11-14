@@ -316,11 +316,6 @@ public class ContributeDataController {
             dto.setRankId(tc.getString("rankID"));
             dto.setRank(tc.getString("rankString"));
         }
-
-        JSONObject taxonName = etc.getJSONObject("taxonName");
-        if (taxonName != null) {
-            dto.setTaxonName(taxonName.getString("nameComplete"));
-        }
         
         JSONObject classification = etc.getJSONObject("classification");
         if(classification!=null){
