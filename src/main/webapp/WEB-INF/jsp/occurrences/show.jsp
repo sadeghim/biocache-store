@@ -411,8 +411,8 @@
             </div>
         </div><!--close col-one--> 
         <div id="column-two">
-            <%-- Allow logged-in user to delete/edit their own observations --%><%-- casUser = ${pageContext.request.userPrincipal.name} | remoteUser = ${pageContext.request.remoteUser} |userId = ${rawOccurrence.userId} --%>
-            <c:if test="${not empty pageContext.request.userPrincipal && not empty rawOccurrence.userId && fn:containsIgnoreCase(pageContext.request.userPrincipal.name, rawOccurrence.userId)}">
+            <%-- Allow logged-in user to delete/edit their own observations --%><%-- casUser = ${pageContext.request.userPrincipal.name} | remoteUser = ${pageContext.request.remoteUser} | userId = ${occurrence.userId} --%>
+            <c:if test="${not empty pageContext.request.userPrincipal && not empty occurrence.userId && fn:containsIgnoreCase(pageContext.request.userPrincipal.name, occurrence.userId)}">
                 <!-- userPrincipal = ${pageContext.request.userPrincipal.name} -->
                 <div id="editOccurrence" class="section">
                     <button id="deleteButton" style="font-size: 120%; color: #E8572F; font-weight: bold; padding: 3px 6px 4px 6px;">Delete this record</button>
