@@ -17,6 +17,7 @@
             <link type="text/css" rel="stylesheet" href="${initParam.centralServer}/wp-content/themes/ala/css/biocache-theme/jquery-ui-1.8.custom.css" charset="utf-8">
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.ba-hashchange.min.js"></script>
             <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/explore/yourAreaMap.js"></script>
+            <script type="text/javascript" src="${pageContext.request.contextPath}/static/js/jquery.qtip-1.0.0.min.js"></script>
             <script type="text/javascript">
                 // Global variables for Openlayers
                 var contextPath = "${pageContext.request.contextPath}";
@@ -188,7 +189,37 @@
                         var params = "q=taxon_name:*|"+$('#latitude').val()+"|"+$('#longitude').val()+"|"+$('#radius').val();
                         document.location.href = contextPath +'/occurrences/searchByArea?' + params;
                     });
-                    
+
+                    // Tooltip for matched location
+                    $('#addressHelp').qtip({
+                        content: {
+                            url: '${pageContext.request.contextPath}/proxy/wordpress',
+                            data: { 'page_id': 16111, 'content-only': 1},
+                            method: 'get'
+                        },
+                        position: {
+                            corner: {
+                                target: 'bottomRight',
+                                tooltip: 'topLeft'
+                            }
+                        },
+                        style: {
+                            width: 500,
+                            padding: 8,
+                            background: '#FFEFE6',
+                            color: 'black',
+                            textAlign: 'left',
+                            border: {
+                                width: 4,
+                                radius: 5,
+                                color: '#FF8640'
+                            },
+                            tip: 'topLeft',
+                            name: 'light' // Inherit the rest of the attributes from the preset light style
+                        },
+                        show: { effect: { type: 'slide', length: 300 } },
+                        hide: { fixed: true, delay: 1000, effect: { type: 'slide', length: 300 }}
+                    });
                 }); // End: $(document).ready() function
             </script>
         </head>
@@ -233,7 +264,10 @@
                                 </div>
                                 <div id="locationInfo">
                                     <c:if test="${true || not empty location}">
-                                        <p>Showing records for: <span id="markerAddress">${location}</span></p>
+                                        <p>
+                                            Showing records for: <span id="markerAddress">${location}</span>
+                                            &nbsp;&nbsp;&nbsp;<a href="${initParam.centralServer}/error-text/your-area/" id="addressHelp" style="text-decoration: none"><span class="asterisk-container">&nbsp;</span></a>
+                                        </p>
                                     </c:if>
                                     <table id="locationOptions">
                                         <tbody>

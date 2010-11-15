@@ -12,6 +12,7 @@
         <pattern>/taxon*</pattern>
         <pattern>/annotation/*</pattern>
         <pattern>/occurrences/json/*</pattern>
+        <pattern>/proxy/*</pattern>
         <pattern>/index.jsp</pattern>
     </excludes>
 
