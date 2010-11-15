@@ -329,6 +329,13 @@
                 updateTitleAttr($('#sightingCoordinateUncertainty').val());
                 $('#sightingAddress label').attr('title', 'You can search for a street address, place of interest, postcode or GPS coordinates (lat, lon)');
                 $('.locationInput, #sightingAddress label').tooltip({track: true, extraClass: "toolTip" });
+
+                // make some input fields appears to be not editable unless clicked on
+//                $('#sightingLocation, #sightingLatitude, #sightingLongitude').focus(function(e) {
+//                    $(this).removeClass('transparentBorder');
+//                }).blur(function(e) {
+//                    $(this).addClass('transparentBorder');
+//                });
             });
             </c:if>
         </script>
@@ -375,20 +382,20 @@
                                         </select>
                                     </p>
                                     <p><label for="verbatimLocality">Location</label>
-                                        <span id="markerAddress" class="locationInput"></span>
-                                        <input type="hidden" id="sightingLocation" name="verbatimLocality" value="${param.verbatimLocality}"/>
+                                        <!-- <span id="markerAddress" class="locationInput"></span> -->
+                                        <input type="text" size="50" id="sightingLocation" class="transparentBorderX" name="verbatimLocality" value="${param.verbatimLocality}"/>
                                         <input type="hidden" id="locality" name="locality" value="${param.locality}"/>
                                         <input type="hidden" id="stateProvince" name="stateProvince" value="${param.stateProvince}"/>
                                         <input type="hidden" id="country" name="country" value="${param.country}"/>
                                         <input type="hidden" id="countryCode" name="countryCode" value="${param.countryCode}"/>
                                     </p>
                                         <p><label for="latitude">Latitude</label>
-                                        <span id="markerLatitude" class="locationInput"></span>
-                                        <input type="hidden" id="sightingLatitude" name="latitude" value="${param.latitude}"/>
+                                        <span id="markerLatitude" class="locationInput" style="display: none"></span>
+                                        <input type="text" id="sightingLatitude" class="transparentBorderX" name="latitude" value="${param.latitude}"/>
                                     </p>
                                     <p><label for="longitude">Longitude</label>
-                                        <span id="markerLongitude" class="locationInput"></span>
-                                        <input type="hidden" id="sightingLongitude" name="longitude" value="${param.longitude}"/>
+                                        <span id="markerLongitude" class="locationInput" style="display: none"></span>
+                                        <input type="text" id="sightingLongitude" class="transparentBorderX" name="longitude" value="${param.longitude}"/>
                                     </p>
                                     <p><label for="coordinateUncertainty">Coordinate Uncertainty</label>
                                         <select id="sightingCoordinateUncertainty" name="coordinateUncertainty">
@@ -428,7 +435,7 @@
                             <div class="section">
                                 <div id="sightingAddress">
                                     <label for="address">Enter the location or address of sighting: </label>
-                                    <input name="address" id="address" size="40" value="${address}"/>
+                                    <input name="address" id="address" size="38" value="${address}"/>
                                     <input id="locationSearch" type="button" value="Search"/>
                                 </div>
                                 <div id="mapCanvas"></div>
