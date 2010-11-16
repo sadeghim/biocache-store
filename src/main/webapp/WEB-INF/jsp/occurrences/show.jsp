@@ -515,7 +515,6 @@
                             <c:if test="${not empty occurrence.coordinatePrecision}">
                                 // Add a Circle overlay to the map.
                                 var radius = parseInt('${occurrence.coordinatePrecision}');
-                                console.log("radius",radius);
                                 circle = new google.maps.Circle({
                                     map: map,
                                     radius: radius, // 3000 km
