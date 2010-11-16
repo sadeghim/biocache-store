@@ -194,7 +194,7 @@
                     $('#addressHelp').qtip({
                         content: {
                             url: '${pageContext.request.contextPath}/proxy/wordpress',
-                            data: { 'page_id': 16111, 'content-only': 1},
+                            data: { 'page_id': 16658, 'content-only': 1},
                             method: 'get'
                         },
                         position: {

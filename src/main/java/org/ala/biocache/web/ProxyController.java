@@ -36,7 +36,7 @@ public class ProxyController {
     /** Logger initialisation */
 	private final static Logger logger = Logger.getLogger(ProxyController.class);
     /** WordPress URL */
-    private String WORDPRESS_URL = "http://test.ala.org.au/";
+    private String WORDPRESS_URL = "http://www.ala.org.au/";
 
     /**
      * Proxy to WordPress site using page_id URI format
