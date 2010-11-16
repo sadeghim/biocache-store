@@ -206,13 +206,13 @@
                         style: {
                             width: 500,
                             padding: 8,
-                            background: '#FFEFE6',
+                            background: '#f0f0f0',
                             color: 'black',
                             textAlign: 'left',
                             border: {
                                 width: 4,
                                 radius: 5,
-                                color: '#FF8640'
+                                color: '#E66542'// '#E66542' '#DD3102'
                             },
                             tip: 'topLeft',
                             name: 'light' // Inherit the rest of the attributes from the preset light style
@@ -266,7 +266,8 @@
                                     <c:if test="${true || not empty location}">
                                         <p>
                                             Showing records for: <span id="markerAddress">${location}</span>
-                                            &nbsp;&nbsp;&nbsp;<a href="${initParam.centralServer}/error-text/your-area/" id="addressHelp" style="text-decoration: none"><span class="asterisk-container">&nbsp;</span></a>
+                                            &nbsp;&nbsp;&nbsp;
+                                            <a href="#" id="addressHelp" style="text-decoration: none"><span class="help-container">&nbsp;</span></a>
                                         </p>
                                     </c:if>
                                     <table id="locationOptions">
