@@ -106,7 +106,9 @@
                         </form>
                     </c:if>
                     <c:if test="${not empty error}">
-                        <div class="section">${error}</div>
+                        <div id="column-one">
+                            <div class="section">${error}</div>
+                        </div>
                     </c:if>
                 </c:when>
                 <c:otherwise><%-- User is NOT logged in --%>
