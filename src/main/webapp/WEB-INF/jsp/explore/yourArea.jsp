@@ -283,6 +283,11 @@
                                             </tr>
                                         </tbody>
                                     </table>
+                                    <div id="dialog-confirm" title="Continue with download?" style="display: none">
+                                        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>You are about to
+                                            download a list of species found within a <span id="rad"></span> km radius of <code>${location}</code>.<br/>
+                                            Format: tab-delimited text file (called data.xls)</p>
+                                    </div>
                                 </div>
                                 <div id="taxaBox">
                                     <div id="rightList" class="tableContainer">
