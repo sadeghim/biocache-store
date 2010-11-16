@@ -219,7 +219,7 @@
                         },
                         show: { effect: { type: 'slide', length: 300 } },
                         hide: { fixed: true, delay: 1000, effect: { type: 'slide', length: 300 }}
-                    });
+                    }).bind('click', function(event){ event.preventDefault(); return false;});
                 }); // End: $(document).ready() function
             </script>
         </head>
