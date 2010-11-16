@@ -160,7 +160,7 @@ function updateMarkerPosition(latLng) {
 function loadRecordsLayer(retry) {
     if (!map && !retry) {
         // in case AJAX calls this function before map has initialised
-        setTimeout(function() {if (!points || points.length == 0) {loadRecordsLayer(true);console.log("retrying...");}}, 2000);
+        setTimeout(function() {if (!points || points.length == 0) {loadRecordsLayer(true)}}, 2000);
         return;
     } else if (!map) {
         //console.log('retry failed');
