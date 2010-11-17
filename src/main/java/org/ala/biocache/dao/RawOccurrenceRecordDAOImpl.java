@@ -294,7 +294,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
          * @param rawOccurrenceRecord
          * @return
          */
-        /*public long create(final RawOccurrenceRecord rawOccurrenceRecord){
+        public long create(final RawOccurrenceRecord rawOccurrenceRecord){
             java.util.List<SqlParameter> params = new java.util.ArrayList<SqlParameter>();
             params.add(new SqlOutParameter("o_id", Types.NUMERIC));
             java.util.Map<String, Object> results =getJdbcTemplate().call(new CallableStatementCreator(){
@@ -364,12 +364,13 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
             if(value != null)
                 return Long.parseLong(value.toString());
             return -1;
-        }*/
+        }
 
 	/**
+         * OLD create that does not use the stored procedure
 	 * @see org.gbif.portal.dao.RawOccurrenceRecordDAO#create(org.gbif.portal.model.RawOccurrenceRecord)
 	 */
-	public long create(final RawOccurrenceRecord rawOccurrenceRecord) {
+	/*public long create(final RawOccurrenceRecord rawOccurrenceRecord) {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		getJdbcTemplate().update(new PreparedStatementCreator() {
 			Timestamp createTime = new Timestamp(System.currentTimeMillis());
@@ -433,7 +434,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 		}, keyHolder);
 		rawOccurrenceRecord.setId(keyHolder.getKey().longValue());
 		return keyHolder.getKey().longValue();
-	}
+	}*/
 
 	/**
 	 * @see org.gbif.portal.dao.RawOccurrenceRecordDAO#updateOrCreate(org.gbif.portal.model.RawOccurrenceRecord)
