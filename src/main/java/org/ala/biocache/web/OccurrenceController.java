@@ -801,38 +801,38 @@ public class OccurrenceController {
 	                }
 	            }
 			}
+		}
             
-            if (id != null) {
-                Long occurrenceId = new Long(id);
+        if (id != null) {
+            Long occurrenceId = new Long(id);
 
-                RawOccurrenceRecord rawOccurrence = rawOccurrenceRecordDAO.getById(occurrenceId);
-                model.addAttribute("rawOccurrence", rawOccurrence);
+            RawOccurrenceRecord rawOccurrence = rawOccurrenceRecordDAO.getById(occurrenceId);
+            model.addAttribute("rawOccurrence", rawOccurrence);
 
-                List<ImageRecord> images = imageRecordDAO.findByOccurrenceId(occurrenceId);
-                model.addAttribute("images", images);
+            List<ImageRecord> images = imageRecordDAO.findByOccurrenceId(occurrenceId);
+            model.addAttribute("images", images);
 
+        }
+        model.addAttribute("hostUrl", hostUrl);
+
+        //log the usage statistics to the ala logger if necessary
+        //We only want to log the stats if a non-json request was made.
+        if (request.getRequestURL() != null && !request.getRequestURL().toString().endsWith("json")) {
+            String email = null;
+            String reason = "Viewing Occurrence Record " + id;
+            String ip = request.getLocalAddr();
+            Map<String, Integer> uidStats = new HashMap<String, Integer>();
+            if (occurrence.getCollectionCodeUid() != null) {
+                uidStats.put(occurrence.getCollectionCodeUid(), 1);
             }
-            model.addAttribute("hostUrl", hostUrl);
-
-            //log the usage statistics to the ala logger if necessary
-            //We only want to log the stats if a non-json request was made.
-            if (request.getRequestURL() != null && !request.getRequestURL().toString().endsWith("json")) {
-                String email = null;
-                String reason = "Viewing Occurrence Record " + id;
-                String ip = request.getLocalAddr();
-                Map<String, Integer> uidStats = new HashMap<String, Integer>();
-                if (occurrence.getCollectionCodeUid() != null) {
-                    uidStats.put(occurrence.getCollectionCodeUid(), 1);
-                }
-                if (occurrence.getInstitutionCodeUid() != null) {
-                    uidStats.put(occurrence.getInstitutionCodeUid(), 1);
-                }
-                //all occurrence records must have a dpuid and druid
-                uidStats.put(occurrence.getDataProviderUid(), 1);
-                uidStats.put(occurrence.getDataResourceUid(), 1);
-                LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_VIEWED, email, reason, ip, uidStats);
-                logger.log(RestLevel.REMOTE, vo);
+            if (occurrence.getInstitutionCodeUid() != null) {
+                uidStats.put(occurrence.getInstitutionCodeUid(), 1);
             }
+            //all occurrence records must have a dpuid and druid
+            uidStats.put(occurrence.getDataProviderUid(), 1);
+            uidStats.put(occurrence.getDataResourceUid(), 1);
+            LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_VIEWED, email, reason, ip, uidStats);
+            logger.log(RestLevel.REMOTE, vo);
         }
         
 		return SHOW;
