@@ -514,7 +514,7 @@ public class SearchDAOImpl implements SearchDAO {
         solrQuery.setQuery("*:*");
         solrQuery.setRows(0);
         solrQuery.setFacet(true);
-        solrQuery.addFacetField("data_provider_id");
+        solrQuery.addFacetField("data_provider_uid");
         solrQuery.addFacetField("data_provider");
         solrQuery.setFacetMinCount(1);
         QueryResponse qr = runSolrQuery(solrQuery, null, 1, 0, "data_provider", "asc");
