@@ -1,6 +1,33 @@
 -- Run this script on the portal database
 
+DROP TABLE sequences;
+
+CREATE TABLE sequences (
+`name` varchar(24) not null primary key,
+`curvalue` int(11) unsigned not null
+)engine=MyISAM default charset=utf8;
+
+insert into sequences values('cs', 0);
+
+update sequences set curvalue= (select IFNULL(max(id),0) from raw_occurrence_record where id < 34000000);
+
+
+
 delimiter $$
+
+-- function to get next value in a sequence table
+DROP FUNCTION IF EXISTS nextval$$
+create function nextval(seq_name text) returns int(11)
+begin
+declare r_curvalue int;
+
+select curvalue +1 into r_curvalue from sequences where `name` = seq_name for update;
+
+update sequences set curvalue = r_curvalue where `name` = seq_name;
+
+return r_curvalue;
+end$$
+
 -- A procedure that adds a citizen science record to the raw occurrence record table.
 -- It performs a lock
 -- Obtains the ID for the next citizen science record
@@ -71,13 +98,8 @@ CREATE PROCEDURE addCitizenScienceRecord(OUT o_id INT(11),
 BEGIN
 
    IF get_lock('cit_science', 5) THEN
-        -- SELECT SLEEP(10);
         -- get the next id
-        SELECT IFNULL(MAX(id), 0) 
-        INTO o_id
-        from raw_occurrence_record where id < 34000000;
-
-        SET o_id = o_id +1;
+         select nextval('cs') into o_id;
 
         -- insert the new record
 
@@ -189,6 +211,7 @@ i_citation,
 i_geodetic_datum,
 i_generalised_metres
         );
+        -- release the lock
         SELECT release_lock('cit_science');
    ELSE
        set  o_id = -1;
