@@ -123,7 +123,8 @@ public class ContributeServiceImpl implements ContributeService {
 			ror.setEventTime(s.getEventTime());
 			
 			long occurrenceId = rawOccurrenceRecordDAO.create(ror);
-			
+
+			if(occurrenceId >0){
 			logger.debug("Created a raw occurrence with ID: "+occurrenceId);
 			
 			//update occurrence record
@@ -222,6 +223,9 @@ public class ContributeServiceImpl implements ContributeService {
 			logger.debug("Added record with ID: "+occurrenceId+" to search indexes.");
 			
 			return true;
+                }
+                else
+                    return false;
 			
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
