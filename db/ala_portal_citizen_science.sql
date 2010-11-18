@@ -17,11 +17,14 @@ delimiter $$
 
 -- function to get next value in a sequence table
 DROP FUNCTION IF EXISTS nextval$$
-create function nextval(seq_name text) returns int(11)
+create function nextval(seq_name text)
+returns int(11)
+not deterministic
+reads sql data
 begin
 declare r_curvalue int;
 
-select curvalue +1 into r_curvalue from sequences where `name` = seq_name for update;
+select curvalue +1 into r_curvalue from sequences where `name` = seq_name;
 
 update sequences set curvalue = r_curvalue where `name` = seq_name;
 
