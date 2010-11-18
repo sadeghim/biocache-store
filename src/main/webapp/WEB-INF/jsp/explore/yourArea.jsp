@@ -195,7 +195,8 @@
                         content: {
                             url: '${pageContext.request.contextPath}/proxy/wordpress',
                             data: { 'page_id': 16658, 'content-only': 1},
-                            method: 'get'
+                            method: 'get',
+                            text: '<img src="${pageContext.request.contextPath}/static/images/loading.gif" alt="" class="no-rounding"/>'
                         },
                         position: {
                             corner: {
