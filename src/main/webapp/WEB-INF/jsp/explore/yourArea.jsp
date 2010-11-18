@@ -204,7 +204,7 @@
                             }
                         },
                         style: {
-                            width: 500,
+                            width: 450,
                             padding: 8,
                             background: '#f0f0f0',
                             color: 'black',
