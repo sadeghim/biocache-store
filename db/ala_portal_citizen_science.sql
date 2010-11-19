@@ -230,8 +230,8 @@ delimiter ;
 
 -- grant the necessary permissions to the biocache user
 
-grant execute on procedure portal.addCitizenScienceRecord TO biocache
+grant execute on procedure portal.addCitizenScienceRecord TO biocache;
 
-grant execute on function portal.nextval TO biocache
+grant execute on function portal.nextval TO biocache;
 
 flush privileges;
