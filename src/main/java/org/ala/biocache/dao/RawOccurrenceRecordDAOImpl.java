@@ -34,6 +34,7 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
+
 /**
  * A pure jdbc implementation
  * 
@@ -45,7 +46,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
                                                                             + "?,?,?,?,?,?,?,?,?,?,"
                                                                             + "?,?,?,?,?,?,?,?,?,?,"
                                                                             + "?,?,?,?,?,?,?,?,?,?,"
-                                                                            + "?,?,?,?,?,?,?,?,?,?,?,?)";
+                                                                            + "?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	/**
 	 * The create SQL
@@ -287,7 +288,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
          * Using this procedure instead of a direct insert will ensure that unique id's are being assigned.
          *
          * @param rawOccurrenceRecord
-         * @return
+         * @return -1 when records was not added otherwise the id for the raw occurrence record
          */
         public long create(final RawOccurrenceRecord rawOccurrenceRecord){
             java.util.List<SqlParameter> params = new java.util.ArrayList<SqlParameter>();
@@ -350,16 +351,17 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
                 cs.setString(51, rawOccurrenceRecord.getCitation());
                 cs.setString(52, rawOccurrenceRecord.getGeodeticDatum());
                 cs.setObject(53, rawOccurrenceRecord.getGeneralisedInMetres());
-                
+
                 return cs;
             }
         }, params);
 
             //now get the id that was added
             Object value = results.get("o_id");
+            long id = -1;
             if(value != null)
-                return Long.parseLong(value.toString());
-            return -1;
+                id =  Long.parseLong(value.toString());
+            return id;
         }
 
 	/**
