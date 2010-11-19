@@ -173,13 +173,13 @@
 	  							<c:if test="${empty occurrence.occurrenceDate && empty rawOccurrence.eventDate && empty rawOccurrence.eventDate && empty rawOccurrence.year && empty rawOccurrence.month && empty rawOccurrence.day}">No date supplied</c:if>
 	  							<fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/>
                             	  <c:if test="${not empty occurrence.occurrenceDate}"><br/></c:if>
-                            	  <span class="originalValue">Supplied as: 
+                            	  <span class="originalValue">
                             	  	<c:choose>
                             	  		<c:when test="${not empty rawOccurrence.eventDate}">
-                            	  			"${rawOccurrence.eventDate}"
+                            	  			Supplied as: "${rawOccurrence.eventDate}"
                             	  		</c:when>
                             	  		<c:when test="${not empty rawOccurrence.year || not empty rawOccurrence.month || not empty rawOccurrence.day}">
-                            	  			"year: ${rawOccurrence.year}, month: ${rawOccurrence.month}, day: ${rawOccurrence.day}"
+                            	  			Supplied as:  "year: ${rawOccurrence.year}, month: ${rawOccurrence.month}, day: ${rawOccurrence.day}"
                             	  		</c:when>
                             	  	</c:choose>
                             	  	</span>
