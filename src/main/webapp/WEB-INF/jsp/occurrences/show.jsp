@@ -170,7 +170,7 @@
                                	</c:if>
                             </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="occurrenceDate" fieldName="Record Date">
-	  							<c:if test="${empty occurrence.occurrenceDate && empty rawOccurrence.eventDate && empty rawOccurrence.eventDate && empty rawOccurrence.year && empty rawOccurrence.month && empty rawOccurrence.day}">No date supplied</c:if>
+	  							<c:if test="${empty occurrence.occurrenceDate && empty rawOccurrence.eventDate && empty rawOccurrence.eventDate && empty rawOccurrence.year && empty rawOccurrence.month && empty rawOccurrence.day}">date not supplied</c:if>
 	  							<fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/>
                             	  <c:if test="${not empty occurrence.occurrenceDate}"><br/></c:if>
                             	  <span class="originalValue">
