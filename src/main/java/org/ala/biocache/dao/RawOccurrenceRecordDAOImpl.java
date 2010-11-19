@@ -18,7 +18,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Date;
@@ -34,8 +33,6 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
 /**
  * A pure jdbc implementation
@@ -44,7 +41,7 @@ import org.springframework.jdbc.support.KeyHolder;
  */
 public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOccurrenceRecordDAO {
         
-        protected static final String PROC_SQL = "call addCitizenScienceRecord(?,?,?,?,?,?,?,?,?,?,"
+	protected static final String PROC_SQL = "call addCitizenScienceRecord(?,?,?,?,?,?,?,?,?,?,"
                                                                             + "?,?,?,?,?,?,?,?,?,?,"
                                                                             + "?,?,?,?,?,?,?,?,?,?,"
                                                                             + "?,?,?,?,?,?,?,?,?,?,"
@@ -90,6 +87,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "year,"
 			+ "month,"
 			+ "day,"
+			+ "event_date,"
 			+ "event_time,"
 			+ "basis_of_record,"
 			+ "identifier_name,"
@@ -106,15 +104,11 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 		    + "geodetic_datum,"
 		    + "generalised_metres"
 			+ ") values (" 
-			+ "?,?,?,?,?,?,?,?,?,?,"
+			+ "?,?,?,?,?,?,?,?,?,?,?,"
 			+ "?,?,?,?,?,?,?,?,?,?,"
 			+ "?,?,?,?,?,?,?,?,?,?," 
 			+ "?,?,?,?,?,?,?,?,?,?," 
 			+ "?,?,?,?,?,?,?,?,?,?,?)";
-
-	protected String citation;
-	protected String geodeticDatum;
-	protected Integer generalisedInMetres;	
 	
 	/**
 	 * The update SQL
@@ -156,6 +150,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "year=?,"
 			+ "month=?,"
 			+ "day=?,"
+			+ "event_date=?,"
 			+ "event_time=?,"
 			+ "basis_of_record=?,"
 			+ "identifier_name=?,"
@@ -179,7 +174,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 	protected static final String QUERY_UNIQUE_SQL = "select ror.id, data_provider_id,data_resource_id,resource_access_point_id,institution_code,collection_code,catalogue_number, "
 			+ "scientific_name,author,rank,kingdom,phylum,class,order_rank,family,"
 			+ "genus,species,subspecies,latitude,longitude,lat_long_precision,min_altitude,max_altitude,altitude_precision,min_depth,max_depth,depth_precision,continent_ocean,country,state_province,county,collector_name,"
-			+ "locality,year,month,day,event_time,basis_of_record,identifier_name,identification_date,unit_qualifier,created,modified,deleted,taxon_concept_guid,user_id,vernacular_name," 
+			+ "locality,year,month,day,event_date,event_time,basis_of_record,identifier_name,identification_date,unit_qualifier,created,modified,deleted,taxon_concept_guid,user_id,vernacular_name," 
 			+ "occurrence_remarks,location_remarks,individual_count,citation,geodetic_datum,generalised_metres "
 			+ "from raw_occurrence_record ror " + "where data_resource_id=? ";
 
@@ -189,7 +184,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 	protected static final String QUERY_ID_SQL = "select ror.id, data_provider_id,data_resource_id,resource_access_point_id,institution_code,collection_code,catalogue_number, "
 			+ "scientific_name,author,rank,kingdom,phylum,class,order_rank,family,"
 			+ "genus,species,subspecies,latitude,longitude,lat_long_precision,min_altitude,max_altitude,altitude_precision,min_depth,max_depth,depth_precision,continent_ocean,country,state_province,county,collector_name,"
-			+ "locality,year,month,day,event_time,basis_of_record,identifier_name,identification_date,unit_qualifier,created,modified,deleted,taxon_concept_guid,user_id,vernacular_name,  "
+			+ "locality,year,month,day,event_date,event_time,basis_of_record,identifier_name,identification_date,unit_qualifier,created,modified,deleted,taxon_concept_guid,user_id,vernacular_name,  "
 			+ "occurrence_remarks, location_remarks,individual_count,citation,geodetic_datum,generalised_metres "
 			+ "from raw_occurrence_record ror " + "where id=? ";
 
@@ -200,7 +195,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 	protected static final String QUERY_MODIFIED_SINCE = "select ror.id, ror.data_provider_id,ror.data_resource_id,ror.resource_access_point_id,ror.institution_code,ror.collection_code,ror.catalogue_number, "
 			+ "ror.scientific_name,ror.author,ror.rank,ror.kingdom,ror.phylum,ror.class,ror.order_rank,ror.family,"
 			+ "ror.genus,ror.species,ror.subspecies,ror.latitude,ror.longitude,ror.lat_long_precision,ror.min_altitude,ror.max_altitude,ror.altitude_precision,ror.min_depth,ror.max_depth,ror.depth_precision,ror.continent_ocean,ror.country,ror.state_province,ror.county,ror.collector_name,"
-			+ "ror.locality,ror.year,ror.month,ror.day,ror.event_time,ror.basis_of_record,ror.identifier_name,ror.identification_date,ror.unit_qualifier,ror.created,ror.modified,ror.deleted,ror.taxon_concept_guid,ror.user_id,ror.vernacular_name,  "
+			+ "ror.locality,ror.year,ror.month,ror.day,ror.event_date,ror.event_time,ror.basis_of_record,ror.identifier_name,ror.identification_date,ror.unit_qualifier,ror.created,ror.modified,ror.deleted,ror.taxon_concept_guid,ror.user_id,ror.vernacular_name,  "
 			+ "ror.occurrence_remarks,ror.location_remarks,individual_count,citation,geodetic_datum,generalised_metres "
 			+ "from raw_occurrence_record ror "
 			+ "where ror.data_resource_id=? and "
@@ -270,7 +265,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 					rs.getString("state_province"), rs.getString("county"),
 					rs.getString("collector_name"), rs.getString("locality"),
 					rs.getString("year"), rs.getString("month"),
-					rs.getString("day"), rs.getString("event_time"), rs.getString("basis_of_record"),
+					rs.getString("day"), rs.getString("event_date"), rs.getString("event_time"), rs.getString("basis_of_record"),
 					rs.getString("identifier_name"),
 					rs.getDate("identification_date"),
 					rs.getString("unit_qualifier"), rs.getDate("created"),
@@ -339,21 +334,22 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
                 cs.setString(35, StringUtils.trimToNull(rawOccurrenceRecord.getYear()));
                 cs.setString(36, StringUtils.trimToNull(rawOccurrenceRecord.getMonth()));
                 cs.setString(37, StringUtils.trimToNull(rawOccurrenceRecord.getDay()));
-                cs.setString(38, StringUtils.trimToNull(rawOccurrenceRecord.getEventTime()));
-                cs.setString(39, StringUtils.trimToNull(rawOccurrenceRecord.getBasisOfRecord()));
-                cs.setString(40, StringUtils.trimToNull(rawOccurrenceRecord.getIdentifierName()));
-                cs.setDate(41, createSQLDate(rawOccurrenceRecord.getDateIdentified()));
-                cs.setString(42, StringUtils.trimToNull(rawOccurrenceRecord.getUnitQualifier()));
-                cs.setTimestamp(43, createTime);
+                cs.setString(38, StringUtils.trimToNull(rawOccurrenceRecord.getEventDate()));
+                cs.setString(39, StringUtils.trimToNull(rawOccurrenceRecord.getEventTime()));
+                cs.setString(40, StringUtils.trimToNull(rawOccurrenceRecord.getBasisOfRecord()));
+                cs.setString(41, StringUtils.trimToNull(rawOccurrenceRecord.getIdentifierName()));
+                cs.setDate(42, createSQLDate(rawOccurrenceRecord.getDateIdentified()));
+                cs.setString(43, StringUtils.trimToNull(rawOccurrenceRecord.getUnitQualifier()));
                 cs.setTimestamp(44, createTime);
-                cs.setString(45, rawOccurrenceRecord.getTaxonConceptGuid());
-                cs.setString(46, rawOccurrenceRecord.getUserId());
-                cs.setString(47, rawOccurrenceRecord.getOccurrenceRemarks());
-                cs.setString(48, rawOccurrenceRecord.getLocationRemarks());
-                cs.setObject(49, rawOccurrenceRecord.getIndividualCount());
-                cs.setString(50, rawOccurrenceRecord.getCitation());
-                cs.setString(51, rawOccurrenceRecord.getGeodeticDatum());
-                cs.setObject(52, rawOccurrenceRecord.getGeneralisedInMetres());
+                cs.setTimestamp(45, createTime);
+                cs.setString(46, rawOccurrenceRecord.getTaxonConceptGuid());
+                cs.setString(47, rawOccurrenceRecord.getUserId());
+                cs.setString(48, rawOccurrenceRecord.getOccurrenceRemarks());
+                cs.setString(49, rawOccurrenceRecord.getLocationRemarks());
+                cs.setObject(50, rawOccurrenceRecord.getIndividualCount());
+                cs.setString(51, rawOccurrenceRecord.getCitation());
+                cs.setString(52, rawOccurrenceRecord.getGeodeticDatum());
+                cs.setObject(53, rawOccurrenceRecord.getGeneralisedInMetres());
                 
                 return cs;
             }
@@ -483,21 +479,22 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 					ps.setString(34, StringUtils.trimToNull(rawOccurrenceRecord.getYear()));
 					ps.setString(35, StringUtils.trimToNull(rawOccurrenceRecord.getMonth()));
 					ps.setString(36, StringUtils.trimToNull(rawOccurrenceRecord.getDay()));
-					ps.setString(37, StringUtils.trimToNull(rawOccurrenceRecord.getEventTime()));
-					ps.setString(38, StringUtils.trimToNull(rawOccurrenceRecord.getBasisOfRecord()));
-					ps.setString(39, StringUtils.trimToNull(rawOccurrenceRecord.getIdentifierName()));
-					ps.setDate(40, createSQLDate(rawOccurrenceRecord.getDateIdentified()));
-					ps.setString(41, StringUtils.trimToNull(rawOccurrenceRecord.getUnitQualifier()));
-					ps.setTimestamp(42, new Timestamp(System.currentTimeMillis()));
-					ps.setString(43, rawOccurrenceRecord.getTaxonConceptGuid());
-					ps.setString(44, rawOccurrenceRecord.getUserId());
-					ps.setString(45, rawOccurrenceRecord.getOccurrenceRemarks());
-					ps.setString(46, rawOccurrenceRecord.getLocationRemarks());
-					ps.setObject(47, rawOccurrenceRecord.getIndividualCount());					
-					ps.setString(48, rawOccurrenceRecord.getCitation());
-					ps.setString(49, rawOccurrenceRecord.getGeodeticDatum());
-					ps.setObject(50, rawOccurrenceRecord.getGeneralisedInMetres());
-					ps.setLong(51, rawOccurrenceRecord.getId());
+					ps.setString(37, StringUtils.trimToNull(rawOccurrenceRecord.getEventDate()));
+					ps.setString(38, StringUtils.trimToNull(rawOccurrenceRecord.getEventTime()));
+					ps.setString(39, StringUtils.trimToNull(rawOccurrenceRecord.getBasisOfRecord()));
+					ps.setString(40, StringUtils.trimToNull(rawOccurrenceRecord.getIdentifierName()));
+					ps.setDate(41, createSQLDate(rawOccurrenceRecord.getDateIdentified()));
+					ps.setString(42, StringUtils.trimToNull(rawOccurrenceRecord.getUnitQualifier()));
+					ps.setTimestamp(43, new Timestamp(System.currentTimeMillis()));
+					ps.setString(44, rawOccurrenceRecord.getTaxonConceptGuid());
+					ps.setString(45, rawOccurrenceRecord.getUserId());
+					ps.setString(46, rawOccurrenceRecord.getOccurrenceRemarks());
+					ps.setString(47, rawOccurrenceRecord.getLocationRemarks());
+					ps.setObject(48, rawOccurrenceRecord.getIndividualCount());					
+					ps.setString(49, rawOccurrenceRecord.getCitation());
+					ps.setString(50, rawOccurrenceRecord.getGeodeticDatum());
+					ps.setObject(51, rawOccurrenceRecord.getGeneralisedInMetres());
+					ps.setLong(52, rawOccurrenceRecord.getId());
 					return ps;
 				}
 			});

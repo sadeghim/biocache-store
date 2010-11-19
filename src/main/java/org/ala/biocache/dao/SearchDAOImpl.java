@@ -223,7 +223,7 @@ public class SearchDAOImpl implements SearchDAO {
         logger.debug("Writing CSV file for species count by circle");
         List<TaxaCountDTO> species = findAllSpeciesByCircleAreaAndHigherTaxa(latitude, longitude, radius, rank, higherTaxa, null, 0, -1, "count", "asc");
         logger.debug("There are " + species.size() + "records being downloaded");
-        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), ',', '"');
+        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(out), '\t', '"');
         csvWriter.writeNext(new String[]{
             		"Taxon ID",
                     "Kingdom",

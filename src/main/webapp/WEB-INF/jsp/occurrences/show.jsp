@@ -169,9 +169,23 @@
                                     <br/><span class="originalValue">Supplied as: "${rawOccurrence.basisOfRecord}"</span>
                                	</c:if>
                             </alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="occurrenceDate" fieldName="Record Date"><fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/></alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="occurrenceDate" fieldName="Record Date">
+                            	<fmt:formatDate value="${occurrence.occurrenceDate}" pattern="yyyy-MM-dd"/>
+                            	  <br/><span class="originalValue">Supplied as: 
+                            	  	<c:choose>
+                            	  		<c:when test="${not empty rawOccurrence.eventDate}">
+                            	  			"${rawOccurrence.eventDate}"
+                            	  		</c:when>
+                            	  		<c:when test="${not empty rawOccurrence.year || not empty rawOccurrence.month || not empty rawOccurrence.day}">
+                            	  			"year: ${rawOccurrence.year}, month: ${rawOccurrence.month}, day: ${rawOccurrence.day}"
+                            	  		</c:when>
+                            	  	</c:choose>
+                            	  	</span>
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="identifierName" fieldName="Identifier">${occurrence.identifierName}</alatag:occurrenceTableRow>
-                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="identifierDate" fieldName="Identified Date"><fmt:formatDate value="${occurrence.identifierDate}" pattern="yyyy-MM-dd"/></alatag:occurrenceTableRow>
+                            <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="identifierDate" fieldName="Identified Date">
+                            	<fmt:formatDate value="${occurrence.identifierDate}" pattern="yyyy-MM-dd"/>
+                            </alatag:occurrenceTableRow>
                             <alatag:occurrenceTableRow annotate="true" section="dataset" fieldCode="collectorName" fieldName="Collector/observer">
                                 <c:if test="${not empty occurrence.collector}">
                                 	${occurrence.collector}
