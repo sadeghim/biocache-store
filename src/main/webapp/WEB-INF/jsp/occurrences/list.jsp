@@ -446,18 +446,17 @@
                     <button id="showMap" title="Display a small map showing points for records">View as Map</button>
                 </c:if>
             </div>
-            <div class="astrisk" style="display:block">
+            <div>
                 <h1>Occurrence Records</h1>
             </div>
             <div id="dialog-confirm" title="Download Occurrences" style="display:none">
                	<p id="termsOfUseDownload">
-               	
-               	By downloading this content you are agreeing to use it in accordance with the Atlas
-               	  <a href="http://www.ala.org.au/about/terms-of-use/#TOUusingcontent">Terms of Use</a>
-               	and individual <a href=" http://www.ala.org.au/support/faq/#q29">Data Provider Terms</a>.
-				<br/>
-				Please provide the following optional details before downloading:
-				</p>
+                    By downloading this content you are agreeing to use it in accordance with the Atlas
+                      <a href="http://www.ala.org.au/about/terms-of-use/#TOUusingcontent">Terms of Use</a>
+                    and individual <a href=" http://www.ala.org.au/support/faq/#q29">Data Provider Terms</a>.
+                    <br/>
+                    Please provide the following optional details before downloading:
+                </p>
                 <form id="downloadForm">
                     <fieldset>
                         <p><label for="email">Email</label>
