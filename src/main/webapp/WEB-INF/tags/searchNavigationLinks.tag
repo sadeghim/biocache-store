@@ -9,9 +9,11 @@
 <%@ attribute name="pageSize" required="true" type="java.lang.Long" %>
 <%@ attribute name="lastPage" required="true" type="java.lang.Integer" %>
 <%@ attribute name="maxPageLinks" required="false" type="java.lang.Integer" %>
+<%@ attribute name="title" required="false" type="java.lang.String" %>
 <span id="navLinks">
     <c:if test="${empty maxPageLinks}"><c:set var="maxPageLinks" value="10"/></c:if>
     <fmt:formatNumber var="pageNumber" value="${(startIndex / pageSize) + 1}" pattern="0" />
+    <c:set var="hash" value=""/>
     <c:set var="coreParams">?q=${param.q}<c:if test="${not empty paramValues.fq}">&fq=${fn:join(paramValues.fq, "&fq=")}</c:if>&sort=${param.sort}&dir=${param.dir}&pageSize=${pageSize}</c:set>
     <!-- coreParams = ${coreParams} || lastPage = ${lastPage} || startIndex = ${startIndex} || pageNumber = ${pageNumber} -->
     <c:set var="startPageLink">
@@ -34,28 +36,28 @@
             </c:otherwise>
         </c:choose>
     </c:set>
-    <c:choose>
-        <c:when test="${startIndex > 0}">
-            <span id="prevPage"><a href="${coreParams}&start=${startIndex - pageSize}#searchResults">&lt; Previous</a></span>
-        </c:when>
-        <c:otherwise>
-            <span id="prevPage">&nbsp;</span>
-        </c:otherwise>
-    </c:choose>
-    <c:forEach var="pageLink" begin="${startPageLink}" end="${endPageLink}" step="1">
-        <span id="pageJumpLink">
+    <ul>
+        <c:choose>
+            <c:when test="${startIndex > 0}">
+                <li id="prevPage"><a href="${coreParams}&start=${startIndex - pageSize}${hash}&title=${title}">&laquo; Previous</a></li>
+            </c:when>
+            <c:otherwise>
+                <li id="prevPage">&laquo; Previous</li>
+            </c:otherwise>
+        </c:choose>
+        <c:forEach var="pageLink" begin="${startPageLink}" end="${endPageLink}" step="1">
             <c:choose>
-                <c:when test="${pageLink == pageNumber}"><span id="currentPage">${pageLink}</span></c:when>
-                <c:otherwise><a href="${coreParams}&start=${(pageLink * pageSize) - pageSize}#searchResults">${pageLink}</a></c:otherwise>
+                <c:when test="${pageLink == pageNumber}"><li class="currentPage">${pageLink}</li></c:when>
+                <c:otherwise><li><a href="${coreParams}&start=${(pageLink * pageSize) - pageSize}${hash}&title=${title}">${pageLink}</a></li></c:otherwise>
             </c:choose>
-        </span>
-    </c:forEach>
-    <c:choose>
-        <c:when test="${!(pageNumber == lastPage)}">
-            <span id="nextPage"><a href="${coreParams}&start=${startIndex + pageSize}#searchResults">Next &gt;</a></span>
-        </c:when>
-        <c:otherwise>
-            <span id="nextPage">&nbsp;</span>
-        </c:otherwise>
-    </c:choose>
+        </c:forEach>
+        <c:choose>
+            <c:when test="${!(pageNumber == lastPage)}">
+                <li id="nextPage"><a href="${coreParams}&start=${startIndex + pageSize}${hash}&title=${title}">Next &raquo;</a></span>
+            </c:when>
+            <c:otherwise>
+                <li id="nextPage">Next &raquo;</span>
+            </c:otherwise>
+        </c:choose>
+    </ul>
 </span>
