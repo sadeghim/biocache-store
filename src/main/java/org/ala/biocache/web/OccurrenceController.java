@@ -204,11 +204,8 @@ public class OccurrenceController {
 			if(logger.isDebugEnabled()){
 				logger.debug("Returning results set with: "+totalRecords);
 			}
-	
-			if (pageSize > 0) {
-				Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-				model.addAttribute("lastPage", lastPage);
-			}
+            
+            model.addAttribute("lastPage", calculateLastPage(totalRecords, pageSize));
 		} else {
 			model.addAttribute("totalRecords", 0);
 			model.addAttribute("searchResult", new SearchResultDTO());
@@ -301,10 +298,7 @@ public class OccurrenceController {
                 model.addAttribute("facetMap", addFacetMap(filterQuery));
 				//type of serach
 				model.addAttribute("type", "provider");
-				if (pageSize > 0) {
-					Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-					model.addAttribute("lastPage", lastPage);
-				}
+				model.addAttribute("lastPage", calculateLastPage(totalRecords, pageSize));
 			}
 		}
 
@@ -365,10 +359,7 @@ public class OccurrenceController {
                 model.addAttribute("facetMap", addFacetMap(filterQuery));
 				//type of serach
 				model.addAttribute("type", "resource");
-				if (pageSize > 0) {
-					Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-					model.addAttribute("lastPage", lastPage);
-				}
+				model.addAttribute("lastPage", calculateLastPage(totalRecords, pageSize));
 			}
 		}		
 
@@ -454,10 +445,7 @@ public class OccurrenceController {
         model.addAttribute("facetMap", addFacetMap(filterQuery));
 		//type of serach
 		model.addAttribute("type", "collection");
-		if (pageSize > 0) {
-			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-			model.addAttribute("lastPage", lastPage);
-		}
+		model.addAttribute("lastPage", calculateLastPage(totalRecords, pageSize));
 
 		return LIST;
 
@@ -566,10 +554,7 @@ public class OccurrenceController {
 			logger.debug("Returning results set with: "+totalRecords);
 		}
 
-		if (pageSize > 0) {
-			Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-			model.addAttribute("lastPage", lastPage);
-		}
+		model.addAttribute("lastPage", calculateLastPage(totalRecords, pageSize));
 
 		return LIST;
 	}
@@ -651,10 +636,7 @@ public class OccurrenceController {
         model.addAttribute("facetMap", addFacetMap(filterQuery));
         //type of serach
         model.addAttribute("type", "normal");
-        if (pageSize > 0) {
-            Integer lastPage = (totalRecords.intValue() / pageSize) + 1;
-            model.addAttribute("lastPage", lastPage);
-        }
+        model.addAttribute("lastPage", calculateLastPage(totalRecords, pageSize));
                 
 		return LIST;
 	}
@@ -857,6 +839,24 @@ public class OccurrenceController {
             }
         }
         return facetMap;
+    }
+    
+    /**
+     * Calculate the last page number for pagination
+     * 
+     * @param totalRecords
+     * @param pageSize
+     * @return
+     */
+    private Integer calculateLastPage(Long totalRecords, Integer pageSize) {
+        Integer lastPage = 0;
+        Integer lastRecordNum = totalRecords.intValue();
+        
+        if (pageSize > 0) {
+            lastPage = (lastRecordNum / pageSize) + ((lastRecordNum % pageSize > 0) ? 1 : 0);
+        }
+        
+        return lastPage;
     }
 
 	/**
