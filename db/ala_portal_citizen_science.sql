@@ -96,7 +96,8 @@ CREATE PROCEDURE addCitizenScienceRecord(OUT o_id INT(11),
                                    IN i_individual_count INT(11),
                                    IN i_citation text,
                                    IN i_geodetic_datum varchar(50),
-                                   IN i_generalised_metres int(11)
+                                   IN i_generalised_metres int(11),
+                                   IN i_guid varchar(255)
                                    
                                     )
 BEGIN
@@ -160,7 +161,8 @@ location_remarks,
 individual_count,
 citation,
 geodetic_datum,
-generalised_metres
+generalised_metres,
+guid
         )
         VALUES(
             o_id,
@@ -215,7 +217,8 @@ i_location_remarks,
 i_individual_count,
 i_citation,
 i_geodetic_datum,
-i_generalised_metres
+i_generalised_metres,
+i_guid
         );
         -- release the lock
         SELECT release_lock('cit_science');
