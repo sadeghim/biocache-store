@@ -17,17 +17,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ala.biocache.model.TaxonConcept;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+
+import au.org.ala.checklist.lucene.CBIndexSearch;
+import au.org.ala.checklist.lucene.SearchResultException;
 
 /**
  * Pure JDBC implementation
  * @author trobertson
  */
 public class TaxonConceptDAOImpl extends JdbcDaoSupport implements TaxonConceptDAO {
-
+	@Inject
+	protected CBIndexSearch cbIdxSearcher;
+	
     protected static final String QUERY_BY_GUID = 
         "select tc.id,tc.guid,tc.lft,tc.rgt,tc.taxon_name_id,tc.parent_concept_id,tc.rank,tc.is_accepted,tc.partner_concept_id," +
         "tc.data_provider_id,tc.data_resource_id,tc.is_nub_concept,tc.is_secondary,tc.priority, " +
@@ -76,6 +83,16 @@ public class TaxonConceptDAOImpl extends JdbcDaoSupport implements TaxonConceptD
             return null;
         }
     }
+
+	public String findLsidByName(String scientificName){
+		String lsid = null;
+		try {
+			lsid = cbIdxSearcher.searchForLSID(scientificName);
+		} catch (SearchResultException e) {
+			logger.warn("Checklist Bank lookup exception - " + e.getMessage() + e.getResults());
+		}
+		return lsid;
+	}
 
 	public class TaxonConceptRowMapper implements RowMapper {
 	    /**

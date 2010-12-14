@@ -249,5 +249,7 @@ public interface SearchDAO {
      * @throws Exception
      */
     TaxaRankCountDTO findTaxonCountForUid(String query, String rank) throws Exception;
+    
+    boolean updateOccurrence(OccurrenceDTO oc) throws Exception;
 }
 

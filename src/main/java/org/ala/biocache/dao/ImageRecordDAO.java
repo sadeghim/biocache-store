@@ -12,4 +12,10 @@ public interface ImageRecordDAO {
 	 * @return The records or an empty list
 	 */
 	public List<ImageRecord> findByOccurrenceId(long occurrenceId);
+	
+	public long create(final ImageRecord imageRecord);
+	
+	public long updateOrCreate(final ImageRecord imageRecord);
+	
+	public void delete(final ImageRecord ImageRecord);
 }

@@ -81,4 +81,6 @@ public interface RawOccurrenceRecordDAO {
      * @param id
      */
     public void deleteById(long id);
+    
+    public long getOccurrenceIdByGuid(String guid);
 }

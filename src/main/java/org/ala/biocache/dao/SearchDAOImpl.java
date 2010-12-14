@@ -1185,4 +1185,25 @@ public class SearchDAOImpl implements SearchDAO {
     public void setSolrHome(String solrHome) {
         this.solrHome = solrHome;
     }
+
+	@Override
+	public boolean updateOccurrence(OccurrenceDTO oc) throws Exception {
+		/**
+		 * http://wiki.apache.org/solr/FAQ#How_can_I_update_a_specific_field_of_an_existing_document.3F
+		 * 
+		 * In Lucene to update a document the operation is really a delete followed by an add. 
+		 * You will need to add the complete document as there is 
+		 * no such "update only a field" semantics in Lucene. 
+		 */
+		
+		// if same id then delete operation is not required.
+		/*
+		OccurrenceDTO dto = getById(oc.getId());
+		if(dto != null){
+			deleteOccurrence(oc.getId());			
+		}
+		*/
+		addOccurrence(oc);
+		return true;
+	}
 }

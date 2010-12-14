@@ -27,4 +27,6 @@ public interface TaxonConceptDAO {
 	 * @return
 	 */
     public TaxonConcept getByGuid(final String guid);
+    
+    public String findLsidByName(String scientificName);
 }

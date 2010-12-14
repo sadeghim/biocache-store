@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.ala.biocache.model.RawOccurrenceRecord;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -41,12 +42,14 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  * @author trobertson
  */
 public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOccurrenceRecordDAO {
-        
+	/** log4 j logger */
+    private static final Logger logger = Logger.getLogger(RawOccurrenceRecordDAOImpl.class);
+    
 	protected static final String PROC_SQL = "call addCitizenScienceRecord(?,?,?,?,?,?,?,?,?,?,"
                                                                             + "?,?,?,?,?,?,?,?,?,?,"
                                                                             + "?,?,?,?,?,?,?,?,?,?,"
                                                                             + "?,?,?,?,?,?,?,?,?,?,"
-                                                                            + "?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                                                                            + "?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	/**
 	 * The create SQL
@@ -165,7 +168,8 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "individual_count=?, "
 		    + "citation=?,"		    
 		    + "geodetic_datum=?,"
-		    + "generalised_metres=?"
+		    + "generalised_metres=?,"
+		    + "guid=?"
 			+ "where id=?";
 	
 	/**
@@ -176,7 +180,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "scientific_name,author,rank,kingdom,phylum,class,order_rank,family,"
 			+ "genus,species,subspecies,latitude,longitude,lat_long_precision,min_altitude,max_altitude,altitude_precision,min_depth,max_depth,depth_precision,continent_ocean,country,state_province,county,collector_name,"
 			+ "locality,year,month,day,event_date,event_time,basis_of_record,identifier_name,identification_date,unit_qualifier,created,modified,deleted,taxon_concept_guid,user_id,vernacular_name," 
-			+ "occurrence_remarks,location_remarks,individual_count,citation,geodetic_datum,generalised_metres "
+			+ "occurrence_remarks,location_remarks,individual_count,citation,geodetic_datum,generalised_metres,guid "
 			+ "from raw_occurrence_record ror " + "where data_resource_id=? ";
 
 	/**
@@ -186,7 +190,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "scientific_name,author,rank,kingdom,phylum,class,order_rank,family,"
 			+ "genus,species,subspecies,latitude,longitude,lat_long_precision,min_altitude,max_altitude,altitude_precision,min_depth,max_depth,depth_precision,continent_ocean,country,state_province,county,collector_name,"
 			+ "locality,year,month,day,event_date,event_time,basis_of_record,identifier_name,identification_date,unit_qualifier,created,modified,deleted,taxon_concept_guid,user_id,vernacular_name,  "
-			+ "occurrence_remarks, location_remarks,individual_count,citation,geodetic_datum,generalised_metres "
+			+ "occurrence_remarks, location_remarks,individual_count,citation,geodetic_datum,generalised_metres,guid "
 			+ "from raw_occurrence_record ror " + "where id=? ";
 
 	/**
@@ -197,7 +201,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 			+ "ror.scientific_name,ror.author,ror.rank,ror.kingdom,ror.phylum,ror.class,ror.order_rank,ror.family,"
 			+ "ror.genus,ror.species,ror.subspecies,ror.latitude,ror.longitude,ror.lat_long_precision,ror.min_altitude,ror.max_altitude,ror.altitude_precision,ror.min_depth,ror.max_depth,ror.depth_precision,ror.continent_ocean,ror.country,ror.state_province,ror.county,ror.collector_name,"
 			+ "ror.locality,ror.year,ror.month,ror.day,ror.event_date,ror.event_time,ror.basis_of_record,ror.identifier_name,ror.identification_date,ror.unit_qualifier,ror.created,ror.modified,ror.deleted,ror.taxon_concept_guid,ror.user_id,ror.vernacular_name,  "
-			+ "ror.occurrence_remarks,ror.location_remarks,individual_count,citation,geodetic_datum,generalised_metres "
+			+ "ror.occurrence_remarks,ror.location_remarks,individual_count,citation,geodetic_datum,generalised_metres,guid "
 			+ "from raw_occurrence_record ror "
 			+ "where ror.data_resource_id=? and "
 			+ "ror.modified>? and "
@@ -217,6 +221,11 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
      * The delete by id
      */
     protected static final String DELETE_SQL = "DELETE FROM raw_occurrence_record WHERE id=?";
+    
+    /**
+     * get id by guid
+     */
+    protected static final String QUERY_ID_BY_GUID = "SELECT id FROM raw_occurrence_record WHERE guid=?";
 
 	/**
 	 * RawOccurrenceRecord row mapper
@@ -278,7 +287,8 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 					(Integer) rs.getObject("individual_count"),
 					rs.getString("citation"),
 					rs.getString("geodetic_datum"),
-					(Integer) rs.getObject("generalised_metres")					
+					(Integer) rs.getObject("generalised_metres"),
+					rs.getString("guid")
 			);
 		}
 	}
@@ -351,7 +361,7 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
                 cs.setString(51, rawOccurrenceRecord.getCitation());
                 cs.setString(52, rawOccurrenceRecord.getGeodeticDatum());
                 cs.setObject(53, rawOccurrenceRecord.getGeneralisedInMetres());
-
+                cs.setObject(54, rawOccurrenceRecord.getGuid());
                 return cs;
             }
         }, params);
@@ -496,7 +506,8 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 					ps.setString(49, rawOccurrenceRecord.getCitation());
 					ps.setString(50, rawOccurrenceRecord.getGeodeticDatum());
 					ps.setObject(51, rawOccurrenceRecord.getGeneralisedInMetres());
-					ps.setLong(52, rawOccurrenceRecord.getId());
+					ps.setObject(52, rawOccurrenceRecord.getGuid());
+					ps.setLong(53, rawOccurrenceRecord.getId());
 					return ps;
 				}
 			});
@@ -642,5 +653,21 @@ public class RawOccurrenceRecordDAOImpl extends JdbcDaoSupport implements RawOcc
 		}
 
 		return sqlDate;
+	}
+
+	@Override
+	public long getOccurrenceIdByGuid(String guid) {
+		long result = -1;
+		List<Long> results = (List<Long>) getJdbcTemplate().query(
+				QUERY_ID_BY_GUID,
+				new Object[] { guid },
+				new RowMapperResultSetExtractor(longRowMapper, 1));
+		if(results.size() == 1){
+			result = results.get(0);
+		}
+		else{
+			logger.info("more than one record for guid: " + guid);
+		}
+		return result;
 	}
 }
