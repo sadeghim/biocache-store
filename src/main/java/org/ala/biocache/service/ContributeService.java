@@ -14,6 +14,7 @@
  ***************************************************************************/
 package org.ala.biocache.service;
 
+import org.ala.biocache.dto.CitizenScience;
 import org.ala.biocache.dto.Sighting;
 /**
  * An interface that for recording and managing sightings.
@@ -23,6 +24,11 @@ import org.ala.biocache.dto.Sighting;
 public interface ContributeService {
 
 	public boolean recordSighting(Sighting sighting);
-	public boolean updateSighting(Sighting sighting);
+	public long updateSighting(Sighting sighting);
 	public boolean deleteSighting(String sightingId);
+	
+	public long recordCitizenScience(CitizenScience sighting);
+	public long updateCitizenScience(CitizenScience sighting);
+	public boolean deleteCitizenScience(String sightingId);
+	
 }
