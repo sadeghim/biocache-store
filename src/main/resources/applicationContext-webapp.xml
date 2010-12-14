@@ -59,4 +59,9 @@
   </bean>
   
   <bean id="restfulClient" class="org.ala.client.util.RestfulClient"/>
+  
+    <bean id="CBIndexSearch" class="au.org.ala.checklist.lucene.CBIndexSearch" lazy-init="true">
+        <constructor-arg value="/data/lucene/namematching"/>
+    </bean>
+  
 </beans>
