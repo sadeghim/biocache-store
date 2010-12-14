@@ -42,7 +42,16 @@ public class Sighting {
     String countryCode;
     /** general notes */
     String occurrenceRemarks;
+    /** guid for sighting */
+    String guid;
     
+	public String getGuid() {
+		return guid;
+	}
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
 	/**
 	 * @return the id
 	 */
