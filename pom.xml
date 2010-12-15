@@ -294,10 +294,13 @@
         	<type>nbm</type>
         	<scope>compile</scope>
         </dependency>
+        
+        <!-- mok011: Dec 2010, failed at ImageRecordDAOImpl.java : line 122 -->
+        <!-- http://bugs.mysql.com/bug.php?id=41448 for version 5.1.13, downgrade to version 5.1.6 -->        
         <dependency>
         	<groupId>mysql</groupId>
         	<artifactId>mysql-connector-java</artifactId>
-        	<version>5.1.13</version>
+        	<version>5.1.6</version>
         	<type>jar</type>
         	<scope>compile</scope>
         </dependency>
