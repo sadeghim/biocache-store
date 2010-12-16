@@ -26,7 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class JmsListenerService {
 
 	public static void main(String[] args) throws Exception {
-		long t = System.currentTimeMillis() + 1000;
+		long t = System.currentTimeMillis() + 5000;
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{
 				"classpath*:applicationContext-webapp.xml","classpath*:activemq-context.xml"});
 		
