@@ -8,7 +8,7 @@
     </layout>
   </appender>
   <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="//logs/ala-jms.log"/>
+    <param name="File" value="logs/ala-jms.log"/>
     <param name="Append" value="true"/>
     <param name="Threshold" value="INFO"/>
     <param name="MaxFileSize" value="200MB"/>
