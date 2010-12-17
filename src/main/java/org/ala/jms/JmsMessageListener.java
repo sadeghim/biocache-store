@@ -64,6 +64,8 @@ public class JmsMessageListener implements MessageListener {
     public void onMessage(Message message) {
     	Method messageMethod = null;
     	String json = null;
+    	long occId = -1;
+    	
         try {
         	if(message.getStringProperty(MESSAGE_METHOD) != null && !"".equals(message.getStringProperty(MESSAGE_METHOD))){
         		messageMethod = Method.valueOf(message.getStringProperty(MESSAGE_METHOD));	
@@ -74,9 +76,13 @@ public class JmsMessageListener implements MessageListener {
 	                json = tm.getText();
 	                
 	                if(json != null && !"".equals(json)){
-	                	sighting = (CitizenScience)mapper.readValue(json, CitizenScience.class);
+	                	sighting = (CitizenScience)mapper.readValue(json, CitizenScience.class);	                	
 	                	String guid = taxonConceptDao.findLsidByName(sighting.getScientificName());
 	                	sighting.setTaxonConceptGuid(guid);
+	                	if(guid == null || "".equals(guid)){
+	                		logger.error("No guid found!!! ScientificName: " + sighting.getScientificName());
+	                		return;
+	                	}	                	
 	                }
 	                else{
 	                	logger.error("Empty Json Message!  Method: " + message.getStringProperty(MESSAGE_METHOD));
@@ -85,22 +91,27 @@ public class JmsMessageListener implements MessageListener {
 	                
 	                switch(messageMethod){
 	                	case CREATE:
-	                		contributeService.recordCitizenScience(sighting);
+	                		occId = contributeService.recordCitizenScience(sighting);	                		
 	                		break;
 	                		
 	                	case UPDATE:
-	                		contributeService.updateCitizenScience(sighting);
+	                		occId = contributeService.updateCitizenScience(sighting);
 	                		break;
 	                		
 	                	case DELETE:
-	                		long occId = rawOccurrenceRecordDAO.getOccurrenceIdByGuid(sighting.getGuid());
-	                    	contributeService.deleteCitizenScience("" + occId);
+	                		occId = rawOccurrenceRecordDAO.getOccurrenceIdByGuid(sighting.getGuid());
+	                    	if(!contributeService.deleteCitizenScience("" + occId)){
+	                    		occId = -1;
+	                    	}
 	                		break;
 	                		
 	                	default:
 	                		logger.error("Invalid method! Method: " + message.getStringProperty(MESSAGE_METHOD) + ".  json= " + json); 
 	                		break;
-	                }                
+	                }
+	                if(occId < 1){
+	                	logger.error("Method = " + message.getStringProperty(MESSAGE_METHOD) + " is failed!!! : Processed message " + json);
+	                }
 	                logger.debug("Method = " + message.getStringProperty(MESSAGE_METHOD) + " : Processed message " + json);  
 	            }
         	}
