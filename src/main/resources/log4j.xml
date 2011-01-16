@@ -23,7 +23,7 @@
 		<param name="Threshold" value="REMOTE#org.ala.client.appender.RestLevel" />
 	</appender>
         <appender name="ASYNC" class="org.apache.log4j.AsyncAppender">
-	    <param name="BufferSize" value="512" /> <!-- default value is 128 messages -->
+	    <param name="BufferSize" value="256" /> <!-- default value is 128 messages -->
 	    <param name="Blocking" value="false" /> 
 	    <appender-ref ref="ALA_LOGGER"/>
 	</appender>
