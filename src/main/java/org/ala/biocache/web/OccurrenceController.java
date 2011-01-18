@@ -663,65 +663,78 @@ public class OccurrenceController {
 			HttpServletResponse response,
             HttpServletRequest request)
 	throws Exception {
-       
-        String ip = request.getLocalAddr();
-        if (query == null || query.isEmpty()) {
-            return LIST;
-        }
-        if (StringUtils.trimToNull(filename) == null) {
-            filename = "data";
-        }
-        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
-        if (filterQuery != null && filterQuery.length == 0) {
-            filterQuery = null;
-        }
-
-        if (filename != null && !filename.toLowerCase().endsWith(".zip")) {
-            filename = filename + ".zip";
-        }
-
-        response.setHeader("Cache-Control", "must-revalidate");
-        response.setHeader("Pragma", "must-revalidate");
-        response.setHeader("Content-Disposition", "attachment;filename=" + filename);
-        response.setContentType("application/zip");
-
-        ServletOutputStream out = response.getOutputStream();
-        //get the new query details
-        SearchQuery searchQuery = new SearchQuery(query, type, filterQuery);
-        searchUtils.updateQueryDetails(searchQuery);
-
-        //Use a zip output stream to include the data and citation together in the download
-        ZipOutputStream zop = new ZipOutputStream(out);
-        zop.putNextEntry(new java.util.zip.ZipEntry(filename + ".csv"));
-        Map<String, Integer> uidStats = null;
-        
-        if (checkValidSpatialParams(latitude, longitude, radius)) {
-            // spatial search
-            uidStats = searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100, latitude, longitude, radius);
-        } else {
-            uidStats = searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100);
-        }
-        zop.closeEntry();
-
-        if (!uidStats.isEmpty()) {
-            //add the citations for the supplied uids
-            zop.putNextEntry(new java.util.zip.ZipEntry("citation.csv"));
-            try {
-                getCitations(uidStats.keySet(), zop);
-//                    citationUtils.addCitation(uidStats.keySet(), zop);
-            } catch (Exception e) {
-                logger.error(e);
-            }
-            zop.closeEntry();
-        }
-        zop.flush();
-        zop.close();
-
-        //logger.debug("UID stats : " + uidStats);
-        //log the stats to ala logger
-
-        LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_DOWNLOADED, email, reason, ip, uidStats);
-        logger.log(RestLevel.REMOTE, vo);
+		ZipOutputStream zop = null;
+		
+		try{
+	        String ip = request.getLocalAddr();
+	        if (query == null || query.isEmpty()) {
+	            return LIST;
+	        }
+	        if (StringUtils.trimToNull(filename) == null) {
+	            filename = "data";
+	        }
+	        // if params are set but empty (e.g. foo=&bar=) then provide sensible defaults
+	        if (filterQuery != null && filterQuery.length == 0) {
+	            filterQuery = null;
+	        }
+	
+	        if (filename != null && !filename.toLowerCase().endsWith(".zip")) {
+	            filename = filename + ".zip";
+	        }
+	
+	        response.setHeader("Cache-Control", "must-revalidate");
+	        response.setHeader("Pragma", "must-revalidate");
+	        response.setHeader("Content-Disposition", "attachment;filename=" + filename);
+	        response.setContentType("application/zip");
+	
+//	        ServletOutputStream out = response.getOutputStream();
+	        //get the new query details
+	        SearchQuery searchQuery = new SearchQuery(query, type, filterQuery);
+	        searchUtils.updateQueryDetails(searchQuery);
+	
+	        //Use a zip output stream to include the data and citation together in the download
+	        zop = new ZipOutputStream(response.getOutputStream());
+	        zop.putNextEntry(new java.util.zip.ZipEntry(filename + ".csv"));
+	        Map<String, Integer> uidStats = null;
+	        
+	        if (checkValidSpatialParams(latitude, longitude, radius)) {
+	            // spatial search
+	            uidStats = searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100, latitude, longitude, radius);
+	        } else {
+	            uidStats = searchDAO.writeResultsToStream(searchQuery.getQuery(), searchQuery.getFilterQuery(), zop, 100);
+	        }
+	        zop.closeEntry();
+	
+	        if (!uidStats.isEmpty()) {
+	            //add the citations for the supplied uids
+	            zop.putNextEntry(new java.util.zip.ZipEntry("citation.csv"));
+	            try {
+	                getCitations(uidStats.keySet(), zop);
+	//                    citationUtils.addCitation(uidStats.keySet(), zop);
+	            } catch (Exception e) {
+	                logger.error(e);
+	            }
+	            zop.closeEntry();
+	        }
+	        zop.flush();
+//	        zop.close();
+	
+	        //logger.debug("UID stats : " + uidStats);
+	        //log the stats to ala logger
+	
+	        LogEventVO vo = new LogEventVO(LogEventType.OCCURRENCE_RECORDS_DOWNLOADED, email, reason, ip, uidStats);
+	        logger.log(RestLevel.REMOTE, vo);
+		}
+		finally{
+			try{
+				if(zop != null){
+					zop.close();
+				}
+			}
+			catch(Exception ex){
+				// do nothing
+			}
+		}
         return null;
 	}
 
