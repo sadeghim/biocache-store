@@ -732,6 +732,7 @@ public class OccurrenceController {
 				}
 			}
 			catch(Exception ex){
+				zop = null;
 				// do nothing
 			}
 		}
