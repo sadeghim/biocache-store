@@ -731,10 +731,10 @@ public class OccurrenceController {
 					zop.close();
 				}
 			}
-			catch(Exception ex){
-				zop = null;
+			catch(Exception ex){				
 				// do nothing
 			}
+			zop = null;
 		}
         return null;
 	}
