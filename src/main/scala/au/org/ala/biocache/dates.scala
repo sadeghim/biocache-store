@@ -72,7 +72,8 @@ object ISODate /*extends (String=>Option[EventDate]) */{
   def unapply(str:String) : Option[EventDate] = {
    try{
        val eventDateParsed = DateUtils.parseDate(str,
-          Array("yyyy-MM-dd", "yyyy-MM-dd'T'hh:mm-ss", "yyyy-MM-dd'T'hh:mm'Z'"))
+          Array("yyyy-MM-dd", "yyyy-MM-dd'T'hh:mm-ss", "yyyy-MM-dd'T'hh:mm'Z'",
+            "yyyy/MM/dd", "dd-MM-yyyy", "dd/MM/yyyy"))
 
        val startDate, endDate = DateFormatUtils.format(eventDateParsed, "yyyy-MM-dd")
        val startDay, endDay = DateFormatUtils.format(eventDateParsed, "dd")
