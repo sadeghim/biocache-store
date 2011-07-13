@@ -33,7 +33,7 @@ object ClassificationDAO {
 
   private val lock : AnyRef = new Object()
 
-  private val nameIndex = Config.getInstance(classOf[CBIndexSearch]).asInstanceOf[CBIndexSearch]
+  private val nameIndex = Config.nameIndex
 
   /**
    * Uses a LRU cache

@@ -218,7 +218,7 @@ trait VocabMaps {
    */
   def areTermsCompatible(term:String, terms:Array[String]) : Option[Boolean] = {
     var weTested:Option[Boolean] = None
-    for(matchingTerm<-terms){
+    terms.foreach(matchingTerm => {
       val matches = isCompatible(term, matchingTerm)
       if(!matches.isEmpty){
         //term is recognised
@@ -229,7 +229,7 @@ trait VocabMaps {
           weTested = Some(false)
         }
       }
-    }
+   })
     weTested
   }
 
