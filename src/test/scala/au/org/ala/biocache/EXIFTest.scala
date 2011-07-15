@@ -1,12 +1,11 @@
 package au.org.ala.biocache
 import java.io.File
-//import com.drew.imaging.ImageMetadataReader
-//import com.drew.metadata.Metadata
 import scala.collection.JavaConversions
-//import com.drew.metadata.exif._
 import java.text.SimpleDateFormat
 import java.util.Date
+import org.junit.Ignore
 
+@Ignore
 object EXIFTest {
     
   import JavaConversions._
