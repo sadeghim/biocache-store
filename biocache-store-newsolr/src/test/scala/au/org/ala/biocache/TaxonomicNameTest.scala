@@ -15,6 +15,14 @@ class TaxonomicNameTest extends ConfigFunSuite {
         expect(10004){qas(0).code}
     }
     
+    test("Parse type"){
+      val raw = new FullRecord
+      val processed = new FullRecord
+      raw.classification.scientificName ="Zabidius novemaculeatus"
+      (new ClassificationProcessor).process("test",raw,processed)
+      expect("wellformed"){processed.classification.nameParseType}
+    }
+    
     test("name not in national checklists"){
         val raw = new FullRecord
         var processed = new FullRecord
@@ -22,7 +30,7 @@ class TaxonomicNameTest extends ConfigFunSuite {
         var qas = (new ClassificationProcessor).process("test", raw, processed)
         expect(true){qas.isEmpty}
         
-        raw.classification.scientificName = "Camponotus reticulatus fullawayi"
+        raw.classification.scientificName = "Acridotheres tristis"
         qas = (new ClassificationProcessor).process("test", raw, processed)
         expect(10005){qas(0).code}
     }
@@ -30,11 +38,13 @@ class TaxonomicNameTest extends ConfigFunSuite {
     test("homonym issue"){
         val raw = new FullRecord
         var processed = new FullRecord
-        raw.classification.genus = "Heteropoda";
-        raw.classification.scientificName = "Heteropoda";
+        raw.classification.genus = "Macropus";
+        raw.classification.scientificName = "Macropus ?";
         val qas = (new ClassificationProcessor).process("test", raw, processed);
         println(processed.classification.taxonConceptID)
-        expect(10006){qas(0).code}
+        expect(true){processed.classification.getTaxonomicIssue().contains("homonym")}
+        expect(true){processed.classification.getTaxonomicIssue().contains("questionSpecies")}
+//        expect(10006){qas(0).code}
     }
     
     test("missing accepted name"){
