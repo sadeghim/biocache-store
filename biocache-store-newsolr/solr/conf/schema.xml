@@ -474,7 +474,7 @@
 
 
     <fieldType name="quad"      class="solr.SpatialTermQueryPrefixTreeFieldType" units="degrees" />
-    <fieldType name="geohash"   class="solr.SpatialRecursivePrefixTreeFieldType" units="degrees" />
+    <fieldType name="geohash"   class="solr.SpatialRecursivePrefixTreeFieldType" spatialContextFactory="com.spatial4j.core.context.jts.JtsSpatialContextFactory" units="degrees" />
 
  </types>
 
@@ -704,6 +704,10 @@
    <field name="duplicate_status" type="string" indexed="true" stored="true" multiValued="false" omitNorms="true" />
    <field name="duplicate_record" type="string" indexed="true" stored="true" multiValued="true" omitNorms="true" />
    <field name="duplicate_type" type="int" indexed="true" stored="true" multiValued="true" omitNorms="true" />
+
+<!-- Distance from expert distribution for associated species -->
+	<field name="distance_outside_expert_range" type="double" indexed="true" stored="true" multiValued="false" />
+
 
 <!-- SOLR 4.0 Spatial Fields -->   
    <field name="quad"     type="quad"     indexed="true" stored="true"  multiValued="false" />
