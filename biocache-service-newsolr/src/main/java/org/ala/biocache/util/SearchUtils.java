@@ -230,9 +230,12 @@ public class SearchUtils {
         }
         /**
          * updates the query ready for a spatial search
+         * Obsolete method for this. I don't think that it is being used
+         * 
          * @param searchParams
          * @return
          */
+        @Deprecated
         public boolean updateSpatial(SpatialSearchRequestParams searchParams){
             String query = searchParams.getQ();
 

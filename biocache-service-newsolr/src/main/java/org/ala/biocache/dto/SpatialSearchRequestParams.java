@@ -115,9 +115,10 @@ public class SpatialSearchRequestParams extends SearchRequestParams {
     }
 
     public void setWkt(String wkt) {
-        if(wkt != null){
-            this.wkt = wkt.replace(' ', ':');
-        }
+        this.wkt =wkt;
+//        if(wkt != null){
+//            this.wkt = wkt.replace(' ', ':');
+//        }
     }
     /**
      * @return the gk
