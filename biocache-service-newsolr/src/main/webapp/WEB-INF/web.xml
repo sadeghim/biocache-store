@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4" id="biocache-service">
+
+    <display-name>Biocache Service</display-name>
+
+    <!-- For spring context initialisation -->
+    <context-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath*:/applicationContext-webapp.xml</param-value>
+    </context-param>
+
+    <listener>
+            <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+    <servlet>
+        <servlet-name>mainDispatcher</servlet-name> 
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>20</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>mainDispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+      
+    <welcome-file-list>
+        <!--<welcome-file>species</welcome-file>-->
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <!-- Displays a stack trace -->
+        <location>/WEB-INF/jsp/error/general.jsp</location>
+    </error-page>
+
+    <!-- CAS Authentication related properties -->
+    <context-param>
+        <!-- Parameter used by CAS filters -->
+        <param-name>serverName</param-name>
+        <param-value>http://biocache.ala.org.au</param-value>
+    </context-param>
+
+    <!-- Used in the homepage to provide a configurable root URL -->
+    <context-param>
+        <param-name>webservicesRoot</param-name>
+        <param-value>http://localhost:8080</param-value>
+    </context-param>
+
+
+    <context-param>
+        <param-name>casServerName</param-name>
+        <param-value>https://auth.ala.org.au</param-value>
+    </context-param>
+
+	<!-- The Central Server hosting the CMS -->
+    <context-param>
+        <param-name>centralServer</param-name>
+        <param-value>http://www.ala.org.au</param-value>
+    </context-param>
+
+    <!-- SiteMesh -->
+    <filter>
+        <filter-name>sitemesh</filter-name>
+        <filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>sitemesh</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- JSONP callback filter -->
+    <filter>
+        <filter-name>JsonpFilter</filter-name>
+        <filter-class>au.org.ala.web.filter.JsonpFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>JsonpFilter</filter-name>
+        <url-pattern>*.json</url-pattern>
+    </filter-mapping>
+</web-app>
