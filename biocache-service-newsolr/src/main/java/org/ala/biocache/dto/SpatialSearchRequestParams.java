@@ -116,9 +116,10 @@ public class SpatialSearchRequestParams extends SearchRequestParams {
 
     public void setWkt(String wkt) {
         this.wkt =wkt;
-//        if(wkt != null){
-//            this.wkt = wkt.replace(' ', ':');
-//        }
+        //NC: switched the replace statement so that the incorrect WKT format required for the OLD Spatial Plugin is replaced with correct values.
+        if(wkt != null){
+            this.wkt = wkt.replace(':', ' ');
+        }
     }
     /**
      * @return the gk
