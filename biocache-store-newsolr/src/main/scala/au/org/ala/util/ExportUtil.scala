@@ -5,6 +5,7 @@ import scala.Array._
 import au.com.bytecode.opencsv.CSVWriter
 import java.io.{FileWriter,  File}
 import scala.collection.mutable.HashSet
+import au.org.ala.biocache.Json
 
 /**
  * Utility for exporting data from the biocache.
@@ -20,6 +21,7 @@ object ExportUtil {
     var startkey =""
     var endkey = ""
     var distinct = false
+    var json =false
     var maxRecords = Integer.MAX_VALUE
 
     val parser = new OptionParser("export") {
@@ -34,19 +36,38 @@ object ExportUtil {
       opt("s", "start", "The row key to start with", {s:String =>startkey = s})
       opt("e", "end", "The row key to end with", {s:String =>endkey = s})
       opt("distinct", "distinct values for the columns only", {distinct=true})
+      opt("json","export the values as json",{json=true})
       intOpt("m", "max-records", "number of records to export", { v: Int => maxRecords = v })
     }
 
     if (parser.parse(args)) {
       val outWriter = new FileWriter(new File(filePath))
       val writer = new CSVWriter(outWriter, '\t', '"')
-      if(distinct)
+      if(json)
+        exportJson(outWriter,entity, startkey, endkey, maxRecords)
+      else if(distinct)
         exportDistinct(writer, entity, fieldsToExport, startkey, endkey)
       else
         export(writer, entity, fieldsToExport, fieldsRequired, maxRecords=maxRecords)
       writer.flush
       writer.close
     }
+  }
+  
+  def exportJson(writer:FileWriter,entity:String, startKey:String, endKey:String, maxRecords:Int){
+    
+    val pm = Config.persistenceManager
+    var counter=0
+    pm.pageOverAll(entity, (guid,map) =>{
+      val finalMap = map +(entity+"rowKey"->guid)
+      //println(Json.toJSON(finalMap))
+      writer.write(Json.toJSON(finalMap))
+      writer.write("\n")
+      counter += 1
+      maxRecords > counter
+    },startKey,endKey,1000)
+    writer.flush
+    writer.close
   }
   
   def exportDistinct(writer: CSVWriter, entity:String, fieldsToExport:List[String], startUuid:String="", endUuid:String="")={
