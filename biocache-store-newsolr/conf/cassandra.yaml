@@ -88,7 +88,7 @@ data_file_directories:
     - /data/cassandra1.2/data
 
 # commit log
-commitlog_directory: /cassandra1.2/commitlog
+commitlog_directory: /data/cassandra1.2/commitlog
 
 # policy for data disk failures:
 # stop: shut down gossip and Thrift, leaving the node effectively dead, but
