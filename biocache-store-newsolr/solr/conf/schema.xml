@@ -708,6 +708,8 @@
 <!-- Distance from expert distribution for associated species -->
 	<field name="distance_outside_expert_range" type="double" indexed="true" stored="true" multiValued="false" />
 
+	<field name="query_assertion_uuid" type="string" indexed="true" stored="true" multiValued="true" omitNorms="true" />
+	<field name="query_assertion_type_s" type="string" indexed="true" stored="true" multiValued="true" omitNorms="true" />
 
 <!-- SOLR 4.0 Spatial Fields -->   
    <field name="quad"     type="quad"     indexed="true" stored="true"  multiValued="false" />
