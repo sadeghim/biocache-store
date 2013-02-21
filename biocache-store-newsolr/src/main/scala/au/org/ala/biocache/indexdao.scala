@@ -367,6 +367,13 @@ trait IndexDAO {
         val loanDate = DateParser.parseStringToDate(map.getOrElse("loanDate", ""))
         val loanReturnDate = DateParser.parseStringToDate(map.getOrElse("loanReturnDate", ""))
         val dateIdentified = DateParser.parseStringToDate(map.getOrElse("dateIdentified.p", ""))
+        
+        var taxonIssue = map.getOrElse("taxonomicIssue.p", "[]")
+        if(!taxonIssue.startsWith("[")){
+          println("WARNING " + map.getOrElse("rowKey","") +" does not have an updated taxonIssue: " + guid)
+          taxonIssue = "[]"
+        }
+        val taxonIssueArray= Json.toStringArray(taxonIssue)
 
         val pest_tmp = if (map.getOrElse("informationWithheld.p", "").startsWith("PEST")) "PEST" else ""
 
@@ -466,7 +473,7 @@ trait IndexDAO {
           map.getOrElse("nameMatchMetric.p", ""),
           map.getOrElse("phenology", ""), //TODO make this a controlled vocab that gets mapped during processing...
           outlierForLayers.mkString("|"),
-          outlierForLayers.length.toString, Json.toStringArray(map.getOrElse("taxonomicIssue.p", "[]")).mkString("|"), map.getOrElse("identificationQualifier", ""),
+          outlierForLayers.length.toString, taxonIssueArray.mkString("|"), map.getOrElse("identificationQualifier", ""),
           habitats.mkString("|"), map.getOrElse("identifiedBy", ""),
           if (dateIdentified.isEmpty) "" else DateFormatUtils.format(dateIdentified.get, "yyyy-MM-dd'T'HH:mm:ss'Z'"),
           sensitiveMap.getOrElse("decimalLongitude", ""), sensitiveMap.getOrElse("decimalLatitude", ""), pest_tmp,
@@ -623,7 +630,7 @@ class SolrIndexDAO @Inject()(@Named("solrHome") solrHome: String, @Named("exclud
     }
   }
 
-  def reload = cc.reload("")
+  def reload = cc.reload("biocache")
 
 
   override def shouldIncludeSensitiveValue(dr: String): Boolean = {
