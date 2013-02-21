@@ -1741,6 +1741,8 @@ public class SearchDAOImpl implements SearchDAO {
         sb.append(spatialField).append(":\"Intersects(Circle(").append(longitude.toString());
         sb.append(" ").append(latitude.toString()).append(" d=").append(SpatialUtils.convertToDegrees(radius).toString());
         sb.append("))\"");
+        if(StringUtils.isNotEmpty(fullTextQuery))
+          sb.append(" AND ").append(fullTextQuery);
 //        String queryString = "{!spatial circles=" + latitude.toString() + "," + longitude.toString()
 //                + "," + radius.toString() + "}" +  fullTextQuery;
         return sb.toString();
