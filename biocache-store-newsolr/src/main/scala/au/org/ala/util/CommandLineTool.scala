@@ -263,7 +263,7 @@ object CMD {
         }
         case it if (it startsWith "delete-columns") =>{
           //first arg is data resource
-          val args = it.split(" ").map(x => x.trim).toArray.tail
+          val args = input.split(" ").map(x => x.trim).toArray.tail
           if(args.length > 1){
             ResourceCleanupTask.main(Array(args.head)++Array("columns","--delcols","-c")++args.tail)
           }
@@ -272,7 +272,7 @@ object CMD {
         }
         case it if(it startsWith "delete-missing") =>{
           //first arg is data resource
-          val args = it.split(" ").map(x => x.trim).toArray.tail
+          val args = input.split(" ").map(x => x.trim).toArray.tail
           if(args.length > 1){
             ResourceCleanupTask.main(Array(args.head)++Array("columns","-c")++args.tail)
           }
