@@ -86,6 +86,7 @@ object ResourceCleanupTask {
     var totalRecordModified=0
     var totalColumnsRemoved=0
     val fullRecord = new FullRecord
+    val valuesToIgnore=Array("uuid","originalSensitiveValues","rowKey")
     pm.pageOverAll("occ", (guid,map)=>{
       totalRecords +=1
       val colToDelete=new ArrayBuffer[String]
@@ -93,7 +94,7 @@ object ResourceCleanupTask {
               fieldName match {
                 case it if fullRecord.hasNestedProperty(fieldName) => {
                   //check to see if the column is in the columns to keep list
-                  if(!colsToKeep.contains(fieldName)){
+                  if(!colsToKeep.contains(fieldName) && !valuesToIgnore.contains(fieldName)){
                     colToDelete += fieldName
                     valueSet += fieldName
                     totalColumnsRemoved += 1
@@ -142,9 +143,10 @@ object ResourceCleanupTask {
     var totalRecords=0
     var totalRecordModified=0
     var totalColumnsRemoved=0    
-    
+    val valuesToIgnore=Array("uuid","originalSensitiveValues","rowKey")
     Config.persistenceManager.pageOverSelect("occ", (guid,map)=>{
       totalRecords +=1
+      
       if(!map.contains("dateDeleted")){
         //check all the raw properties for the modified time.
         val timemap = Config.persistenceManager.getColumnsWithTimestamps(guid,"occ")
@@ -156,7 +158,7 @@ object ResourceCleanupTask {
 //              if(fieldName == "kingdom")
 //                println(fullRecord.hasProperty(fieldName) +" "+ timemap.get.get(fieldName).get)
               fieldName match {
-                case it if fullRecord.hasNestedProperty(fieldName) => {
+                case it if (fullRecord.hasNestedProperty(fieldName))=> {
 //                  if(fieldName == "kingdom")
 //                    println("Edit time: " +editTime + " less than : " + (timemap.get.get(fieldName).get < editTime))
                   if(timemap.get.get(fieldName).get < editTime){
