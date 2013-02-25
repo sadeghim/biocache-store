@@ -213,7 +213,7 @@
 		<dependency>
 			<groupId>org.gbif</groupId>
 			<artifactId>dwca-reader</artifactId>
-			<version>1.7.6</version>
+			<version>1.14-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-io</groupId>
@@ -361,13 +361,26 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		    <dependency>
+      <groupId>com.vividsolutions</groupId>
+      <artifactId>jts</artifactId>
+      <version>${jts.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+		
 		<!-- Spatial-SOLR plugin patched by Adam Collins (ALA Spatial Team) to 
 			have wkt support -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>nl.jteam</groupId>
 			<artifactId>spatial-solr</artifactId>
 			<version>2.0-RC5_ssplex_wkt</version>
-		</dependency>
+		</dependency> -->
 		<!-- COMMONS -->
 		<dependency>
 			<groupId>commons-httpclient</groupId>
