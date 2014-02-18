@@ -15,7 +15,7 @@ import au.org.ala.biocache.model.FullRecord
  * 
  * See http://www.scalatest.org/getting_started_with_fun_suite
  * 
- * scala -cp scalatest-1.0.jar org.scalatest.tools.Runner -p . -o -s ay.org.ala.biocache.ProcessEventTests 
+ * scala -cp scalatest-1.0.jar org.scalatest.tools.Runner -p . -o -s ay.au.biocache.ProcessEventTests
  * 
  * @author Dave Martin (David.Martin@csiro.au)
  */

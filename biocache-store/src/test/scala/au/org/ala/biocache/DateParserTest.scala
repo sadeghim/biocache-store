@@ -11,7 +11,7 @@ import au.org.ala.biocache.parser.DateParser
  * 
  * See http://www.scalatest.org/getting_started_with_fun_suite
  * 
- * scala -cp scalatest-1.0.jar org.scalatest.tools.Runner -p . -o -s au.org.ala.biocache.ProcessEventTests
+ * scala -cp scalatest-1.0.jar org.scalatest.tools.Runner -p . -o -s au.au.biocache.ProcessEventTests
  * 
  * @author Dave Martin (David.Martin@csiro.au)
  */

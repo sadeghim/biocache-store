@@ -1,6 +1,6 @@
 package au.org.ala.biocache.load
 
-//import au.org.ala.biocache.load.DataLoader
+//import au.au.biocache.load.DataLoader
 import java.io._
 import org.apache.commons.compress.archivers.ArchiveStreamFactory
 import org.apache.commons.io.{FilenameUtils,FileUtils}

@@ -39,11 +39,7 @@
         <!--<appender-ref ref="ALA_LOGGER"/>-->
     <!--</appender>-->
     <!-- Alter the logging of known libs -->
-    <category name="au.org.ala.biocache">
-        <priority value="INFO"/>
-    </category>
-    <!-- Alter the logging of known libs -->
-    <category name="org.ala.biocache">
+    <category name="au.au.biocache">
         <priority value="INFO"/>
     </category>
     <category name="org.ala.layers">
